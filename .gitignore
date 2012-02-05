@@ -1,5 +1,9 @@
+### WINDOWS ###
+Thumbs.db
+
 ### PYCHARM ###
 .idea/workspace.xml
+.idea/dictionaries/
 
 ### PYTHON ###
 *.py[co]
@@ -26,3 +30,9 @@ pip-log.txt
 
 #Translations
 *.mo
+
+### ENGINEER ###
+/output/
+/cache/
+/logs/
+*.cache

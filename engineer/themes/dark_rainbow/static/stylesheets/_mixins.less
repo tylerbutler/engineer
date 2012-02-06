@@ -1,0 +1,16 @@
+@import "../../engineer/_base_mixins.less";
+
+.bulleted-list(@bullet: "»") {
+    > ul li:before {
+        font-size: @font-size-default + 2;
+        content: @bullet;
+        padding-right: 11px;
+        margin-left: -10px;
+    }
+}
+
+.horizontal {
+    ul {
+        .horizontal-list()
+    }
+}

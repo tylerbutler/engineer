@@ -1,0 +1,4 @@
+include *.txt
+recursive-include docs *.py *.html *.js *.css *.less
+recursive_include APP_NAME *.py *.html *.js *.css *.less
+recursive_include docs_source *.rst *.py

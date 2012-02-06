@@ -1,0 +1,96 @@
+{# Use the future Django 1.5 url tag behavior. #}
+{#{% load url from future %}#}
+
+{# django-compress #}
+{#{% load compress %}#}
+
+{# django-engineer #}
+{#{% load engineer %}#}
+
+<!DOCTYPE html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8"/>
+
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width"/>
+
+    <title>{{ theme.name }}</title>
+
+{#    {% if meta_description %}#}
+{#        <meta name="description" content="{{ engineer.meta_description }}">#}
+{#    {% endif %}#}
+{##}
+{#    {% if meta_author %}#}
+{#        <meta name="author" content="{% block meta_author %}{% endblock %}">#}
+{#    {% endif %}#}
+
+    <link rel="alternate" type="application/atom+xml"
+          title="{{ theme.name }} Atom Feed" href="{{ url.atom_feed }}"/>
+    <link rel="alternate" type="application/rss+xml"
+          title="{{ theme.name }} RSS Feed" href="{{ url.rss_feed }}"/>
+
+    {% if theme.use_foundation %}
+        {# FOUNDATION CSS #}
+
+{#        {% compress css %}#}
+            <link rel="stylesheet" href="{{ engineer.foundation_url }}stylesheets/grid.css">
+{#        {% endcompress %}#}
+
+{#        {% compress css %}#}
+            <link rel="stylesheet" href="{{ engineer.foundation_url }}stylesheets/mobile.css">
+{#        {% endcompress %}#}
+
+        <!--[if lt IE 9]>
+{#        {% compress css %}#}
+            <link rel="stylesheet" href="{{ engineer.foundation_url }}stylesheets/ie.css">
+{#        {% endcompress %}#}
+        <![endif]-->
+    {% endif %}
+
+    {% block stylesheets %}{% endblock %}
+
+    {% if theme.use_lesscss %}
+        {% if config.USE_CLIENT_SIDE_LESS %}
+            <script src="{{ engineer.lesscss_url }}" type="text/javascript"></script>
+            <script type="text/javascript">
+                //less = { env:'development' };
+                less.watch();
+            </script>
+        {% endif %}
+    {% endif %}
+
+    {% block scripts_top %}{% endblock %}
+
+    {% if theme.use_modernizr %}
+        <script src="{{ engineer.modernizr_url }}" type="text/javascript"></script>
+    {% endif %}
+
+    {% if theme.use_jquery -%}
+        <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        <script>
+            window.jQuery || document.write('<script src="{{ engineer.jquery_url }}jquery-1.6.2.min.js"><\/script>')
+        </script>
+    {%- endif %}
+
+    <!-- IE Fix for HTML5 Tags -->
+    <!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+<body>
+{%- block body %}{% endblock -%}
+
+{% if theme.use_foundation -%}
+    <script src="{{ engineer.foundation_url }}javascripts/foundation.js"></script>
+{%- endif %}
+
+{% block scripts_bottom %}{% endblock %}
+</body>
+</html>

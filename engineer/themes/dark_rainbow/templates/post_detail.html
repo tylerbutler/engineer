@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block section_main_class %}twelve columns{% endblock %}
+
+{# No secondary header. #}
+{% block header_secondary %}{% endblock %}
+
+{# No sidebar. #}
+{% block section_sidebar %}{% endblock %}
+
+{% block section_main_content %}
+    {% include theme.theme_path('_single_post.html') %}
+{% endblock %}
+

@@ -1,0 +1,90 @@
+///////////
+// FONTS //
+///////////
+
+@font-main: myriad-pro;
+@font-heading: museo-slab;
+@font-mono: Consolas, anonymous-pro;
+@font-proxima: proxima-nova-sc-osf-ext-cond;
+
+.margin-calc(@desired_size, @top_percentage: 0, @bottom_percentage: 1, @top_add: 0px, @bottom_add: 0px) {
+    margin-top: (@desired_size * @top_percentage) + @top_add;
+    margin-bottom: (@desired_size * @bottom_percentage) + @bottom_add;
+}
+
+.line-height-calc(@multiplier: 1) {
+    line-height: @line-height-default * @multiplier;
+}
+
+@font-size-base: 18px;
+@font-size-default: 18px;
+@line-height-default: 25px;//1.3889em; // 25px 
+@line-height-double: 2 * @line-height-default;
+//@lead-multiplier: (25 / 18);
+@font-size-tiny: 12px;
+@font-size-small: 16px;
+@font-size-medium: 23px;
+@font-size-large: 32px;
+@font-size-xl: 36px;
+@font-size-xxl: 45px;
+
+.font-size-default(@top: 0, @bottom: 1) {
+    font-size: @font-size-default;
+    //line-height: @line-height-default;
+    line-height: @line-height-default;
+    .margin-calc(@line-height-default, @top, @bottom);
+}
+
+// 12px //
+//@margin-tiny: 2.0833em;
+.font-size-tiny(@top: 0, @bottom: 1) {
+    font-size: @font-size-tiny;//0.6667em; // 12px
+    //line-height: 2.0833em; // 25px
+    line-height: @line-height-default;
+    .margin-calc(@line-height-default, @top, @bottom);
+}
+
+// 16px 
+//@margin-small: 1.5625em;
+.font-size-small(@top: 0, @bottom: 1) {
+    font-size: @font-size-small; // 16px 
+    //line-height: 1.5625em; // 25px 
+    line-height: @line-height-default;
+    .margin-calc(@line-height-default, @top, @bottom);
+}
+
+// 23px 
+//@margin-medium: 1.087em;
+.font-size-medium(@top: 0, @bottom: 1) {
+    font-size: @font-size-medium;//1.2778em; // 23px 
+    //line-height: 1.087em; // 25px 
+    line-height: @line-height-default;
+    .margin-calc(@line-height-default, @top, @bottom);
+}
+
+// 32px 
+//@margin-large: 0.7813em;
+.font-size-large(@top: 0, @bottom: 1) {
+    font-size: @font-size-large;//1.7778em; // 32px 
+    //line-height: @line-height-default * 2;//.5625em; // 50px 
+    line-height: @line-height-double;
+    .margin-calc(@line-height-default, @top, @bottom);
+ }
+
+// 36px 
+//@margin-xl: 0.6944em;
+.font-size-xl(@top: 0, @bottom: 1) {
+    font-size: @font-size-xl;//2em; // 36px 
+    //line-height: @line-height-default * 2;//1.3889em; // 50px 
+    line-height: @line-height-double;
+    .margin-calc(@line-height-default, @top, @bottom);
+}
+
+// 45px 
+//@margin-xxl: .5556em;
+.font-size-xxl(@top: 0, @bottom: 1) {
+    font-size: @font-size-xxl;//2.5em; // 45px 
+    //line-height: @line-height-default * 2;//1.1111em; // 50px 
+    line-height: @line-height-double;
+    .margin-calc(@line-height-default, @top, @bottom);
+}

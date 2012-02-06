@@ -1,0 +1,11 @@
+path.py>=2.2.2
+markdown>=2.1.1
+typogrify>=1.0
+pyYAML>=3.10
+flufl.enum>=3.3.1
+translitcodec>=0.2
+jinja2>=2.6
+compressinja>=0.0.1
+pygments>=1.4
+html5lib>=0.90
+Pynq>=0.4.0.Pineapple

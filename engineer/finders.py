@@ -15,7 +15,7 @@ class BaseFinder(object):
 class DefaultFinder(BaseFinder):
     @classmethod
     def get_themes(cls):
-        themes_path = settings.THEMES_DIR
+        themes_path = settings.ENGINEER_THEMES_DIR
         return cls.get_from_directory(themes_path)
 
 

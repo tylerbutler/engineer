@@ -27,11 +27,6 @@ class Theme(object):
 
         self.self_contained = kwargs.get('self_contained', True)
 
-        #        if 'static_root' in kwargs:
-        #            self.static_root = kwargs['static_root']
-        #        else:
-        #            self.static_root = self.root_path / 'static'
-
         self.static_root = path(kwargs.get('static_root', self.root_path / 'static/')).abspath()
 
         self.template_root = path(kwargs['template_root']) if 'template_root' in kwargs\

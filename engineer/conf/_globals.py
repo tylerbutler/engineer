@@ -1,5 +1,7 @@
 # coding=utf-8
 
+from engineer.conf import settings
+
 __author__ = 'tyler@tylerbutler.com'
 
-USER_SETTINGS_MODULE = __import__('user_settings')
+POST_CACHE = {}

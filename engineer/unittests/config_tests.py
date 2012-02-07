@@ -8,7 +8,8 @@ class TestConfig(TestCase):
         pass
 
     def test_init(self):
-        pass
+        from engineer.conf import settings
+
 
     def test_load(self):
         posts = LocalLoader.load_all()

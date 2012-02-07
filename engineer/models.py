@@ -11,7 +11,7 @@ from flufl.enum._enum import Enum
 from path import path
 from typogrify.templatetags import typogrify
 from engineer.conf import settings
-from engineer.util import slugify, checksum, chunk
+from engineer.util import slugify, chunk
 
 try:
     import cPickle as pickle
@@ -68,11 +68,12 @@ class Post(object):
         self.output_file_name = 'index.html'#'%s.html' % self.slug
 
         # update cache
-        settings.POST_CACHE[self.source] = {
+        from engineer.post_cache import POST_CACHE
+        POST_CACHE[self.source] = {
             'mtime': self.source.mtime,
             'size': self.source.size,
-            'checksum': checksum(self.source),
-            'post': self
+            'checksum': self.source.read_hexhash('sha256'),
+            #'post': self
         }
 
     @property
@@ -125,7 +126,9 @@ class Post(object):
 
 
 class PostCollection(list):
-    html_template = settings.JINJA_ENV.get_template('post_list.html')
+    def __init__(self, seq=()):
+        list.__init__(self, seq)
+        self.html_template = settings.JINJA_ENV.get_template('post_list.html')
 
     def paginate(self, paginate_by=5):
         return chunk(self, paginate_by, PostCollection)
@@ -147,67 +150,3 @@ class PostCollection(list):
             slice_num=slice_num,
             has_next=has_next,
             has_previous=has_previous)
-
-
-class _PostCache(dict):
-    CACHE_VERSION = 0
-
-    def __init__(self, empty=False):
-        dict.__init__(self)
-        if not empty:
-            _PostCache._load_cache()
-
-    @staticmethod
-    def is_cached(file):
-        if settings.DISABLE_CACHE:
-            return False
-
-        file = path(file).abspath()
-        if file not in settings.POST_CACHE:
-            return False
-        cache_entry = settings.POST_CACHE[file]
-        if cache_entry['mtime'] != file.mtime:
-            return False
-        if cache_entry['size'] != file.size:
-            return False
-        if cache_entry['checksum'] != file.read_hexhash():
-            return False
-        return True
-
-    @staticmethod
-    def _load_cache():
-        try:
-            if settings.DISABLE_CACHE or hasattr(settings, 'POST_CACHE'):
-                return
-        except:
-            return
-
-        cache_file = settings.POST_CACHE_FILE
-        try:
-            with open(cache_file) as f:
-                settings.POST_CACHE = pickle.load(f)
-                if settings.POST_CACHE.pickled_version != _PostCache.CACHE_VERSION:
-                    settings.POST_CACHE = _PostCache(empty=True)
-        except (IOError, AttributeError, EOFError):
-            settings.POST_CACHE = _PostCache(empty=True)
-
-    @staticmethod
-    def _save_cache():
-        if settings.DISABLE_CACHE:
-            return
-
-        settings.POST_CACHE.pickled_version = _PostCache.CACHE_VERSION
-        cache_file = path(settings.POST_CACHE_FILE).abspath()
-        with open(cache_file, mode='wb') as f:
-            pickle.dump(settings.POST_CACHE, f)
-
-    @staticmethod
-    def delete():
-        try:
-            path(settings.POST_CACHE_FILE).abspath().remove()
-        except WindowsError as we:
-            if we.winerror not in (2, 3):
-                logging.exception(we.message)
-        settings.POST_CACHE = _PostCache(empty=True)
-
-PostCache = _PostCache()

@@ -1,20 +1,20 @@
 # coding=utf-8
 import logging
 from path import path
-from engineer.conf import settings
-from engineer.models import Post, MetadataError, PostCollection, PostCache
+from engineer.models import Post, MetadataError, PostCollection#, PostCache
+#from engineer.conf import settings
 
 __author__ = 'tyler@tylerbutler.com'
 
 class LocalLoader(object):
     @staticmethod
-    def load_all(input=settings.DRAFT_DIR):
+    def load_all(input):
+        from engineer.post_cache import POST_CACHE
         posts = PostCollection()
         file_list = path(input).listdir('*.md') + path(input).listdir('*.markdown')
-        print file_list
         for f in file_list:#path(input).walkfiles(pattern='*.{md,*.markdown}'):
             try:
-                if not PostCache.is_cached(f):
+                if not POST_CACHE.is_cached(f):
                     logging.debug("'%s': Beginning to parse." % f.basename())
                     post = Post(f)
                     logging.debug("'%s': Parsed successfully." % f.basename())
@@ -25,5 +25,5 @@ class LocalLoader(object):
                 logging.warning("'%s': SKIPPING - metadata is invalid. %s" % (f.basename(), e.message))
                 continue
         logging.debug("Successfully parsed %d items." % len(posts))
-        PostCache._save_cache()
+        POST_CACHE.save()
         return posts

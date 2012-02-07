@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="start --settings" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="build --settings" type="PythonConfigurationType" factoryName="Python">
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
@@ -10,11 +10,13 @@
     <option name="IS_MODULE_SDK" value="true" />
     <module name="blog-static" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/starts.py" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/build.py" />
     <option name="PARAMETERS" value="--settings sample_config" />
     <option name="MULTIPROCESS" value="false" />
     <RunnerSettings RunnerId="PyDebugRunner" />
+    <RunnerSettings RunnerId="PythonRunner" />
     <ConfigurationWrapper RunnerId="PyDebugRunner" />
+    <ConfigurationWrapper RunnerId="PythonRunner" />
     <method />
   </configuration>
 </component>

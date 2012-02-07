@@ -1,15 +1,17 @@
 # coding=utf-8
 import logging
+import os
 import platform
 from path import path
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
-#from engineer.filters import format_datetime
 from engineer.util import urljoin
-#from engineer.conf.globals import USER_SETTINGS_MODULE
 
 __author__ = 'tyler@tylerbutler.com'
 
-USER_SETTINGS_MODULE = __import__('user_settings')
+try:
+    USER_SETTINGS_MODULE = __import__(os.environ['ENGINEER_SETTINGS_MODULE'])
+except KeyError, ImportError:
+    logging.exception("The ENGINEER_SETTINGS_MODULE variable doesn't seem to be set...")
 
 def check(setting, default):
     to_return = getattr(USER_SETTINGS_MODULE, setting, default)

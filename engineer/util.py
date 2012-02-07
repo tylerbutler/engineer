@@ -1,4 +1,5 @@
 # coding=utf-8
+from path import path
 import posixpath
 import re
 import filecmp
@@ -64,7 +65,7 @@ def chunk(seq, chunksize, process=iter):
     while True:
         yield process(chain([it.next()], islice(it, chunksize - 1)))
 
-
+# class comes from Django
 class LazyObject(object):
     """
     A wrapper for another class that can be used to delay instantiation of the
@@ -111,36 +112,6 @@ class LazyObject(object):
             self._setup()
         return  dir(self._wrapped)
 
-#def sync_folders(source, target):
-#    if not target.exists():
-#        target.mkdir()
-#
-#    c = filecmp.dircmp(source, target)
-#    for f in c.right_only:
-#        t = (target / f)
-#        if t.isfile():
-#            t.remove()
-#        else:
-#            t.rmtree()
-#
-#    for dir in source.walkdirs():
-#        files = list(f.basename() for f in dir.files())
-#
-#        if (dir.relpathto(target) / dir.basename()).exists():
-#            # delete items that are on the right but not the left
-#            folder_compare = filecmp.dircmp(dir, (target / dir.relpath()))
-#            for f in folder_compare.right_only:
-#                (target / dir.relpath() / f).remove()
-#
-#        match, mismatch, errors = filecmp.cmpfiles(dir, (dir.relpathto(target) / dir.basename()).abspath(), files)
-#        mismatch.extend(errors)
-#        to_copy = list(((dir / f), (dir.relpathto(target) / dir.basename() / f).abspath()) for f in mismatch)
-#        if not (dir.relpathto(target) / dir.basename()).abspath().exists():
-#            (dir.relpathto(target) / dir.basename()).abspath().mkdir()
-#        for source_file, target_file in to_copy:
-#            source_file.copy2(target_file)
-
-
 def sync_folders(d1, d2):
     logging.debug("Synchronizing %s ==> %s" % (d1, d2))
     if not d2.exists():
@@ -159,3 +130,15 @@ def sync_folders(d1, d2):
         (d1 / item).copy2(d2)
     for item in compare.common_dirs:
         sync_folders(d1 / item, d2 / item)
+
+def ensure_exists(p):
+    """
+    Ensures a given path *p* exists.
+
+    If a path to a file is passed in, then the path to the file will be checked.
+    """
+    if path(p).ext:
+        path(p).dirname().makedirs_p()
+    else:
+        path(p).makedirs_p()
+    return p

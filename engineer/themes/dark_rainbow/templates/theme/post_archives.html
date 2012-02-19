@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{# Use the future Django 1.5 url tag behavior. #}
+{% load url from future %}
+
+{% block section_main_class %}{{ block.super }} archives{% endblock %}
+
+{% block header_secondary_title %}
+    {{ year }} Archives
+{% endblock %}
+
+{% block nav_secondary_content %}
+    <ul>
+        {% for date in all_years %}
+            <li><a href="{% url 'archives' year=date.year %}">{{ date|date:"Y" }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block section_main_content %}
+    {% for item in posts_by_month %}
+        {% with month=item.0 posts=item.1 %}
+            <h2>{{ month|date:'F' }}</h2>
+            <ul>
+                {% for post in posts %}
+                    <li><span class="post-date">{{ post.timestamp|date:'d N' }}</span>
+                        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endwith %}
+    {% empty %}
+        <h2>Hmmm, it looks like there weren't any posts in {{ year }}.</h2>
+    {% endfor %}
+{% endblock %}

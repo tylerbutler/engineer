@@ -29,19 +29,24 @@ class Theme(object):
 
         self.static_root = path(kwargs.get('static_root', self.root_path / 'static/')).abspath()
 
-        self.template_root = path(kwargs['template_root']) if 'template_root' in kwargs\
-        else path('%s/templates/' % self.id)
+        #        self.template_root = path(kwargs['template_root']).abspath() if 'template_root' in kwargs\
+        #        else path('%s/templates/' % self.id)
+
+        self.template_root = path(kwargs.get('template_root', self.root_path / 'templates')).abspath()
 
         #self.templates = {}
 
         if 'templates' in kwargs:
             self.templates = dict((k, self.theme_path(v)) for (k, v) in kwargs['templates'].iteritems())
         else:
-            self.templates = dict((k, self.theme_path('%s.html' % k)) for k in
-            ['base', 'post_list', 'post_detail', 'post_archives', 'template_pages'])
+            self.templates = dict((p.namebase, 'theme/%s' % p.name) for p in
+            self.template_root.walkfiles(pattern='*.html'))
 
-        #        for k, v in settings.ENGINEER_THEME_VARIABLES.iteritems():
-        #            setattr(self, k, v)
+        #            self.templates = dict((k, self.theme_path('%s.html' % k)) for k in
+        #            ['base', 'post_list', 'post_detail', 'post_archives', 'template_pages'])
+
+        for k, v in settings.THEME_SETTINGS.iteritems():
+            setattr(self, k, v)
 
     @property
     def STATICFILE_DIR(self):
@@ -52,7 +57,11 @@ class Theme(object):
         return self.template_root
 
     def theme_path(self, template):
-        return str(self.template_root / template)
+        if (self.template_root / template).abspath().exists():
+            return str(self.template_root / template)
+        else:
+            return template
+            #        return str(self.template_root / template)
 
 
     @staticmethod
@@ -61,6 +70,7 @@ class Theme(object):
             yaml_doc = yaml.load(file.read())
         theme = Theme(path(yaml_file).dirname(), **yaml_doc)
         return theme
+
 
 class ThemeManager(object):
 #    themes = _themes()

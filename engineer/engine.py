@@ -5,7 +5,7 @@ from codecs import open
 from path import path
 from engineer.conf import settings, configure_settings
 from engineer.loaders import LocalLoader
-from engineer.models import PostCollection
+from engineer.models import PostCollection, TemplatePage
 from engineer.themes import ThemeManager
 from engineer.util import sync_folders
 from engineer.log import logger, get_logger
@@ -27,6 +27,17 @@ def clean():
 
 
 def build():
+    # Generate template pages
+    for template in (settings.TEMPLATE_DIR / 'pages').walkfiles('*.html'):
+        page = TemplatePage(template)
+        rendered_page = page.render_html()
+        if not page.output_path.exists():
+            page.output_path.makedirs()
+        with open(page.output_path/page.output_file_name, mode='wb', encoding='UTF-8') as file:
+            file.write(rendered_page)
+            logger.info("Output '%s'." % file.name)
+
+    # Load markdown input posts
     logger.debug("Loading drafts.")
     all_posts = LocalLoader.load_all(input=settings.DRAFT_DIR)
 
@@ -59,8 +70,8 @@ def build():
         if not posts.output_path(slice_num).exists():
             posts.output_path(slice_num).dirname().makedirs()
         with open(posts.output_path(slice_num), mode='wb', encoding='UTF-8') as file:
-            logger.info("Output '%s'." % file.name)
             file.write(rendered_page)
+            logger.info("Output '%s'." % file.name)
 
         # Copy first rollup page to root of site - it's the homepage.
         if slice_num == 1:

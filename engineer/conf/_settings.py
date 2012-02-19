@@ -40,6 +40,10 @@ class SettingsBase(object):
         return self.normalize('output')
 
     @zproperty.Lazy
+    def TEMPLATE_DIR(self):
+        return self.normalize('templates')
+
+    @zproperty.Lazy
     def LOG_DIR(self):
         return self.normalize('logs')
 
@@ -76,12 +80,13 @@ class SettingsBase(object):
             'home': '/',
             'atom_feed': 'feeds/atom.xml',
             'rss_feed': 'feeds/rss.xml',
-            'page': page,
+            'listpage': page,
             }
         return DEFAULT_URLS
 
     # THEMES
     THEME_FINDERS = ['engineer.finders.DefaultFinder']
+    THEME_SETTINGS = {}
     THEME = 'dark_rainbow'
 
     # Miscellaneous
@@ -102,11 +107,12 @@ class SettingsBase(object):
             }
 
         env = Environment(
-            loader=FileSystemLoader([self.ENGINEER_TEMPLATE_DIR,
-                                     #ThemeManager.current_theme().TEMPLATE_DIR,
-                                     self.ENGINEER_THEMES_DIR]),
-            extensions=['jinja2.ext.with_',
-                        'compressinja.html.HtmlCompressor'],
+            loader=FileSystemLoader([self.TEMPLATE_DIR,
+                                     self.ENGINEER_TEMPLATE_DIR,
+                                     #self.ENGINEER_THEMES_DIR,
+                                     ThemeManager.current_theme().template_root]),
+            extensions=['jinja2.ext.with_',],
+                        #'compressinja.html.HtmlCompressor'],
             bytecode_cache=FileSystemBytecodeCache(directory=self.JINJA_CACHE_DIR),
             trim_blocks=True)
 

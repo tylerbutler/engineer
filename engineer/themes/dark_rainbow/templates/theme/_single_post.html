@@ -1,0 +1,44 @@
+{% with link=post.is_link %}
+    <div class="row">
+        {% block post_info %}
+            <div class="post-info two columns">
+                <div class="post-date">
+                    {% with timestamp=post.timestamp %}
+                        <div class="month">{{ timestamp|date("%B")|upper }}</div>
+                        <div class="day">{{ timestamp|date("%d") }}</div>
+                        <div class="year">{{ timestamp|date("%Y") }}</div>
+                        <div class="permalink">
+                            <a href="{{ post.absolute_url }}"
+                               title="Permanent link to '{{ post.title }}'">∞</a>
+                        </div>
+                    {% endwith %}
+                </div>
+{#                {% if post.tags.count > 0 %}#}
+{#                    <ul class="tags">#}
+{#                        {% for tag in post.tags.all %}#}
+{#                            <li><a href="{% url 'tag' tag=tag.name %}">{{ tag }}</a></li>#}
+{#                        {% endfor %}#}
+{#                    </ul>#}
+{#                {% endif %}#}
+            </div>
+        {% endblock post_info %}
+        {% block post_content %}
+            <article class="post-content ten columns">
+                <time datetime="{{ post.timestamp|date("%Y-%m-%d") }}" pubdate=""></time>
+                <header>
+                    <h1>
+                        <a href="{% if link %}{{ post.external_link }}{% else %}
+        {{ post.absolute_url }}{% endif %}">{{ post.title }}</a>
+                        {% if link %}<span class="arrow">→</span>{% endif %}
+                    </h1>
+                </header>
+                {{ post.content|safe }}
+                {% if link %}
+                    <div class="attribution">
+                        <a href="{{ post.attribute_to_link }}">/via {{ post.attribute_to }}</a>
+                    </div>
+                {% endif %}
+            </article>
+        {% endblock post_content %}
+    </div>
+{% endwith %}

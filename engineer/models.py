@@ -10,7 +10,7 @@ from flufl.enum._enum import Enum
 from path import path
 from typogrify.templatetags import typogrify
 from engineer.conf import settings
-from engineer.util import slugify, chunk
+from engineer.util import slugify, chunk, urljoin
 from engineer.log import logger
 
 try:
@@ -69,6 +69,7 @@ class Post(object):
 
         # update cache
         from engineer.post_cache import POST_CACHE
+
         POST_CACHE[self.source] = {
             'mtime': self.source.mtime,
             'size': self.source.size,
@@ -124,6 +125,19 @@ class Post(object):
 
     __repr__ = __unicode__
 
+
+class TemplatePage(object):
+    def __init__(self, template_path):
+        self.html_template = settings.JINJA_ENV.get_template('pages/%s' % template_path.name)
+        self.name = template_path.namebase
+        self.absolute_url = urljoin(settings.HOME_URL, self.name)
+        self.output_path = path(settings.OUTPUT_DIR / self.name)
+        self.output_file_name = 'index.html'
+
+        settings.URLS[self.name] = self.absolute_url
+
+    def render_html(self):
+        return self.html_template.render()
 
 class PostCollection(list):
     def __init__(self, seq=()):

@@ -1,0 +1,1 @@
+The failure of XML on the web article is worth linking to. Using draconian tools can be useful to learn the ins and outs of a language. Learn the 'fundamentals'. 

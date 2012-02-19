@@ -1,13 +1,14 @@
 # coding=utf-8
-from path import path
 import posixpath
 import re
 import filecmp
 import hashlib
-import logging
+import sys
 import translitcodec
 from itertools import chain, islice
+from path import path
 from urlparse import urljoin, urlparse, urlunparse
+from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
 
@@ -113,20 +114,20 @@ class LazyObject(object):
         return  dir(self._wrapped)
 
 def sync_folders(d1, d2):
-    logging.debug("Synchronizing %s ==> %s" % (d1, d2))
+    logger.debug("Synchronizing %s ==> %s" % (d1, d2))
     if not d2.exists():
         d2.makedirs()
     compare = filecmp.dircmp(d1, d2)
     for item in compare.left_only:
         fullpath = d1 / item
         if fullpath.isdir():
-            logging.debug("Copying new directory %s ==> %s" % (fullpath, (d2 / item)))
+            logger.debug("Copying new directory %s ==> %s" % (fullpath, (d2 / item)))
             fullpath.copytree(d2 / item)
         elif fullpath.isfile():
-            logging.debug("Copying new file %s ==> %s" % (fullpath, d2))
+            logger.debug("Copying new file %s ==> %s" % (fullpath, d2))
             fullpath.copy2(d2)
     for item in compare.diff_files:
-        logging.debug("Overwriting existing file %s ==> %s" % ((d1 / item), d2))
+        logger.debug("Overwriting existing file %s ==> %s" % ((d1 / item), d2))
         (d1 / item).copy2(d2)
     for item in compare.common_dirs:
         sync_folders(d1 / item, d2 / item)

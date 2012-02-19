@@ -1,17 +1,17 @@
 # coding=utf-8
-import logging
 import os
 import platform
 from path import path
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 from engineer.util import urljoin
+from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
 
 try:
     USER_SETTINGS_MODULE = __import__(os.environ['ENGINEER_SETTINGS_MODULE'])
 except KeyError, ImportError:
-    logging.exception("The ENGINEER_SETTINGS_MODULE variable doesn't seem to be set...")
+    logger.exception("The ENGINEER_SETTINGS_MODULE variable doesn't seem to be set...")
 
 def check(setting, default):
     to_return = getattr(USER_SETTINGS_MODULE, setting, default)
@@ -62,15 +62,15 @@ USE_CLIENT_SIDE_LESS = check('USE_CLIENT_SIDE_LESS', (platform.system() == 'Wind
 
 # Ensure directories exist and create them if not
 if not LOG_DIR.exists():
-    logging.info("The log directory '%s' does not exist; creating." % LOG_DIR)
+    logger.info("The log directory '%s' does not exist; creating." % LOG_DIR)
     LOG_DIR.makedirs()
 
 if not CACHE_DIR.exists():
-    logging.info("The cache directory '%s' does not exist; creating." % CACHE_DIR)
+    logger.info("The cache directory '%s' does not exist; creating." % CACHE_DIR)
     CACHE_DIR.makedirs()
 
 if not JINJA_CACHE_DIR.exists():
-    logging.info("The jinja cache directory '%s' does not exist; creating." % JINJA_CACHE_DIR)
+    logger.info("The jinja cache directory '%s' does not exist; creating." % JINJA_CACHE_DIR)
     JINJA_CACHE_DIR.makedirs()
 
 # Configure Jinja2 environment

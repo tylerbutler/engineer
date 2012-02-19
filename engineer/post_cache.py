@@ -1,8 +1,8 @@
 # coding=utf-8
 import cPickle as pickle
-import logging
 from path import path
 from engineer.conf import settings
+from engineer.log import logger
 from engineer.conf._globals import POST_CACHE as GLOBAL_CACHE
 
 __author__ = 'tyler@tylerbutler.com'
@@ -110,6 +110,7 @@ class _PostCache(dict):
         global TEMP_CACHE
         try:
             if settings.DISABLE_CACHE:# or hasattr(settings, 'POST_CACHE'):
+                TEMP_CACHE = _PostCache(empty=True)
                 return
         except Exception, e:
             TEMP_CACHE = _PostCache(empty=True)
@@ -119,7 +120,7 @@ class _PostCache(dict):
             with open(cache_file) as f:
                 TEMP_CACHE = pickle.load(f)
                 if TEMP_CACHE.pickled_version != _PostCache.CACHE_VERSION:
-                    logging.debug("The current post cache is version %s; current version is %s. Rebuilding cache." %
+                    logger.debug("The current post cache is version %s; current version is %s. Rebuilding cache." %
                         (TEMP_CACHE.pickled_version, _PostCache.CACHE_VERSION))
                     TEMP_CACHE = _PostCache(empty=True)
         except (IOError, AttributeError, EOFError):
@@ -133,7 +134,7 @@ class _PostCache(dict):
         POST_CACHE.pickled_version = _PostCache.CACHE_VERSION
         cache_file = path(settings.POST_CACHE_FILE).abspath()
         with open(cache_file, mode='wb') as f:
-            d = dict(POST_CACHE)
+            #d = dict(POST_CACHE)
             pickle.dump(POST_CACHE, f)
 
     @staticmethod
@@ -142,7 +143,7 @@ class _PostCache(dict):
             path(settings.POST_CACHE_FILE).abspath().remove()
         except WindowsError as we:
             if we.winerror not in (2, 3):
-                logging.exception(we.message)
+                logger.exception(we.message)
         POST_CACHE = _PostCache(empty=True)
 
 _PostCache()

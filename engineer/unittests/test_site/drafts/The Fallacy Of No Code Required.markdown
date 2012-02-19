@@ -1,0 +1,1 @@
+No code required huh? Really? No, you're just doing programming in a slightly different form.

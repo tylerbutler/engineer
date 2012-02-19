@@ -1,11 +1,13 @@
 # coding=utf-8
-import logging
+import argparse
+import sys
 from codecs import open
-from engineer.conf import settings
+from engineer.conf import settings, configure_settings
 from engineer.loaders import LocalLoader
-from engineer.models import PostCollection#, PostCache
+from engineer.models import PostCollection
 from engineer.themes import ThemeManager
 from engineer.util import sync_folders
+from engineer.log import logger, get_logger
 
 __author__ = 'tyler@tylerbutler.com'
 
@@ -14,23 +16,23 @@ def clean():
         settings.OUTPUT_DIR.rmtree()
     except WindowsError as we:
         if we.winerror not in (2, 3):
-            logging.exception(we.message)
+            logger.exception(we.message)
         else:
-            logging.info("Couldn't find output directory: %s" % settings.OUTPUT_DIR )
+            logger.info("Couldn't find output directory: %s" % settings.OUTPUT_DIR)
     from engineer.post_cache import POST_CACHE
-    POST_CACHE.delete()
-    logging.info('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 
+    POST_CACHE.delete()
+    print('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 
 
 def build():
-    logging.debug("Loading drafts.")
+    logger.debug("Loading drafts.")
     all_posts = LocalLoader.load_all(input=settings.DRAFT_DIR)
 
-    logging.debug("Loading published.")
+    logger.debug("Loading published.")
     all_posts.extend(LocalLoader.load_all(input=settings.PUBLISHED_DIR))
 
-    logging.debug("Drafts: %d, Published: %d" % (len(all_posts.drafts), len(all_posts.published)))
+    logger.debug("Drafts: %d, Published: %d" % (len(all_posts.drafts), len(all_posts.published)))
     #
     #all_posts = PostCollection()
     #all_posts.extend(published)
@@ -46,7 +48,7 @@ def build():
         if not post.output_path.exists():
             post.output_path.makedirs()
         with open(post.output_path / post.output_file_name, mode='wb', encoding='UTF-8') as file:
-            logging.info("Output '%s'." % file.name)
+            logger.info("Output '%s'." % file.name)
             file.write(rendered_post)
 
     # Generate rollup pages
@@ -62,17 +64,52 @@ def build():
         if not posts.output_path(slice_num).exists():
             posts.output_path(slice_num).dirname().makedirs()
         with open(posts.output_path(slice_num), mode='wb', encoding='UTF-8') as file:
-            logging.info("Output '%s'." % file.name)
+            logger.info("Output '%s'." % file.name)
             file.write(rendered_page)
 
 
     # Copy static content to output dir
     sync_folders(settings.ENGINEER_STATIC_DIR.abspath(),
-                 (settings.ENGINEER_STATIC_DIR.relpathto(settings.OUTPUT_DIR) /
-                  settings.ENGINEER_STATIC_DIR.basename()).abspath())
+                 (settings.OUTPUT_DIR / settings.ENGINEER_STATIC_DIR.basename()).abspath())
 
     # Copy theme static content to output dir
     s = ThemeManager.current_theme().static_root.abspath()
-    t = (settings.ENGINEER_STATIC_DIR.relpathto(settings.OUTPUT_DIR) /
-         settings.ENGINEER_STATIC_DIR.basename() / 'theme').abspath()
+    t = (settings.OUTPUT_DIR / settings.ENGINEER_STATIC_DIR.basename() / 'theme').abspath()
     sync_folders(s, t)
+
+
+def cmdline(args=sys.argv):
+    parser = argparse.ArgumentParser(description="Engineer site builder.")
+
+    top_group = parser.add_mutually_exclusive_group()
+    top_group.add_argument('--build', '-b', dest='build', action='store_true', help="Build the site.")
+    top_group.add_argument('--clean', '-c', dest='clean', action='store_true', help="Clean the output directory.")
+    top_group.add_argument('--serve', '-s', dest='serve', action='store_true', help="Start the development server.")
+
+    parser.add_argument('--no-cache', '-n', dest='disable_cache', action='store_true', help="Disable the post cache.")
+#    parser.add_argument('--verbose', '-v', dest='verbose', action='store_true', help="Display verbose output.")
+    parser.add_argument('--settings', dest='settings_module', default='settings',
+                        help="Specify a configuration file to use.")
+    args = parser.parse_args()
+
+    configure_settings(args.settings_module)
+    settings.DISABLE_CACHE = args.disable_cache
+
+#    import logging
+#    if args.verbose:
+#        logging.basicConfig(level=logging.DEBUG)
+#    else:
+#        logging.basicConfig(level=logging.WARNING)
+
+    if args.serve:
+        from engineer.server import serve
+        serve()
+    elif args.clean:
+        clean()
+        exit()
+    elif args.build:
+        build()
+        exit()
+    else:
+        parser.print_help()
+        exit()

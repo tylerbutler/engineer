@@ -1,0 +1,1 @@
+Settings are things that are shared across multiple configurations. Configurations are collections of settings that are almost definitely different between different environments.

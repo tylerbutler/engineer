@@ -1,5 +1,4 @@
 # coding=utf-8
-import logging
 import markdown
 import pynq
 import re
@@ -12,6 +11,7 @@ from path import path
 from typogrify.templatetags import typogrify
 from engineer.conf import settings
 from engineer.util import slugify, chunk
+from engineer.log import logger
 
 try:
     import cPickle as pickle
@@ -50,7 +50,7 @@ class Post(object):
         try:
             self.status = Status(metadata.get('status', Status.draft.name))
         except ValueError:
-            logging.warning("'%s': Invalid status value in metadata. Defaulting to 'draft'." % self.title)
+            logger.warning("'%s': Invalid status value in metadata. Defaulting to 'draft'." % self.title)
             self.status = Status.draft
 
         self.timestamp = metadata.get('timestamp', datetime.now())

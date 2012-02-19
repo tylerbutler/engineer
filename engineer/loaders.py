@@ -11,7 +11,7 @@ class LocalLoader(object):
         from engineer.post_cache import POST_CACHE
         posts = PostCollection()
         file_list = path(input).listdir('*.md') + path(input).listdir('*.markdown')
-        for f in file_list:#path(input).walkfiles(pattern='*.{md,*.markdown}'):
+        for f in file_list:
             try:
                 if not POST_CACHE.is_cached(f):
                     logger.debug("'%s': Beginning to parse." % f.basename())

@@ -2,6 +2,7 @@
 import argparse
 import sys
 from codecs import open
+from path import path
 from engineer.conf import settings, configure_settings
 from engineer.loaders import LocalLoader
 from engineer.models import PostCollection
@@ -22,7 +23,7 @@ def clean():
     from engineer.post_cache import POST_CACHE
 
     POST_CACHE.delete()
-    print('Cleaned output directory: %s' % settings.OUTPUT_DIR)
+    logger.info('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 
 
 def build():
@@ -67,6 +68,10 @@ def build():
             logger.info("Output '%s'." % file.name)
             file.write(rendered_page)
 
+        # Copy first rollup page to root of site - it's the homepage.
+        if slice_num == 1:
+            logger.info("Output '%s'." % (settings.OUTPUT_DIR / 'index.html'))
+            path.copyfile(posts.output_path(slice_num), settings.OUTPUT_DIR / 'index.html')
 
     # Copy static content to output dir
     sync_folders(settings.ENGINEER_STATIC_DIR.abspath(),

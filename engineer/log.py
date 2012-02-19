@@ -1,6 +1,7 @@
 # coding=utf-8
 import sys
 import logging
+
 __author__ = 'tyler@tylerbutler.com'
 
 def get_logger(logger_name):

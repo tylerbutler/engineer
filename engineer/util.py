@@ -12,7 +12,7 @@ from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
 
-_punctuation_regex = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
+_punctuation_regex = re.compile(r'[\t :!"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
 
 def slugify(text, length_limit=0, delimiter=u'-'):
     """Generates an ASCII-only slug."""

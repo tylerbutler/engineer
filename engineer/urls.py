@@ -15,16 +15,3 @@ def urlname(name, *args):
 
 def url(path):
     return urljoin(urlname('home'), path)
-
-
-def page(num):
-    page_path = urljoin('page', str(num))
-    return url(page_path)
-
-
-DEFAULT_URLS = {
-    'home': '/',
-    'atom_feed': 'feeds/atom.xml',
-    'rss_feed': 'feeds/rss.xml',
-    'page': page,
-    }

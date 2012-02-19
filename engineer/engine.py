@@ -34,14 +34,8 @@ def build():
     all_posts.extend(LocalLoader.load_all(input=settings.PUBLISHED_DIR))
 
     logger.debug("Drafts: %d, Published: %d" % (len(all_posts.drafts), len(all_posts.published)))
-    #
-    #all_posts = PostCollection()
-    #all_posts.extend(published)
-    #all_posts.extend(drafts)
-    #all_posts = pynq.From(all_posts).where("item.status == Status.published").select_many()
-    #[(post if post.status!=Status.draft else None)for post in all_posts]
 
-    all_posts = PostCollection(sorted(all_posts.drafts, reverse=True, key=lambda post: post.timestamp))
+    all_posts = PostCollection(sorted(all_posts.published, reverse=True, key=lambda post: post.timestamp))
 
     # Generate individual post pages
     for post in all_posts:
@@ -70,17 +64,20 @@ def build():
 
         # Copy first rollup page to root of site - it's the homepage.
         if slice_num == 1:
-            logger.info("Output '%s'." % (settings.OUTPUT_DIR / 'index.html'))
             path.copyfile(posts.output_path(slice_num), settings.OUTPUT_DIR / 'index.html')
+            logger.info("Output '%s'." % (settings.OUTPUT_DIR / 'index.html'))
 
     # Copy static content to output dir
-    sync_folders(settings.ENGINEER_STATIC_DIR.abspath(),
-                 (settings.OUTPUT_DIR / settings.ENGINEER_STATIC_DIR.basename()).abspath())
+    s = settings.ENGINEER_STATIC_DIR.abspath()
+    t = (settings.OUTPUT_DIR / settings.ENGINEER_STATIC_DIR.basename()).abspath()
+    sync_folders(s, t)
+    logger.info("Copied static files to '%s'." % t)
 
     # Copy theme static content to output dir
     s = ThemeManager.current_theme().static_root.abspath()
     t = (settings.OUTPUT_DIR / settings.ENGINEER_STATIC_DIR.basename() / 'theme').abspath()
     sync_folders(s, t)
+    logger.info("Copied static files for theme to '%s'." % t)
 
 
 def cmdline(args=sys.argv):
@@ -92,7 +89,7 @@ def cmdline(args=sys.argv):
     top_group.add_argument('--serve', '-s', dest='serve', action='store_true', help="Start the development server.")
 
     parser.add_argument('--no-cache', '-n', dest='disable_cache', action='store_true', help="Disable the post cache.")
-#    parser.add_argument('--verbose', '-v', dest='verbose', action='store_true', help="Display verbose output.")
+    parser.add_argument('--verbose', '-v', dest='verbose', action='store_true', help="Display verbose output.")
     parser.add_argument('--settings', dest='settings_module', default='settings',
                         help="Specify a configuration file to use.")
     args = parser.parse_args()
@@ -100,14 +97,13 @@ def cmdline(args=sys.argv):
     configure_settings(args.settings_module)
     settings.DISABLE_CACHE = args.disable_cache
 
-#    import logging
-#    if args.verbose:
-#        logging.basicConfig(level=logging.DEBUG)
-#    else:
-#        logging.basicConfig(level=logging.WARNING)
+    if args.verbose:
+        import logging
+        logger.setLevel(logging.DEBUG)
 
     if args.serve:
         from engineer.server import serve
+
         serve()
     elif args.clean:
         clean()

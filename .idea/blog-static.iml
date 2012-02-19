@@ -15,8 +15,9 @@
     <option name="TEMPLATES_IN_JAVASCRIPT" value="true" />
     <option name="TEMPLATE_FOLDERS">
       <list>
-        <option value="$MODULE_DIR$/templates" />
         <option value="$MODULE_DIR$/engineer/themes" />
+        <option value="$MODULE_DIR$/engineer/themes/dark_rainbow/templates" />
+        <option value="$MODULE_DIR$/engineer/templates" />
       </list>
     </option>
   </component>

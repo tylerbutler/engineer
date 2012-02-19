@@ -10,28 +10,6 @@ from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
 
-#class Settings2(object):
-#    def __init__(self, config_module='engineer.conf.globals'):
-#        try:
-#            self.USER_SETTINGS_MODULE = get_class(config_module)
-#        except ImportError, e:
-#            raise ImportError("Could not import settings from '%s'. %s", (config_module, e))
-#
-#        for setting in dir(globals):
-#            if setting == setting.upper():
-#                setattr(self, setting, getattr(globals, setting))
-#
-#        if self.USER_SETTINGS_MODULE != globals:
-#            for setting in dir(self.USER_SETTINGS_MODULE):
-#                if setting == setting.upper():
-#                    setattr(self, setting, getattr(self.USER_SETTINGS_MODULE, setting))
-#
-#    def normalize(self, p):
-#        if path.isabs(path(p)):
-#            return path(p)
-#        else:
-#            return path((self.CONTENT_ROOT_DIR / p).abspath())
-
 class LazySettings(LazyObject):
     def _setup(self):
         settings_module = os.environ['ENGINEER_SETTINGS_MODULE']
@@ -88,7 +66,19 @@ class SettingsBase(object):
     def STATIC_URL(self):
         return urljoin(self.HOME_URL, 'static')
 
-    URLS = {}
+    @zproperty.Lazy
+    def URLS(self):
+        def page(num):
+            page_path = urljoin('page', str(num))
+            return urljoin(self.HOME_URL, page_path)
+
+        DEFAULT_URLS = {
+            'home': '/',
+            'atom_feed': 'feeds/atom.xml',
+            'rss_feed': 'feeds/rss.xml',
+            'page': page,
+            }
+        return DEFAULT_URLS
 
     # THEMES
     THEME_FINDERS = ['engineer.finders.DefaultFinder']

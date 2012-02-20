@@ -112,8 +112,8 @@ class SettingsBase(object):
                                      self.ENGINEER_TEMPLATE_DIR,
                                      #self.ENGINEER_THEMES_DIR,
                                      ThemeManager.current_theme().template_root]),
-            extensions=['jinja2.ext.with_',],
-                        #'compressinja.html.HtmlCompressor'],
+            extensions=['jinja2.ext.with_', ],
+            #'compressinja.html.HtmlCompressor'],
             bytecode_cache=FileSystemBytecodeCache(directory=self.JINJA_CACHE_DIR),
             trim_blocks=False)
 

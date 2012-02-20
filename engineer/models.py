@@ -109,7 +109,7 @@ class Post(object):
         return metadata, content
 
     def render_html(self):
-        return self.html_template.render(post=self)
+        return self.html_template.render(post=self, nav_context='post')
 
     def render_markdown(self):
         metadata = yaml.dump({
@@ -137,7 +137,10 @@ class TemplatePage(object):
         settings.URLS[self.name] = self.absolute_url
 
     def render_html(self):
-        return self.html_template.render()
+#        settings.JINJA_ENV.globals['engineer']['navigation']['section'] = self.name
+        rendered = self.html_template.render(nav_context=self.name)
+#        settings.JINJA_ENV.globals['engineer']['navigation']['section'] = 'default'
+        return rendered
 
 
 class PostCollection(list):
@@ -175,7 +178,8 @@ class PostCollection(list):
             post_list=self,
             slice_num=slice_num,
             has_next=has_next,
-            has_previous=has_previous)
+            has_previous=has_previous,
+            nav_context='listpage')
 
     def render_archive_html(self):
-        return self.archive_template.render(post_list=self.grouped_by_year)
+        return self.archive_template.render(post_list=self.grouped_by_year, nav_context='archive')

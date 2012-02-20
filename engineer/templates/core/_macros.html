@@ -17,3 +17,9 @@
         <link rel="stylesheet" href="{{ _make_relative_path(path_input, prepend_static_url) }}" type="text/css"/>
     {%- endif %}
 {%- endmacro %}
+
+{% macro navigation_link(name, url, section) -%}
+{#    <li>section: {{ section }}, current_section: {{ current_section }}</li>#}
+    <li{% if nav_context in section %} class="current"{% endif %}><a href="{{ url }}">
+        {{ name }}</a></li>
+{%- endmacro %}

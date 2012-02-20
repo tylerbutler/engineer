@@ -6,7 +6,7 @@ from engineer.util import urljoin
 __author__ = 'tyler@tylerbutler.com'
 
 def urlname(name, *args):
-    url = settings.URLS.get(name, None)
+    url = settings.URLS.get(name, settings.HOME_URL)
     if isfunction(url):
         return url(*args)
     else:

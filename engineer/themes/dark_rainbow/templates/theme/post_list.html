@@ -1,7 +1,9 @@
 {% extends 'theme/base.html' %}
 
-{# No secondary header. #}
-{% block header_secondary %}{% endblock %}
+
+{% block header_secondary %}
+    {# No secondary header. #}
+{% endblock %}
 
 {% block section_main_content %}
     {% if post_list %}
@@ -17,12 +19,13 @@
                         ← older posts</a></div>
                 {% endif %}
             </div>
-            <div class="six columns">
+            <div class="four columns centered">
+                <a href="{{ urlname('archives') }}"> &mdash; archives &mdash; </a>
+            </div>
+            <div class="four columns">
                 <div class="button right">
                     {% if has_previous %}
                         <a href="{{ urlname('listpage', (slice_num - 1)) }}">newer posts →</a>
-                    {% else %}
-                        <a href="">archives →</a>
                     {% endif %}
                 </div>
             </div>
@@ -33,8 +36,4 @@
                 <a href="">archives</a>?</h1>
         </div>
     {% endif %}
-{% endblock %}
-
-{% block section_sidebar_content %}
-    {% include 'theme/_sidebar.html' %}
 {% endblock %}

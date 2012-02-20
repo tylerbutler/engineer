@@ -11,7 +11,7 @@ __author__ = 'tyler@tylerbutler.com'
 #        #logger.debug('got a GET request')
 #        SimpleHTTPRequestHandler.do_GET(self)
 
-def serve(path=settings.OUTPUT_DIR, port=8080):
+def serve(path=settings.OUTPUT_DIR, port=8000):
     old_working_dir = getcwd()
     chdir(path)
     new_working_dir = getcwd()

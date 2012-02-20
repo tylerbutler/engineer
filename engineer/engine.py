@@ -66,7 +66,7 @@ def build():
         slice_num += 1
         has_next = slice_num < num_slices
         has_previous = 1 < slice_num <= num_slices
-        rendered_page = posts.render_html(slice_num, has_next, has_previous)
+        rendered_page = posts.render_listpage_html(slice_num, has_next, has_previous)
         if not posts.output_path(slice_num).exists():
             posts.output_path(slice_num).dirname().makedirs()
         with open(posts.output_path(slice_num), mode='wb', encoding='UTF-8') as file:
@@ -77,6 +77,17 @@ def build():
         if slice_num == 1:
             path.copyfile(posts.output_path(slice_num), settings.OUTPUT_DIR / 'index.html')
             logger.info("Output '%s'." % (settings.OUTPUT_DIR / 'index.html'))
+
+    # Generate archive page
+    archive_output_path = settings.OUTPUT_DIR / 'archives/index.html'
+    if not archive_output_path.exists():
+        archive_output_path.dirname().makedirs()
+
+    rendered_archive = all_posts.render_archive_html()
+
+    with open(settings.OUTPUT_DIR / 'archives/index.html', mode='wb', encoding='UTF-8') as file:
+        file.write(rendered_archive)
+        logger.info("Output '%s'." % file.name)
 
     # Copy static content to output dir
     s = settings.ENGINEER_STATIC_DIR.abspath()

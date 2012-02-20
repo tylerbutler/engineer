@@ -36,3 +36,5 @@ pip-log.txt
 /cache/
 /logs/
 *.cache
+sample_site/output/
+sample_site/cache/

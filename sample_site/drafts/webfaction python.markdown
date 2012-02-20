@@ -5,8 +5,7 @@ tags:
 	- guides
 	- webfaction
 	- python
-draft: true
-
+status: published
 ---
 
 WebFaction has a lot of different versions of Python available, which makes sense since it's a shared

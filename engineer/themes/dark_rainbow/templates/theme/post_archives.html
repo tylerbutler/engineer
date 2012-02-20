@@ -1,34 +1,43 @@
-{% extends 'base.html' %}
-
-{# Use the future Django 1.5 url tag behavior. #}
-{% load url from future %}
-
-{% block section_main_class %}{{ block.super }} archives{% endblock %}
-
-{% block header_secondary_title %}
-    {{ year }} Archives
-{% endblock %}
+{% extends 'theme/base.html' %}
 
 {% block nav_secondary_content %}
-    <ul>
-        {% for date in all_years %}
-            <li><a href="{% url 'archives' year=date.year %}">{{ date|date:"Y" }}</a></li>
-        {% endfor %}
-    </ul>
+    {# No secondary nav. #}
+{% endblock %}
+
+{% block section_main_class %}
+    {{ super() }} archives
+{% endblock %}
+
+{% block header_secondary_title %}
+    Archives
 {% endblock %}
 
 {% block section_main_content %}
-    {% for item in posts_by_month %}
-        {% with month=item.0 posts=item.1 %}
-            <h2>{{ month|date:'F' }}</h2>
-            <ul>
+    {% for year, posts in post_list %}
+        <div class="row">
+            <div class="two columns"><h2><a name="{{ year }}"></a>{{ year }}</h2></div>
+            <div class="ten columns">
                 {% for post in posts %}
-                    <li><span class="post-date">{{ post.timestamp|date:'d N' }}</span>
-                        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a></li>
+                    <article class="row">
+                        <div class="two columns post-date">
+                            {{ post.timestamp|date('%d %b') }}
+                        </div>
+                        <div class="ten columns">
+                            <h1><a href="{{ post.absolute_url }}">{{ post.title }}</a></h1>
+                        </div>
+                    </article>
                 {% endfor %}
-            </ul>
-        {% endwith %}
-    {% empty %}
-        <h2>Hmmm, it looks like there weren't any posts in {{ year }}.</h2>
+            </div>
+        </div>
     {% endfor %}
+{% endblock %}
+
+{% block section_sidebar_content %}
+    <nav>
+        <ul>
+            {% for year, posts in post_list %}
+                <li><a href="#{{ year }}">{{ year }}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
 {% endblock %}

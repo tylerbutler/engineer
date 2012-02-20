@@ -40,8 +40,8 @@ class Post(object):
 
     def __init__(self, source):
         self.source = path(source).abspath()
-        self.html_template = settings.JINJA_ENV.get_template('post_detail.html')
-        self.markdown_template = settings.JINJA_ENV.get_template('post.md')
+        self.html_template = settings.JINJA_ENV.get_template('theme/post_detail.html')
+        self.markdown_template = settings.JINJA_ENV.get_template('core/post.md')
 
         metadata, self.content_raw = self._parse_source()
 
@@ -139,10 +139,12 @@ class TemplatePage(object):
     def render_html(self):
         return self.html_template.render()
 
+
 class PostCollection(list):
     def __init__(self, seq=()):
         list.__init__(self, seq)
-        self.html_template = settings.JINJA_ENV.get_template('post_list.html')
+        self.listpage_template = settings.JINJA_ENV.get_template('theme/post_list.html')
+        self.archive_template = settings.JINJA_ENV.get_template('theme/post_archives.html')
 
     def paginate(self, paginate_by=5):
         return chunk(self, paginate_by, PostCollection)
@@ -155,12 +157,25 @@ class PostCollection(list):
     def drafts(self):
         return pynq.From(self).where("item.is_draft == True").select_many()
 
+    @property
+    def grouped_by_year(self):
+        years = map(lambda x: x.timestamp.year, self)
+        years = set(years)
+
+        to_return = [(year, filter(lambda p: p.timestamp.year == year, self)) for year in years]
+        to_return = sorted(to_return, reverse=True)
+
+        return to_return
+
     def output_path(self, slice_num):
         return path(settings.OUTPUT_DIR / ("page/%s/index.html" % slice_num))
 
-    def render_html(self, slice_num, has_next, has_previous):
-        return self.html_template.render(
+    def render_listpage_html(self, slice_num, has_next, has_previous):
+        return self.listpage_template.render(
             post_list=self,
             slice_num=slice_num,
             has_next=has_next,
             has_previous=has_previous)
+
+    def render_archive_html(self):
+        return self.archive_template.render(post_list=self.grouped_by_year)

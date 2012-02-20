@@ -11,7 +11,7 @@
 {%- endmacro %}
 
 {% macro render_less_link(path_input, prepend_static_url=True) -%}
-    {%- if config.USE_CLIENT_SIDE_LESS %}
+    {%- if settings.USE_CLIENT_SIDE_LESS %}
         <link rel="stylesheet/less" href="{{ _make_relative_path(path_input, prepend_static_url) }}" type="text/css"/>
     {%- else -%}
         <link rel="stylesheet" href="{{ _make_relative_path(path_input, prepend_static_url) }}" type="text/css"/>

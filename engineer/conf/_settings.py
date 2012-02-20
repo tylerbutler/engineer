@@ -77,7 +77,8 @@ class SettingsBase(object):
             return urljoin(self.HOME_URL, page_path)
 
         DEFAULT_URLS = {
-            'home': '/',
+            'home': self.HOME_URL,
+            'archives': urljoin(self.HOME_URL, 'archives'),
             'atom_feed': 'feeds/atom.xml',
             'rss_feed': 'feeds/rss.xml',
             'listpage': page,
@@ -114,15 +115,15 @@ class SettingsBase(object):
             extensions=['jinja2.ext.with_',],
                         #'compressinja.html.HtmlCompressor'],
             bytecode_cache=FileSystemBytecodeCache(directory=self.JINJA_CACHE_DIR),
-            trim_blocks=True)
+            trim_blocks=False)
 
         env.filters['date'] = format_datetime
         env.globals['engineer'] = engineer
-        env.globals['theme'] = ThemeManager.current_theme()#get_class('engineer.themes.ThemeManager').current_theme()
+        env.globals['theme'] = ThemeManager.current_theme()
         env.globals['urlname'] = urlname
         env.globals['url'] = url
         env.globals['STATIC_URL'] = self.STATIC_URL
-        env.globals['config'] = self#get_class('engineer.conf.settings')
+        env.globals['settings'] = self
         return env
 
     def normalize(self, p):

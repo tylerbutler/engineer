@@ -1,14 +1,8 @@
-{% extends 'theme/base.html' %}
-
-{% block section_main_class %}twelve columns{% endblock %}
+{% extends 'theme/layouts/no_sidebar.html' %}
 
 {# No secondary header. #}
 {% block header_secondary %}{% endblock %}
 
-{# No sidebar. #}
-{% block section_sidebar %}{% endblock %}
-
 {% block section_main_content %}
     {% include 'theme/_single_post.html' %}
 {% endblock %}
-

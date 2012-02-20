@@ -2,8 +2,7 @@
 title: "Managing Django Sites on WebFaction"
 timestamp: 2011-12-28
 tags:
-draft: true
-
+status: published
 ---
 
 Handy tools

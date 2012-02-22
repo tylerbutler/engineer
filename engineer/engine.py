@@ -3,12 +3,12 @@ import argparse
 import sys
 from codecs import open
 from path import path
-from engineer.conf import settings, configure_settings
+from engineer.conf import settings
 from engineer.loaders import LocalLoader
 from engineer.models import PostCollection, TemplatePage
 from engineer.themes import ThemeManager
 from engineer.util import sync_folders
-from engineer.log import logger, get_logger
+from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
 
@@ -38,11 +38,8 @@ def build():
             logger.info("Output '%s'." % file.name)
 
     # Load markdown input posts
-    logger.debug("Loading drafts.")
-    all_posts = LocalLoader.load_all(input=settings.DRAFT_DIR)
-
-    logger.debug("Loading published.")
-    all_posts.extend(LocalLoader.load_all(input=settings.PUBLISHED_DIR))
+    logger.debug("Loading posts...")
+    all_posts = LocalLoader.load_all(input=settings.CONTENT_ROOT_DIR)
 
     logger.debug("Drafts: %d, Published: %d" % (len(all_posts.drafts), len(all_posts.published)))
 
@@ -112,11 +109,11 @@ def cmdline(args=sys.argv):
 
     parser.add_argument('--no-cache', '-n', dest='disable_cache', action='store_true', help="Disable the post cache.")
     parser.add_argument('--verbose', '-v', dest='verbose', action='store_true', help="Display verbose output.")
-    parser.add_argument('--settings', dest='settings_module', default='settings',
+    parser.add_argument('--config', dest='config_file', default='config.yaml',
                         help="Specify a configuration file to use.")
     args = parser.parse_args()
 
-    configure_settings(args.settings_module)
+    settings.initialize_from_yaml(args.config_file)
     settings.DISABLE_CACHE = args.disable_cache
 
     if args.verbose:

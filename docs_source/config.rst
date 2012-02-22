@@ -22,3 +22,14 @@ TEMPLATE_DIR
     .. seealso::
         :doc:`templates`
 
+Site Settings
+=============
+
+SITE_TITLE
+    The title of your site. Where this text appears depends on your theme. Default: *Empty string.*
+
+HOME_URL
+    The root URL of the site. If your site is loaded from a non-root location,
+    such as http://example.com/blog, then you would set the HOME_URL to `'/blog'`.
+
+

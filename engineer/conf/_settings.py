@@ -2,6 +2,7 @@
 import platform
 import os
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
+import yaml
 from zope.cachedescriptors import property as zproperty
 from path import path
 import sys
@@ -11,86 +12,58 @@ from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
 
-class SettingsBase(Borg):
+class EngineerConfiguration(Borg):
     # ENGINEER 'CONSTANT' PATHS
     ENGINEER_ROOT_DIR = path(__file__).dirname().dirname().abspath()
     ENGINEER_TEMPLATE_DIR = (ENGINEER_ROOT_DIR / 'templates').abspath()
     ENGINEER_STATIC_DIR = (ENGINEER_ROOT_DIR / 'static').abspath()
     ENGINEER_THEMES_DIR = (ENGINEER_ROOT_DIR / 'themes').abspath()
 
-    def __init__(self, load_from_yaml=True):
-        Borg.__init__(self)
+    def __init__(self, settings_file='config.yaml'):
+        self.initialize_from_yaml(settings_file)
 
-    @zproperty.Lazy
-    def CONTENT_ROOT_DIR(self):
-        return self.normalize(self.ENGINEER_ROOT_DIR.dirname())
+    def initialize_from_yaml(self, yaml_file):
+        # Load settings from YAML file if found
+        if yaml_file and (path.getcwd() / yaml_file).exists():
+            with open(path.getcwd() / yaml_file, mode='rb') as file:
+                config = yaml.load(file)
+                self.initialize(config)
 
-    @zproperty.Lazy
-    def DRAFT_DIR(self):
-        return self.normalize('drafts')
+    def initialize(self, config):
+        if getattr(self, '_initialized', False):
+            logger.warning("Configuration has already been initialized once.")
+        else:
+            self._initialized = True
 
-    @zproperty.Lazy
-    def PUBLISHED_DIR(self):
-        return self.normalize('published')
+        # CONTENT DIRECTORIES
+        self.CONTENT_ROOT_DIR = config.pop('CONTENT_ROOT_DIR', path.getcwd().abspath())
+        self.POST_DIR = config.pop('POST_DIR', self.normalize('posts'))
+        self.OUTPUT_DIR = config.pop('OUTPUT_DIR', self.normalize('output'))
+        self.TEMPLATE_DIR = config.pop('TEMPLATE_DIR', self.normalize('templates'))
+        self.LOG_DIR = config.pop('LOG_DIR', self.normalize('logs'))
+        self.LOG_FILE = ensure_exists(config.pop('LOG_FILE', (self.LOG_DIR / 'build.log').abspath()))
+        self.CACHE_DIR = config.pop('CACHE_DIR', self.normalize('_cache'))
+        self.JINJA_CACHE_DIR = ensure_exists(config.pop('JINJA_CACHE_DIR', (self.CACHE_DIR / 'jinja_cache').abspath()))
+        self.POST_CACHE_FILE = ensure_exists(
+            config.pop('POST_CACHE_FILE', (self.CACHE_DIR / 'post_cache.cache').abspath()))
 
-    @zproperty.Lazy
-    def OUTPUT_DIR(self):
-        return self.normalize('output')
+        # SITE SETTINGS
+        self.SITE_TITLE = config.pop('SITE_TITLE', '')
+        self.HOME_URL = config.pop('HOME_URL', '/')
+        self.STATIC_URL = config.pop('STATIC_URL', urljoin(self.HOME_URL, 'static'))
 
-    @zproperty.Lazy
-    def TEMPLATE_DIR(self):
-        return self.normalize('templates')
+        # THEMES
+        self.THEME_FINDERS = ['engineer.finders.DefaultFinder']
+        self.THEME_SETTINGS = config.pop('THEME_SETTINGS', {})
+        self.THEME = config.pop('THEME', 'dark_rainbow')
 
-    @zproperty.Lazy
-    def LOG_DIR(self):
-        return self.normalize('logs')
+        # Miscellaneous
+        self.DEBUG = config.pop('DEBUG', False)
+        self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
+        self.USE_CLIENT_SIDE_LESS = config.pop('USE_CLIENT_SIDE_LESS', (platform.system() == 'Windows'))
 
-    @zproperty.Lazy
-    def LOG_FILE(self):
-        return ensure_exists((self.LOG_DIR / 'build.log').abspath())
-
-    @zproperty.Lazy
-    def CACHE_DIR(self):
-        return self.normalize('_cache')
-
-    @zproperty.Lazy
-    def JINJA_CACHE_DIR(self):
-        return ensure_exists((self.CACHE_DIR / 'jinja_cache').abspath())
-
-    @zproperty.Lazy
-    def POST_CACHE_FILE(self):
-        return ensure_exists((self.CACHE_DIR / 'post_cache.cache').abspath())
-
-    # URLS
-    HOME_URL = '/'
-
-    @zproperty.Lazy
-    def STATIC_URL(self):
-        return urljoin(self.HOME_URL, 'static')
-
-    @zproperty.Lazy
-    def URLS(self):
-        def page(num):
-            page_path = urljoin('page', str(num))
-            return urljoin(self.HOME_URL, page_path)
-
-        DEFAULT_URLS = {
-            'home': self.HOME_URL,
-            'archives': urljoin(self.HOME_URL, 'archives'),
-            'atom_feed': 'feeds/atom.xml',
-            'rss_feed': 'feeds/rss.xml',
-            'listpage': page,
-            }
-        return DEFAULT_URLS
-
-    # THEMES
-    THEME_FINDERS = ['engineer.finders.DefaultFinder']
-    THEME_SETTINGS = {}
-    THEME = 'dark_rainbow'
-
-    # Miscellaneous
-    DISABLE_CACHE = False
-    USE_CLIENT_SIDE_LESS = (platform.system() == 'Windows')
+        for k, v in config.iteritems():
+            setattr(self, k, v)
 
     @zproperty.CachedProperty
     def JINJA_ENV(self):
@@ -108,7 +81,6 @@ class SettingsBase(Borg):
         env = Environment(
             loader=FileSystemLoader([self.TEMPLATE_DIR,
                                      self.ENGINEER_TEMPLATE_DIR,
-                                     #self.ENGINEER_THEMES_DIR,
                                      ThemeManager.current_theme().template_root]),
             extensions=['jinja2.ext.with_', ],
             #'compressinja.html.HtmlCompressor'],
@@ -129,14 +101,3 @@ class SettingsBase(Borg):
             return ensure_exists(path(p))
         else:
             return ensure_exists((self.CONTENT_ROOT_DIR / p).abspath())
-
-    def configure_settings(self, settings_module):
-        if path.getcwd() not in sys.path:
-            sys.path.append(path.getcwd())
-        os.environ['ENGINEER_SETTINGS_MODULE'] = settings_module
-        logger.info("Using settings module: '%s'" % os.environ['ENGINEER_SETTINGS_MODULE'])
-
-    def __setattr__(self, key, value):
-        if key.endswith('_DIR') and isinstance(value, str):
-            value = path(value)
-        super(SettingsBase, self).__setattr__(key, value)

@@ -39,7 +39,7 @@ def build():
 
     # Load markdown input posts
     logger.debug("Loading posts...")
-    all_posts = LocalLoader.load_all(input=settings.CONTENT_ROOT_DIR)
+    all_posts = LocalLoader.load_all(input=settings.POST_DIR)
 
     logger.debug("Drafts: %d, Published: %d" % (len(all_posts.drafts), len(all_posts.published)))
 

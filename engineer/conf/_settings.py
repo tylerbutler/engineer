@@ -52,6 +52,18 @@ class EngineerConfiguration(Borg):
         self.HOME_URL = config.pop('HOME_URL', '/')
         self.STATIC_URL = config.pop('STATIC_URL', urljoin(self.HOME_URL, 'static'))
 
+        def page(num):
+            page_path = urljoin('page', str(num))
+            return urljoin(self.HOME_URL, page_path)
+
+        self.URLS = {
+            'home': self.HOME_URL,
+            'archives': urljoin(self.HOME_URL, 'archives'),
+            'atom_feed': 'feeds/atom.xml',
+            'rss_feed': 'feeds/rss.xml',
+            'listpage': page,
+            }
+
         # THEMES
         self.THEME_FINDERS = ['engineer.finders.DefaultFinder']
         self.THEME_SETTINGS = config.pop('THEME_SETTINGS', {})

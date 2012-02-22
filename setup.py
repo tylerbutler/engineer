@@ -109,7 +109,7 @@ def get_install_requirements():
         temp = [i[:-1] for i in temp]
 
         for line in temp:
-            if line is None or line == '' or line.startswith('#'):
+            if line is None or line == '' or line.startswith(('#', '-e')):
                 continue
             else:
                 requirements.append(line)

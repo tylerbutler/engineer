@@ -4,24 +4,22 @@ import os
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 from zope.cachedescriptors import property as zproperty
 from path import path
+import sys
 from engineer.filters import format_datetime
-from engineer.util import urljoin, LazyObject, ensure_exists
+from engineer.util import urljoin, ensure_exists, Borg
 from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
 
-class LazySettings(LazyObject):
-    def _setup(self):
-        settings_module = os.environ['ENGINEER_SETTINGS_MODULE']
-        self._wrapped = SettingsOverride(settings_module)
-
-
-class SettingsBase(object):
+class SettingsBase(Borg):
     # ENGINEER 'CONSTANT' PATHS
     ENGINEER_ROOT_DIR = path(__file__).dirname().dirname().abspath()
     ENGINEER_TEMPLATE_DIR = (ENGINEER_ROOT_DIR / 'templates').abspath()
     ENGINEER_STATIC_DIR = (ENGINEER_ROOT_DIR / 'static').abspath()
     ENGINEER_THEMES_DIR = (ENGINEER_ROOT_DIR / 'themes').abspath()
+
+    def __init__(self, load_from_yaml=True):
+        Borg.__init__(self)
 
     @zproperty.Lazy
     def CONTENT_ROOT_DIR(self):
@@ -132,22 +130,13 @@ class SettingsBase(object):
         else:
             return ensure_exists((self.CONTENT_ROOT_DIR / p).abspath())
 
+    def configure_settings(self, settings_module):
+        if path.getcwd() not in sys.path:
+            sys.path.append(path.getcwd())
+        os.environ['ENGINEER_SETTINGS_MODULE'] = settings_module
+        logger.info("Using settings module: '%s'" % os.environ['ENGINEER_SETTINGS_MODULE'])
+
     def __setattr__(self, key, value):
         if key.endswith('_DIR') and isinstance(value, str):
             value = path(value)
         super(SettingsBase, self).__setattr__(key, value)
-
-
-class SettingsOverride(SettingsBase):
-    def __init__(self, settings_module):
-        try:
-            self.SETTINGS_MODULE = __import__(settings_module)
-        except ImportError:
-            logger.critical("Could not import settings from '%s'. It's " \
-                            "probably missing or has " \
-                            "an Import Error." % settings_module)
-            exit()
-
-        for setting in dir(self.SETTINGS_MODULE):
-            if setting == setting.upper():
-                setattr(self, setting, getattr(self.SETTINGS_MODULE, setting))

@@ -66,53 +66,6 @@ def chunk(seq, chunksize, process=iter):
     while True:
         yield process(chain([it.next()], islice(it, chunksize - 1)))
 
-# class comes from Django
-class LazyObject(object):
-    """
-    A wrapper for another class that can be used to delay instantiation of the
-    wrapped class.
-
-    By subclassing, you have the opportunity to intercept and alter the
-    instantiation. If you don't need to do that, use SimpleLazyObject.
-    """
-    def __init__(self):
-        self._wrapped = None
-
-    def __getattr__(self, name):
-        if self._wrapped is None:
-            self._setup()
-        return getattr(self._wrapped, name)
-
-    def __setattr__(self, name, value):
-        if name == "_wrapped":
-            # Assign to __dict__ to avoid infinite __setattr__ loops.
-            self.__dict__["_wrapped"] = value
-        else:
-            if self._wrapped is None:
-                self._setup()
-            setattr(self._wrapped, name, value)
-
-    def __delattr__(self, name):
-        if name == "_wrapped":
-            raise TypeError("can't delete _wrapped.")
-        if self._wrapped is None:
-            self._setup()
-        delattr(self._wrapped, name)
-
-    def _setup(self):
-        """
-        Must be implemented by subclasses to initialise the wrapped object.
-        """
-        raise NotImplementedError
-
-    # introspection support:
-    __members__ = property(lambda self: self.__dir__())
-
-    def __dir__(self):
-        if self._wrapped is None:
-            self._setup()
-        return  dir(self._wrapped)
-
 def sync_folders(d1, d2):
     logger.debug("Synchronizing %s ==> %s" % (d1, d2))
     if not d2.exists():
@@ -143,3 +96,19 @@ def ensure_exists(p):
     else:
         path(p).makedirs_p()
     return p
+
+class Borg(object):
+    """
+    A class that shares state among all instances of the class.
+
+    There seem to be a lot of differing opinions about whether this design
+    pattern is A Good Idea (tm) or not. It definitely seems better than
+    Singletons since it enforces *behavior*, not *structure*,
+    but it's also possible there's a better way to do it in Python with
+    judicious use of globals.
+    """
+    _state = {}
+    def __new__(cls, *p, **k):
+        self = object.__new__(cls)
+        self.__dict__ = cls._state
+        return self

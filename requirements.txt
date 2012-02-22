@@ -1,6 +1,5 @@
 path.py>=2.2.2
 markdown>=2.1.1
-typogrify>=1.0
 pyYAML>=3.10
 flufl.enum>=3.3.1
 translitcodec>=0.2
@@ -11,3 +10,4 @@ html5lib>=0.90
 Pynq>=0.4.0.Pineapple
 python-dateutil==1.5
 zope.cachedescriptors>=3.5.1
+-e git://github.com/hyde/typogrify#egg=typogrify

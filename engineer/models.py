@@ -8,7 +8,7 @@ from datetime import datetime
 from dateutil import parser
 from flufl.enum._enum import Enum
 from path import path
-from typogrify.templatetags import typogrify
+from typogrify.templatetags.jinja2_filters import typogrify
 from engineer.conf import settings
 from engineer.util import slugify, chunk, urljoin
 from engineer.log import logger
@@ -57,7 +57,7 @@ class Post(object):
         if not isinstance(self.timestamp, datetime):
             self.timestamp = parser.parse(str(self.timestamp))
 
-        self.content = typogrify.typogrify(markdown.markdown(self.content_raw))
+        self.content = typogrify(markdown.markdown(self.content_raw))
 
         self.markdown_file_name = unicode.format(u'{0}-{1}.md', self.timestamp.strftime('%Y-%m-%d'), self.slug)
         self.absolute_url = unicode.format(u'{0}{1}/{2}/',

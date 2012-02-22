@@ -4,8 +4,9 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/engineer.egg-info" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 2.7.2 (C:/Users/Tyler/.virtualenvs/blog-static/Scripts/python.exe)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 2.7.2 (C:/Users/tylerbu/.virtualenvs/tylerbutler.com/Scripts/python.exe)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="tylerbutler.com" />
   </component>

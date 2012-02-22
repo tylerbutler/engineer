@@ -142,8 +142,11 @@ class SettingsOverride(SettingsBase):
     def __init__(self, settings_module):
         try:
             self.SETTINGS_MODULE = __import__(settings_module)
-        except ImportError, e:
-            raise ImportError("Could not import settings from '%s'. %s", (settings_module, e))
+        except ImportError:
+            logger.critical("Could not import settings from '%s'. It's " \
+                            "probably missing or has " \
+                            "an Import Error." % settings_module)
+            exit()
 
         for setting in dir(self.SETTINGS_MODULE):
             if setting == setting.upper():

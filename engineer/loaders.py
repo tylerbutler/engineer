@@ -1,6 +1,7 @@
 # coding=utf-8
 from path import path
 from engineer.models import Post, MetadataError, PostCollection
+from engineer.post_cache import POST_CACHE
 from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
@@ -8,7 +9,6 @@ __author__ = 'tyler@tylerbutler.com'
 class LocalLoader(object):
     @staticmethod
     def load_all(input):
-        from engineer.post_cache import POST_CACHE
         posts = PostCollection()
         file_list = path(input).listdir('*.md') + path(input).listdir('*.markdown')
         for f in file_list:

@@ -10,6 +10,7 @@ from flufl.enum._enum import Enum
 from path import path
 from typogrify.templatetags.jinja2_filters import typogrify
 from engineer.conf import settings
+from engineer.post_cache import POST_CACHE
 from engineer.util import slugify, chunk, urljoin
 from engineer.log import logger
 
@@ -68,8 +69,6 @@ class Post(object):
         self.output_file_name = 'index.html'#'%s.html' % self.slug
 
         # update cache
-        from engineer.post_cache import POST_CACHE
-
         POST_CACHE[self.source] = {
             'mtime': self.source.mtime,
             'size': self.source.size,
@@ -137,9 +136,9 @@ class TemplatePage(object):
         settings.URLS[self.name] = self.absolute_url
 
     def render_html(self):
-#        settings.JINJA_ENV.globals['engineer']['navigation']['section'] = self.name
+    #        settings.JINJA_ENV.globals['engineer']['navigation']['section'] = self.name
         rendered = self.html_template.render(nav_context=self.name)
-#        settings.JINJA_ENV.globals['engineer']['navigation']['section'] = 'default'
+        #        settings.JINJA_ENV.globals['engineer']['navigation']['section'] = 'default'
         return rendered
 
 

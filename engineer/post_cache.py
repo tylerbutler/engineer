@@ -3,100 +3,71 @@ import cPickle as pickle
 from path import path
 from engineer.conf import settings
 from engineer.log import logger
-from engineer.conf._globals import POST_CACHE as GLOBAL_CACHE
+from engineer.util import Borg
 
 __author__ = 'tyler@tylerbutler.com'
 
-#class _PostCacheNew(dict):
-#    CACHE_VERSION = 0
-#
-#    def __init__(self, empty=False):
-#        if not empty:
-#            _PostCache.load()
-#            #dict.__init__(tmp)
-#        else:
-#            dict.__init__(self)
-#
-#    @staticmethod
-#    def is_cached(file):
-#        if settings.DISABLE_CACHE:
-#            return False
-#
-#        file = path(file).abspath()
-#        if file not in POST_CACHE:
-#            return False
-#        cache_entry = POST_CACHE[file]
-#        if cache_entry['mtime'] != file.mtime:
-#            return False
-#        if cache_entry['size'] != file.size:
-#            return False
-#        if cache_entry['checksum'] != file.read_hexhash():
-#            return False
-#        return True
-#
-#    @staticmethod
-#    def load():
-#        try:
-#            if settings.DISABLE_CACHE or hasattr(settings, 'POST_CACHE'):
-#                return None
-#        except:
-#            return None
-#
-#        cache_file = settings.POST_CACHE_FILE
-#        try:
-#            with open(cache_file) as f:
-#                pickled_cache = pickle.load(f)
-#                if pickled_cache.pickled_version != _PostCache.CACHE_VERSION:
-#                    return _PostCache(empty=True)
-#            return pickled_cache
-#        except:# (IOError, AttributeError, EOFError):
-#            return _PostCache(empty=True)
-#
-#    @staticmethod
-#    def save():
-#        if settings.DISABLE_CACHE:
-#            return
-#
-#        POST_CACHE.pickled_version = _PostCache.CACHE_VERSION
-#        cache_file = path(settings.POST_CACHE_FILE).abspath()
-#        with open(cache_file, mode='wb') as f:
-#            try:
-#                logging.error('saving cache!')
-#                #d = dict(settings.POST_CACHE)
-#                pickle.dump(POST_CACHE, f)
-#            except Exception as ex:
-#                logging.exception(ex)
-#
-#    @staticmethod
-#    def delete():
-#        try:
-#            path(settings.POST_CACHE_FILE).abspath().remove()
-#        except WindowsError as we:
-#            if we.winerror not in (2, 3):
-#                logging.exception(we.message)
-#        POST_CACHE = _PostCache(empty=True)
+class CacheBorg(object):
+    _state = {}
 
-TEMP_CACHE = None
+    def __new__(cls, *p, **k):
+        self = object.__new__(cls)
+        self.__dict__ = cls._state
+        return self
 
-class _PostCache(dict):
-    CACHE_VERSION = 1
 
-    def __init__(self, empty=False):
+class _CacheDict(dict):
+    def __init__(self, cache_version):
         dict.__init__(self)
-        if not empty:
-            _PostCache._load_cache()
-            global POST_CACHE, TEMP_CACHE
-            POST_CACHE = TEMP_CACHE
+        self.cache_version = cache_version
 
-    @staticmethod
-    def is_cached(file):
-        if settings.DISABLE_CACHE:
+
+class _PostCache(CacheBorg):
+    CACHE_VERSION = 1.1
+    _dict = _CacheDict(CACHE_VERSION)
+
+    def __getitem__(self, item):
+        return self._dict.__getitem__(item)
+
+    def __setitem__(self, key, value):
+        return self._dict.__setitem__(key, value)
+
+    def __delitem__(self, key):
+        return self._dict.__delitem__(key)
+
+    def __contains__(self, item):
+        return self._dict.__contains__(item)
+
+    def __iter__(self):
+        return self._dict.__iter__()
+
+    def clear(self):
+        self._dict.clear()
+
+    def __init__(self, *args):
+        self.enabled = not settings.DISABLE_CACHE
+        self._cache_file = settings.POST_CACHE_FILE
+
+        try:
+            with open(self._cache_file) as f:
+                temp_cache = pickle.load(f)
+                if temp_cache.cache_version != self.CACHE_VERSION:
+                    logger.debug("The current post cache is version %s; current version is %s. Rebuilding cache." %
+                                 (temp_cache.cache_version, self.CACHE_VERSION))
+                    self._dict.clear()
+                else:
+                    self._dict = temp_cache
+        except (IOError, AttributeError, EOFError, TypeError):
+            self._dict.clear()
+
+    def is_cached(self, file):
+        if not self.enabled:
             return False
 
         file = path(file).abspath()
-        if file not in POST_CACHE:
+        if file not in self:
             return False
-        cache_entry = POST_CACHE[file]
+        cache_entry = self[file]
         if cache_entry['mtime'] != file.mtime:
             return False
         if cache_entry['size'] != file.size:
@@ -105,47 +76,31 @@ class _PostCache(dict):
             return False
         return True
 
-    @staticmethod
-    def _load_cache():
-        global TEMP_CACHE
-        try:
-            if settings.DISABLE_CACHE:# or hasattr(settings, 'POST_CACHE'):
-                TEMP_CACHE = _PostCache(empty=True)
-                return
-        except Exception, e:
-            TEMP_CACHE = _PostCache(empty=True)
-
-        cache_file = settings.POST_CACHE_FILE
-        try:
-            with open(cache_file) as f:
-                TEMP_CACHE = pickle.load(f)
-                if TEMP_CACHE.pickled_version != _PostCache.CACHE_VERSION:
-                    logger.debug("The current post cache is version %s; current version is %s. Rebuilding cache." %
-                        (TEMP_CACHE.pickled_version, _PostCache.CACHE_VERSION))
-                    TEMP_CACHE = _PostCache(empty=True)
-        except (IOError, AttributeError, EOFError):
-            TEMP_CACHE = _PostCache(empty=True)
-
-    @staticmethod
-    def save():
-        if settings.DISABLE_CACHE:
+    def save(self):
+        if not self.enabled:
             return
 
-        POST_CACHE.pickled_version = _PostCache.CACHE_VERSION
-        cache_file = path(settings.POST_CACHE_FILE).abspath()
+        self._dict.cache_version = self.CACHE_VERSION
+        cache_file = path(self._cache_file).abspath()
         with open(cache_file, mode='wb') as f:
-            #d = dict(POST_CACHE)
-            pickle.dump(POST_CACHE, f)
+            pickle.dump(self._dict, f)
 
-    @staticmethod
-    def delete():
+    def delete(self):
         try:
-            path(settings.POST_CACHE_FILE).abspath().remove()
+            path(self._cache_file).abspath().remove()
         except WindowsError as we:
             if we.winerror not in (2, 3):
                 logger.exception(we.message)
-        POST_CACHE = _PostCache(empty=True)
+        self.clear()
 
-_PostCache()
 
-POST_CACHE = TEMP_CACHE
+class _PostCacheWrapper(Borg):
+    _cache = _PostCache()
+
+    def delete(self):
+        self._cache.delete()
+
+    def is_cached(self, file):
+        return self._cache.is_cached(file)
+
+POST_CACHE = _PostCache()

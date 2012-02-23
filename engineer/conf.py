@@ -1,20 +1,18 @@
 # coding=utf-8
 import platform
-import os
-from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 import yaml
-from zope.cachedescriptors import property as zproperty
+from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 from path import path
-import sys
+from zope.cachedescriptors import property as zproperty
 from engineer.filters import format_datetime
-from engineer.util import urljoin, ensure_exists, Borg
+from engineer.util import Borg, urljoin, ensure_exists
 from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
 
 class EngineerConfiguration(Borg):
     # ENGINEER 'CONSTANT' PATHS
-    ENGINEER_ROOT_DIR = path(__file__).dirname().dirname().abspath()
+    ENGINEER_ROOT_DIR = path(__file__).dirname().abspath()
     ENGINEER_TEMPLATE_DIR = (ENGINEER_ROOT_DIR / 'templates').abspath()
     ENGINEER_STATIC_DIR = (ENGINEER_ROOT_DIR / 'static').abspath()
     ENGINEER_THEMES_DIR = (ENGINEER_ROOT_DIR / 'themes').abspath()
@@ -113,3 +111,5 @@ class EngineerConfiguration(Borg):
             return ensure_exists(path(p))
         else:
             return ensure_exists((self.CONTENT_ROOT_DIR / p).abspath())
+
+settings = EngineerConfiguration()

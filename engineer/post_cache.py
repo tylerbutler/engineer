@@ -3,11 +3,10 @@ import cPickle as pickle
 from path import path
 from engineer.conf import settings
 from engineer.log import logger
-from engineer.util import Borg
 
 __author__ = 'tyler@tylerbutler.com'
 
-class CacheBorg(object):
+class _PostCache(object):
     _state = {}
 
     def __new__(cls, *p, **k):
@@ -15,50 +14,40 @@ class CacheBorg(object):
         self.__dict__ = cls._state
         return self
 
-
-class _CacheDict(dict):
-    def __init__(self, cache_version):
-        dict.__init__(self)
-        self.cache_version = cache_version
-
-
-class _PostCache(CacheBorg):
-    CACHE_VERSION = 1.1
-    _dict = _CacheDict(CACHE_VERSION)
-
     def __getitem__(self, item):
-        return self._dict.__getitem__(item)
+        return self._state.__getitem__(item)
 
     def __setitem__(self, key, value):
-        return self._dict.__setitem__(key, value)
+        return self._state.__setitem__(key, value)
 
     def __delitem__(self, key):
-        return self._dict.__delitem__(key)
+        return self._state.__delitem__(key)
 
     def __contains__(self, item):
-        return self._dict.__contains__(item)
+        return self._state.__contains__(item)
 
     def __iter__(self):
-        return self._dict.__iter__()
+        return self._state.__iter__()
 
     def clear(self):
-        self._dict.clear()
-
-    def __init__(self, *args):
+        self._state.clear()
+        self.CACHE_VERSION = 1.4
         self.enabled = not settings.DISABLE_CACHE
         self._cache_file = settings.POST_CACHE_FILE
 
+    def __init__(self, *args):
+        self.clear()
         try:
             with open(self._cache_file) as f:
                 temp_cache = pickle.load(f)
-                if temp_cache.cache_version != self.CACHE_VERSION:
+                if temp_cache['CACHE_VERSION'] != self.CACHE_VERSION:
                     logger.debug("The current post cache is version %s; current version is %s. Rebuilding cache." %
-                                 (temp_cache.cache_version, self.CACHE_VERSION))
-                    self._dict.clear()
+                                 (temp_cache['CACHE_VERSION'], self.CACHE_VERSION))
+                    self.clear()
                 else:
-                    self._dict = temp_cache
-        except (IOError, AttributeError, EOFError, TypeError):
-            self._dict.clear()
+                    self._state = temp_cache
+        except (IOError, AttributeError, EOFError, TypeError), e:
+            self.clear()
 
     def is_cached(self, file):
         if not self.enabled:
@@ -80,10 +69,10 @@ class _PostCache(CacheBorg):
         if not self.enabled:
             return
 
-        self._dict.cache_version = self.CACHE_VERSION
+        #self['_cache_version'] = self.CACHE_VERSION
         cache_file = path(self._cache_file).abspath()
         with open(cache_file, mode='wb') as f:
-            pickle.dump(self._dict, f)
+            pickle.dump(self._state, f)
 
     def delete(self):
         try:
@@ -92,15 +81,5 @@ class _PostCache(CacheBorg):
             if we.winerror not in (2, 3):
                 logger.exception(we.message)
         self.clear()
-
-
-class _PostCacheWrapper(Borg):
-    _cache = _PostCache()
-
-    def delete(self):
-        self._cache.delete()
-
-    def is_cached(self, file):
-        return self._cache.is_cached(file)
 
 POST_CACHE = _PostCache()

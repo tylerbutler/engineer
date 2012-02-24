@@ -1,15 +1,10 @@
 # coding=utf-8
-
 import yaml
 from path import path
 from engineer.conf import settings
 from engineer.util import get_class
-#from engineer.themes import theme_manager
 
 __author__ = 'tyler@tylerbutler.com'
-
-#ThemeManager = theme_manager
-#Theme = Theme
 
 class Theme(object):
     def __init__(self, theme_root_path, **kwargs):
@@ -26,24 +21,14 @@ class Theme(object):
         self.use_jquery = kwargs.get('use_jquery', False)
 
         self.self_contained = kwargs.get('self_contained', True)
-
         self.static_root = path(kwargs.get('static_root', self.root_path / 'static/')).abspath()
-
-        #        self.template_root = path(kwargs['template_root']).abspath() if 'template_root' in kwargs\
-        #        else path('%s/templates/' % self.id)
-
         self.template_root = path(kwargs.get('template_root', self.root_path / 'templates')).abspath()
-
-        #self.templates = {}
 
         if 'templates' in kwargs:
             self.templates = dict((k, self.theme_path(v)) for (k, v) in kwargs['templates'].iteritems())
         else:
             self.templates = dict((p.namebase, 'theme/%s' % p.name) for p in
             self.template_root.walkfiles(pattern='*.html'))
-
-        #            self.templates = dict((k, self.theme_path('%s.html' % k)) for k in
-        #            ['base', 'post_list', 'post_detail', 'post_archives', 'template_pages'])
 
         for k, v in settings.THEME_SETTINGS.iteritems():
             setattr(self, k, v)
@@ -61,8 +46,6 @@ class Theme(object):
             return str(self.template_root / template)
         else:
             return template
-            #        return str(self.template_root / template)
-
 
     @staticmethod
     def from_yaml(yaml_file):
@@ -73,9 +56,6 @@ class Theme(object):
 
 
 class ThemeManager(object):
-#    themes = _themes()
-#    current_theme = ThemeManager._current_theme()
-
     @classmethod
     def themes(cls):
         themes = []
@@ -96,7 +76,3 @@ class ThemeManager(object):
     @staticmethod
     def theme(id):
         return ThemeManager.themes[id]
-
-#    @staticmethod
-#    def theme_path(theme, template):
-#        return theme.template_root / template

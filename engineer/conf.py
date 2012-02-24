@@ -5,12 +5,32 @@ from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 from path import path
 from zope.cachedescriptors import property as zproperty
 from engineer.filters import format_datetime
-from engineer.util import Borg, urljoin, ensure_exists
+from engineer.util import urljoin, ensure_exists
 from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
 
-class EngineerConfiguration(Borg):
+class EngineerConfiguration(object):
+    """
+    Stores all of the configuration settings for a given Engineer site.
+
+    This class uses the Borg design pattern and shares state among all
+    instances of the class.
+
+    There seem to be a lot of differing opinions about whether this design
+    pattern is A Good Idea (tm) or not. It definitely seems better than
+    Singletons since it enforces *behavior*, not *structure*,
+    but it's also possible there's a better way to do it in Python with
+    judicious use of globals.
+    """
+
+    _state = {}
+
+    def __new__(cls, *p, **k):
+        self = object.__new__(cls)
+        self.__dict__ = cls._state
+        return self
+
     # ENGINEER 'CONSTANT' PATHS
     ENGINEER_ROOT_DIR = path(__file__).dirname().abspath()
     ENGINEER_TEMPLATE_DIR = (ENGINEER_ROOT_DIR / 'templates').abspath()

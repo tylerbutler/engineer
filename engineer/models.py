@@ -25,11 +25,8 @@ class Status(Enum):
     draft = 0
     published = 1
 
-
-class Type(Enum):
-    post = 0
-    link = 1
-    flat = 2
+    def __reduce__(self):
+        return 'Status'
 
 
 class MetadataError(Exception):
@@ -48,6 +45,7 @@ class Post(object):
 
         self.title = metadata.get('title', self.source.namebase.replace('-', ' ').replace('_', ' '))
         self.slug = metadata.get('slug', slugify(self.title))
+        self.external_link = metadata.get('external_link', None)
         try:
             self.status = Status(metadata.get('status', Status.draft.name))
         except ValueError:
@@ -60,7 +58,10 @@ class Post(object):
 
         self.content = typogrify(markdown.markdown(self.content_raw))
 
-        self.markdown_file_name = unicode.format(u'{0}-{1}.md', self.timestamp.strftime('%Y-%m-%d'), self.slug)
+        self.markdown_file_name = unicode.format(u'({0}){1}-{2}.md',
+                                                 self.status.name[:1],
+                                                 self.timestamp.strftime('%Y-%m-%d'),
+                                                 self.slug)
         self.absolute_url = unicode.format(u'{0}{1}/{2}/',
                                            settings.HOME_URL,
                                            self.timestamp.strftime('%Y/%m/%d'),
@@ -83,6 +84,10 @@ class Post(object):
     @property
     def is_published(self):
         return self.status == Status.published
+
+    @property
+    def is_external_link(self):
+        return self.external_link is not None
 
     def _parse_source(self):
         try:

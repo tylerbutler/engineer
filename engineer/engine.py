@@ -7,7 +7,7 @@ from engineer.conf import settings
 from engineer.loaders import LocalLoader
 from engineer.models import PostCollection, TemplatePage
 from engineer.themes import ThemeManager
-from engineer.util import sync_folders
+from engineer.util import sync_folders, ensure_exists
 from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
@@ -31,9 +31,8 @@ def build():
     for template in (settings.TEMPLATE_DIR / 'pages').walkfiles('*.html'):
         page = TemplatePage(template)
         rendered_page = page.render_html()
-        if not page.output_path.exists():
-            page.output_path.makedirs()
-        with open(page.output_path/page.output_file_name, mode='wb', encoding='UTF-8') as file:
+        ensure_exists(page.output_path)
+        with open(page.output_path / page.output_file_name, mode='wb', encoding='UTF-8') as file:
             file.write(rendered_page)
             logger.info("Output '%s'." % file.name)
 
@@ -48,8 +47,7 @@ def build():
     # Generate individual post pages
     for post in all_posts:
         rendered_post = post.render_html()
-        if not post.output_path.exists():
-            post.output_path.makedirs()
+        ensure_exists(post.output_path)
         with open(post.output_path / post.output_file_name, mode='wb', encoding='UTF-8') as file:
             logger.info("Output '%s'." % file.name)
             file.write(rendered_post)
@@ -64,8 +62,7 @@ def build():
         has_next = slice_num < num_slices
         has_previous = 1 < slice_num <= num_slices
         rendered_page = posts.render_listpage_html(slice_num, has_next, has_previous)
-        if not posts.output_path(slice_num).exists():
-            posts.output_path(slice_num).dirname().makedirs()
+        ensure_exists(posts.output_path(slice_num))
         with open(posts.output_path(slice_num), mode='wb', encoding='UTF-8') as file:
             file.write(rendered_page)
             logger.info("Output '%s'." % file.name)
@@ -77,8 +74,7 @@ def build():
 
     # Generate archive page
     archive_output_path = settings.OUTPUT_DIR / 'archives/index.html'
-    if not archive_output_path.exists():
-        archive_output_path.dirname().makedirs()
+    ensure_exists(archive_output_path)
 
     rendered_archive = all_posts.render_archive_html()
 
@@ -118,6 +114,7 @@ def cmdline(args=sys.argv):
 
     if args.verbose:
         import logging
+
         logger.setLevel(logging.DEBUG)
 
     if args.serve:

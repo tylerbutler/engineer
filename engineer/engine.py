@@ -7,7 +7,7 @@ from engineer.conf import settings
 from engineer.loaders import LocalLoader
 from engineer.models import PostCollection, TemplatePage
 from engineer.themes import ThemeManager
-from engineer.util import sync_folders, ensure_exists
+from engineer.util import mirror_folder, ensure_exists
 from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
@@ -15,6 +15,7 @@ __author__ = 'tyler@tylerbutler.com'
 def clean():
     try:
         settings.OUTPUT_DIR.rmtree()
+        settings.OUTPUT_CACHE_DIR.rmtree()
     except WindowsError as we:
         if we.winerror not in (2, 3):
             logger.exception(we.message)
@@ -69,30 +70,33 @@ def build():
 
         # Copy first rollup page to root of site - it's the homepage.
         if slice_num == 1:
-            path.copyfile(posts.output_path(slice_num), settings.OUTPUT_DIR / 'index.html')
-            logger.info("Output '%s'." % (settings.OUTPUT_DIR / 'index.html'))
+            path.copyfile(posts.output_path(slice_num), settings.OUTPUT_CACHE_DIR / 'index.html')
+            logger.info("Output '%s'." % (settings.OUTPUT_CACHE_DIR / 'index.html'))
 
     # Generate archive page
-    archive_output_path = settings.OUTPUT_DIR / 'archives/index.html'
-    ensure_exists(archive_output_path)
+    if num_posts > 0:
+        archive_output_path = settings.OUTPUT_CACHE_DIR / 'archives/index.html'
+        ensure_exists(archive_output_path)
 
-    rendered_archive = all_posts.render_archive_html()
+        rendered_archive = all_posts.render_archive_html()
 
-    with open(settings.OUTPUT_DIR / 'archives/index.html', mode='wb', encoding='UTF-8') as file:
-        file.write(rendered_archive)
-        logger.info("Output '%s'." % file.name)
+        with open(settings.OUTPUT_CACHE_DIR / 'archives/index.html', mode='wb', encoding='UTF-8') as file:
+            file.write(rendered_archive)
+            logger.info("Output '%s'." % file.name)
 
     # Copy static content to output dir
     s = settings.ENGINEER_STATIC_DIR.abspath()
-    t = (settings.OUTPUT_DIR / settings.ENGINEER_STATIC_DIR.basename()).abspath()
-    sync_folders(s, t)
+    t = (settings.OUTPUT_CACHE_DIR / settings.ENGINEER_STATIC_DIR.basename()).abspath()
+    mirror_folder(s, t)
     logger.info("Copied static files to '%s'." % t)
 
     # Copy theme static content to output dir
     s = ThemeManager.current_theme().static_root.abspath()
-    t = (settings.OUTPUT_DIR / settings.ENGINEER_STATIC_DIR.basename() / 'theme').abspath()
-    sync_folders(s, t)
+    t = (settings.OUTPUT_CACHE_DIR / settings.ENGINEER_STATIC_DIR.basename() / 'theme').abspath()
+    mirror_folder(s, t)
     logger.info("Copied static files for theme to '%s'." % t)
+
+    mirror_folder(settings.OUTPUT_CACHE_DIR, settings.OUTPUT_DIR)
 
 
 def cmdline(args=sys.argv):

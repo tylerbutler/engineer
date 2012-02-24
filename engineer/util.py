@@ -66,24 +66,45 @@ def chunk(seq, chunksize, process=iter):
     while True:
         yield process(chain([it.next()], islice(it, chunksize - 1)))
 
-def sync_folders(d1, d2):
-    logger.debug("Synchronizing %s ==> %s" % (d1, d2))
+
+def mirror_folder(source, target, level=0):
+    """Mirrors a folder *source* into a target folder *target*."""
+    d1 = source
+    d2 = target
+    logger.debug("Mirroring %s ==> %s" % (d1, d2))
     if not d2.exists():
         d2.makedirs()
     compare = filecmp.dircmp(d1, d2)
+
+    # Delete orphan files/folders in the target folder
+    for item in compare.right_only:
+        fullpath = path(d2 / item)
+        if fullpath.isdir():
+            logger.debug("%s ==> Deleted - doesn't exist in source" % fullpath)
+            fullpath.rmtree()
+        elif fullpath.isfile():
+            logger.debug("%s ==> Deleted - doesn't exist in source" % fullpath)
+            fullpath.remove()
+
+    # Copy new files and folders from the source to the target
     for item in compare.left_only:
         fullpath = d1 / item
         if fullpath.isdir():
             logger.debug("Copying new directory %s ==> %s" % (fullpath, (d2 / item)))
             fullpath.copytree(d2 / item)
         elif fullpath.isfile():
-            logger.debug("Copying new file %s ==> %s" % (fullpath, d2))
+            logger.debug("Copying new file %s ==> %s" % (fullpath, (d2 / item)))
             fullpath.copy2(d2)
+
+    # Copy modified files in the source to the target, overwriting the target file
     for item in compare.diff_files:
-        logger.debug("Overwriting existing file %s ==> %s" % ((d1 / item), d2))
+        logger.debug("Overwriting existing file %s ==> %s" % ((d1 / item), (d2 / item)))
         (d1 / item).copy2(d2)
+
+    # Recurse into subfolders that exist in both the source and target
     for item in compare.common_dirs:
-        sync_folders(d1 / item, d2 / item)
+        mirror_folder(d1 / item, d2 / item, level + 1)
+
 
 def ensure_exists(p):
     """
@@ -97,6 +118,7 @@ def ensure_exists(p):
         path(p).makedirs_p()
     return p
 
+
 class Borg(object):
     """
     A class that shares state among all instances of the class.
@@ -108,6 +130,7 @@ class Borg(object):
     judicious use of globals.
     """
     _state = {}
+
     def __new__(cls, *p, **k):
         self = object.__new__(cls)
         self.__dict__ = cls._state

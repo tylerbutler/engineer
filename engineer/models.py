@@ -66,7 +66,7 @@ class Post(object):
                                            settings.HOME_URL,
                                            self.timestamp.strftime('%Y/%m/%d'),
                                            self.slug)
-        self.output_path = path(settings.OUTPUT_DIR / self.timestamp.strftime('%Y/%m/%d') / self.slug)
+        self.output_path = path(settings.OUTPUT_CACHE_DIR / self.timestamp.strftime('%Y/%m/%d') / self.slug)
         self.output_file_name = 'index.html'#'%s.html' % self.slug
 
         # update cache
@@ -135,7 +135,7 @@ class TemplatePage(object):
         self.html_template = settings.JINJA_ENV.get_template('pages/%s' % template_path.name)
         self.name = template_path.namebase
         self.absolute_url = urljoin(settings.HOME_URL, self.name)
-        self.output_path = path(settings.OUTPUT_DIR / self.name)
+        self.output_path = path(settings.OUTPUT_CACHE_DIR / self.name)
         self.output_file_name = 'index.html'
 
         settings.URLS[self.name] = self.absolute_url
@@ -175,7 +175,7 @@ class PostCollection(list):
         return to_return
 
     def output_path(self, slice_num):
-        return path(settings.OUTPUT_DIR / ("page/%s/index.html" % slice_num))
+        return path(settings.OUTPUT_CACHE_DIR / ("page/%s/index.html" % slice_num))
 
     def render_listpage_html(self, slice_num, has_next, has_previous):
         return self.listpage_template.render(

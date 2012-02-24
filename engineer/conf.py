@@ -61,6 +61,8 @@ class EngineerConfiguration(object):
         self.LOG_DIR = config.pop('LOG_DIR', self.normalize('logs'))
         self.LOG_FILE = ensure_exists(config.pop('LOG_FILE', (self.LOG_DIR / 'build.log').abspath()))
         self.CACHE_DIR = config.pop('CACHE_DIR', self.normalize('_cache'))
+        self.OUTPUT_CACHE_DIR = ensure_exists(
+            config.pop('OUTPUT_CACHE_DIR', (self.CACHE_DIR / 'output_cache').abspath()))
         self.JINJA_CACHE_DIR = ensure_exists(config.pop('JINJA_CACHE_DIR', (self.CACHE_DIR / 'jinja_cache').abspath()))
         self.POST_CACHE_FILE = ensure_exists(
             config.pop('POST_CACHE_FILE', (self.CACHE_DIR / 'post_cache.cache').abspath()))

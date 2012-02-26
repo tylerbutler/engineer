@@ -46,6 +46,8 @@ class EngineerConfiguration(object):
             with open(path.getcwd() / yaml_file, mode='rb') as file:
                 config = yaml.load(file)
                 self.initialize(config)
+        else:
+            self.initialize({})
 
     def initialize(self, config):
         if getattr(self, '_initialized', False):
@@ -54,13 +56,13 @@ class EngineerConfiguration(object):
             self._initialized = True
 
         # CONTENT DIRECTORIES
-        self.CONTENT_ROOT_DIR = config.pop('CONTENT_ROOT_DIR', path.getcwd().abspath())
-        self.POST_DIR = config.pop('POST_DIR', self.normalize('posts'))
-        self.OUTPUT_DIR = config.pop('OUTPUT_DIR', self.normalize('output'))
-        self.TEMPLATE_DIR = config.pop('TEMPLATE_DIR', self.normalize('templates'))
-        self.LOG_DIR = config.pop('LOG_DIR', self.normalize('logs'))
+        self.CONTENT_ROOT_DIR = path(config.pop('CONTENT_ROOT_DIR', path.getcwd().abspath()))
+        self.POST_DIR = self.normalize(config.pop('POST_DIR', 'posts'))
+        self.OUTPUT_DIR = self.normalize(config.pop('OUTPUT_DIR', 'output'))
+        self.TEMPLATE_DIR = self.normalize(config.pop('TEMPLATE_DIR', 'templates'))
+        self.LOG_DIR = self.normalize(config.pop('LOG_DIR', 'logs'))
         self.LOG_FILE = ensure_exists(config.pop('LOG_FILE', (self.LOG_DIR / 'build.log').abspath()))
-        self.CACHE_DIR = config.pop('CACHE_DIR', self.normalize('_cache'))
+        self.CACHE_DIR = self.normalize(config.pop('CACHE_DIR', '_cache'))
         self.OUTPUT_CACHE_DIR = ensure_exists(
             config.pop('OUTPUT_CACHE_DIR', (self.CACHE_DIR / 'output_cache').abspath()))
         self.JINJA_CACHE_DIR = ensure_exists(config.pop('JINJA_CACHE_DIR', (self.CACHE_DIR / 'jinja_cache').abspath()))
@@ -71,6 +73,7 @@ class EngineerConfiguration(object):
         self.SITE_TITLE = config.pop('SITE_TITLE', '')
         self.HOME_URL = config.pop('HOME_URL', '/')
         self.STATIC_URL = config.pop('STATIC_URL', urljoin(self.HOME_URL, 'static'))
+        self.ROLLUP_PAGE_SIZE = int(config.pop('ROLLUP_PAGE_SIZE', 5))
 
         def page(num):
             page_path = urljoin('page', str(num))

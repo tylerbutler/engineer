@@ -69,6 +69,18 @@ def chunk(seq, chunksize, process=iter):
 
 def mirror_folder(source, target, level=0):
     """Mirrors a folder *source* into a target folder *target*."""
+
+    def expand_tree(p):
+        tree = []
+        for item in path(p).walk():
+            tree.append(item)
+        return tree
+
+    report = {
+        'deleted': set([]),
+        'overwritten': set([]),
+        'new': set([])
+    }
     d1 = source
     d2 = target
     logger.debug("Mirroring %s ==> %s" % (d1, d2))
@@ -81,9 +93,13 @@ def mirror_folder(source, target, level=0):
         fullpath = path(d2 / item)
         if fullpath.isdir():
             logger.debug("%s ==> Deleted - doesn't exist in source" % fullpath)
+            report['deleted'].add(fullpath)
+            if len(fullpath.listdir()) > 0:
+                report['deleted'].update(expand_tree(fullpath))
             fullpath.rmtree()
         elif fullpath.isfile():
             logger.debug("%s ==> Deleted - doesn't exist in source" % fullpath)
+            report['deleted'].add(fullpath)
             fullpath.remove()
 
     # Copy new files and folders from the source to the target
@@ -92,18 +108,26 @@ def mirror_folder(source, target, level=0):
         if fullpath.isdir():
             logger.debug("Copying new directory %s ==> %s" % (fullpath, (d2 / item)))
             fullpath.copytree(d2 / item)
+            report['new'].add(d2 / item)
+            report['new'].update(expand_tree(d2 / item))
         elif fullpath.isfile():
             logger.debug("Copying new file %s ==> %s" % (fullpath, (d2 / item)))
             fullpath.copy2(d2)
+            report['new'].add(d2 / item)
 
     # Copy modified files in the source to the target, overwriting the target file
     for item in compare.diff_files:
         logger.debug("Overwriting existing file %s ==> %s" % ((d1 / item), (d2 / item)))
         (d1 / item).copy2(d2)
+        report['overwritten'].add(d2 / item)
 
     # Recurse into subfolders that exist in both the source and target
     for item in compare.common_dirs:
-        mirror_folder(d1 / item, d2 / item, level + 1)
+        rpt = mirror_folder(d1 / item, d2 / item, level + 1)
+        report['new'].update(rpt['new'])
+        report['overwritten'].update(rpt['overwritten'])
+        report['deleted'].update(rpt['deleted'])
+    return report
 
 
 def ensure_exists(p):

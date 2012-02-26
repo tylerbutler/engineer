@@ -10,7 +10,7 @@ from flufl.enum._enum import Enum
 from path import path
 from typogrify.templatetags.jinja2_filters import typogrify
 from engineer.conf import settings
-from engineer.post_cache import POST_CACHE
+from zope.cachedescriptors.property import CachedProperty
 from engineer.util import slugify, chunk, urljoin
 from engineer.log import logger
 
@@ -38,8 +38,8 @@ class Post(object):
 
     def __init__(self, source):
         self.source = path(source).abspath()
-        self.html_template = settings.JINJA_ENV.get_template('theme/post_detail.html')
-        self.markdown_template = settings.JINJA_ENV.get_template('core/post.md')
+        self.html_template_path = 'theme/post_detail.html'
+        self.markdown_template_path = 'core/post.md'
 
         metadata, self.content_raw = self._parse_source()
 
@@ -70,12 +70,22 @@ class Post(object):
         self.output_file_name = 'index.html'#'%s.html' % self.slug
 
         # update cache
+        from engineer.post_cache import POST_CACHE
+
         POST_CACHE[self.source] = {
             'mtime': self.source.mtime,
             'size': self.source.size,
             'checksum': self.source.read_hexhash('sha256'),
-            #'post': self
+            'post': self
         }
+
+    @CachedProperty
+    def html_template(self):
+        return settings.JINJA_ENV.get_template(self.html_template_path)
+
+    @CachedProperty
+    def markdown_template(self):
+        return settings.JINJA_ENV.get_template(self.markdown_template_path)
 
     @property
     def is_draft(self):
@@ -153,7 +163,7 @@ class PostCollection(list):
         self.listpage_template = settings.JINJA_ENV.get_template('theme/post_list.html')
         self.archive_template = settings.JINJA_ENV.get_template('theme/post_archives.html')
 
-    def paginate(self, paginate_by=5):
+    def paginate(self, paginate_by=settings.ROLLUP_PAGE_SIZE):
         return chunk(self, paginate_by, PostCollection)
 
     @property

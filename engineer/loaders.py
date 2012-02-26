@@ -9,7 +9,8 @@ __author__ = 'tyler@tylerbutler.com'
 class LocalLoader(object):
     @staticmethod
     def load_all(input):
-        posts = PostCollection()
+        new_posts = PostCollection()
+        cached_posts = PostCollection()
         file_list = path(input).listdir('*.md') + path(input).listdir('*.markdown')
         for f in file_list:
             try:
@@ -17,14 +18,15 @@ class LocalLoader(object):
                     logger.debug("'%s': Beginning to parse." % f.basename())
                     post = Post(f)
                     logger.debug("'%s': Parsed successfully." % f.basename())
-                    posts.append(post)
+                    new_posts.append(post)
                     logger.info("'%s': LOADED successfully." % f.basename())
                 else:
-                    logger.info("'%s': SKIPPING - file is cached and does not need to be generated again." %
-                                f.basename())
+                    logger.debug("'%s': FROM CACHE" % f.basename())
+                    cached_posts.append(POST_CACHE[f]['post'])
             except MetadataError as e:
-                logger.warning("'%s': SKIPPING - metadata is invalid. %s" % (f.basename(), e.message))
+                logger.warning("SKIPPING '%s': metadata is invalid. %s" % (f.basename(), e.message))
                 continue
-        logger.debug("Successfully parsed %d items." % len(posts))
+        logger.info(
+            "Successfully parsed %d new items and loaded %s from the cache." % (len(new_posts), len(cached_posts)))
         POST_CACHE.save()
-        return posts
+        return new_posts, cached_posts

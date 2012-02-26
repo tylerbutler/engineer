@@ -28,20 +28,31 @@ def clean():
 
 
 def build():
+    build_stats = {
+        'template_pages': 0,
+        'new_posts': 0,
+        'cached_posts': 0,
+        'rollups': 0
+    }
+
+    settings.OUTPUT_CACHE_DIR.rmtree()
+
     # Generate template pages
-    for template in (settings.TEMPLATE_DIR / 'pages').walkfiles('*.html'):
+    template_page_source = (settings.TEMPLATE_DIR / 'pages').abspath()
+    logger.info("Generating template pages from %s." % template_page_source)
+    for template in template_page_source.walkfiles('*.html'):
         page = TemplatePage(template)
         rendered_page = page.render_html()
         ensure_exists(page.output_path)
         with open(page.output_path / page.output_file_name, mode='wb', encoding='UTF-8') as file:
             file.write(rendered_page)
-            logger.info("Output '%s'." % file.name)
+            logger.debug("Output '%s'." % file.name)
+            build_stats['template_pages'] += 1
 
     # Load markdown input posts
-    logger.debug("Loading posts...")
-    all_posts = LocalLoader.load_all(input=settings.POST_DIR)
-
-    logger.debug("Drafts: %d, Published: %d" % (len(all_posts.drafts), len(all_posts.published)))
+    logger.info("Loading posts from %s." % settings.POST_DIR)
+    new_posts, cached_posts = LocalLoader.load_all(input=settings.POST_DIR)
+    all_posts = PostCollection(new_posts + cached_posts)
 
     all_posts = PostCollection(sorted(all_posts.published, reverse=True, key=lambda post: post.timestamp))
 
@@ -50,12 +61,17 @@ def build():
         rendered_post = post.render_html()
         ensure_exists(post.output_path)
         with open(post.output_path / post.output_file_name, mode='wb', encoding='UTF-8') as file:
-            logger.info("Output '%s'." % file.name)
             file.write(rendered_post)
+            if post in new_posts:
+                logger.info("Output new or modified post '%s'." % post.title)
+                build_stats['new_posts'] += 1
+            elif post in cached_posts:
+                build_stats['cached_posts'] += 1
 
     # Generate rollup pages
     num_posts = len(all_posts)
-    num_slices = (num_posts / 5) if num_posts % 5 == 0 else (num_posts / 5) + 1
+    num_slices = (num_posts / settings.ROLLUP_PAGE_SIZE) if num_posts % settings.ROLLUP_PAGE_SIZE == 0 else (
+                                                                                                                num_posts / settings.ROLLUP_PAGE_SIZE) + 1
 
     slice_num = 0
     for posts in all_posts.paginate():
@@ -66,12 +82,13 @@ def build():
         ensure_exists(posts.output_path(slice_num))
         with open(posts.output_path(slice_num), mode='wb', encoding='UTF-8') as file:
             file.write(rendered_page)
-            logger.info("Output '%s'." % file.name)
+            logger.debug("Output '%s'." % file.name)
+            build_stats['rollups'] += 1
 
         # Copy first rollup page to root of site - it's the homepage.
         if slice_num == 1:
             path.copyfile(posts.output_path(slice_num), settings.OUTPUT_CACHE_DIR / 'index.html')
-            logger.info("Output '%s'." % (settings.OUTPUT_CACHE_DIR / 'index.html'))
+            logger.debug("Output '%s'." % (settings.OUTPUT_CACHE_DIR / 'index.html'))
 
     # Generate archive page
     if num_posts > 0:
@@ -80,23 +97,36 @@ def build():
 
         rendered_archive = all_posts.render_archive_html()
 
-        with open(settings.OUTPUT_CACHE_DIR / 'archives/index.html', mode='wb', encoding='UTF-8') as file:
+        with open(archive_output_path, mode='wb', encoding='UTF-8') as file:
             file.write(rendered_archive)
-            logger.info("Output '%s'." % file.name)
+            logger.debug("Output '%s'." % file.name)
 
     # Copy static content to output dir
     s = settings.ENGINEER_STATIC_DIR.abspath()
     t = (settings.OUTPUT_CACHE_DIR / settings.ENGINEER_STATIC_DIR.basename()).abspath()
     mirror_folder(s, t)
-    logger.info("Copied static files to '%s'." % t)
+    logger.debug("Copied static files to '%s'." % t)
 
     # Copy theme static content to output dir
     s = ThemeManager.current_theme().static_root.abspath()
     t = (settings.OUTPUT_CACHE_DIR / settings.ENGINEER_STATIC_DIR.basename() / 'theme').abspath()
     mirror_folder(s, t)
-    logger.info("Copied static files for theme to '%s'." % t)
+    logger.debug("Copied static files for theme to '%s'." % t)
 
-    mirror_folder(settings.OUTPUT_CACHE_DIR, settings.OUTPUT_DIR)
+    logger.info("Synchronizing output directory with output cache.")
+    report = mirror_folder(settings.OUTPUT_CACHE_DIR, settings.OUTPUT_DIR)
+    from pprint import pformat
+
+    logger.debug(pformat(report))
+    logger.info('')
+    logger.info("Site: '%s' output to %s." % (settings.SITE_TITLE, settings.OUTPUT_DIR))
+    logger.info("Posts: %s (%s new or updated)" % (
+        (build_stats['new_posts'] + build_stats['cached_posts']), build_stats['new_posts']))
+    logger.info("Post rollup pages: %s (%s posts per page)" % (build_stats['rollups'], settings.ROLLUP_PAGE_SIZE))
+    logger.info("Template pages: %s" % build_stats['template_pages'])
+    logger.info("%s new items, %s modified items, and %s deleted items." % (len(report['new']),
+                                                                            len(report['overwritten']),
+                                                                            len(report['deleted'])))
 
 
 def cmdline(args=sys.argv):

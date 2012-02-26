@@ -38,7 +38,7 @@ class _PostCache(object):
     def __init__(self, *args):
         self.clear()
         try:
-            with open(self._cache_file) as f:
+            with open(self._cache_file, mode='rb') as f:
                 temp_cache = pickle.load(f)
                 if temp_cache['CACHE_VERSION'] != self.CACHE_VERSION:
                     logger.debug("The current post cache is version %s; current version is %s. Rebuilding cache." %

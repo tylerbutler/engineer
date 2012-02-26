@@ -9,6 +9,7 @@ from dateutil import parser
 from flufl.enum._enum import Enum
 from path import path
 from typogrify.templatetags.jinja2_filters import typogrify
+from zope.cachedescriptors.property import CachedProperty
 from engineer.conf import settings
 from engineer.util import slugify, chunk, urljoin
 from engineer.log import logger
@@ -45,6 +46,10 @@ class Post(object):
         self.title = metadata.get('title', self.source.namebase.replace('-', ' ').replace('_', ' '))
         self.slug = metadata.get('slug', slugify(self.title))
         self.external_link = metadata.get('external_link', None)
+
+        self.attribute_to = self.attribute_to_link = None
+        self.attribution = metadata.get('attribution', None)
+
         try:
             self.status = Status(metadata.get('status', Status.draft.name))
         except ValueError:
@@ -91,6 +96,30 @@ class Post(object):
     @property
     def is_external_link(self):
         return self.external_link is not None
+
+    @property
+    def attribution(self):
+        if not self.attribute_to and not self.attribute_to_link:
+            return None
+        attrib = []
+        if self.attribute_to:
+            attrib.append(self.attribute_to)
+        if self.attribute_to_link:
+            attrib.append(self.attribute_to_link)
+        return attrib
+
+    @attribution.setter
+    def attribution(self, value):
+        if not value:
+            self.attribute_to = self.attribute_to_link = None
+            return
+
+        l = len(value)
+        if l >= 1:
+            self.attribute_to = value[0]
+        if l == 2:
+            self.attribute_to_link = value[1]
+        return
 
     def _parse_source(self):
         try:
@@ -141,11 +170,13 @@ class Post(object):
             'status': self.status.name,
             'slug': self.slug,
             'external_link': self.external_link,
+            'attribution': self.attribution,
             }
-        order = ['title', 'timestamp', 'status', 'slug', 'external_link']
+        order = ['title', 'timestamp', 'status', 'slug', 'external_link', 'attribution']
         metadata = ''
         for k in order:
-            metadata += yaml.safe_dump(dict([[k, d[k]]]), default_flow_style=False)
+            if d[k]:
+                metadata += yaml.safe_dump(dict([[k, d[k]]]), default_flow_style=False)
         return settings.JINJA_ENV.get_template(self.markdown_template_path).render(metadata=metadata,
                                                                                    content=self.content_raw)
 
@@ -179,15 +210,15 @@ class PostCollection(list):
     def paginate(self, paginate_by=settings.ROLLUP_PAGE_SIZE):
         return chunk(self, paginate_by, PostCollection)
 
-    @property
+    @CachedProperty
     def published(self):
-        return pynq.From(self).where("item.is_published == True").select_many()
+        return PostCollection([p for p in self if p.is_published == True])
 
-    @property
+    @CachedProperty
     def drafts(self):
-        return pynq.From(self).where("item.is_draft == True").select_many()
+        return PostCollection([p for p in self if p.is_draft == True])
 
-    @property
+    @CachedProperty
     def grouped_by_year(self):
         years = map(lambda x: x.timestamp.year, self)
         years = set(years)

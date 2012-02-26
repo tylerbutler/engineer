@@ -1,28 +1,28 @@
-{% with link=post.is_link %}
-    <div class="row">
-        {% block post_info %}
-            <div class="post-info two columns">
-                <div class="post-date">
-                    {% with timestamp=post.timestamp %}
-                        <div class="month">{{ timestamp|date("%B")|upper }}</div>
-                        <div class="day">{{ timestamp|date("%d") }}</div>
-                        <div class="year">{{ timestamp|date("%Y") }}</div>
-                        <div class="permalink">
-                            <a href="{{ post.absolute_url }}"
-                               title="Permanent link to '{{ post.title }}'">∞</a>
-                        </div>
-                    {% endwith %}
-                </div>
-{#                {% if post.tags.count > 0 %}#}
-{#                    <ul class="tags">#}
-{#                        {% for tag in post.tags.all %}#}
-{#                            <li><a href="{% url 'tag' tag=tag.name %}">{{ tag }}</a></li>#}
-{#                        {% endfor %}#}
-{#                    </ul>#}
-{#                {% endif %}#}
+<div class="row">
+    {% block post_info %}
+        <div class="post-info two columns">
+            <div class="post-date">
+                {% with timestamp=post.timestamp %}
+                    <div class="month">{{ timestamp|date("%B")|upper }}</div>
+                    <div class="day">{{ timestamp|date("%d") }}</div>
+                    <div class="year">{{ timestamp|date("%Y") }}</div>
+                    <div class="permalink">
+                        <a href="{{ post.absolute_url }}"
+                           title="Permanent link to '{{ post.title }}'">∞</a>
+                    </div>
+                {% endwith %}
             </div>
-        {% endblock post_info %}
-        {% block post_content %}
+            {#                {% if post.tags.count > 0 %}#}
+            {#                    <ul class="tags">#}
+            {#                        {% for tag in post.tags.all %}#}
+            {#                            <li><a href="{% url 'tag' tag=tag.name %}">{{ tag }}</a></li>#}
+            {#                        {% endfor %}#}
+            {#                    </ul>#}
+            {#                {% endif %}#}
+        </div>
+    {% endblock post_info %}
+    {% block post_content %}
+        {% with link=post.is_external_link %}
             <article class="post-content ten columns">
                 <time datetime="{{ post.timestamp|date("%Y-%m-%d") }}" pubdate=""></time>
                 <header>
@@ -33,12 +33,16 @@
                     </h1>
                 </header>
                 {{ post.content|safe }}
-                {% if link %}
+                {% if post.attribute_to %}
                     <div class="attribution">
-                        <a href="{{ post.attribute_to_link }}">/via {{ post.attribute_to }}</a>
+                        {% if post.attribute_to_link %}
+                            <a href="{{ post.attribute_to_link }}">/via {{ post.attribute_to }}</a>
+                        {% else %}
+                            /via {{ post.attribute_to }}
+                        {% endif %}
                     </div>
                 {% endif %}
             </article>
-        {% endblock post_content %}
-    </div>
-{% endwith %}
+        {% endwith %}
+    {% endblock post_content %}
+</div>

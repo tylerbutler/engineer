@@ -10,7 +10,6 @@ from flufl.enum._enum import Enum
 from path import path
 from typogrify.templatetags.jinja2_filters import typogrify
 from engineer.conf import settings
-from zope.cachedescriptors.property import CachedProperty
 from engineer.util import slugify, chunk, urljoin
 from engineer.log import logger
 
@@ -56,9 +55,9 @@ class Post(object):
         if not isinstance(self.timestamp, datetime):
             self.timestamp = parser.parse(str(self.timestamp))
 
-        self.content = typogrify(markdown.markdown(self.content_raw))
+        self.content = typogrify(markdown.markdown(self.content_raw, extensions=['extra', 'codehilite']))
 
-        self.markdown_file_name = unicode.format(u'({0}){1}-{2}.md',
+        self.markdown_file_name = unicode.format(settings.NORMALIZE_INPUT_FILE_MASK,
                                                  self.status.name[:1],
                                                  self.timestamp.strftime('%Y-%m-%d'),
                                                  self.slug)
@@ -69,6 +68,8 @@ class Post(object):
         self.output_path = path(settings.OUTPUT_CACHE_DIR / self.timestamp.strftime('%Y/%m/%d') / self.slug)
         self.output_file_name = 'index.html'#'%s.html' % self.slug
 
+        self._normalize_source()
+
         # update cache
         from engineer.post_cache import POST_CACHE
 
@@ -78,14 +79,6 @@ class Post(object):
             'checksum': self.source.read_hexhash('sha256'),
             'post': self
         }
-
-    @CachedProperty
-    def html_template(self):
-        return settings.JINJA_ENV.get_template(self.html_template_path)
-
-    @CachedProperty
-    def markdown_template(self):
-        return settings.JINJA_ENV.get_template(self.markdown_template_path)
 
     @property
     def is_draft(self):
@@ -122,17 +115,39 @@ class Post(object):
 
         return metadata, content
 
+    def _normalize_source(self):
+        if settings.NORMALIZE_INPUT_FILES:
+            output = self.render_markdown()
+            output_filename = (self.source.dirname() / self.markdown_file_name).abspath()
+            with open(output_filename, mode='wb', encoding='UTF-8') as file:
+                file.write(output)
+
+            if self.source.abspath() != output_filename:
+                # remove the original source file unless it has
+                # the same name as the new target file
+                self.source.remove_p()
+
+            self.source = output_filename
+        return
+
     def render_html(self):
-        return self.html_template.render(post=self, nav_context='post')
+        return settings.JINJA_ENV.get_template(self.html_template_path).render(post=self, nav_context='post')
 
     def render_markdown(self):
-        metadata = yaml.dump({
+        # A hack to guarantee the YAML output is in a sensible order.
+        d = {
             'title': self.title,
             'timestamp': self.timestamp,
             'status': self.status.name,
-            'slug': self.slug
-        }, default_flow_style=False)
-        return self.markdown_template.render(metadata=metadata, content=self.content_raw)
+            'slug': self.slug,
+            'external_link': self.external_link,
+            }
+        order = ['title', 'timestamp', 'status', 'slug', 'external_link']
+        metadata = ''
+        for k in order:
+            metadata += yaml.safe_dump(dict([[k, d[k]]]), default_flow_style=False)
+        return settings.JINJA_ENV.get_template(self.markdown_template_path).render(metadata=metadata,
+                                                                                   content=self.content_raw)
 
     def __unicode__(self):
         return self.markdown_file_name
@@ -151,9 +166,7 @@ class TemplatePage(object):
         settings.URLS[self.name] = self.absolute_url
 
     def render_html(self):
-    #        settings.JINJA_ENV.globals['engineer']['navigation']['section'] = self.name
         rendered = self.html_template.render(nav_context=self.name)
-        #        settings.JINJA_ENV.globals['engineer']['navigation']['section'] = 'default'
         return rendered
 
 

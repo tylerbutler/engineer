@@ -51,7 +51,7 @@ class EngineerConfiguration(object):
 
     def initialize(self, config):
         if getattr(self, '_initialized', False):
-            logger.warning("Configuration has already been initialized once.")
+            logger.debug("Configuration has already been initialized once.")
         else:
             self._initialized = True
 
@@ -95,6 +95,8 @@ class EngineerConfiguration(object):
         # Miscellaneous
         self.DEBUG = config.pop('DEBUG', False)
         self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
+        self.NORMALIZE_INPUT_FILES = config.pop('NORMALIZE_INPUT_FILES', True)
+        self.NORMALIZE_INPUT_FILE_MASK = config.pop('NORMALIZE_INPUT_FILE_MASK', u'({0}){1}-{2}.md')
         self.USE_CLIENT_SIDE_LESS = config.pop('USE_CLIENT_SIDE_LESS', (platform.system() == 'Windows'))
 
         for k, v in config.iteritems():

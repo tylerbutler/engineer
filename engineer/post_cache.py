@@ -31,7 +31,7 @@ class _PostCache(object):
 
     def clear(self):
         self._state.clear()
-        self.CACHE_VERSION = 1.4
+        self.CACHE_VERSION = 1.1
         self.enabled = not settings.DISABLE_CACHE
         self._cache_file = settings.POST_CACHE_FILE
 
@@ -46,7 +46,7 @@ class _PostCache(object):
                     self.clear()
                 else:
                     self._state = temp_cache
-        except (IOError, AttributeError, EOFError, TypeError), e:
+        except (KeyError, IOError, AttributeError, EOFError, TypeError), e:
             self.clear()
 
     def is_cached(self, file):

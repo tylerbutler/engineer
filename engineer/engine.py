@@ -1,6 +1,7 @@
 # coding=utf-8
 import argparse
 import sys
+from test.threaded_import_hangers import args
 from codecs import open
 from path import path
 from engineer.conf import settings
@@ -35,7 +36,7 @@ def build():
         'rollups': 0
     }
 
-    settings.OUTPUT_CACHE_DIR.rmtree()
+    settings.OUTPUT_CACHE_DIR.rmtree(ignore_errors=True)
 
     # Generate template pages
     template_page_source = (settings.TEMPLATE_DIR / 'pages').abspath()
@@ -130,18 +131,27 @@ def build():
 
 
 def cmdline(args=sys.argv):
-    parser = argparse.ArgumentParser(description="Engineer site builder.")
+    # Common parameters
+    common_parser = argparse.ArgumentParser(add_help=False)
+    common_parser.add_argument('--no-cache', '-n', dest='disable_cache', action='store_true',
+                               help="Disable the post cache.")
+    common_parser.add_argument('--verbose', '-v', dest='verbose', action='store_true', help="Display verbose output.")
+    common_parser.add_argument('--config', dest='config_file', default='config.yaml',
+                               help="Specify a configuration file to use.")
 
-    top_group = parser.add_mutually_exclusive_group()
-    top_group.add_argument('--build', '-b', dest='build', action='store_true', help="Build the site.")
-    top_group.add_argument('--clean', '-c', dest='clean', action='store_true', help="Clean the output directory.")
-    top_group.add_argument('--serve', '-s', dest='serve', action='store_true', help="Start the development server.")
+    main_parser = argparse.ArgumentParser(
+        description="Engineer site builder.",
+        parents=[common_parser])
 
-    parser.add_argument('--no-cache', '-n', dest='disable_cache', action='store_true', help="Disable the post cache.")
-    parser.add_argument('--verbose', '-v', dest='verbose', action='store_true', help="Display verbose output.")
-    parser.add_argument('--config', dest='config_file', default='config.yaml',
-                        help="Specify a configuration file to use.")
-    args = parser.parse_args()
+    top_group = main_parser.add_mutually_exclusive_group(required=True)
+    top_group.add_argument('--build', '-b', dest='build',
+                           action='store_true', help="Build the site.")
+    top_group.add_argument('--serve', '-s', dest='serve',
+                           action='store_true', help="Start the development server.")
+    top_group.add_argument('--clean', '-c', dest='clean',
+                           action='store_true', help="Clean the output directory.")
+
+    args = main_parser.parse_args()
 
     settings.initialize_from_yaml(args.config_file)
     settings.DISABLE_CACHE = args.disable_cache
@@ -155,12 +165,12 @@ def cmdline(args=sys.argv):
         from engineer.server import serve
 
         serve()
-    elif args.clean:
-        clean()
-        exit()
     elif args.build:
         build()
         exit()
+    elif args.clean:
+        clean()
+        exit()
     else:
-        parser.print_help()
+        main_parser.print_help()
         exit()

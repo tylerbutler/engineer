@@ -79,6 +79,7 @@ class EngineerConfiguration(object):
         self.FEED_TITLE = config.pop('FEED_TITLE_ATOM', self.SITE_TITLE + ' Feed')
         self.FEED_DESCRIPTION = config.pop('FEED_DESCRIPTION',
                                            'The %s most recent posts from %s.' % (self.ROLLUP_PAGE_SIZE, self.SITE_URL))
+        self.FEED_ITEM_LIMIT = config.pop('FEED_ITEM_LIMIT', self.ROLLUP_PAGE_SIZE)
 
         def page(num):
             page_path = urljoin('page', str(num))

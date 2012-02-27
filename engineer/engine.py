@@ -117,7 +117,7 @@ def build():
     # Generate feeds
     feed_output_path = ensure_exists(settings.OUTPUT_CACHE_DIR / 'feeds/rss.xml')
     feed_content = settings.JINJA_ENV.get_template('core/rss.xml').render(
-        post_list=all_posts[:settings.ROLLUP_PAGE_SIZE],
+        post_list=all_posts[:settings.FEED_ITEM_LIMIT],
         build_date=datetime.now())
     with open(feed_output_path, mode='wb', encoding='UTF-8') as file:
         file.write(feed_content)

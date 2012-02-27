@@ -1,6 +1,5 @@
 # coding=utf-8
 import markdown
-import pynq
 import re
 import yaml
 from codecs import open
@@ -45,6 +44,7 @@ class Post(object):
 
         self.title = metadata.get('title', self.source.namebase.replace('-', ' ').replace('_', ' '))
         self.slug = metadata.get('slug', slugify(self.title))
+        self.tags = metadata.get('tags', [])
         self.external_link = metadata.get('external_link', None)
 
         self.attribute_to = self.attribute_to_link = None
@@ -171,8 +171,9 @@ class Post(object):
             'slug': self.slug,
             'external_link': self.external_link,
             'attribution': self.attribution,
+            'tags': self.tags,
             }
-        order = ['title', 'timestamp', 'status', 'slug', 'external_link', 'attribution']
+        order = ['title', 'timestamp', 'status', 'tags', 'external_link', 'attribution', 'slug', ]
         metadata = ''
         for k in order:
             if d[k]:
@@ -219,6 +220,13 @@ class PostCollection(list):
         return PostCollection([p for p in self if p.is_draft == True])
 
     @CachedProperty
+    def all_tags(self):
+        tags = set()
+        for post in self:
+            tags.update(post.tags)
+        return list(tags)
+
+    @CachedProperty
     def grouped_by_year(self):
         years = map(lambda x: x.timestamp.year, self)
         years = set(years)
@@ -227,6 +235,9 @@ class PostCollection(list):
         to_return = sorted(to_return, reverse=True)
 
         return to_return
+
+    def tagged(self, tag):
+        return PostCollection([p for p in self if tag in p.tags])
 
     def output_path(self, slice_num):
         return path(settings.OUTPUT_CACHE_DIR / ("page/%s/index.html" % slice_num))
@@ -241,3 +252,8 @@ class PostCollection(list):
 
     def render_archive_html(self):
         return self.archive_template.render(post_list=self.grouped_by_year, nav_context='archive')
+
+    def render_tag_html(self, tag):
+        return settings.JINJA_ENV.get_template('theme/tags_list.html').render(tag=tag,
+                                                                              post_list=self.tagged(
+                                                                                  tag).grouped_by_year)

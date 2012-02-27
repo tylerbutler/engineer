@@ -12,13 +12,13 @@
                     </div>
                 {% endwith %}
             </div>
-            {#                {% if post.tags.count > 0 %}#}
-            {#                    <ul class="tags">#}
-            {#                        {% for tag in post.tags.all %}#}
-            {#                            <li><a href="{% url 'tag' tag=tag.name %}">{{ tag }}</a></li>#}
-            {#                        {% endfor %}#}
-            {#                    </ul>#}
-            {#                {% endif %}#}
+            {% if post.tags.count > 0 %}
+                <ul class="tags">
+                    {% for tag in post.tags %}
+                        <li><a href="{{ urlname('tag', tag) }}">{{ tag }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
     {% endblock post_info %}
     {% block post_content %}

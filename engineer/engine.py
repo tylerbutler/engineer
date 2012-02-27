@@ -1,7 +1,6 @@
 # coding=utf-8
 import argparse
 import sys
-from test.threaded_import_hangers import args
 from codecs import open
 from path import path
 from engineer.conf import settings
@@ -33,8 +32,9 @@ def build():
         'template_pages': 0,
         'new_posts': 0,
         'cached_posts': 0,
-        'rollups': 0
-    }
+        'rollups': 0,
+        'tag_pages': 0,
+        }
 
     settings.OUTPUT_CACHE_DIR.rmtree(ignore_errors=True)
 
@@ -71,8 +71,8 @@ def build():
 
     # Generate rollup pages
     num_posts = len(all_posts)
-    num_slices = (num_posts / settings.ROLLUP_PAGE_SIZE) if num_posts % settings.ROLLUP_PAGE_SIZE == 0 else (
-                                                                                                                num_posts / settings.ROLLUP_PAGE_SIZE) + 1
+    num_slices = (num_posts / settings.ROLLUP_PAGE_SIZE) if num_posts % settings.ROLLUP_PAGE_SIZE == 0\
+    else (num_posts / settings.ROLLUP_PAGE_SIZE) + 1
 
     slice_num = 0
     for posts in all_posts.paginate():
@@ -102,6 +102,17 @@ def build():
             file.write(rendered_archive)
             logger.debug("Output '%s'." % file.name)
 
+    # Generate tag pages
+    if num_posts > 0:
+        tags_output_path = settings.OUTPUT_CACHE_DIR / 'tag'
+        for tag in all_posts.all_tags:
+            rendered_tag_page = all_posts.render_tag_html(tag)
+            tag_path = ensure_exists(tags_output_path / tag / 'index.html')
+            with open(tag_path, mode='wb', encoding='UTF-8') as file:
+                file.write(rendered_tag_page)
+                build_stats['tag_pages'] += 1
+                logger.debug("Output '%s'." % file.name)
+
     # Copy static content to output dir
     s = settings.ENGINEER_STATIC_DIR.abspath()
     t = (settings.OUTPUT_CACHE_DIR / settings.ENGINEER_STATIC_DIR.basename()).abspath()
@@ -125,6 +136,7 @@ def build():
         (build_stats['new_posts'] + build_stats['cached_posts']), build_stats['new_posts']))
     logger.info("Post rollup pages: %s (%s posts per page)" % (build_stats['rollups'], settings.ROLLUP_PAGE_SIZE))
     logger.info("Template pages: %s" % build_stats['template_pages'])
+    logger.info("Tag pages: %s" % build_stats['tag_pages'])
     logger.info("%s new items, %s modified items, and %s deleted items." % (len(report['new']),
                                                                             len(report['overwritten']),
                                                                             len(report['deleted'])))

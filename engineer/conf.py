@@ -79,12 +79,18 @@ class EngineerConfiguration(object):
             page_path = urljoin('page', str(num))
             return urljoin(self.HOME_URL, page_path)
 
+        def tag(name):
+            page_path = urljoin('tag', name)
+            page_path = urljoin(self.HOME_URL, page_path)
+            return page_path
+
         self.URLS = {
             'home': self.HOME_URL,
             'archives': urljoin(self.HOME_URL, 'archives'),
             'atom_feed': 'feeds/atom.xml',
             'rss_feed': 'feeds/rss.xml',
             'listpage': page,
+            'tag': tag,
             }
 
         # THEMES

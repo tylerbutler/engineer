@@ -1,5 +1,6 @@
 # coding=utf-8
 import argparse
+from datetime import datetime
 import sys
 from codecs import open
 from path import path
@@ -112,6 +113,15 @@ def build():
                 file.write(rendered_tag_page)
                 build_stats['tag_pages'] += 1
                 logger.debug("Output '%s'." % file.name)
+
+    # Generate feeds
+    feed_output_path = ensure_exists(settings.OUTPUT_CACHE_DIR / 'feeds/rss.xml')
+    feed_content = settings.JINJA_ENV.get_template('core/rss.xml').render(
+        post_list=all_posts[:settings.ROLLUP_PAGE_SIZE],
+        build_date=datetime.now())
+    with open(feed_output_path, mode='wb', encoding='UTF-8') as file:
+        file.write(feed_content)
+        logger.debug("Output '%s'." % file.name)
 
     # Copy static content to output dir
     s = settings.ENGINEER_STATIC_DIR.abspath()

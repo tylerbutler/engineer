@@ -1,0 +1,9 @@
+<item>
+    <title>{{ post.title }}</title>
+    <link>{{ post.absolute_url }}</link>
+    <description><![CDATA[
+            {{ post.content }}
+            ]]></description>
+    <pubDate>{{ post.timestamp|date("%a, %d %b %Y %H:%M:%S %Z") }}</pubDate>
+    <guid>{{ post.absolute_url }}</guid>
+</item>

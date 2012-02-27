@@ -7,7 +7,7 @@
                     <div class="day">{{ timestamp|date("%d") }}</div>
                     <div class="year">{{ timestamp|date("%Y") }}</div>
                     <div class="permalink">
-                        <a href="{{ post.absolute_url }}"
+                        <a href="{{ post.url }}"
                            title="Permanent link to '{{ post.title }}'">∞</a>
                     </div>
                 {% endwith %}
@@ -28,7 +28,7 @@
                 <header>
                     <h1>
                         <a href="{% if link %}{{ post.external_link }}{% else %}
-        {{ post.absolute_url }}{% endif %}">{{ post.title }}</a>
+        {{ post.url }}{% endif %}">{{ post.title }}</a>
                         {% if link %}<span class="arrow">→</span>{% endif %}
                     </h1>
                 </header>

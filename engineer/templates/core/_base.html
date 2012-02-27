@@ -13,23 +13,21 @@
 
     <title>{{ theme.name }}</title>
 
-{#    {% if meta_description %}#}
-{#        <meta name="description" content="{{ engineer.meta_description }}">#}
-{#    {% endif %}#}
-{##}
-{#    {% if meta_author %}#}
-{#        <meta name="author" content="{% block meta_author %}{% endblock %}">#}
-{#    {% endif %}#}
+    {#    {% if meta_description %}#}
+    {#        <meta name="description" content="{{ engineer.meta_description }}">#}
+    {#    {% endif %}#}
+    {##}
+    {% if meta_author %}
+        <meta name="author" content="{% block meta_author %}{{ settings.SITE_AUTHOR }}{% endblock %}">
+    {% endif %}
 
-    <link rel="alternate" type="application/atom+xml"
-          title="{{ theme.name }} Atom Feed" href="{{ url.atom_feed }}"/>
     <link rel="alternate" type="application/rss+xml"
-          title="{{ theme.name }} RSS Feed" href="{{ url.rss_feed }}"/>
+          title="{{ settings.SITE_TITLE }} RSS Feed" href="{{ urlname('feed') }}"/>
 
     {% if theme.use_foundation %}
         {# FOUNDATION CSS #}
-            <link rel="stylesheet" href="{{ engineer.foundation_url }}stylesheets/grid.css">
-            <link rel="stylesheet" href="{{ engineer.foundation_url }}stylesheets/mobile.css">
+        <link rel="stylesheet" href="{{ engineer.foundation_url }}stylesheets/grid.css">
+        <link rel="stylesheet" href="{{ engineer.foundation_url }}stylesheets/mobile.css">
 
         <!--[if lt IE 9]>
             <link rel="stylesheet" href="{{ engineer.foundation_url }}stylesheets/ie.css">

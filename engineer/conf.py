@@ -71,9 +71,14 @@ class EngineerConfiguration(object):
 
         # SITE SETTINGS
         self.SITE_TITLE = config.pop('SITE_TITLE', '')
+        self.SITE_URL = config.pop('SITE_URL') #required
+        self.SITE_AUTHOR = config.pop('SITE_AUTHOR', '')
         self.HOME_URL = config.pop('HOME_URL', '/')
         self.STATIC_URL = config.pop('STATIC_URL', urljoin(self.HOME_URL, 'static'))
         self.ROLLUP_PAGE_SIZE = int(config.pop('ROLLUP_PAGE_SIZE', 5))
+        self.FEED_TITLE = config.pop('FEED_TITLE_ATOM', self.SITE_TITLE + ' Feed')
+        self.FEED_DESCRIPTION = config.pop('FEED_DESCRIPTION',
+                                           'The %s most recent posts from %s.' % (self.ROLLUP_PAGE_SIZE, self.SITE_URL))
 
         def page(num):
             page_path = urljoin('page', str(num))
@@ -87,8 +92,7 @@ class EngineerConfiguration(object):
         self.URLS = {
             'home': self.HOME_URL,
             'archives': urljoin(self.HOME_URL, 'archives'),
-            'atom_feed': 'feeds/atom.xml',
-            'rss_feed': 'feeds/rss.xml',
+            'feed': urljoin(self.HOME_URL, 'feeds/rss.xml'),
             'listpage': page,
             'tag': tag,
             }

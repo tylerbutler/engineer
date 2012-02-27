@@ -66,10 +66,11 @@ class Post(object):
                                                  self.status.name[:1],
                                                  self.timestamp.strftime('%Y-%m-%d'),
                                                  self.slug)
-        self.absolute_url = unicode.format(u'{0}{1}/{2}/',
-                                           settings.HOME_URL,
-                                           self.timestamp.strftime('%Y/%m/%d'),
-                                           self.slug)
+        self.url = unicode.format(u'{0}{1}/{2}/',
+                                  settings.HOME_URL,
+                                  self.timestamp.strftime('%Y/%m/%d'),
+                                  self.slug)
+        self.absolute_url = unicode.format(u'{0}{1}', settings.SITE_URL, self.url)
         self.output_path = path(settings.OUTPUT_CACHE_DIR / self.timestamp.strftime('%Y/%m/%d') / self.slug)
         self.output_file_name = 'index.html'#'%s.html' % self.slug
 

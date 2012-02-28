@@ -19,18 +19,13 @@ import sys, os
 #sys.path.insert(0, os.path.abspath('.'))
 
 from path import path
+
 to_add = path(__file__).dirname().dirname().abspath()
 print "Adding to path: %s" % to_add
 sys.path.append(to_add)
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'APP_NAME_test.settings'
-
-APP_NAME = u'APP_NAME'
-AUTHOR_NAME = u'AUTHOR_NAME'
-
-#from potpourri.tests.test_project import settings
-#from django.core.management import setup_environ
-#setup_environ(settings)
+APP_NAME = u'engineer'
+AUTHOR_NAME = u'Tyler Butler <tyler@tylerbutler.com>'
 
 # -- General configuration -----------------------------------------------------
 
@@ -184,21 +179,21 @@ htmlhelp_basename = '%sdoc' % APP_NAME
 # -- Options for LaTeX output --------------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #'preamble': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', '%s.tex' % APP_NAME, u'%s Documentation' % APP_NAME,
-   u'Tyler Butler', 'manual'),
+    ('index', '%s.tex' % APP_NAME, u'%s Documentation' % APP_NAME,
+     AUTHOR_NAME, 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -241,8 +236,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', APP_NAME, u'%s Documentation' % APP_NAME, AUTHOR_NAME,
-   APP_NAME, 'One line description of project.', 'Miscellaneous'),
+    ('index', APP_NAME, u'%s Documentation' % APP_NAME, AUTHOR_NAME,
+     APP_NAME, 'One line description of project.', 'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.

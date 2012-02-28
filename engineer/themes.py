@@ -7,6 +7,10 @@ from engineer.util import get_class
 __author__ = 'tyler@tylerbutler.com'
 
 class Theme(object):
+    """
+    Creates a new theme object based on the contents of *theme_root_path*.
+    """
+
     def __init__(self, theme_root_path, **kwargs):
         self.root_path = path(theme_root_path)
         self.name = kwargs.get('name')
@@ -21,11 +25,14 @@ class Theme(object):
         self.use_jquery = kwargs.get('use_jquery', False)
 
         self.self_contained = kwargs.get('self_contained', True)
-        self.static_root = path(kwargs.get('static_root', self.root_path / 'static/')).abspath()
-        self.template_root = path(kwargs.get('template_root', self.root_path / 'templates')).abspath()
+        self.static_root = path(
+            kwargs.get('static_root', self.root_path / 'static/')).abspath()
+        self.template_root = path(
+            kwargs.get('template_root', self.root_path / 'templates')).abspath()
 
         if 'templates' in kwargs:
-            self.templates = dict((k, self.theme_path(v)) for (k, v) in kwargs['templates'].iteritems())
+            self.templates = dict((k, self.theme_path(v)) for (k, v) in kwargs[
+                                                                        'templates'].iteritems())
         else:
             self.templates = dict((p.namebase, 'theme/%s' % p.name) for p in
             self.template_root.walkfiles(pattern='*.html'))

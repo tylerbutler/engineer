@@ -1,8 +1,12 @@
-# coding=utf-8
 
 =============
 Configuration
 =============
+
+.. currentmodule:: engineer.conf
+
+.. autoclass:: EngineerConfiguration
+   :members:
 
 Content Location Settings
 =========================

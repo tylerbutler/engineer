@@ -1,3 +1,5 @@
-SITE_TITLE: Sample Site
+SITE_TITLE: Sample Engineer Site
 HOME_URL: '/'
+SITE_URL: http://example.com
 
+PUBLISH_DRAFTS: yes

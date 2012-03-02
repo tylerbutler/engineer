@@ -157,6 +157,27 @@ def build():
                                                                             len(report['deleted'])))
 
 
+def management_server():
+    import bottle
+
+    @bottle.route('/<filepath:path>')
+    def server_static(filepath):
+        print "trying filepath %s" % filepath
+        response = bottle.static_file(filepath, root=settings.OUTPUT_DIR)
+        print 'response: %s' % response.output
+        if type(response) is bottle.HTTPError:
+            print "appending /index.html and trying again."
+            return bottle.static_file(path(filepath) / 'index.html', root=settings.OUTPUT_DIR)
+
+    @bottle.route('/manage')
+    def manage():
+        return 'Management Page'
+
+    bottle.debug(True)
+    #    bottle.default_app.mount(bottle.load_app('servefiles'), '/')
+    bottle.run(server='paste', host='localhost', port=8000, reloader=True, interval=3)
+
+
 def cmdline(args=sys.argv):
     # Common parameters
     common_parser = argparse.ArgumentParser(add_help=False)
@@ -189,9 +210,10 @@ def cmdline(args=sys.argv):
         logger.setLevel(logging.DEBUG)
 
     if args.serve:
-        from engineer.server import serve
+        #from engineer.server import serve
 
-        serve()
+        #serve()
+        management_server()
     elif args.build:
         build()
         exit()

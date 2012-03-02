@@ -56,7 +56,12 @@ def build():
     new_posts, cached_posts = LocalLoader.load_all(input=settings.POST_DIR)
     all_posts = PostCollection(new_posts + cached_posts)
 
-    all_posts = PostCollection(sorted(all_posts.published, reverse=True, key=lambda post: post.timestamp))
+    if settings.PUBLISH_DRAFTS:
+        to_publish = all_posts
+    else:
+        to_publish = PostCollection(all_posts.published)
+
+    all_posts = PostCollection(sorted(to_publish, reverse=True, key=lambda post: post.timestamp))
 
     # Generate individual post pages
     for post in all_posts:

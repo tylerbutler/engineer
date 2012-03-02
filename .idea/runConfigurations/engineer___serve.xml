@@ -6,13 +6,13 @@
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
     <option name="SDK_HOME" value="" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/sample_site" />
     <option name="IS_MODULE_SDK" value="true" />
     <module name="blog-static" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/engineer_script.py" />
-    <option name="PARAMETERS" value="-s --settings sample_site_settings" />
-    <option name="MULTIPROCESS" value="false" />
+    <option name="PARAMETERS" value="-s" />
+    <option name="MULTIPROCESS" value="true" />
     <RunnerSettings RunnerId="PyDebugRunner" />
     <RunnerSettings RunnerId="PythonRunner" />
     <ConfigurationWrapper RunnerId="PyDebugRunner" />

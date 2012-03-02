@@ -31,6 +31,8 @@ class EngineerConfiguration(object):
         self.__dict__ = cls._state
         return self
 
+    _required_params = ('SITE_URL',)
+
     # ENGINEER 'CONSTANT' PATHS
     ENGINEER_ROOT_DIR = path(__file__).dirname().abspath()
     ENGINEER_TEMPLATE_DIR = (ENGINEER_ROOT_DIR / 'templates').abspath()
@@ -38,14 +40,26 @@ class EngineerConfiguration(object):
     ENGINEER_THEMES_DIR = (ENGINEER_ROOT_DIR / 'themes').abspath()
 
     def __init__(self, settings_file='config.yaml'):
-        self.initialize_from_yaml(settings_file)
+        self.reload(settings_file)
+
+    def reload(self, settings_file='config.yaml'):
+        if settings_file is None and self._initialized:
+            return
+        else:
+            self.initialize_from_yaml(settings_file)
+
 
     def initialize_from_yaml(self, yaml_file):
         # Load settings from YAML file if found
-        if yaml_file and (path.getcwd() / yaml_file).exists():
+        self.settings_file = path.getcwd() / yaml_file
+        if yaml_file and self.settings_file.exists():
             with open(path.getcwd() / yaml_file, mode='rb') as file:
                 config = yaml.load(file)
-                self.initialize(config)
+            for param in self._required_params:
+                if param not in config:
+                    raise Exception("Required setting '%s' is missing from config file %s." %
+                                    (param, path.getcwd() / yaml_file))
+            self.initialize(config)
         else:
             self.initialize({})
 
@@ -71,7 +85,7 @@ class EngineerConfiguration(object):
 
         # SITE SETTINGS
         self.SITE_TITLE = config.pop('SITE_TITLE', '')
-        self.SITE_URL = config.pop('SITE_URL') #required
+        self.SITE_URL = config.pop('SITE_URL')
         self.SITE_AUTHOR = config.pop('SITE_AUTHOR', '')
         self.HOME_URL = config.pop('HOME_URL', '/')
         self.STATIC_URL = config.pop('STATIC_URL', urljoin(self.HOME_URL, 'static'))
@@ -109,6 +123,7 @@ class EngineerConfiguration(object):
         self.NORMALIZE_INPUT_FILES = config.pop('NORMALIZE_INPUT_FILES', True)
         self.NORMALIZE_INPUT_FILE_MASK = config.pop('NORMALIZE_INPUT_FILE_MASK', u'({0}){1}-{2}.md')
         self.USE_CLIENT_SIDE_LESS = config.pop('USE_CLIENT_SIDE_LESS', (platform.system() == 'Windows'))
+        self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
 
         for k, v in config.iteritems():
             setattr(self, k, v)

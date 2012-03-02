@@ -1,6 +1,8 @@
-SITE_TITLE: Sample Site
+SITE_TITLE: Engineer Site
 HOME_URL: '/'
 SITE_URL: http://example.com
 
 PUBLISH_DRAFTS: yes
-SITE_URL: http://example.com
+
+THEME_SETTINGS:
+  typekit_id: vty2qol

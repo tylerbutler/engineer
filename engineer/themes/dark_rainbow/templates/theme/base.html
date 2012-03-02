@@ -9,7 +9,8 @@
 
 {%- block scripts_top %}
     {# TYPEKIT #}
-    <script type="text/javascript" src="{{ theme.typekit_url }}"></script>
+    <script type="text/javascript"
+            src="http://use.typekit.com/{{ theme.typekit_id }}.js"></script>
     <script type="text/javascript">
         try {
             Typekit.load();
@@ -24,13 +25,15 @@
     {%- block header_primary %}
         <header id="primary" class="row">
             {%- block header_primary_content %}
-                <h1 class="{%- block header_primary_h1_class %}five columns{% endblock -%}">
+                <h1 class="
+                        {%- block header_primary_h1_class %}five columns{% endblock -%}">
                     <a href="{{ urlname('home') }}">
                         {%- block header_primary_title %}{{ settings.SITE_TITLE|lower }}{% endblock -%}</a>
                 </h1>
             {% endblock -%}
             {%- block nav_primary %}
-                <nav class="{%- block nav_primary_class %}seven columns{% endblock -%}">
+                <nav class="
+                        {%- block nav_primary_class %}seven columns{% endblock -%}">
                     {%- block nav_primary_content %}
                         {% include 'theme/_nav_primary.html' %}
                     {% endblock -%}
@@ -41,11 +44,14 @@
     {%- block header_secondary %}
         <header id="secondary" class="row">
             {%- block header_secondary_content %}
-                <h1 class="{%- block header_secondary_h1_class %}six columns{% endblock -%}">
-                    {%- block header_secondary_title %}<span class="replace_me">section header</span>{% endblock -%}
+                <h1 class="
+                        {%- block header_secondary_h1_class %}six columns{% endblock -%}">
+                    {%- block header_secondary_title %}<span class="replace_me">
+                        section header</span>{% endblock -%}
                 </h1>
                 {%- block nav_secondary %}
-                    <nav class="{%- block nav_secondary_class %}six columns{% endblock -%}">
+                    <nav class="
+                            {%- block nav_secondary_class %}six columns{% endblock -%}">
                         {%- block nav_secondary_content %}
                             <ul class="replace_me">
                                 <li>secondary</li>
@@ -59,14 +65,19 @@
     {% endblock -%}
     <div class="row">
         {%- block section_main %}
-            <section id="main" class="{%- block section_main_class %}nine columns{% endblock -%}" role="main">
+            <section id="main" class="
+                    {%- block section_main_class %}nine columns{% endblock -%}"
+                     role="main">
                 {%- block section_main_content %}
-                    <div class="replace_me">Replace this content in the main section.</div>
+                    <div class="replace_me">Replace this content in the main
+                        section.
+                    </div>
                 {% endblock -%}
             </section>
         {% endblock -%}
         {%- block section_sidebar %}
-            <section id="sidebar" class="{%- block section_sidebar_class %}three columns{% endblock -%}">
+            <section id="sidebar" class="
+                    {%- block section_sidebar_class %}three columns{% endblock -%}">
                 {%- block section_sidebar_content %}
                     {% include 'theme/_sidebar.html' %}
                 {% endblock -%}
@@ -75,7 +86,8 @@
     </div>
     <div class="row">
         {%- block footer %}
-            <footer class="{%- block footer_class %}twelve columns centered{% endblock -%}">
+            <footer class="
+                    {%- block footer_class %}twelve columns centered{% endblock -%}">
                 {%- block footer_content %}
                     {% include 'theme/_footer.html' %}
                 {% endblock -%}
@@ -85,5 +97,6 @@
 {% endblock body %}
 
 {%- block scripts_bottom %}
-    <script type="text/javascript" src="{{ STATIC_URL }}/theme/scripts/highlight.js"></script>
+    <script type="text/javascript"
+            src="{{ STATIC_URL }}/theme/scripts/highlight.js"></script>
 {% endblock -%}

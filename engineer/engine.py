@@ -178,13 +178,13 @@ def management_server():
     import bottle
 
     @bottle.route('/<filepath:path>')
-    def server_static(filepath):
-        print "trying filepath %s" % filepath
+    def serve_static(filepath):
         response = bottle.static_file(filepath, root=settings.OUTPUT_DIR)
-        print 'response: %s' % response.output
         if type(response) is bottle.HTTPError:
-            print "appending /index.html and trying again."
-            return bottle.static_file(path(filepath) / 'index.html', root=settings.OUTPUT_DIR)
+            return bottle.static_file(path(filepath) / 'index.html',
+                                      root=settings.OUTPUT_DIR)
+        else:
+            return response
 
     @bottle.route('/manage')
     def manage():
@@ -192,7 +192,7 @@ def management_server():
 
     bottle.debug(True)
     #    bottle.default_app.mount(bottle.load_app('servefiles'), '/')
-    bottle.run(server='paste', host='localhost', port=8000, reloader=True, interval=3)
+    bottle.run(host='localhost', port=8000, reloader=True)
 
 
 def cmdline(args=sys.argv):

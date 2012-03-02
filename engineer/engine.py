@@ -59,14 +59,13 @@ def build():
     new_posts, cached_posts = LocalLoader.load_all(input=settings.POST_DIR)
     all_posts = PostCollection(new_posts + cached_posts)
 
-    all_posts = PostCollection(sorted(all_posts.published, reverse=True,
-                                      key=lambda post: post.timestamp))
     if settings.PUBLISH_DRAFTS:
         to_publish = all_posts
     else:
         to_publish = PostCollection(all_posts.published)
 
-    all_posts = PostCollection(sorted(to_publish, reverse=True, key=lambda post: post.timestamp))
+    all_posts = PostCollection(
+        sorted(to_publish, reverse=True, key=lambda post: post.timestamp))
 
     # Generate individual post pages
     for post in all_posts:
@@ -84,7 +83,7 @@ def build():
     # Generate rollup pages
     num_posts = len(all_posts)
     num_slices = (
-    num_posts / settings.ROLLUP_PAGE_SIZE) if num_posts % settings.ROLLUP_PAGE_SIZE == 0\
+        num_posts / settings.ROLLUP_PAGE_SIZE) if num_posts % settings.ROLLUP_PAGE_SIZE == 0\
     else (num_posts / settings.ROLLUP_PAGE_SIZE) + 1
 
     slice_num = 0
@@ -142,15 +141,15 @@ def build():
 
     # Copy static content to output dir
     s = settings.ENGINEER_STATIC_DIR.abspath()
-    t = (
-    settings.OUTPUT_CACHE_DIR / settings.ENGINEER_STATIC_DIR.basename()).abspath()
+    t = ( settings.OUTPUT_CACHE_DIR /
+          settings.ENGINEER_STATIC_DIR.basename()).abspath()
     mirror_folder(s, t)
     logger.debug("Copied static files to '%s'." % t)
 
     # Copy theme static content to output dir
     s = ThemeManager.current_theme().static_root.abspath()
     t = (
-    settings.OUTPUT_CACHE_DIR / settings.ENGINEER_STATIC_DIR.basename() / 'theme').abspath()
+        settings.OUTPUT_CACHE_DIR / settings.ENGINEER_STATIC_DIR.basename() / 'theme').abspath()
     mirror_folder(s, t)
     logger.debug("Copied static files for theme to '%s'." % t)
 
@@ -166,13 +165,13 @@ def build():
         (build_stats['new_posts'] + build_stats['cached_posts']),
         build_stats['new_posts']))
     logger.info("Post rollup pages: %s (%s posts per page)" % (
-    build_stats['rollups'], settings.ROLLUP_PAGE_SIZE))
+        build_stats['rollups'], settings.ROLLUP_PAGE_SIZE))
     logger.info("Template pages: %s" % build_stats['template_pages'])
     logger.info("Tag pages: %s" % build_stats['tag_pages'])
     logger.info("%s new items, %s modified items, and %s deleted items." % (
-    len(report['new']),
-    len(report['overwritten']),
-    len(report['deleted'])))
+        len(report['new']),
+        len(report['overwritten']),
+        len(report['deleted'])))
 
 
 def cmdline(args=sys.argv):

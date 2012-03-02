@@ -18,16 +18,20 @@
     {#    {% endif %}#}
     {##}
     {% if meta_author %}
-        <meta name="author" content="{% block meta_author %}{{ settings.SITE_AUTHOR }}{% endblock %}">
+        <meta name="author"
+              content="{% block meta_author %}{{ settings.SITE_AUTHOR }}{% endblock %}">
     {% endif %}
 
     <link rel="alternate" type="application/rss+xml"
-          title="{{ settings.SITE_TITLE }} RSS Feed" href="{{ urlname('feed') }}"/>
+          title="{{ settings.SITE_TITLE }} RSS Feed"
+          href="{{ urlname('feed') }}"/>
 
     {% if theme.use_foundation %}
         {# FOUNDATION CSS #}
-        <link rel="stylesheet" href="{{ engineer.foundation_url }}stylesheets/grid.css">
-        <link rel="stylesheet" href="{{ engineer.foundation_url }}stylesheets/mobile.css">
+        <link rel="stylesheet"
+              href="{{ engineer.foundation_url }}stylesheets/grid.css">
+        <link rel="stylesheet"
+              href="{{ engineer.foundation_url }}stylesheets/mobile.css">
 
         <!--[if lt IE 9]>
             <link rel="stylesheet" href="{{ engineer.foundation_url }}stylesheets/ie.css">
@@ -38,18 +42,22 @@
 
     {% if theme.use_lesscss %}
         {% if settings.USE_CLIENT_SIDE_LESS %}
-            <script src="{{ engineer.lesscss_url }}" type="text/javascript"></script>
-            <script type="text/javascript">
-                //less = { env:'development' };
-                less.watch();
-            </script>
+            <script src="{{ engineer.lesscss_url }}"
+                    type="text/javascript"></script>
+            {% if DEBUG %}
+                <script type="text/javascript">
+                    //less = { env:'development' };
+                    less.watch();
+                </script>
+            {% endif %}
         {% endif %}
     {% endif %}
 
     {% block scripts_top %}{% endblock %}
 
     {% if theme.use_modernizr %}
-        <script src="{{ engineer.modernizr_url }}" type="text/javascript"></script>
+        <script src="{{ engineer.modernizr_url }}"
+                type="text/javascript"></script>
     {% endif %}
 
     {% if theme.use_jquery -%}

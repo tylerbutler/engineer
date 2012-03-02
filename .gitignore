@@ -32,9 +32,10 @@ pip-log.txt
 *.mo
 
 ### ENGINEER ###
+/docs
 /output/
-/cache/
 /logs/
+_cache/
 *.cache
 sample_site/output/
-sample_site/cache/
+sample_site/_cache/

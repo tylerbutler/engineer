@@ -39,3 +39,4 @@ _cache/
 *.cache
 sample_site/output/
 sample_site/_cache/
+_emma_secret.pvt

@@ -1,19 +1,15 @@
-{% extends 'theme/base.html' %}
+{% extends 'theme/template_page_base.html' %}
 
-{% block nav_secondary %}
-    {# No secondary nav. #}
-{% endblock %}
-
-{% block header_secondary_title %}
-    {% block title %}
-        Simple Template Page
-    {% endblock %}
-{% endblock %}
-
+{% block page_title %}Simple Template Page{% endblock %}
 
 {% block section_main_content %}
-    {% block content %}
-        <h1>A Simple Template Page</h1>
-        <p>This is a simple template page!</p>
-    {% endblock %}
+    {% filter typogrify %}
+        {% block content %}
+            <div class="replace-me">
+                <h1>A Simple Template Page</h1>
+
+                <p>This is a simple template page!</p>
+            </div>
+        {% endblock %}
+    {% endfilter %}
 {% endblock %}

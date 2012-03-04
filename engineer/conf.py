@@ -2,9 +2,10 @@
 import platform
 import yaml
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
+from typogrify.templatetags.jinja2_filters import typogrify
 from path import path
 from zope.cachedescriptors import property as zproperty
-from engineer.filters import format_datetime
+from engineer.filters import format_datetime, markdown_filter
 from engineer.util import urljoin, ensure_exists
 from engineer.log import logger
 
@@ -88,10 +89,15 @@ class EngineerConfiguration(object):
             config.pop('POST_CACHE_FILE', (self.CACHE_DIR / 'post_cache.cache').abspath()))
         self.BUILD_STATS_FILE = config.pop('BUILD_STATS_FILE', (self.CACHE_DIR / 'build_stats.cache').abspath())
 
+        # THEMES
+        self.THEME_FINDERS = ['engineer.finders.DefaultFinder']
+        self.THEME_SETTINGS = config.pop('THEME_SETTINGS', {})
+        self.THEME = config.pop('THEME', 'dark_rainbow')
+
         # SITE SETTINGS
-        self.SITE_TITLE = config.pop('SITE_TITLE', '')
-        self.SITE_URL = config.pop('SITE_URL', '')
-        self.SITE_AUTHOR = config.pop('SITE_AUTHOR', '')
+        self.SITE_TITLE = config.pop('SITE_TITLE', 'SITE_TITLE')
+        self.SITE_URL = config.pop('SITE_URL', 'SITE_URL')
+        self.SITE_AUTHOR = config.pop('SITE_AUTHOR', None)
         self.HOME_URL = config.pop('HOME_URL', '/')
         self.STATIC_URL = config.pop('STATIC_URL', urljoin(self.HOME_URL, 'static'))
         self.ROLLUP_PAGE_SIZE = int(config.pop('ROLLUP_PAGE_SIZE', 5))
@@ -116,11 +122,6 @@ class EngineerConfiguration(object):
             'listpage': page,
             'tag': tag,
             }
-
-        # THEMES
-        self.THEME_FINDERS = ['engineer.finders.DefaultFinder']
-        self.THEME_SETTINGS = config.pop('THEME_SETTINGS', {})
-        self.THEME = config.pop('THEME', 'dark_rainbow')
 
         # Miscellaneous
         self.DEBUG = config.pop('DEBUG', False)
@@ -158,6 +159,8 @@ class EngineerConfiguration(object):
 
         env.filters['date'] = format_datetime
         env.filters['naturaltime'] = humanize.naturaltime
+        env.filters['typogrify'] = typogrify
+        env.filters['markdown'] = markdown_filter
         env.globals['engineer'] = engineer
         env.globals['theme'] = ThemeManager.current_theme()
         env.globals['urlname'] = urlname

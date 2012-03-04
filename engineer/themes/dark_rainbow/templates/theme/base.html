@@ -2,6 +2,11 @@
 
 {%- from 'core/_macros.html' import render_less_link -%}
 
+{% block site_title %}
+    {% block page_title %}{% endblock %}
+    {% if self.page_title() %}: {% endif %}{{ super() }}
+{% endblock %}
+
 {%- block stylesheets %}
     {{ render_less_link('theme/stylesheets/dark_rainbow.less') }}
     {%- block additional_stylesheets %}{% endblock -%}

@@ -11,7 +11,7 @@
     <!-- Set the viewport width to device width for mobile -->
     <meta name="viewport" content="width=device-width"/>
 
-    <title>{% block title %}{{ theme.name }}{% endblock %}</title>
+    <title>{% block site_title %}{{ settings.SITE_TITLE }}{% endblock %}</title>
 
     {#    {% if meta_description %}#}
     {#        <meta name="description" content="{{ engineer.meta_description }}">#}

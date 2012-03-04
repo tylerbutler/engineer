@@ -11,7 +11,7 @@
     <module name="blog-static" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/engineer_script.py" />
-    <option name="PARAMETERS" value="build" />
+    <option name="PARAMETERS" value="build --settings debug.yaml" />
     <option name="MULTIPROCESS" value="false" />
     <RunnerSettings RunnerId="PyDebugRunner" />
     <RunnerSettings RunnerId="PythonRunner" />

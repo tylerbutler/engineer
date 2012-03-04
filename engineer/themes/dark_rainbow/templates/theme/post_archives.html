@@ -1,5 +1,7 @@
 {% extends 'theme/base.html' %}
 
+{% block page_title %}Archives{% endblock %}
+
 {% block nav_secondary_content %}
     {# No secondary nav. #}
 {% endblock %}
@@ -9,7 +11,7 @@
 {% endblock %}
 
 {% block header_secondary_title %}
-    Archives
+    {{ self.page_title() }}
 {% endblock %}
 
 {% block section_main_content %}

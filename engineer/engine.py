@@ -24,8 +24,8 @@ def clean():
     try:
         settings.OUTPUT_DIR.rmtree()
         settings.OUTPUT_CACHE_DIR.rmtree()
-    except WindowsError as we:
-        if we.winerror not in (2, 3):
+    except OSError as we:
+        if hasattr(we, 'winerror') and we.winerror not in (2, 3):
             logger.exception(we.message)
         else:
             logger.info(
@@ -52,6 +52,8 @@ def build(args=None):
         'files': {},
         }
 
+    # Remove the output cache (not the post cache or the Jinja cache)
+    # since we're rebuilding the site
     settings.OUTPUT_CACHE_DIR.rmtree(ignore_errors=True)
 
     # Generate template pages

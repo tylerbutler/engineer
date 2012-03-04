@@ -77,8 +77,8 @@ class _PostCache(object):
     def delete(self):
         try:
             path(self._cache_file).abspath().remove()
-        except WindowsError as we:
-            if we.winerror not in (2, 3):
+        except OSError as we:
+            if hasattr(we, 'winerror') and we.winerror not in (2, 3):
                 logger.exception(we.message)
         self.clear()
 

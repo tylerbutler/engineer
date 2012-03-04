@@ -51,7 +51,7 @@ class EngineerConfiguration(object):
 
     def initialize_from_yaml(self, yaml_file):
         # Load settings from YAML file if found
-        logger.debug("Initializing sonfiguration from %s" % yaml_file)
+        logger.debug("Initializing configuration from %s" % yaml_file)
         if path(yaml_file).exists() and path(yaml_file).isfile():
             self.settings_file = path(yaml_file).abspath()
         else:
@@ -74,7 +74,7 @@ class EngineerConfiguration(object):
             self._initialized = True
 
         # CONTENT DIRECTORIES
-        self.CONTENT_ROOT_DIR = path(config.pop('CONTENT_ROOT_DIR', path.getcwd().abspath()))
+        self.CONTENT_ROOT_DIR = path(config.pop('CONTENT_ROOT_DIR', self.settings_file.dirname().abspath()))
         self.POST_DIR = self.normalize(config.pop('POST_DIR', 'posts'))
         self.OUTPUT_DIR = self.normalize(config.pop('OUTPUT_DIR', 'output'))
         self.TEMPLATE_DIR = self.normalize(config.pop('TEMPLATE_DIR', 'templates'))
@@ -167,7 +167,7 @@ class EngineerConfiguration(object):
         return env
 
     def normalize(self, p):
-        if path.isabs(path(p)):
+        if path(p).isabs():
             return ensure_exists(path(p))
         else:
             return ensure_exists((self.CONTENT_ROOT_DIR / p).abspath())

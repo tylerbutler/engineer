@@ -1,8 +1,12 @@
 SITE_TITLE: Engineer Site
 HOME_URL: '/'
 SITE_URL: http://static.tylerbutler.com
+OUTPUT_DIR: '/home/tylerbutler/webapps/static_tylerbutler_com'
 
 PUBLISH_DRAFTS: yes
 
 THEME_SETTINGS:
   typekit_id: vty2qol
+
+DEBUG: yes
+USE_CLIENT_SIDE_LESS: yes

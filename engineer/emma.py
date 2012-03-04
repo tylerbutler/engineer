@@ -2,6 +2,8 @@
 import bottle
 from path import path
 from uuid import uuid4
+from engineer.conf import settings
+from engineer.log import logger
 
 try:
     import cPickle as pickle
@@ -12,6 +14,7 @@ __author__ = 'tyler@tylerbutler.com'
 
 secret_file = path(__file__).dirname() / '_emma_secret.pvt'
 _secret = None
+_prefix = None
 
 def get_secret():
     global _secret
@@ -24,44 +27,129 @@ def get_secret():
 def generate_secret():
     global _secret
     new_secret = uuid4()
+    if get_secret() is not None:
+        logger.warning("A secret already existed but was overwritten.")
     with open(secret_file, mode='wb') as file:
         pickle.dump(new_secret, file)
     _secret = new_secret
 
 
-def get_secret_path():
+def get_secret_path(absolute=False):
+    global _prefix
     if get_secret() is None:
-        raise Exception("No secret!")
-    return '/_emma/%s' % get_secret()
-
-
-def url(path_to_append):
-    if path_to_append is None or path_to_append == '':
-        return [get_secret_path(), get_secret_path() + '/']
+        raise NoSecretException("No secret!")
+    if not absolute:
+        return '/%s' % get_secret()
     else:
-        path = '%s/%s' % (get_secret_path(), path_to_append)
+        if _prefix is not None:
+            return '%s/%s/%s' % (settings.SITE_URL, _prefix, get_secret())
+        else:
+            return '%s/%s' % (settings.SITE_URL, get_secret())
+
+
+class NoSecretException(Exception):
+    pass
+
+
+def url(path_to_append, absolute=False):
+    if path_to_append is None or path_to_append == '':
+        return [get_secret_path(absolute), get_secret_path(absolute) + '/']
+    else:
+        path = '%s/%s' % (get_secret_path(absolute), path_to_append)
         return [path, path + '/']
 
 
 class Emma(object):
-    emma = bottle.Bottle()
-    mgmt = bottle.Bottle()
+    app = bottle.Bottle()
 
     def __init__(self):
+        self.stats = None
+        self.messages = []
         # Not using the decorator syntax since that causes the functions to
         # get called on module import, which will throw an exception if
         # generate_secret hasn't been called yet.
-        self.emma.route(url(None), callback=self._home)
-        self.emma.route(url('publish'), callback=self._publish)
+        self.app.route(url(None), callback=self._home, name='home')
+        self.app.route(url(None), method='POST', callback=self._home, name='home')
+        self.app.route(url('build'), callback=self._build, name='build')
+        self.app.route(url('clean'), callback=self._clean, name='clean')
+        self.app.route(url('disable'), callback=self._disable, name='disable')
+        self.app.route(url('disable/confirm'), callback=self._confirm_disable, name='confirm_disable')
+
+        self.app.route('/static/<filepath:path>', callback=self._serve_static, name='static')
+
+        logger.debug("Absolute URL prefix: %s" % url(None, True))
+        logger.debug("Relative URL prefix: %s" % url(None))
+
+    def get_url(self, routename, **kwargs):
+        # Wrapper method around bottle's get_url method to handle the case
+        # where a prefix is set
+        global _prefix
+        if _prefix is not None:
+            url = "%s/%s" % ('/'.join(get_secret_path(True).split('/')[:-1]),
+                             self.app.get_url(routename, **kwargs))
+            print "getting url for %s" % routename
+            print "url: %s" % url
+            return url
+        else:
+            return self.app.get_url(routename, **kwargs)
 
     def _home(self):
-        return 'manage_home'
+        template = settings.JINJA_ENV.get_template('emma/home.html')
+        if settings.BUILD_STATS_FILE.exists():
+            with open(settings.BUILD_STATS_FILE, mode='rb') as file:
+                stats = pickle.load(file)
+        else:
+            stats = None
+        current_messages = self.messages
+        self.messages = []
+        return template.render(get_url=self.get_url, len=len, stats=stats, messages=current_messages)
 
-    def _publish(self):
-        return 'publish'
+    def _build(self):
+        from engineer.engine import build
 
-    def run(self):
-        bottle.run(app=self.emma, reloader=True)
+        self.stats = build()
+        self.messages.append("Build successful.")
+        return bottle.redirect(self.get_url('home'))
+
+    def _clean(self):
+        from engineer.engine import build, get_argparser
+
+        self.stats = build(get_argparser().parse_args(['build', '-c']))
+        self.messages.append("Clean build successful.")
+        return bottle.redirect(self.get_url('home'))
+
+    def _disable(self):
+        template = settings.JINJA_ENV.get_template('emma/disable.html')
+        return template.render(get_url=self.get_url)
+
+    def _confirm_disable(self):
+        global _secret
+        _secret = None
+        global secret_file
+        secret_file.remove()
+        exit()
+
+    def _serve_static(self, filepath):
+        response = bottle.static_file(filepath, root=settings.ENGINEER_STATIC_DIR)
+        if type(response) is bottle.HTTPError:
+            return bottle.static_file(path(filepath) / 'index.html',
+                                      root=settings.OUTPUT_DIR)
+        else:
+            return response
+
+    def run(self, port=8080, **kwargs):
+        use_cherrypy = False
+        if 'server' not in kwargs:
+            try:
+                import cherrypy
+
+                use_cherrypy = True
+            except ImportError:
+                pass
+        if use_cherrypy:
+            bottle.run(app=self.app, port=port, server='cherrypy')
+        else:
+            bottle.run(app=self.app, port=port, **kwargs)
 
 
 if __name__ == "__main__":

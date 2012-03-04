@@ -1,0 +1,72 @@
+{% extends 'core/_base.html' %}
+
+{%- from 'core/_macros.html' import render_less_link -%}
+
+{% block foundation %}{% endblock %}
+
+{%- block stylesheets %}
+    <!-- Included CSS Files -->
+    <link rel="stylesheet"
+          href="{{ engineer.foundation_url }}stylesheets/globals.css">
+    <link rel="stylesheet"
+          href="{{ engineer.foundation_url }}stylesheets/typography.css">
+    <link rel="stylesheet"
+          href="{{ engineer.foundation_url }}stylesheets/grid.css">
+    <link rel="stylesheet"
+          href="{{ engineer.foundation_url }}stylesheets/ui.css">
+    <link rel="stylesheet"
+          href="{{ engineer.foundation_url }}stylesheets/app.css">
+    <link rel="stylesheet"
+          href="{{ engineer.foundation_url }}stylesheets/mobile.css">
+    <!--[if lt IE 9]>
+		<link rel="stylesheet" href="stylesheets/ie.css">
+	<![endif]-->
+
+
+    <!-- IE Fix for HTML5 Tags -->
+    <!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+    {# { render_less_link('theme/stylesheets/oleb.less') }#}
+    {%- block additional_stylesheets %}
+        <style type="text/css">
+            p, div, .label {
+                font-size: 18px;
+                font-size: 1.8rem;
+                line-height: 1.5;
+            }
+        </style>
+    {% endblock -%}
+{% endblock -%}
+
+{%- block scripts_top %}
+    {# TYPEKIT #}
+    {#    <script type="text/javascript"#}
+    {#            src="http://use.typekit.com/{{ theme.typekit_id }}.js"></script>#}
+    {#    <script type="text/javascript">#}
+    {#        try {#}
+    {#            Typekit.load();#}
+    {#        } catch (e) {#}
+    {#        }#}
+    {#    </script>#}
+    {%- block additional_scripts_top %}{% endblock -%}
+{% endblock -%}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <header class="twelve columns">
+                <h1 style="display: inline;">Emma: </h1>
+
+                <h3 style="display: inline;">Engineer Miniature Management Automaton</h3>
+            </header>
+            <hr/>
+        </div>
+        {% block section_main %}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block scripts_bottom %}
+    <script type="text/javascript" src="{{ engineer.foundation_url }}javascripts/jquery.tooltips.js"></script>
+{% endblock %}

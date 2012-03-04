@@ -1,0 +1,22 @@
+{% extends 'emma/base.html' %}
+
+{% block section_main %}
+    <div class="row">
+        <section class="twelve columns centered">
+            <h2>Really Disable Emma?</h2>
+
+            <div class="alert-box warning">If you disable Emma, you won't be
+                able to access your management site until you create a new secret.
+            </div>
+            <div class="row">
+                <a href="{{ get_url('confirm_disable') }}" class="nice medium radius red button">
+                    Yes, disable Emma
+                </a>
+
+                <a href="{{ get_url('home') }}" class="nice medium radius white button">
+                    No, don't disable Emma
+                </a>
+            </div>
+        </section>
+    </div>
+{% endblock %}

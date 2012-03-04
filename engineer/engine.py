@@ -2,14 +2,21 @@
 import argparse
 from datetime import datetime
 import sys
+import bottle
 from codecs import open
 from path import path
 from engineer.conf import settings
+from engineer import emma
 from engineer.loaders import LocalLoader
 from engineer.models import PostCollection, TemplatePage
 from engineer.themes import ThemeManager
 from engineer.util import mirror_folder, ensure_exists
 from engineer.log import logger
+
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 __author__ = 'tyler@tylerbutler.com'
 
@@ -29,13 +36,20 @@ def clean():
     logger.info('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 
 
-def build():
+def build(args=None):
+    if args and args.clean:
+        clean()
+
     build_stats = {
-        'template_pages': 0,
-        'new_posts': 0,
-        'cached_posts': 0,
-        'rollups': 0,
-        'tag_pages': 0,
+        'time_run': datetime.now(),
+        'counts': {
+            'template_pages': 0,
+            'new_posts': 0,
+            'cached_posts': 0,
+            'rollups': 0,
+            'tag_pages': 0,
+            },
+        'files': {},
         }
 
     settings.OUTPUT_CACHE_DIR.rmtree(ignore_errors=True)
@@ -52,7 +66,7 @@ def build():
                       encoding='UTF-8') as file:
                 file.write(rendered_page)
                 logger.debug("Output '%s'." % file.name)
-                build_stats['template_pages'] += 1
+                build_stats['counts']['template_pages'] += 1
 
     # Load markdown input posts
     logger.info("Loading posts from %s." % settings.POST_DIR)
@@ -76,9 +90,9 @@ def build():
             file.write(rendered_post)
             if post in new_posts:
                 logger.info("Output new or modified post '%s'." % post.title)
-                build_stats['new_posts'] += 1
+                build_stats['counts']['new_posts'] += 1
             elif post in cached_posts:
-                build_stats['cached_posts'] += 1
+                build_stats['counts']['cached_posts'] += 1
 
     # Generate rollup pages
     num_posts = len(all_posts)
@@ -98,7 +112,7 @@ def build():
                   encoding='UTF-8') as file:
             file.write(rendered_page)
             logger.debug("Output '%s'." % file.name)
-            build_stats['rollups'] += 1
+            build_stats['counts']['rollups'] += 1
 
         # Copy first rollup page to root of site - it's the homepage.
         if slice_num == 1:
@@ -126,7 +140,7 @@ def build():
             tag_path = ensure_exists(tags_output_path / tag / 'index.html')
             with open(tag_path, mode='wb', encoding='UTF-8') as file:
                 file.write(rendered_tag_page)
-                build_stats['tag_pages'] += 1
+                build_stats['counts']['tag_pages'] += 1
                 logger.debug("Output '%s'." % file.name)
 
     # Generate feeds
@@ -154,29 +168,30 @@ def build():
     logger.debug("Copied static files for theme to '%s'." % t)
 
     logger.info("Synchronizing output directory with output cache.")
-    report = mirror_folder(settings.OUTPUT_CACHE_DIR, settings.OUTPUT_DIR)
+    build_stats['files'] = mirror_folder(settings.OUTPUT_CACHE_DIR, settings.OUTPUT_DIR)
     from pprint import pformat
 
-    logger.debug(pformat(report))
+    logger.debug("Folder mirroring report: %s" % pformat(build_stats['files']))
     logger.info('')
     logger.info(
         "Site: '%s' output to %s." % (settings.SITE_TITLE, settings.OUTPUT_DIR))
     logger.info("Posts: %s (%s new or updated)" % (
-        (build_stats['new_posts'] + build_stats['cached_posts']),
-        build_stats['new_posts']))
+        (build_stats['counts']['new_posts'] + build_stats['counts']['cached_posts']),
+        build_stats['counts']['new_posts']))
     logger.info("Post rollup pages: %s (%s posts per page)" % (
-        build_stats['rollups'], settings.ROLLUP_PAGE_SIZE))
-    logger.info("Template pages: %s" % build_stats['template_pages'])
-    logger.info("Tag pages: %s" % build_stats['tag_pages'])
+        build_stats['counts']['rollups'], settings.ROLLUP_PAGE_SIZE))
+    logger.info("Template pages: %s" % build_stats['counts']['template_pages'])
+    logger.info("Tag pages: %s" % build_stats['counts']['tag_pages'])
     logger.info("%s new items, %s modified items, and %s deleted items." % (
-        len(report['new']),
-        len(report['overwritten']),
-        len(report['deleted'])))
+        len(build_stats['files']['new']),
+        len(build_stats['files']['overwritten']),
+        len(build_stats['files']['deleted'])))
+    with open(settings.BUILD_STATS_FILE, mode='wb') as file:
+        pickle.dump(build_stats, file)
+    return build_stats
 
 
-def management_server():
-    import bottle
-
+def serve(args):
     @bottle.route('/<filepath:path>')
     def serve_static(filepath):
         response = bottle.static_file(filepath, root=settings.OUTPUT_DIR)
@@ -191,58 +206,92 @@ def management_server():
         return 'Management Page'
 
     bottle.debug(True)
-    #    bottle.default_app.mount(bottle.load_app('servefiles'), '/')
     bottle.run(host='localhost', port=8000, reloader=True)
 
 
-def cmdline(args=sys.argv):
+def start_emma(args):
+    try:
+        if args.prefix:
+            emma._prefix = args.prefix
+        if args.generate:
+            emma.generate_secret()
+            logger.info("New Emma URL: %s" % emma.get_secret_path(True))
+        elif args.url:
+            logger.info("Current Emma URL: %s" % emma.get_secret_path(True))
+        elif args.run:
+            emma.Emma().run(port=args.port)
+    except emma.NoSecretException:
+        logger.warning("You haven't created a secret for Emma yet. Try 'engineer emma --generate' first.")
+    exit()
+
+
+def get_argparser():
     # Common parameters
     common_parser = argparse.ArgumentParser(add_help=False)
-    common_parser.add_argument('--no-cache', '-n', dest='disable_cache',
-                               action='store_true',
-                               help="Disable the post cache.")
-    common_parser.add_argument('--verbose', '-v', dest='verbose',
+    common_parser.add_argument('-v', '--verbose',
+                               dest='verbose',
                                action='store_true',
                                help="Display verbose output.")
-    common_parser.add_argument('--config', dest='config_file',
+    common_parser.add_argument('--config', '--settings',
+                               dest='config_file',
                                default='config.yaml',
                                help="Specify a configuration file to use.")
 
     main_parser = argparse.ArgumentParser(
-        description="Engineer site builder.",
-        parents=[common_parser])
+        description="Engineer static site builder.")
+    subparsers = main_parser.add_subparsers(title="subcommands")
 
-    top_group = main_parser.add_mutually_exclusive_group(required=True)
-    top_group.add_argument('--build', '-b', dest='build',
-                           action='store_true', help="Build the site.")
-    top_group.add_argument('--serve', '-s', dest='serve',
-                           action='store_true',
-                           help="Start the development server.")
-    top_group.add_argument('--clean', '-c', dest='clean',
-                           action='store_true',
-                           help="Clean the output directory.")
+    parser_build = subparsers.add_parser('build',
+                                         help="Build the site.",
+                                         parents=[common_parser])
+    parser_build.add_argument('-c', '--clean',
+                              dest='clean',
+                              action='store_true',
+                              help="Clean the output directory and clear all the caches before building.")
+    parser_build.set_defaults(func=build)
 
-    args = main_parser.parse_args()
+    parser_serve = subparsers.add_parser('serve',
+                                         help="Start the development server.",
+                                         parents=[common_parser])
+    parser_serve.set_defaults(func=serve)
 
+    parser_emma = subparsers.add_parser('emma',
+                                        help="Start Emma, the built-in management server.",
+                                        parents=[common_parser])
+    parser_emma.add_argument('-p', '--port',
+                             type=int,
+                             default=8080,
+                             dest='port',
+                             help="The port Emma should listen on.")
+    parser_emma.add_argument('--prefix',
+                             type=str,
+                             dest='prefix',
+                             help="The prefix path the Emma site will be rooted at.")
+    emma_options = parser_emma.add_mutually_exclusive_group(required=True)
+    emma_options.add_argument('-r', '--run',
+                              dest='run',
+                              action='store_true',
+                              help="Run Emma.")
+    emma_options.add_argument('-g', '--generate',
+                              dest='generate',
+                              action='store_true',
+                              help="Generate a new secret location for Emma.")
+    emma_options.add_argument('-u', '--url',
+                              dest='url',
+                              action='store_true',
+                              help="Get Emma's current URL.")
+    parser_emma.set_defaults(func=start_emma)
+    return main_parser
+
+
+def cmdline(args=sys.argv):
+    args = get_argparser().parse_args(args[1:])
     settings.initialize_from_yaml(args.config_file)
-    settings.DISABLE_CACHE = args.disable_cache
 
     if args.verbose:
         import logging
 
         logger.setLevel(logging.DEBUG)
 
-    if args.serve:
-        #from engineer.server import serve
-
-        #serve()
-        management_server()
-    elif args.build:
-        build()
-        exit()
-    elif args.clean:
-        clean()
-        exit()
-    else:
-        main_parser.print_help()
-        exit()
+    args.func(args)
+    exit()

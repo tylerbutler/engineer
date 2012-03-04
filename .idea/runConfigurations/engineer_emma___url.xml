@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="engineer" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="engineer emma --url" type="PythonConfigurationType" factoryName="Python">
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
@@ -11,7 +11,7 @@
     <module name="blog-static" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/engineer_script.py" />
-    <option name="PARAMETERS" value="" />
+    <option name="PARAMETERS" value="emma -u --prefix _emma" />
     <option name="MULTIPROCESS" value="false" />
     <RunnerSettings RunnerId="PyDebugRunner" />
     <RunnerSettings RunnerId="PythonRunner" />

@@ -11,7 +11,7 @@
     <!-- Set the viewport width to device width for mobile -->
     <meta name="viewport" content="width=device-width"/>
 
-    <title>{{ theme.name }}</title>
+    <title>{% block title %}{{ theme.name }}{% endblock %}</title>
 
     {#    {% if meta_description %}#}
     {#        <meta name="description" content="{{ engineer.meta_description }}">#}
@@ -26,47 +26,55 @@
           title="{{ settings.SITE_TITLE }} RSS Feed"
           href="{{ urlname('feed') }}"/>
 
-    {% if theme.use_foundation %}
-        {# FOUNDATION CSS #}
-        <link rel="stylesheet"
-              href="{{ engineer.foundation_url }}stylesheets/grid.css">
-        <link rel="stylesheet"
-              href="{{ engineer.foundation_url }}stylesheets/mobile.css">
+    {% block foundationcss %}
+        {% if theme.use_foundation %}
+            {# FOUNDATION CSS #}
+            <link rel="stylesheet"
+                  href="{{ engineer.foundation_url }}stylesheets/grid.css">
+            <link rel="stylesheet"
+                  href="{{ engineer.foundation_url }}stylesheets/mobile.css">
 
-        <!--[if lt IE 9]>
+            <!--[if lt IE 9]>
             <link rel="stylesheet" href="{{ engineer.foundation_url }}stylesheets/ie.css">
         <![endif]-->
-    {% endif %}
+        {% endif %}
+    {% endblock %}
 
     {% block stylesheets %}{% endblock %}
 
-    {% if theme.use_lesscss %}
-        {% if settings.USE_CLIENT_SIDE_LESS %}
-            <script src="{{ engineer.lesscss_url }}"
-                    type="text/javascript"></script>
-            {% if DEBUG %}
-                <script type="text/javascript">
-                    //less = { env:'development' };
-                    less.watch();
-                </script>
+    {% block lesscss %}
+        {% if theme.use_lesscss %}
+            {% if settings.USE_CLIENT_SIDE_LESS %}
+                <script src="{{ engineer.lesscss_url }}"
+                        type="text/javascript"></script>
+                {% if DEBUG %}
+                    <script type="text/javascript">
+                        //less = { env:'development' };
+                        less.watch();
+                    </script>
+                {% endif %}
             {% endif %}
         {% endif %}
-    {% endif %}
+    {% endblock %}
 
     {% block scripts_top %}{% endblock %}
 
-    {% if theme.use_modernizr %}
-        <script src="{{ engineer.modernizr_url }}"
-                type="text/javascript"></script>
-    {% endif %}
+    {% block modernizr %}
+        {% if theme.use_modernizr %}
+            <script src="{{ engineer.modernizr_url }}"
+                    type="text/javascript"></script>
+        {% endif %}
+    {% endblock %}
 
-    {% if theme.use_jquery -%}
-        <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-        <script>
-            window.jQuery || document.write('<script src="{{ engineer.jquery_url }}jquery-1.6.2.min.js"><\/script>')
-        </script>
-    {%- endif %}
+    {% block jquery %}
+        {% if theme.use_jquery -%}
+            <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+            <script>
+                window.jQuery || document.write('<script src="{{ engineer.jquery_url }}jquery-1.6.2.min.js"><\/script>')
+            </script>
+        {%- endif %}
+    {% endblock %}
 
     <!-- IE Fix for HTML5 Tags -->
     <!--[if lt IE 9]>
@@ -76,9 +84,11 @@
 <body>
 {%- block body %}{% endblock -%}
 
-{% if theme.use_foundation -%}
-    <script src="{{ engineer.foundation_url }}javascripts/foundation.js"></script>
-{%- endif %}
+{% block foundation_js %}
+    {% if theme.use_foundation -%}
+        <script src="{{ engineer.foundation_url }}javascripts/foundation.js"></script>
+    {%- endif %}
+{% endblock %}
 
 {% block scripts_bottom %}{% endblock %}
 </body>

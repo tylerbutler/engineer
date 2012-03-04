@@ -51,7 +51,11 @@ class EngineerConfiguration(object):
 
     def initialize_from_yaml(self, yaml_file):
         # Load settings from YAML file if found
-        self.settings_file = path.getcwd() / yaml_file
+        logger.debug("Initializing sonfiguration from %s" % yaml_file)
+        if path(yaml_file).exists() and path(yaml_file).isfile():
+            self.settings_file = path(yaml_file).abspath()
+        else:
+            self.settings_file = path.getcwd() / yaml_file
         if yaml_file and self.settings_file.exists():
             with open(path.getcwd() / yaml_file, mode='rb') as file:
                 config = yaml.load(file)
@@ -82,10 +86,11 @@ class EngineerConfiguration(object):
         self.JINJA_CACHE_DIR = ensure_exists(config.pop('JINJA_CACHE_DIR', (self.CACHE_DIR / 'jinja_cache').abspath()))
         self.POST_CACHE_FILE = ensure_exists(
             config.pop('POST_CACHE_FILE', (self.CACHE_DIR / 'post_cache.cache').abspath()))
+        self.BUILD_STATS_FILE = config.pop('BUILD_STATS_FILE', (self.CACHE_DIR / 'build_stats.cache').abspath())
 
         # SITE SETTINGS
         self.SITE_TITLE = config.pop('SITE_TITLE', '')
-        self.SITE_URL = config.pop('SITE_URL')
+        self.SITE_URL = config.pop('SITE_URL', '')
         self.SITE_AUTHOR = config.pop('SITE_AUTHOR', '')
         self.HOME_URL = config.pop('HOME_URL', '/')
         self.STATIC_URL = config.pop('STATIC_URL', urljoin(self.HOME_URL, 'static'))
@@ -130,6 +135,7 @@ class EngineerConfiguration(object):
 
     @zproperty.CachedProperty
     def JINJA_ENV(self):
+        import humanize
         from engineer.urls import url, urlname
         from engineer.themes import ThemeManager
         # Configure Jinja2 environment
@@ -151,6 +157,7 @@ class EngineerConfiguration(object):
             trim_blocks=False)
 
         env.filters['date'] = format_datetime
+        env.filters['naturaltime'] = humanize.naturaltime
         env.globals['engineer'] = engineer
         env.globals['theme'] = ThemeManager.current_theme()
         env.globals['urlname'] = urlname

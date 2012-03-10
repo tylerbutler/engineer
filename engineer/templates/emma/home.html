@@ -56,9 +56,8 @@
         <section class="four columns">
             <div class="panel">
                 <h2>Site Stats</h2>
-
-                <div>{{ settings.SITE_URL }}</div>
                 {% if stats %}
+                    <hr/>
                     <div>
                     <span class="black radius label">
                         {{ stats['counts']['new_posts'] + stats['counts']['cached_posts'] }}</span> Posts
@@ -77,6 +76,18 @@
                         No site stats available.
                     </div>
                 {% endif %}
+        </section>
+    </div>
+    <div class="row">
+        <section class="twelve columns">
+            <div class="panel">
+                <h2>Configuration Details</h2>
+
+                <div>SITE_URL: <span class="white radius label">{{ settings.SITE_URL }}</span></div>
+                <div>POST_DIR: <span class="white radius label">{{ settings.POST_DIR }}</span></div>
+                <div>TEMPLATE_DIR: <span class="white radius label">{{ settings.TEMPLATE_DIR }}</span></div>
+                <div>OUTPUT_DIR: <span class="white radius label">{{ settings.OUTPUT_DIR }}</span></div>
+            </div>
         </section>
     </div>
 {% endblock %}

@@ -255,6 +255,10 @@ header#secondary {
             font-family: @font-heading;
         }
 
+        .tags {
+            float: right;
+        }
+
         .permalink, .attribution {
             &:before{
                 content: " • ";
@@ -337,4 +341,56 @@ footer {
 .arrow {
     .font-size-xl();
     color: @bg-accent;
+}
+
+ul.tags {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+
+    li {
+        display: inline-block;
+        height: @line-height-default;
+        line-height: @line-height-default;
+    }
+
+    .link-color(@light-blue, @orange);
+
+    a {
+        position: relative;
+        text-indent: 0;
+        text-transform: uppercase;
+        font-family: @font-main;
+        .font-size-tiny();
+        margin-left: 20px;
+        padding: 2px 10px 3px 10px;
+        background: @bg-accent;
+        text-decoration: none;
+        .border-radius(0px 2px 2px 0px);
+
+        &:before {
+            content: "";
+            float: left;
+            position: absolute;
+            left: -10px;
+            top: 0;
+            width: 0;
+            height: 0;
+            border-color: transparent @bg-accent transparent transparent;
+            border-style: solid;
+            border-width: 10px 10px 10px 0;
+	    }
+
+        &:after {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 0;
+            float: left;
+            width: 4px;
+            height: 4px;
+            background: @bg;
+        }
+    }
 }

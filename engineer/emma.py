@@ -12,7 +12,7 @@ except ImportError:
 
 __author__ = 'tyler@tylerbutler.com'
 
-secret_file = path(__file__).dirname() / '_emma_secret.pvt'
+secret_file = settings.CONTENT_ROOT_DIR / '_emma_secret.pvt'
 _secret = None
 _prefix = None
 
@@ -59,39 +59,56 @@ def url(path_to_append, absolute=False):
         return [path, path + '/']
 
 
+class EmmaStandalone(object):
+    app = bottle.Bottle()
+
+    def __init__(self):
+        em = Emma()
+        self.app.mount(get_secret_path(), em.app)
+
+    @staticmethod
+    @app.route('/static/<filepath:path>')
+    def _serve_static(filepath):
+        response = bottle.static_file(filepath, root=settings.ENGINEER_STATIC_DIR)
+        if type(response) is bottle.HTTPError:
+            return bottle.static_file(path(filepath) / 'index.html',
+                                      root=settings.OUTPUT_DIR)
+        else:
+            return response
+
+    def run(self, port=8080, **kwargs):
+        use_cherrypy = False
+        if 'server' not in kwargs:
+            try:
+                import cherrypy
+
+                use_cherrypy = True
+            except ImportError:
+                pass
+        if use_cherrypy:
+            bottle.run(app=self.app, port=port, server='cherrypy')
+        else:
+            bottle.run(app=self.app, port=port, **kwargs)
+
+
 class Emma(object):
     app = bottle.Bottle()
 
     def __init__(self):
         self.stats = None
         self.messages = []
-        # Not using the decorator syntax since that causes the functions to
-        # get called on module import, which will throw an exception if
-        # generate_secret hasn't been called yet.
-        self.app.route(url(None), callback=self._home, name='home')
-        self.app.route(url(None), method='POST', callback=self._home, name='home')
-        self.app.route(url('build'), callback=self._build, name='build')
-        self.app.route(url('clean'), callback=self._clean, name='clean')
-        self.app.route(url('disable'), callback=self._disable, name='disable')
-        self.app.route(url('disable/confirm'), callback=self._confirm_disable, name='confirm_disable')
+
+        self.app.route('/', callback=self._home, name='home')
+        self.app.route('/', method='POST', callback=self._home, name='home')
+        self.app.route('/build', callback=self._build, name='build')
+        self.app.route('/clean', callback=self._clean, name='clean')
+        self.app.route('/disable', callback=self._disable, name='disable')
+        self.app.route('/disable/confirm', callback=self._confirm_disable, name='confirm_disable')
 
         self.app.route('/static/<filepath:path>', callback=self._serve_static, name='static')
 
         logger.debug("Absolute URL prefix: %s" % url(None, True))
         logger.debug("Relative URL prefix: %s" % url(None))
-
-    def get_url(self, routename, **kwargs):
-        # Wrapper method around bottle's get_url method to handle the case
-        # where a prefix is set
-        global _prefix
-        if _prefix is not None:
-            url = "%s/%s" % ('/'.join(get_secret_path(True).split('/')[:-1]),
-                             self.app.get_url(routename, **kwargs))
-            print "getting url for %s" % routename
-            print "url: %s" % url
-            return url
-        else:
-            return self.app.get_url(routename, **kwargs)
 
     def _home(self):
         template = settings.JINJA_ENV.get_template('emma/home.html')
@@ -137,21 +154,13 @@ class Emma(object):
         else:
             return response
 
-    def run(self, port=8080, **kwargs):
-        use_cherrypy = False
-        if 'server' not in kwargs:
-            try:
-                import cherrypy
-
-                use_cherrypy = True
-            except ImportError:
-                pass
-        if use_cherrypy:
-            bottle.run(app=self.app, port=port, server='cherrypy')
+    def get_url(self, routename, **kwargs):
+        # Wrapper method around bottle's get_url method to handle the case
+        # where a prefix is set
+        global _prefix
+        if _prefix is not None:
+            url = "%s/%s" % ('/'.join(get_secret_path(True).split('/')[:-1]),
+                             self.app.get_url(routename, **kwargs))
+            return url
         else:
-            bottle.run(app=self.app, port=port, **kwargs)
-
-
-if __name__ == "__main__":
-    emma = Emma()
-    emma.run()
+            return self.app.get_url(routename, **kwargs)

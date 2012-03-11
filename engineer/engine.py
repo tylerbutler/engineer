@@ -198,7 +198,10 @@ def build(args=None):
 
 
 def serve(args):
-    @bottle.route('/<filepath:path>')
+    debug_server = bottle.Bottle()
+    debug_server.mount('/_emma', emma.Emma().app)
+
+    @debug_server.route('/<filepath:path>')
     def serve_static(filepath):
         response = bottle.static_file(filepath, root=settings.OUTPUT_DIR)
         if type(response) is bottle.HTTPError:
@@ -207,12 +210,8 @@ def serve(args):
         else:
             return response
 
-    @bottle.route('/manage')
-    def manage():
-        return 'Management Page'
-
     bottle.debug(True)
-    bottle.run(host='localhost', port=8000, reloader=True)
+    bottle.run(app=debug_server, host='localhost', port=8000, reloader=True)
 
 
 def start_emma(args):
@@ -225,7 +224,7 @@ def start_emma(args):
         elif args.url:
             logger.info("Current Emma URL: %s" % emma.get_secret_path(True))
         elif args.run:
-            emma.Emma().run(port=args.port)
+            emma.EmmaStandalone().run(port=args.port)
     except emma.NoSecretException:
         logger.warning("You haven't created a secret for Emma yet. Try 'engineer emma --generate' first.")
     exit()

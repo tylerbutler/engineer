@@ -46,7 +46,8 @@
         {% if theme.use_lesscss %}
             {% if settings.USE_CLIENT_SIDE_LESS %}
                 <script src="{{ engineer.lesscss_url }}"
-                        type="text/javascript"></script>
+                        type="text/javascript">
+                </script>
                 {% if DEBUG %}
                     <script type="text/javascript">
                         //less = { env:'development' };

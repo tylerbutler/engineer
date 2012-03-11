@@ -2,24 +2,24 @@
 
 {%- endmacro %}
 
-{% macro _make_relative_path(path, prepend_static_url) -%}
-    {% if prepend_static_url -%}
+{%- macro _make_relative_path(path, prepend_static_url) -%}
+    {%- if prepend_static_url -%}
         {{ STATIC_URL }}/{{ path }}
-    {% else -%}
+    {%- else -%}
         {{ path }}
-    {%- endif %}
-{%- endmacro %}
+    {%- endif -%}
+{%- endmacro -%}
 
 {% macro render_less_link(path_input, prepend_static_url=True) -%}
-    {%- if settings.USE_CLIENT_SIDE_LESS %}
+    {%- if settings.USE_CLIENT_SIDE_LESS -%}
         <link rel="stylesheet/less" href="{{ _make_relative_path(path_input, prepend_static_url) }}" type="text/css"/>
     {%- else -%}
         <link rel="stylesheet" href="{{ _make_relative_path(path_input, prepend_static_url) }}" type="text/css"/>
-    {%- endif %}
-{%- endmacro %}
+    {%- endif -%}
+{%- endmacro -%}
 
 {% macro navigation_link(name, url, section) -%}
-{#    <li>section: {{ section }}, current_section: {{ current_section }}</li>#}
+    {#    <li>section: {{ section }}, current_section: {{ current_section }}</li>#}
     <li{% if nav_context in section %} class="current"{% endif %}><a href="{{ url }}">
         {{ name }}</a></li>
 {%- endmacro %}

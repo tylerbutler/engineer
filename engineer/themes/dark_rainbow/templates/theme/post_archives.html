@@ -2,13 +2,15 @@
 
 {% block page_title %}Archives{% endblock %}
 
-{% block nav_secondary_content %}
+{% block nav_secondary %}
     {# No secondary nav. #}
 {% endblock %}
 
 {% block section_main_class %}
     {{ super() }} archives
 {% endblock %}
+
+{% block header_secondary_h1_class %}twelve columns{% endblock %}
 
 {% block header_secondary_title %}
     {{ self.page_title() }}

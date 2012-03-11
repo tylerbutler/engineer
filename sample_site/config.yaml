@@ -3,7 +3,7 @@ HOME_URL: '/'
 SITE_URL: http://static.tylerbutler.com
 OUTPUT_DIR: '/home/tylerbutler/webapps/static_tylerbutler_com'
 
-PUBLISH_DRAFTS: yes
+PUBLISH_DRAFTS: no
 
 THEME_SETTINGS:
   typekit_id: vty2qol

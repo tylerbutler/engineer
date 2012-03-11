@@ -6,7 +6,7 @@ from typogrify.templatetags.jinja2_filters import typogrify
 from path import path
 from zope.cachedescriptors import property as zproperty
 from engineer.filters import format_datetime, markdown_filter
-from engineer.util import urljoin, ensure_exists
+from engineer.util import urljoin, ensure_exists, slugify
 from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
@@ -111,7 +111,7 @@ class EngineerConfiguration(object):
             return urljoin(self.HOME_URL, page_path)
 
         def tag(name):
-            page_path = urljoin('tag', name)
+            page_path = urljoin('tag', slugify(name))
             page_path = urljoin(self.HOME_URL, page_path)
             return page_path
 

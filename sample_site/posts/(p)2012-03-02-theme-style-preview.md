@@ -1,6 +1,10 @@
 title: Theme Style Preview
 timestamp: 2012-03-02 10:49:00
-status: draft
+status: published
+tags:
+- themes
+- preview
+- engineer features
 slug: theme-style-preview
 
 

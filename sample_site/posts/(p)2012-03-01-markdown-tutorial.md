@@ -1,6 +1,6 @@
 title: Markdown Tutorial
 timestamp: 2012-03-01 00:00:00
-status: draft
+status: published
 tags:
 - markdown
 - primer

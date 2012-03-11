@@ -10,7 +10,7 @@ from engineer import emma
 from engineer.loaders import LocalLoader
 from engineer.models import PostCollection, TemplatePage
 from engineer.themes import ThemeManager
-from engineer.util import mirror_folder, ensure_exists
+from engineer.util import mirror_folder, ensure_exists, slugify
 from engineer.log import logger
 
 try:
@@ -139,7 +139,7 @@ def build(args=None):
         tags_output_path = settings.OUTPUT_CACHE_DIR / 'tag'
         for tag in all_posts.all_tags:
             rendered_tag_page = all_posts.render_tag_html(tag)
-            tag_path = ensure_exists(tags_output_path / tag / 'index.html')
+            tag_path = ensure_exists(tags_output_path / slugify(tag) / 'index.html')
             with open(tag_path, mode='wb', encoding='UTF-8') as file:
                 file.write(rendered_tag_page)
                 build_stats['counts']['tag_pages'] += 1

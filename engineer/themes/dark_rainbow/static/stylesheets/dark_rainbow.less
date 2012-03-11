@@ -47,6 +47,10 @@ ul {
     }
 }
 
+ol {
+    padding-left: 21px;
+}
+
 hr {
     border-top: none;
     border-bottom: 3px dotted @purple;
@@ -117,6 +121,30 @@ article {
     color: @light;
     font-weight: normal;
     padding-right: 10px;
+}
+
+pre, code, div.codehilite {
+    // nice scrollbars in webkit
+    ::-webkit-scrollbar {
+        height: 10px;
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment {
+        background: transparent;
+        display: none;
+    }
+
+    ::-webkit-scrollbar-track-piece {
+        background: @bg-accent;//#d0d0d0;
+    }
+
+    ::-webkit-scrollbar-thumb:vertical, ::-webkit-scrollbar-thumb:horizontal {
+        background: @blue;//#999;
+        .border-radius(5px);
+        display: block;
+        height: 50px;
+    }
 }
 
 pre {

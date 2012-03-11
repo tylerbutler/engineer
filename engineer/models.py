@@ -190,8 +190,12 @@ class Post(object):
 
 class TemplatePage(object):
     def __init__(self, template_path):
-        self.html_template = settings.JINJA_ENV.get_template('pages/%s' % template_path.name)
-        self.name = template_path.namebase
+        self.html_template = settings.JINJA_ENV.get_template(
+            str(settings.TEMPLATE_DIR.relpathto(template_path)).replace('\\', '/'))
+        namebase = template_path.namebase
+        name_components = settings.TEMPLATE_PAGE_DIR.relpathto(template_path).splitall()[1:]
+        name_components[-1] = namebase
+        self.name = '/'.join(name_components)
         self.absolute_url = urljoin(settings.HOME_URL, self.name)
         self.output_path = path(settings.OUTPUT_CACHE_DIR / self.name)
         self.output_file_name = 'index.html'
@@ -209,7 +213,9 @@ class PostCollection(list):
         self.listpage_template = settings.JINJA_ENV.get_template('theme/post_list.html')
         self.archive_template = settings.JINJA_ENV.get_template('theme/post_archives.html')
 
-    def paginate(self, paginate_by=settings.ROLLUP_PAGE_SIZE):
+    def paginate(self, paginate_by=None):
+        if paginate_by is None:
+            paginate_by = settings.ROLLUP_PAGE_SIZE
         return chunk(self, paginate_by, PostCollection)
 
     @CachedProperty

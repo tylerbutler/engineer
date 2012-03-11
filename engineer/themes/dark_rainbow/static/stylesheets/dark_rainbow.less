@@ -253,11 +253,6 @@ header#secondary {
                 line-height: 75px;
             }
         }
-
-        ul.tags li {
-            .font-size-small(0, 0);
-            text-align: right;
-        }
     }
 }
 
@@ -353,6 +348,10 @@ footer {
     }
 }
 
+div.row.archives {
+    .font-size-default(2, 0);
+}
+
 // MISCELLANEOUS
 .permalink {
     a {
@@ -381,6 +380,7 @@ ul.tags {
         display: inline-block;
         height: @line-height-default;
         line-height: @line-height-default;
+        white-space: pre;
     }
 
     .link-color(@light-blue, @orange);

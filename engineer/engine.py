@@ -57,11 +57,15 @@ def build(args=None):
     settings.OUTPUT_CACHE_DIR.rmtree(ignore_errors=True)
 
     # Generate template pages
-    template_page_source = (settings.TEMPLATE_DIR / 'pages').abspath()
-    if template_page_source.exists():
-        logger.info("Generating template pages from %s." % template_page_source)
-        for template in template_page_source.walkfiles('*.html'):
-            page = TemplatePage(template)
+    if settings.TEMPLATE_PAGE_DIR.exists():
+        logger.info("Generating template pages from %s." % settings.TEMPLATE_PAGE_DIR)
+        template_pages = []
+        for template in settings.TEMPLATE_PAGE_DIR.walkfiles('*.html'):
+            # We create all the TemplatePage objects first so we have all of the URLs to them in the template
+            # environment. Without this step, template pages might have broken links if they link to a page that is
+            # loaded after them, since the URL to the not-yet-loaded page will be missing.
+            template_pages.append(TemplatePage(template))
+        for page in template_pages:
             rendered_page = page.render_html()
             ensure_exists(page.output_path)
             with open(page.output_path / page.output_file_name, mode='wb',

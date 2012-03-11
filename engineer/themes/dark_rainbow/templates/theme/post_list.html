@@ -11,14 +11,14 @@
                 {% include 'theme/_single_post.html' %}
             {% endfor %}
         </div>
-        <div class="row">
-            <div class="four columns offset-by-two">
+        <div class="row archives">
+            <div class="four columns">
                 {% if has_next %}
                     <div class="button left"><a href="{{ urlname('listpage', (slice_num + 1)) }}">
                         ← older posts</a></div>
                 {% endif %}
             </div>
-            <div class="four columns centered">
+            <div class="four columns" style="text-align: center;">
                 <a href="{{ urlname('archives') }}"> &mdash; archives &mdash; </a>
             </div>
             <div class="four columns">

@@ -147,6 +147,7 @@ class EngineerConfiguration(object):
             'jquery_url': urljoin(self.STATIC_URL, 'engineer/lib/jquery-1.6.2.min.js'),
             'modernizr_url': urljoin(self.STATIC_URL, 'engineer/lib/modernizr-2.0.6.min.js'),
             'lesscss_url': urljoin(self.STATIC_URL, 'engineer/lib/less-1.1.5.min.js'),
+            'tweet_url': urljoin(self.STATIC_URL, 'engineer/lib/tweet/tweet/jquery.tweet.js'),
             }
 
         env = Environment(

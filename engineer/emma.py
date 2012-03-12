@@ -107,8 +107,11 @@ class Emma(object):
 
         self.app.route('/static/<filepath:path>', callback=self._serve_static, name='static')
 
-        logger.debug("Absolute URL prefix: %s" % url(None, True))
-        logger.debug("Relative URL prefix: %s" % url(None))
+        try:
+            logger.debug("Absolute URL prefix: %s" % url(None, True))
+            logger.debug("Relative URL prefix: %s" % url(None))
+        except NoSecretException:
+            pass
 
     def _home(self):
         template = settings.JINJA_ENV.get_template('emma/home.html')

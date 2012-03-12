@@ -161,11 +161,8 @@ pre, code {
 }
 
 p > code {
-    .border-radius(1px);
-    border: 1px dotted @main-blue;
-    padding: 1px 3px;
     white-space: nowrap;
-    .font-size-small();
+    .font-size-default();
     margin: 0;
 }
 
@@ -303,22 +300,67 @@ header#secondary {
 // SIDEBAR
 
 #sidebar {
-    .text-center;
-    .border-radius();
-    background-color: lighten(@bg, 5%);
+    section {
+        .border-radius();
+        background-color: lighten(@bg, 7%);
+        .font-size-default(.5, .5);
+        padding: .5em 0;
 
-    .font-size-default(.5, .5);
+        &.basic {
+            .text-center;
 
-    p {
-        .font-size-default(0, 0);
-        .bulleted-list();
-    }
-    
-    .horizontal-list(5px, 0);
-    li:not(:last-child) {
-        &:after {
-            content: "/";
-            padding-left: 9px;
+            p {
+                .font-size-default(0, 0);
+                .bulleted-list();
+            }
+
+            .horizontal-list(5px, 0);
+            li:not(:last-child) {
+                &:after {
+                    content: "/";
+                    padding-left: 9px;
+                }
+            }
+        }
+
+        &.twitter {
+            .text-left;
+
+            h1 {
+                .text-center;
+                .font-size-medium(0, .5);
+            }
+
+            ul {
+                padding-left: 12px;
+                padding-right: 5px;
+
+                li {
+                    text-indent: 0;
+                }
+
+                li:not(:last-child) {
+                    &:after {
+                        height: 0px;
+                        border-bottom: 3px dotted @purple;
+                        width: 20%;
+                        display: block;
+                        margin: .5em auto;
+                        content: "";
+                    }
+                }
+            }
+
+            .tweet_text {
+
+            }
+
+            .tweet_time {
+                display: block;
+                .font-size-tiny(0, 0);
+                text-transform: uppercase;
+                text-align: right;
+            }
         }
     }
 }

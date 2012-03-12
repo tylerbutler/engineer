@@ -77,6 +77,25 @@
         {%- endif %}
     {% endblock %}
 
+    {% block twitter %}
+        {% if theme.twitter_id %}
+            <script type="text/javascript" src="{{ engineer.tweet_url }}"></script>
+            <script type='text/javascript'>
+                jQuery(function ($) {
+                    $(".tweet").tweet({
+                        username:'{{ theme.twitter_id }}',
+                        join_text:null,
+                        avatar_size:null,
+                        retweets:false,
+                        count:{{ theme.tweet_count if theme.tweet_count else 5 }},
+                        loading_text:"loading tweets...",
+                        template:"{text}{time}"
+                    });
+                });
+            </script>
+        {% endif %}
+    {% endblock %}
+
     <!-- IE Fix for HTML5 Tags -->
     <!--[if lt IE 9]>
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>

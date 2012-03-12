@@ -1,0 +1,11 @@
+{%- block section_twitter %}
+    {% if theme.twitter_id %}
+        <section class="{%- block section_twitter_class %}twitter{% endblock -%}">
+            {%- block section_twitter_content %}
+                <h1>Latest Tweets</h1>
+                <div class="tweet">
+                </div>
+            {% endblock -%}
+        </section>
+    {% endif %}
+{% endblock -%}

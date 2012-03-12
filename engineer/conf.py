@@ -1,4 +1,5 @@
 # coding=utf-8
+from inspect import isfunction
 import platform
 import yaml
 from datetime import datetime
@@ -35,11 +36,19 @@ class EngineerConfiguration(object):
 
     _required_params = ('SITE_URL',)
 
-    # ENGINEER 'CONSTANT' PATHS
-    ENGINEER_ROOT_DIR = path(__file__).dirname().abspath()
-    ENGINEER_TEMPLATE_DIR = (ENGINEER_ROOT_DIR / 'templates').abspath()
-    ENGINEER_STATIC_DIR = (ENGINEER_ROOT_DIR / 'static').abspath()
-    ENGINEER_THEMES_DIR = (ENGINEER_ROOT_DIR / 'themes').abspath()
+    class _EngineerConstants(object):
+        # ENGINEER 'CONSTANTS'
+        ROOT_DIR = path(__file__).dirname().abspath()
+        TEMPLATE_DIR = (ROOT_DIR / 'templates').abspath()
+        STATIC_DIR = (ROOT_DIR / 'static').abspath()
+        THEMES_DIR = (ROOT_DIR / 'themes').abspath()
+
+        # URLs to included libraries - will be updated in the EngineerConfiguration.initialize() method.
+        FOUNDATION_CSS_URL = None
+        JQUERY_URL = None
+        MODERNIZR_URL = None
+        LESS_JS_URL = None
+        TWEET_URL = None
 
     def __init__(self, settings_file='config.yaml'):
         self.reload(settings_file)
@@ -76,6 +85,8 @@ class EngineerConfiguration(object):
         else:
             self._initialized = True
 
+        self.ENGINEER = EngineerConfiguration._EngineerConstants()
+
         # CONTENT DIRECTORIES
         self.CONTENT_ROOT_DIR = path(config.pop('CONTENT_ROOT_DIR', self.SETTINGS_FILE.dirname().abspath()))
         self.POST_DIR = self.normalize(config.pop('POST_DIR', 'posts'))
@@ -105,10 +116,18 @@ class EngineerConfiguration(object):
         self.STATIC_URL = config.pop('STATIC_URL', urljoin(self.HOME_URL, 'static'))
         self.ROLLUP_PAGE_SIZE = int(config.pop('ROLLUP_PAGE_SIZE', 5))
         self.FEED_TITLE = config.pop('FEED_TITLE_ATOM', self.SITE_TITLE + ' Feed')
-        self.FEED_DESCRIPTION = config.pop('FEED_DESCRIPTION',
-                                           'The %s most recent posts from %s.' % (self.ROLLUP_PAGE_SIZE, self.SITE_URL))
         self.FEED_ITEM_LIMIT = config.pop('FEED_ITEM_LIMIT', self.ROLLUP_PAGE_SIZE)
+        self.FEED_DESCRIPTION = config.pop('FEED_DESCRIPTION',
+                                           'The %s most recent posts from %s.' % (self.FEED_ITEM_LIMIT, self.SITE_URL))
 
+        # These 'constants' are updated here so they're relative to the STATIC_URL value
+        self.ENGINEER.FOUNDATION_CSS_URL = urljoin(self.STATIC_URL, 'engineer/lib/foundation/')
+        self.ENGINEER.JQUERY_URL = urljoin(self.STATIC_URL, 'engineer/lib/jquery-1.6.2.min.js')
+        self.ENGINEER.MODERNIZR_URL = urljoin(self.STATIC_URL, 'engineer/lib/modernizr-2.0.6.min.js')
+        self.ENGINEER.LESS_JS_URL = urljoin(self.STATIC_URL, 'engineer/lib/less-1.1.5.min.js')
+        self.ENGINEER.TWEET_URL = urljoin(self.STATIC_URL, 'engineer/lib/tweet/tweet/jquery.tweet.js')
+
+        # URL helper functions
         def page(num):
             page_path = urljoin('page', str(num))
             return urljoin(self.HOME_URL, page_path)
@@ -125,6 +144,8 @@ class EngineerConfiguration(object):
             'listpage': page,
             'tag': tag,
             }
+        # Update URLs from the config setting if they're present
+        self.URLS.update(config.pop('URLS', {}))
 
         # Miscellaneous
         self.DEBUG = config.pop('DEBUG', False)
@@ -134,42 +155,47 @@ class EngineerConfiguration(object):
         self.USE_CLIENT_SIDE_LESS = config.pop('USE_CLIENT_SIDE_LESS', (platform.system() == 'Windows'))
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
 
+        # Pull any remaining settings in the config and set them as attributes on the settings object
         for k, v in config.iteritems():
             setattr(self, k, v)
 
     @zproperty.CachedProperty
     def JINJA_ENV(self):
         import humanize
-        from engineer.urls import url, urlname
         from engineer.themes import ThemeManager
+
         # Configure Jinja2 environment
         logger.debug("Configuring the Jinja environment.")
-        engineer = {
-            'foundation_url': urljoin(self.STATIC_URL, 'engineer/lib/foundation/'),
-            'jquery_url': urljoin(self.STATIC_URL, 'engineer/lib/jquery-1.6.2.min.js'),
-            'modernizr_url': urljoin(self.STATIC_URL, 'engineer/lib/modernizr-2.0.6.min.js'),
-            'lesscss_url': urljoin(self.STATIC_URL, 'engineer/lib/less-1.1.5.min.js'),
-            'tweet_url': urljoin(self.STATIC_URL, 'engineer/lib/tweet/tweet/jquery.tweet.js'),
-            }
+
+        # Helper function to look up a URL by name
+        def urlname(name, *args):
+            url = settings.URLS.get(name, settings.HOME_URL)
+            if isfunction(url):
+                return url(*args)
+            else:
+                return url
 
         env = Environment(
             loader=FileSystemLoader([self.TEMPLATE_DIR,
-                                     self.ENGINEER_TEMPLATE_DIR,
+                                     self.ENGINEER.TEMPLATE_DIR,
                                      ThemeManager.current_theme().template_root]),
             extensions=['jinja2.ext.with_', ],
             #'compressinja.html.HtmlCompressor'],
             bytecode_cache=FileSystemBytecodeCache(directory=self.JINJA_CACHE_DIR),
             trim_blocks=False)
 
+        # Filters
         env.filters['date'] = format_datetime
         env.filters['naturaltime'] = humanize.naturaltime
         env.filters['typogrify'] = typogrify
         env.filters['markdown'] = markdown_filter
-        env.globals['engineer'] = engineer
+
+        # Globals
         env.globals['theme'] = ThemeManager.current_theme()
         env.globals['urlname'] = urlname
-        env.globals['url'] = url
+        #        env.globals['url'] = url
         env.globals['STATIC_URL'] = self.STATIC_URL
+        env.globals['DEBUG'] = self.DEBUG
         env.globals['settings'] = self
         return env
 

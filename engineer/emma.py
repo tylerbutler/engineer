@@ -69,7 +69,7 @@ class EmmaStandalone(object):
     @staticmethod
     @app.route('/static/<filepath:path>')
     def _serve_static(filepath):
-        response = bottle.static_file(filepath, root=settings.ENGINEER_STATIC_DIR)
+        response = bottle.static_file(filepath, root=settings.ENGINEER.STATIC_DIR)
         if type(response) is bottle.HTTPError:
             return bottle.static_file(path(filepath) / 'index.html',
                                       root=settings.OUTPUT_DIR)
@@ -152,11 +152,11 @@ class Emma(object):
         global _secret
         _secret = None
         global secret_file
-        secret_file.remove()
-        exit()
+        secret_file.remove_p()
+        return bottle.redirect(self.get_url('home'))
 
     def _serve_static(self, filepath):
-        response = bottle.static_file(filepath, root=settings.ENGINEER_STATIC_DIR)
+        response = bottle.static_file(filepath, root=settings.ENGINEER.STATIC_DIR)
         if type(response) is bottle.HTTPError:
             return bottle.static_file(path(filepath) / 'index.html',
                                       root=settings.OUTPUT_DIR)

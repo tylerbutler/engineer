@@ -9,17 +9,17 @@
 {%- block stylesheets %}
     <!-- Included CSS Files -->
     <link rel="stylesheet"
-          href="{{ engineer.foundation_url }}stylesheets/globals.css">
+          href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/globals.css">
     <link rel="stylesheet"
-          href="{{ engineer.foundation_url }}stylesheets/typography.css">
+          href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/typography.css">
     <link rel="stylesheet"
-          href="{{ engineer.foundation_url }}stylesheets/grid.css">
+          href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/grid.css">
     <link rel="stylesheet"
-          href="{{ engineer.foundation_url }}stylesheets/ui.css">
+          href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/ui.css">
     <link rel="stylesheet"
-          href="{{ engineer.foundation_url }}stylesheets/app.css">
+          href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/app.css">
     <link rel="stylesheet"
-          href="{{ engineer.foundation_url }}stylesheets/mobile.css">
+          href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/mobile.css">
     <!--[if lt IE 9]>
 		<link rel="stylesheet" href="stylesheets/ie.css">
 	<![endif]-->
@@ -62,5 +62,7 @@
 {% endblock %}
 
 {% block scripts_bottom %}
-    <script type="text/javascript" src="{{ engineer.foundation_url }}javascripts/jquery.tooltips.js"></script>
+    <script type="text/javascript"
+            src="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}javascripts/jquery.tooltips.js">
+    </script>
 {% endblock %}

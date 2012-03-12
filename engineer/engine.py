@@ -160,16 +160,16 @@ def build(args=None):
         logger.debug("Output '%s'." % file.name)
 
     # Copy static content to output dir
-    s = settings.ENGINEER_STATIC_DIR.abspath()
+    s = settings.ENGINEER.STATIC_DIR.abspath()
     t = ( settings.OUTPUT_CACHE_DIR /
-          settings.ENGINEER_STATIC_DIR.basename()).abspath()
+          settings.ENGINEER.STATIC_DIR.basename()).abspath()
     mirror_folder(s, t)
     logger.debug("Copied static files to '%s'." % t)
 
     # Copy theme static content to output dir
     s = ThemeManager.current_theme().static_root.abspath()
     t = (
-        settings.OUTPUT_CACHE_DIR / settings.ENGINEER_STATIC_DIR.basename() / 'theme').abspath()
+        settings.OUTPUT_CACHE_DIR / settings.ENGINEER.STATIC_DIR.basename() / 'theme').abspath()
     mirror_folder(s, t)
     logger.debug("Copied static files for theme to '%s'." % t)
 

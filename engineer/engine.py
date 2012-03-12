@@ -5,12 +5,8 @@ import sys
 import bottle
 from codecs import open
 from path import path
-from engineer.conf import settings
 from engineer import emma
-from engineer.loaders import LocalLoader
-from engineer.models import PostCollection, TemplatePage
-from engineer.themes import ThemeManager
-from engineer.util import mirror_folder, ensure_exists, slugify
+from engineer.conf import settings
 from engineer.log import logger
 
 try:
@@ -37,6 +33,11 @@ def clean():
 
 
 def build(args=None):
+    from engineer.loaders import LocalLoader
+    from engineer.models import PostCollection, TemplatePage
+    from engineer.themes import ThemeManager
+    from engineer.util import mirror_folder, ensure_exists, slugify
+
     if args and args.clean:
         clean()
 
@@ -291,7 +292,7 @@ def get_argparser():
 
 def cmdline(args=sys.argv):
     args = get_argparser().parse_args(args[1:])
-    settings.initialize_from_yaml(args.config_file)
+    settings.reload(settings_file=args.config_file)
 
     if args.verbose:
         import logging

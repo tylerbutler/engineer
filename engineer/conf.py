@@ -50,41 +50,41 @@ class EngineerConfiguration(object):
         LESS_JS_URL = None
         TWEET_URL = None
 
-    def __init__(self, settings_file='config.yaml'):
+    def __init__(self, settings_file=None):
         self.reload(settings_file)
 
-    def reload(self, settings_file='config.yaml'):
-        if settings_file is None and self._initialized:
-            return
-        else:
-            self.initialize_from_yaml(settings_file)
+    def reload(self, settings_file=None):
+        if settings_file is None:
+            if getattr(self, 'SETTINGS_FILE', None) is not None:
+                settings_file = self.SETTINGS_FILE
+            else:
+                import threading
 
+                logger.debug(threading.currentThread().getName() + ": " + str(threading.currentThread().ident))
+                logger.info("Loading default configuration.")
+                self.SETTINGS_FILE = path.getcwd().abspath()
+                self._initialize({})
+                return
 
-    def initialize_from_yaml(self, yaml_file):
         # Load settings from YAML file if found
-        logger.debug("Initializing configuration from %s" % yaml_file)
-        if path(yaml_file).exists() and path(yaml_file).isfile():
-            self.SETTINGS_FILE = path(yaml_file).abspath()
+        logger.info("Loading configuration from %s." % path(settings_file).abspath())
+        if path(settings_file).exists() and path(settings_file).isfile():
+            self.SETTINGS_FILE = path(settings_file).abspath()
         else:
-            self.SETTINGS_FILE = path.getcwd() / yaml_file
-        if yaml_file and self.SETTINGS_FILE.exists():
-            with open(path.getcwd() / yaml_file, mode='rb') as file:
+            self.SETTINGS_FILE = path.getcwd() / settings_file
+        if settings_file and self.SETTINGS_FILE.exists():
+            with open(path.getcwd() / settings_file, mode='rb') as file:
                 config = yaml.load(file)
             for param in self._required_params:
                 if param not in config:
                     raise Exception("Required setting '%s' is missing from config file %s." %
-                                    (param, path.getcwd() / yaml_file))
-            self.initialize(config)
+                                    (param, path.getcwd() / settings_file))
+            self._initialize(config)
         else:
-            self.initialize({})
+            self._initialize({})
         self.SETTINGS_FILE_LOAD_TIME = datetime.now()
 
-    def initialize(self, config):
-        if getattr(self, '_initialized', False):
-            logger.debug("Configuration has already been initialized once.")
-        else:
-            self._initialized = True
-
+    def _initialize(self, config):
         self.ENGINEER = EngineerConfiguration._EngineerConstants()
 
         # CONTENT DIRECTORIES

@@ -140,7 +140,7 @@ class Emma(object):
         return bottle.redirect(self.get_url('home'))
 
     def _reload_settings(self):
-        settings.reload(settings_file=settings.SETTINGS_FILE)
+        settings.reload()
         self.messages.append("Settings reloaded from %s." % settings.SETTINGS_FILE)
         return bottle.redirect(self.get_url('home'))
 

@@ -102,6 +102,7 @@ class Emma(object):
         self.app.route('/', method='POST', callback=self._home, name='home')
         self.app.route('/build', callback=self._build, name='build')
         self.app.route('/clean', callback=self._clean, name='clean')
+        self.app.route('/reload_settings', callback=self._reload_settings, name='reload_settings')
         self.app.route('/disable', callback=self._disable, name='disable')
         self.app.route('/disable/confirm', callback=self._confirm_disable, name='confirm_disable')
 
@@ -136,6 +137,11 @@ class Emma(object):
 
         self.stats = build(get_argparser().parse_args(['build', '-c']))
         self.messages.append("Clean build successful.")
+        return bottle.redirect(self.get_url('home'))
+
+    def _reload_settings(self):
+        settings.reload(settings_file=settings.SETTINGS_FILE)
+        self.messages.append("Settings reloaded from %s." % settings.SETTINGS_FILE)
         return bottle.redirect(self.get_url('home'))
 
     def _disable(self):

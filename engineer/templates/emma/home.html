@@ -21,6 +21,8 @@
                 <br/><br/>
                 <a href="{{ get_url('clean') }}" class="nice large radius white button">Clean and Build</a>
                 <br/><br/>
+                <a href="{{ get_url('reload_settings') }}" class="nice large radius green button">Reload Settings</a>
+                <br/><br/>
                 <a href="{{ get_url('disable') }}" class="nice large radius red button">Disable Emma</a>
                 <br/><br/>
             </div>
@@ -83,6 +85,9 @@
             <div class="panel">
                 <h2>Configuration Details</h2>
 
+                <div>SETTINGS_FILE: <span class="white radius label">{{ settings.SETTINGS_FILE }}</span></div>
+                <div>SETTINGS_FILE_LOAD_TIME: <span class="white radius label">
+                    {{ settings.SETTINGS_FILE_LOAD_TIME|naturaltime }}</span></div>
                 <div>SITE_URL: <span class="white radius label">{{ settings.SITE_URL }}</span></div>
                 <div>POST_DIR: <span class="white radius label">{{ settings.POST_DIR }}</span></div>
                 <div>TEMPLATE_DIR: <span class="white radius label">{{ settings.TEMPLATE_DIR }}</span></div>

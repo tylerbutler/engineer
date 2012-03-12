@@ -1,6 +1,7 @@
 # coding=utf-8
 import platform
 import yaml
+from datetime import datetime
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 from typogrify.templatetags.jinja2_filters import typogrify
 from path import path
@@ -54,10 +55,10 @@ class EngineerConfiguration(object):
         # Load settings from YAML file if found
         logger.debug("Initializing configuration from %s" % yaml_file)
         if path(yaml_file).exists() and path(yaml_file).isfile():
-            self.settings_file = path(yaml_file).abspath()
+            self.SETTINGS_FILE = path(yaml_file).abspath()
         else:
-            self.settings_file = path.getcwd() / yaml_file
-        if yaml_file and self.settings_file.exists():
+            self.SETTINGS_FILE = path.getcwd() / yaml_file
+        if yaml_file and self.SETTINGS_FILE.exists():
             with open(path.getcwd() / yaml_file, mode='rb') as file:
                 config = yaml.load(file)
             for param in self._required_params:
@@ -67,6 +68,7 @@ class EngineerConfiguration(object):
             self.initialize(config)
         else:
             self.initialize({})
+        self.SETTINGS_FILE_LOAD_TIME = datetime.now()
 
     def initialize(self, config):
         if getattr(self, '_initialized', False):
@@ -75,7 +77,7 @@ class EngineerConfiguration(object):
             self._initialized = True
 
         # CONTENT DIRECTORIES
-        self.CONTENT_ROOT_DIR = path(config.pop('CONTENT_ROOT_DIR', self.settings_file.dirname().abspath()))
+        self.CONTENT_ROOT_DIR = path(config.pop('CONTENT_ROOT_DIR', self.SETTINGS_FILE.dirname().abspath()))
         self.POST_DIR = self.normalize(config.pop('POST_DIR', 'posts'))
         self.OUTPUT_DIR = self.normalize(config.pop('OUTPUT_DIR', 'output'))
         self.TEMPLATE_DIR = self.normalize(config.pop('TEMPLATE_DIR', 'templates'))

@@ -37,11 +37,13 @@
 {% endblock %}
 
 {% block section_sidebar_content %}
-    <nav>
-        <ul>
-            {% for year, posts in post_list %}
-                <li><a href="#{{ year }}">{{ year }}</a></li>
-            {% endfor %}
-        </ul>
-    </nav>
+    <section>
+        <nav>
+            <ul>
+                {% for year, posts in post_list %}
+                    <li><a href="#{{ year }}">{{ year }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </section>
 {% endblock %}

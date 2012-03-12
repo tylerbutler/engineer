@@ -298,28 +298,23 @@ header#secondary {
 }
 
 // SIDEBAR
-
 #sidebar {
     section {
         .border-radius();
         background-color: lighten(@bg, 7%);
         .font-size-default(.5, .5);
+        .text-center;
         padding: .5em 0;
+        p {
+            .font-size-default(0, 0);
+            .bulleted-list();
+        }
 
-        &.basic {
-            .text-center;
-
-            p {
-                .font-size-default(0, 0);
-                .bulleted-list();
-            }
-
-            .horizontal-list(5px, 0);
-            li:not(:last-child) {
-                &:after {
-                    content: "/";
-                    padding-left: 9px;
-                }
+        .horizontal-list(0, 0);
+        li:not(:last-child) {
+            &:after {
+                content: "/";
+                padding-left: 9px;
             }
         }
 
@@ -358,8 +353,8 @@ header#secondary {
             .tweet_time {
                 display: block;
                 .font-size-tiny(0, 0);
+                .text-right;
                 text-transform: uppercase;
-                text-align: right;
             }
         }
     }

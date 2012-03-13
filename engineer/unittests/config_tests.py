@@ -26,7 +26,7 @@ class TestConfig(CopyDataTestCase):
         from engineer.conf import settings as s1
         from engineer.conf import EngineerConfiguration
 
-        s2 = EngineerConfiguration(None)
+        s2 = EngineerConfiguration()
         self.assertEqual(s1.SITE_TITLE, s2.SITE_TITLE)
 
     def test_manual_config_yaml(self):

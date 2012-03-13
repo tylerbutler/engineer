@@ -8,7 +8,7 @@ from typogrify.templatetags.jinja2_filters import typogrify
 from path import path
 from zope.cachedescriptors import property as zproperty
 from engineer.filters import format_datetime, markdown_filter
-from engineer.util import urljoin, ensure_exists, slugify
+from engineer.util import urljoin, slugify
 from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
@@ -54,25 +54,29 @@ class EngineerConfiguration(object):
         self.reload(settings_file)
 
     def reload(self, settings_file=None):
+        default_settings_file = path.getcwd() / 'config.yaml'
         if settings_file is None:
-            if getattr(self, 'SETTINGS_FILE', None) is not None:
+            if hasattr(self, 'SETTINGS_FILE') and self.SETTINGS_FILE is not None:
+                # First check if SETTINGS_FILE has been defined. If so, we'll reload from that file.
                 settings_file = self.SETTINGS_FILE
+            elif default_settings_file.exists():
+                # Next check if there's a default settings file (config.yaml) in the working dir.
+                settings_file = default_settings_file
             else:
+                # Looks like we're just loading the 'empty' config.
                 import threading
 
                 logger.debug(threading.currentThread().getName() + ": " + str(threading.currentThread().ident))
                 logger.info("Loading default configuration.")
-                self.SETTINGS_FILE = path.getcwd().abspath()
+                self.SETTINGS_FILE = None
                 self._initialize({})
                 return
 
         # Load settings from YAML file if found
-        logger.info("Loading configuration from %s." % path(settings_file).abspath())
         if path(settings_file).exists() and path(settings_file).isfile():
             self.SETTINGS_FILE = path(settings_file).abspath()
-        else:
-            self.SETTINGS_FILE = path.getcwd() / settings_file
-        if settings_file and self.SETTINGS_FILE.exists():
+            logger.info("Loading configuration from %s." % path(settings_file).abspath())
+
             with open(path.getcwd() / settings_file, mode='rb') as file:
                 config = yaml.load(file)
             for param in self._required_params:
@@ -80,27 +84,27 @@ class EngineerConfiguration(object):
                     raise Exception("Required setting '%s' is missing from config file %s." %
                                     (param, path.getcwd() / settings_file))
             self._initialize(config)
+            self.SETTINGS_FILE_LOAD_TIME = datetime.now()
         else:
-            self._initialize({})
-        self.SETTINGS_FILE_LOAD_TIME = datetime.now()
+            raise Exception("Settings file %s not found!" % self.SETTINGS_FILE)
 
     def _initialize(self, config):
         self.ENGINEER = EngineerConfiguration._EngineerConstants()
 
         # CONTENT DIRECTORIES
-        self.CONTENT_ROOT_DIR = path(config.pop('CONTENT_ROOT_DIR', self.SETTINGS_FILE.dirname().abspath()))
+        self.CONTENT_ROOT_DIR = path(config.pop('CONTENT_ROOT_DIR',
+                                                self.SETTINGS_FILE.dirname().abspath() if self.SETTINGS_FILE is not
+                                                                                          None else path.getcwd()))
         self.POST_DIR = self.normalize(config.pop('POST_DIR', 'posts'))
         self.OUTPUT_DIR = self.normalize(config.pop('OUTPUT_DIR', 'output'))
         self.TEMPLATE_DIR = self.normalize(config.pop('TEMPLATE_DIR', 'templates'))
         self.TEMPLATE_PAGE_DIR = config.pop('TEMPLATE_PAGE_DIR', (self.TEMPLATE_DIR / 'pages').abspath())
         self.LOG_DIR = self.normalize(config.pop('LOG_DIR', 'logs'))
-        self.LOG_FILE = ensure_exists(config.pop('LOG_FILE', (self.LOG_DIR / 'build.log').abspath()))
+        self.LOG_FILE = config.pop('LOG_FILE', (self.LOG_DIR / 'build.log').abspath())
         self.CACHE_DIR = self.normalize(config.pop('CACHE_DIR', '_cache'))
-        self.OUTPUT_CACHE_DIR = ensure_exists(
-            config.pop('OUTPUT_CACHE_DIR', (self.CACHE_DIR / 'output_cache').abspath()))
-        self.JINJA_CACHE_DIR = ensure_exists(config.pop('JINJA_CACHE_DIR', (self.CACHE_DIR / 'jinja_cache').abspath()))
-        self.POST_CACHE_FILE = ensure_exists(
-            config.pop('POST_CACHE_FILE', (self.CACHE_DIR / 'post_cache.cache').abspath()))
+        self.OUTPUT_CACHE_DIR = config.pop('OUTPUT_CACHE_DIR', (self.CACHE_DIR / 'output_cache').abspath())
+        self.JINJA_CACHE_DIR = config.pop('JINJA_CACHE_DIR', (self.CACHE_DIR / 'jinja_cache').abspath())
+        self.POST_CACHE_FILE = config.pop('POST_CACHE_FILE', (self.CACHE_DIR / 'post_cache.cache').abspath())
         self.BUILD_STATS_FILE = config.pop('BUILD_STATS_FILE', (self.CACHE_DIR / 'build_stats.cache').abspath())
 
         # THEMES
@@ -201,8 +205,8 @@ class EngineerConfiguration(object):
 
     def normalize(self, p):
         if path(p).isabs():
-            return ensure_exists(path(p))
+            return path(p)
         else:
-            return ensure_exists((self.CONTENT_ROOT_DIR / p).abspath())
+            return (self.CONTENT_ROOT_DIR / p).abspath()
 
 settings = EngineerConfiguration()

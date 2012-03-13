@@ -5,8 +5,6 @@ import sys
 import bottle
 from codecs import open
 from path import path
-from engineer import emma
-from engineer.conf import settings
 from engineer.log import logger
 
 try:
@@ -17,6 +15,8 @@ except ImportError:
 __author__ = 'tyler@tylerbutler.com'
 
 def clean():
+    from engineer.conf import settings
+
     try:
         settings.OUTPUT_DIR.rmtree()
         settings.OUTPUT_CACHE_DIR.rmtree()
@@ -33,6 +33,7 @@ def clean():
 
 
 def build(args=None):
+    from engineer.conf import settings
     from engineer.loaders import LocalLoader
     from engineer.models import PostCollection, TemplatePage
     from engineer.themes import ThemeManager
@@ -199,6 +200,9 @@ def build(args=None):
 
 
 def serve(args):
+    from engineer.conf import settings
+    from engineer import emma
+
     debug_server = bottle.Bottle()
     debug_server.mount('/_emma', emma.Emma().app)
 
@@ -216,16 +220,19 @@ def serve(args):
 
 
 def start_emma(args):
+    from engineer import emma
+
+    em = emma.EmmaStandalone()
     try:
         if args.prefix:
-            emma._prefix = args.prefix
+            em.emma_instance.prefix = args.prefix
         if args.generate:
-            emma.generate_secret()
-            logger.info("New Emma URL: %s" % emma.get_secret_path(True))
+            em.emma_instance.generate_secret()
+            logger.info("New Emma URL: %s" % em.emma_instance.get_secret_path(True))
         elif args.url:
-            logger.info("Current Emma URL: %s" % emma.get_secret_path(True))
+            logger.info("Current Emma URL: %s" % em.emma_instance.get_secret_path(True))
         elif args.run:
-            emma.EmmaStandalone().run(port=args.port)
+            em.run(port=args.port)
     except emma.NoSecretException:
         logger.warning("You haven't created a secret for Emma yet. Try 'engineer emma --generate' first.")
     exit()
@@ -240,7 +247,7 @@ def get_argparser():
                                help="Display verbose output.")
     common_parser.add_argument('--config', '--settings',
                                dest='config_file',
-                               default='config.yaml',
+                               default=path.getcwd() / 'config.yaml',
                                help="Specify a configuration file to use.")
 
     main_parser = argparse.ArgumentParser(
@@ -291,6 +298,8 @@ def get_argparser():
 
 
 def cmdline(args=sys.argv):
+    from engineer.conf import settings
+
     args = get_argparser().parse_args(args[1:])
     settings.reload(settings_file=args.config_file)
 

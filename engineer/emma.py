@@ -12,59 +12,23 @@ except ImportError:
 
 __author__ = 'tyler@tylerbutler.com'
 
-secret_file = settings.CONTENT_ROOT_DIR / '_emma_secret.pvt'
-_secret = None
-_prefix = None
-
-def get_secret():
-    global _secret
-    if secret_file.exists():
-        with open(secret_file, mode='rb') as file:
-            _secret = pickle.load(file)
-    return _secret
-
-
-def generate_secret():
-    global _secret
-    new_secret = uuid4()
-    if get_secret() is not None:
-        logger.warning("A secret already existed but was overwritten.")
-    with open(secret_file, mode='wb') as file:
-        pickle.dump(new_secret, file)
-    _secret = new_secret
-
-
-def get_secret_path(absolute=False):
-    global _prefix
-    if get_secret() is None:
-        raise NoSecretException("No secret!")
-    if not absolute:
-        return '/%s' % get_secret()
-    else:
-        if _prefix is not None:
-            return '%s/%s/%s' % (settings.SITE_URL, _prefix, get_secret())
-        else:
-            return '%s/%s' % (settings.SITE_URL, get_secret())
-
-
 class NoSecretException(Exception):
     pass
 
 
-def url(path_to_append, absolute=False):
-    if path_to_append is None or path_to_append == '':
-        return [get_secret_path(absolute), get_secret_path(absolute) + '/']
-    else:
-        path = '%s/%s' % (get_secret_path(absolute), path_to_append)
-        return [path, path + '/']
+#def url(path_to_append, absolute=False):
+#    if path_to_append is None or path_to_append == '':
+#        return [get_secret_path(absolute), get_secret_path(absolute) + '/']
+#    else:
+#        path = '%s/%s' % (get_secret_path(absolute), path_to_append)
+#        return [path, path + '/']
 
 
 class EmmaStandalone(object):
     app = bottle.Bottle()
 
     def __init__(self):
-        em = Emma()
-        self.app.mount(get_secret_path(), em.app)
+        self.emma_instance = Emma()
 
     @staticmethod
     @app.route('/static/<filepath:path>')
@@ -77,6 +41,8 @@ class EmmaStandalone(object):
             return response
 
     def run(self, port=8080, **kwargs):
+        self.app.mount(self.emma_instance.get_secret_path(), self.emma_instance.app)
+
         use_cherrypy = False
         if 'server' not in kwargs:
             try:
@@ -94,7 +60,12 @@ class EmmaStandalone(object):
 class Emma(object):
     app = bottle.Bottle()
 
-    def __init__(self):
+    def __init__(self, prefix=None):
+        self.prefix = prefix
+
+        if self.prefix is None and hasattr(settings, 'EMMA_PREFIX'):
+            self.prefix = settings.EMMA_PREFIX
+
         self.stats = None
         self.messages = []
 
@@ -108,11 +79,11 @@ class Emma(object):
 
         self.app.route('/static/<filepath:path>', callback=self._serve_static, name='static')
 
-        try:
-            logger.debug("Absolute URL prefix: %s" % url(None, True))
-            logger.debug("Relative URL prefix: %s" % url(None))
-        except NoSecretException:
-            pass
+    #        try:
+    #            logger.debug("Absolute URL prefix: %s" % url(None, True))
+    #            logger.debug("Relative URL prefix: %s" % url(None))
+    #        except NoSecretException:
+    #            pass
 
     def _home(self):
         template = settings.JINJA_ENV.get_template('emma/home.html')
@@ -149,11 +120,8 @@ class Emma(object):
         return template.render(get_url=self.get_url)
 
     def _confirm_disable(self):
-        global _secret
-        _secret = None
-        global secret_file
-        secret_file.remove_p()
-        return bottle.redirect(self.get_url('home'))
+        self.secret_file.remove_p()
+        exit()
 
     def _serve_static(self, filepath):
         response = bottle.static_file(filepath, root=settings.ENGINEER.STATIC_DIR)
@@ -166,10 +134,42 @@ class Emma(object):
     def get_url(self, routename, **kwargs):
         # Wrapper method around bottle's get_url method to handle the case
         # where a prefix is set
-        global _prefix
-        if _prefix is not None:
-            url = "%s/%s" % ('/'.join(get_secret_path(True).split('/')[:-1]),
+        if self.prefix is not None:
+            url = "%s/%s" % ('/'.join(self.get_secret_path(True).split('/')[:-1]),
                              self.app.get_url(routename, **kwargs))
             return url
         else:
             return self.app.get_url(routename, **kwargs)
+
+    @property
+    def secret_file(self):
+        return settings.CONTENT_ROOT_DIR / '_emma_secret.pvt'
+
+    @property
+    def secret(self):
+        if self.secret_file.exists():
+            with open(self.secret_file, mode='rb') as file:
+                self._secret = pickle.load(file)
+            return self._secret
+        else:
+            return None
+
+    def get_secret_path(self, absolute=False):
+        if self.secret is None:
+            raise NoSecretException("No secret!")
+        if not absolute:
+            return '/%s' % self.secret
+        else:
+            if self.prefix is not None:
+                return '%s/%s/%s' % (settings.SITE_URL, self.prefix, self.secret)
+            else:
+                return '%s/%s' % (settings.SITE_URL, self.secret)
+
+    def generate_secret(self):
+        new_secret = uuid4()
+        if self.secret is not None:
+            logger.warning("A secret already existed but was overwritten.")
+        with open(self.secret_file, mode='wb') as file:
+            pickle.dump(new_secret, file)
+        self._secret = new_secret
+        logger.info("Wrote secret file: %s" % self.secret_file)

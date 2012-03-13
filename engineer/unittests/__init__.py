@@ -2,17 +2,20 @@
 from tempfile import mkdtemp
 from unittest.case import TestCase
 from path import path
-from engineer.conf import EngineerConfiguration
 
 __author__ = 'tyler@tylerbutler.com'
 
 class SettingsTestCase(TestCase):
     def __init__(self, settings_file, *args, **kwargs):
+        from engineer.conf import EngineerConfiguration
+
         super(SettingsTestCase, self).__init__(*args, **kwargs)
         self._source_settings_file = settings_file
         EngineerConfiguration(self._source_settings_file)
 
     def tearDown(self):
+        from engineer.conf import EngineerConfiguration
+
         EngineerConfiguration(self._source_settings_file)
 
 

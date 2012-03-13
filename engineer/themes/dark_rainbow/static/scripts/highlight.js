@@ -1,11 +1,11 @@
 $(document).ready(function () {
     var header = $('header#primary h1 a');
     var headerText = header.text();
-    console.debug(headerText);
+    console.log(headerText);
     var headerTextArray = headerText.split(' ');
     var headerTextArrayLength = headerTextArray.length;
     var lastWord = headerTextArray[headerTextArrayLength - 1];
-    console.debug(lastWord);
+    console.log(lastWord);
     headerTextArray.pop();
     var firstWords = headerTextArray.join(' ');
 

@@ -247,7 +247,6 @@ def get_argparser():
                                help="Display verbose output.")
     common_parser.add_argument('--config', '--settings',
                                dest='config_file',
-                               default=path.getcwd() / 'config.yaml',
                                help="Specify a configuration file to use.")
 
     main_parser = argparse.ArgumentParser(
@@ -298,10 +297,19 @@ def get_argparser():
 
 
 def cmdline(args=sys.argv):
-    from engineer.conf import settings
-
     args = get_argparser().parse_args(args[1:])
-    settings.reload(settings_file=args.config_file)
+    try:
+        from engineer.conf import settings
+
+        if args.config_file is None:
+            default_config_file = path.getcwd() / 'config.yaml'
+            logger.info("No '--config' parameter specified, defaulting to %s." % default_config_file)
+            settings.reload(default_config_file)
+        else:
+            settings.reload(settings_file=args.config_file)
+    except Exception as e:
+        logger.error(e.message)
+        exit()
 
     if args.verbose:
         import logging

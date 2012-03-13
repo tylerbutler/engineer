@@ -16,6 +16,7 @@ class TestConfig(CopyDataTestCase):
     def test_config_yaml(self):
         from engineer.conf import settings
 
+        settings.reload('config.yaml')
         self.assertEqual(settings.SITE_TITLE, 'Test Config')
         self.assertEqual(settings.HOME_URL, '/')
 

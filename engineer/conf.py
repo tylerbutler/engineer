@@ -13,6 +13,10 @@ from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
 
+class SettingsFileNotFoundException(Exception):
+    pass
+
+
 class EngineerConfiguration(object):
     """
     Stores all of the configuration settings for a given Engineer site.
@@ -54,20 +58,16 @@ class EngineerConfiguration(object):
         self.reload(settings_file)
 
     def reload(self, settings_file=None):
-        default_settings_file = path.getcwd() / 'config.yaml'
         if settings_file is None:
             if hasattr(self, 'SETTINGS_FILE') and self.SETTINGS_FILE is not None:
                 # First check if SETTINGS_FILE has been defined. If so, we'll reload from that file.
                 settings_file = self.SETTINGS_FILE
-            elif default_settings_file.exists():
-                # Next check if there's a default settings file (config.yaml) in the working dir.
-                settings_file = default_settings_file
             else:
                 # Looks like we're just loading the 'empty' config.
                 import threading
 
                 logger.debug(threading.currentThread().getName() + ": " + str(threading.currentThread().ident))
-                logger.info("Loading default configuration.")
+                logger.info("Initializing empty configuration.")
                 self.SETTINGS_FILE = None
                 self._initialize({})
                 return
@@ -77,16 +77,16 @@ class EngineerConfiguration(object):
             self.SETTINGS_FILE = path(settings_file).abspath()
             logger.info("Loading configuration from %s." % path(settings_file).abspath())
 
-            with open(path.getcwd() / settings_file, mode='rb') as file:
+            with open(self.SETTINGS_FILE, mode='rb') as file:
                 config = yaml.load(file)
             for param in self._required_params:
                 if param not in config:
                     raise Exception("Required setting '%s' is missing from config file %s." %
-                                    (param, path.getcwd() / settings_file))
+                                    (param, self.SETTINGS_FILE))
             self._initialize(config)
             self.SETTINGS_FILE_LOAD_TIME = datetime.now()
         else:
-            raise Exception("Settings file %s not found!" % self.SETTINGS_FILE)
+            raise SettingsFileNotFoundException("Settings file %s not found!" % settings_file)
 
     def _initialize(self, config):
         self.ENGINEER = EngineerConfiguration._EngineerConstants()

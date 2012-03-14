@@ -205,6 +205,10 @@ def serve(args):
     from engineer.conf import settings
     from engineer import emma
 
+    if not settings.OUTPUT_DIR.exists():
+        logger.warning("Output directory doesn't exist - did you forget to run 'engineer build'?")
+        exit()
+
     debug_server = bottle.Bottle()
     debug_server.mount('/_emma', emma.Emma().app)
 

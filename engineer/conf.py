@@ -8,7 +8,7 @@ from typogrify.templatetags.jinja2_filters import typogrify
 from path import path
 from zope.cachedescriptors import property as zproperty
 from engineer.filters import format_datetime, markdown_filter
-from engineer.util import urljoin, slugify
+from engineer.util import urljoin, slugify, ensure_exists
 from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
@@ -208,5 +208,13 @@ class EngineerConfiguration(object):
             return path(p)
         else:
             return (self.CONTENT_ROOT_DIR / p).abspath()
+
+    def create_required_directories(self):
+        required = (self.CACHE_DIR,
+                    self.JINJA_CACHE_DIR,
+                    self.OUTPUT_DIR,)
+
+        for folder in required:
+            ensure_exists(folder)
 
 settings = EngineerConfiguration()

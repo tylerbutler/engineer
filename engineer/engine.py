@@ -42,6 +42,8 @@ def build(args=None):
     if args and args.clean:
         clean()
 
+    settings.create_required_directories()
+
     build_stats = {
         'time_run': datetime.now(),
         'counts': {

@@ -1,0 +1,11 @@
+Included MIT licensed software:
+jQuery Copyright (c) 2011 John Resig, http://jquery.com/
+jquery.tweet.js Copyright (c) 2008-2011 Todd Matthews & Steve Purcell
+Modernizr Copyright (c) 2009-2011, http://www.modernizr.com/
+Foundation Copyright (c) 2011 ZURB, http://www.zurb.com/
+
+Included BSD licensed software:
+jinja2htmlcompress.py Copyright (c) 2011 Armin Ronacher
+
+Included Apache 2.0 licensed software:
+LESS Copyright (c) 2009-2011 Alexis Sellier

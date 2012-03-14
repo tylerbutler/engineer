@@ -130,9 +130,9 @@ setup(
     entry_points={
         'console_scripts': ['engineer=engineer.engine:cmdline'],
         },
-    #url='http://pypi.python.org/pypi/TowelStuff/',
-    license='LICENSE.txt',
-    description='A static blog engine.',
+    url='http://github.com/tylerbutler/engineer',
+    license='MIT',
+    description='A static website generator.',
     long_description=get_readme(),
     install_requires=get_install_requirements(),
     tests_require=('nose'),
@@ -141,4 +141,4 @@ setup(
                                    package=PROJECT,
                                    only_in_packages=False),
     zip_safe=True, # Setting to False doesn't create an egg - easier to debug and hack on
-    )
+)

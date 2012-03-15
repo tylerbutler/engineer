@@ -1,7 +1,6 @@
 SITE_TITLE: Engineer Site
 HOME_URL: '/'
-SITE_URL: http://static.tylerbutler.com
-OUTPUT_DIR: '/home/tylerbutler/webapps/static_tylerbutler_com'
+SITE_URL: http://localhost:8080
 
 PUBLISH_DRAFTS: no
 

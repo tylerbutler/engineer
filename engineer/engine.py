@@ -244,6 +244,35 @@ def start_emma(args):
     exit()
 
 
+def init(args):
+    sample_site_path = path(__file__).dirname().dirname() / 'sample_site'
+    target = path.getcwd()
+    if target.listdir() and not args.force:
+        logger.warning("Target folder %s is not empty." % target)
+        exit()
+    elif args.force:
+        logger.info("Deleting folder contents.")
+        try:
+            for item in target.dirs():
+                item.rmtree()
+            for item in target.files():
+                item.remove()
+        except Exception as e:
+            logger.error("Couldn't delete folder contents - aborting.")
+            logger.exception(e)
+            exit()
+
+    from engineer.util import mirror_folder, ensure_exists
+
+    if args.no_sample:
+        ensure_exists(target / 'posts')
+        (sample_site_path / 'config.yaml').copyfile(target / 'config.yaml')
+    else:
+        mirror_folder(sample_site_path, target)
+    logger.info("Initialization complete.")
+    exit()
+
+
 def get_argparser():
     # Common parameters
     common_parser = argparse.ArgumentParser(add_help=False)
@@ -251,13 +280,14 @@ def get_argparser():
                                dest='verbose',
                                action='store_true',
                                help="Display verbose output.")
-    common_parser.add_argument('--config', '--settings',
+    common_parser.add_argument('-s', '--config', '--settings',
                                dest='config_file',
                                help="Specify a configuration file to use.")
 
     main_parser = argparse.ArgumentParser(
         description="Engineer static site builder.")
-    subparsers = main_parser.add_subparsers(title="subcommands")
+    subparsers = main_parser.add_subparsers(title="subcommands",
+                                            dest='parser_name')
 
     parser_build = subparsers.add_parser('build',
                                          help="Build the site.",
@@ -299,23 +329,40 @@ def get_argparser():
                               action='store_true',
                               help="Get Emma's current URL.")
     parser_emma.set_defaults(func=start_emma)
+    parser_init = subparsers.add_parser('init',
+                                        help="Initialize the current directory as an engineer site.",
+                                        parents=[common_parser])
+    parser_init.add_argument('--no-sample',
+                             dest='no_sample',
+                             action='store_true',
+                             help="Do not include sample content.")
+    parser_init.add_argument('--force', '-f',
+                             dest='force',
+                             action='store_true',
+                             help="Delete target folder contents. Use with caution!")
+    parser_init.set_defaults(func=init)
     return main_parser
 
 
 def cmdline(args=sys.argv):
     args = get_argparser().parse_args(args[1:])
-    try:
-        from engineer.conf import settings
+    skip_settings = ('init',)
 
-        if args.config_file is None:
-            default_config_file = path.getcwd() / 'config.yaml'
-            logger.info("No '--config' parameter specified, defaulting to %s." % default_config_file)
-            settings.reload(default_config_file)
-        else:
-            settings.reload(settings_file=args.config_file)
-    except Exception as e:
-        logger.error(e.message)
-        exit()
+    if args.parser_name in skip_settings:
+        pass
+    else: # try loading settings
+        try:
+            from engineer.conf import settings
+
+            if args.config_file is None:
+                default_config_file = path.getcwd() / 'config.yaml'
+                logger.info("No '--config' parameter specified, defaulting to %s." % default_config_file)
+                settings.reload(default_config_file)
+            else:
+                settings.reload(settings_file=args.config_file)
+        except Exception as e:
+            logger.error(e.message)
+            exit()
 
     if args.verbose:
         import logging

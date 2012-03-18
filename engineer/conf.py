@@ -72,13 +72,31 @@ class EngineerConfiguration(object):
                 self._initialize({})
                 return
 
-        # Load settings from YAML file if found
         if path(settings_file).exists() and path(settings_file).isfile():
-            self.SETTINGS_FILE = path(settings_file).abspath()
+            self.SETTINGS_FILE = settings_file = path(settings_file).abspath()
             logger.info("Loading configuration from %s." % path(settings_file).abspath())
+            # Find the complete set of settings files based on inheritance
+            all_configs = []
+            config = {}
+            while True:
+                with open(settings_file, mode='rb') as file:
+                    temp_config = yaml.load(file)
+                all_configs.append((temp_config, settings_file))
+                if 'SUPER' not in temp_config:
+                    break
+                else:
+                    settings_file = path(temp_config['SUPER']).abspath()
 
-            with open(self.SETTINGS_FILE, mode='rb') as file:
-                config = yaml.load(file)
+            # load parent configs
+            all_configs.reverse()
+            for c in all_configs[:-1]:
+                logger.debug("Loading parent configuration from %s." % path(c[1]).abspath())
+                config.update(c[0])
+
+            # load main config
+            logger.debug("Finalizing configuration from %s." % path(all_configs[-1][1]).abspath())
+            config.update(all_configs[-1][0])
+
             for param in self._required_params:
                 if param not in config:
                     raise Exception("Required setting '%s' is missing from config file %s." %

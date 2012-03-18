@@ -1,0 +1,10 @@
+SITE_TITLE: Engineer Site
+HOME_URL: '/'
+SITE_URL: http://localhost:8080
+
+PUBLISH_DRAFTS: no
+
+THEME_SETTINGS:
+  typekit_id: vty2qol
+
+USE_CLIENT_SIDE_LESS: yes

@@ -337,22 +337,17 @@ header#secondary {
                 li {
                     text-indent: 0;
                     padding-right: 0;
+                    display: block;
                 }
 
-                li:not(:last-child) {
-                    &:after {
+                li:not(:last-child):after {
                         height: 0px;
                         border-bottom: 3px dotted @purple;
                         width: 20%;
                         display: block;
                         margin: .5em auto;
                         content: "";
-                    }
                 }
-            }
-
-            .tweet_text {
-
             }
 
             .tweet_time {

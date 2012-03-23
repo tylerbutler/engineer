@@ -1,4 +1,5 @@
 # coding=utf-8
+import humanize
 import re
 import times
 from markdown import markdown
@@ -25,6 +26,14 @@ def localtime(value, tz=None):
     from engineer.conf import settings
 
     if tz is None:
-        tz = settings.DEFAULT_TIMEZONE
+        tz = settings.POST_TIMEZONE
 
     return times.to_local(value, tz)
+
+
+def naturaltime(value):
+    from engineer.conf import settings
+
+    server_time = localtime(value, settings.SERVER_TIMEZONE).replace(tzinfo=None)
+    friendly = humanize.naturaltime(server_time)
+    return friendly

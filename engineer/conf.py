@@ -78,14 +78,22 @@ class EngineerConfiguration(object):
             # Find the complete set of settings files based on inheritance
             all_configs = []
             config = {}
-            while True:
-                with open(settings_file, mode='rb') as file:
-                    temp_config = yaml.load(file)
-                all_configs.append((temp_config, settings_file))
-                if 'SUPER' not in temp_config:
-                    break
-                else:
-                    settings_file = path(temp_config['SUPER']).abspath()
+            try:
+                while True:
+                    logger.debug("in loop")
+                    with open(settings_file, mode='rb') as file:
+                        temp_config = yaml.load(file)
+                        logger.debug("Loaded %s file." % file)
+                    all_configs.append((temp_config, settings_file))
+                    if 'SUPER' not in temp_config:
+                        break
+                    else:
+                        new_settings = path(temp_config['SUPER'])
+                        if not new_settings.isabs():
+                            settings_file = (settings_file.dirname() / new_settings).abspath()
+                        logger.debug("Going to next settings file... %s" % path(temp_config['SUPER']).abspath())
+            except Exception as e:
+                logger.exception(e.message)
 
             # load parent configs
             all_configs.reverse()
@@ -177,7 +185,9 @@ class EngineerConfiguration(object):
         self.USE_CLIENT_SIDE_LESS = config.pop('USE_CLIENT_SIDE_LESS', (platform.system() == 'Windows'))
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
         self.PUBLISH_PENDING = config.pop('PUBLISH_PENDING', False)
-        self.DEFAULT_TIMEZONE = pytz.timezone(config.pop('DEFAULT_TIMEZONE', 'UTC'))
+        self.POST_TIMEZONE = pytz.timezone(config.pop('POST_TIMEZONE', 'UTC'))
+        self.SERVER_TIMEZONE = self.POST_TIMEZONE if config.get('SERVER_TIMEZONE',
+                                                                None) is None else config.pop('SERVER_TIMEZONE')
         self.TIME_FORMAT = config.pop('TIME_FORMAT', '%I:%M %p %A, %B %d, %Y %Z') # '%Y-%m-%d %H:%M:%S %Z%z'
 
         # Pull any remaining settings in the config and set them as attributes on the settings object
@@ -186,8 +196,7 @@ class EngineerConfiguration(object):
 
     @zproperty.CachedProperty
     def JINJA_ENV(self):
-        import humanize
-        from engineer.filters import format_datetime, markdown_filter, localtime
+        from engineer.filters import format_datetime, markdown_filter, localtime, naturaltime
         from engineer.themes import ThemeManager
 
         # Configure Jinja2 environment
@@ -213,7 +222,7 @@ class EngineerConfiguration(object):
         # Filters
         env.filters['date'] = format_datetime
         env.filters['localtime'] = localtime
-        env.filters['naturaltime'] = humanize.naturaltime
+        env.filters['naturaltime'] = naturaltime
         env.filters['typogrify'] = typogrify
         env.filters['markdown'] = markdown_filter
 

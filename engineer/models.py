@@ -74,7 +74,7 @@ class Post(object):
             self.timestamp = times.to_universal(self.timestamp)
         elif not utctime:
             # convert to UTC assuming input time is in the DEFAULT_TIMEZONE
-            self.timestamp = times.to_universal(self.timestamp, settings.DEFAULT_TIMEZONE)
+            self.timestamp = times.to_universal(self.timestamp, settings.POST_TIMEZONE)
 
         self.content = typogrify(markdown.markdown(self.content_raw, extensions=['extra', 'codehilite']))
 

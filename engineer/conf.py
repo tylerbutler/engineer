@@ -177,6 +177,7 @@ class EngineerConfiguration(object):
         self.NORMALIZE_INPUT_FILE_MASK = config.pop('NORMALIZE_INPUT_FILE_MASK', u'({0}){1}-{2}.md')
         self.USE_CLIENT_SIDE_LESS = config.pop('USE_CLIENT_SIDE_LESS', (platform.system() == 'Windows'))
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
+        self.PUBLISH_PENDING = config.pop('PUBLISH_PENDING', False)
         self.DEFAULT_TIMEZONE = pytz.timezone(config.pop('DEFAULT_TIMEZONE', 'UTC'))
         self.TIME_FORMAT = config.pop('TIME_FORMAT', '%I:%M %p %A, %B %d, %Y %Z')
 

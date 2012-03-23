@@ -85,6 +85,8 @@ def build(args=None):
 
     if settings.PUBLISH_DRAFTS:
         to_publish = all_posts
+    elif settings.PUBLISH_PENDING:
+        to_publish = PostCollection(all_posts.published + all_posts.pending)
     else:
         to_publish = PostCollection(all_posts.published)
 

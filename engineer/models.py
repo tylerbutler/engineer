@@ -101,7 +101,11 @@ class Post(object):
 
     @property
     def is_published(self):
-        return self.status == Status.published
+        return self.status == Status.published and self.timestamp <= times.now()
+
+    @property
+    def is_pending(self):
+        return self.status == Status.published and self.timestamp >= times.now()
 
     @property
     def is_external_link(self):
@@ -215,6 +219,10 @@ class PostCollection(list):
     @CachedProperty
     def drafts(self):
         return PostCollection([p for p in self if p.is_draft == True])
+
+    @property
+    def pending(self):
+        return PostCollection([p for p in self if p.is_pending == True])
 
     @CachedProperty
     def all_tags(self):

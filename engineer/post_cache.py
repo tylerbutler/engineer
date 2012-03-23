@@ -7,31 +7,26 @@ from engineer.log import logger
 __author__ = 'tyler@tylerbutler.com'
 
 class _PostCache(object):
-    _state = {}
-
-    def __new__(cls, *p, **k):
-        self = object.__new__(cls)
-        self.__dict__ = cls._state
-        return self
+    _cache = {}
 
     def __getitem__(self, item):
-        return self._state.__getitem__(item)
+        return self._cache.__getitem__(item)
 
     def __setitem__(self, key, value):
-        return self._state.__setitem__(key, value)
+        return self._cache.__setitem__(key, value)
 
     def __delitem__(self, key):
-        return self._state.__delitem__(key)
+        return self._cache.__delitem__(key)
 
     def __contains__(self, item):
-        return self._state.__contains__(item)
+        return self._cache.__contains__(item)
 
     def __iter__(self):
-        return self._state.__iter__()
+        return self._cache.__iter__()
 
     def clear(self):
-        self._state.clear()
-        self.CACHE_VERSION = 1.1
+        self._cache.clear()
+        self.CACHE_VERSION = 1.2
         self.enabled = not settings.DISABLE_CACHE
         self._cache_file = settings.POST_CACHE_FILE
 
@@ -40,12 +35,13 @@ class _PostCache(object):
         try:
             with open(self._cache_file, mode='rb') as f:
                 temp_cache = pickle.load(f)
-                if temp_cache['CACHE_VERSION'] != self.CACHE_VERSION:
+                if not hasattr(temp_cache, 'CACHE_VERSION') or temp_cache.CACHE_VERSION != self.CACHE_VERSION:
                     logger.debug("The current post cache is version %s; current version is %s. Rebuilding cache." %
                                  (temp_cache['CACHE_VERSION'], self.CACHE_VERSION))
                     self.clear()
                 else:
-                    self._state = temp_cache
+                    self.CACHE_VERSION = temp_cache.CACHE_VERSION
+                    self._cache = temp_cache._cache
         except (KeyError, IOError, AttributeError, EOFError, TypeError), e:
             self.clear()
 
@@ -69,10 +65,9 @@ class _PostCache(object):
         if not self.enabled:
             return
 
-        #self['_cache_version'] = self.CACHE_VERSION
         cache_file = path(self._cache_file).abspath()
         with open(cache_file, mode='wb') as f:
-            pickle.dump(self._state, f)
+            pickle.dump(self, f)
 
     def delete(self):
         try:

@@ -1,8 +1,8 @@
 # coding=utf-8
 import argparse
-from datetime import datetime
-import sys
 import bottle
+import sys
+import times
 from codecs import open
 from path import path
 from engineer.log import logger
@@ -45,7 +45,7 @@ def build(args=None):
     settings.create_required_directories()
 
     build_stats = {
-        'time_run': datetime.now(),
+        'time_run': times.now(),
         'counts': {
             'template_pages': 0,
             'new_posts': 0,
@@ -158,7 +158,7 @@ def build(args=None):
         settings.OUTPUT_CACHE_DIR / 'feeds/rss.xml')
     feed_content = settings.JINJA_ENV.get_template('core/rss.xml').render(
         post_list=all_posts[:settings.FEED_ITEM_LIMIT],
-        build_date=datetime.now())
+        build_date=times.now())
     with open(feed_output_path, mode='wb', encoding='UTF-8') as file:
         file.write(feed_content)
         logger.debug("Output '%s'." % file.name)

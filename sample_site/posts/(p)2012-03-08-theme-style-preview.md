@@ -1,5 +1,5 @@
 title: Theme Style Preview
-timestamp: 2012-03-08 10:49:00
+timestamp: 10:49 AM Thursday, March 08, 2012
 status: published
 tags:
 - themes

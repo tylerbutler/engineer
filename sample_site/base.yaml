@@ -8,3 +8,4 @@ THEME_SETTINGS:
   typekit_id: vty2qol
 
 USE_CLIENT_SIDE_LESS: yes
+DEFAULT_TIMEZONE: 'America/Los_Angeles'

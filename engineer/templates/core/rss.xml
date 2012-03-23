@@ -5,7 +5,7 @@
         <link>{{ settings.SITE_URL }}</link>
         <description>{{ settings.FEED_DESCRIPTION }}</description>
         {#        <language>en-us</language>#}
-        <lastBuildDate>{{ build_date|date("%a, %d %b %Y %H:%M:%S %Z") }}</lastBuildDate>
+        <lastBuildDate>{{ build_date|date("%a, %d %b %Y %H:%M:%S UTC") }}</lastBuildDate>
         <generator uri="http://github.com/tylerbutler/engineer">Engineer</generator>
         {% for post in post_list %}
             {% include 'core/_rss_item.xml' %}

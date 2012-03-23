@@ -1,8 +1,9 @@
 # coding=utf-8
 from inspect import isfunction
 import platform
+import pytz
+import times
 import yaml
-from datetime import datetime
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 from typogrify.templatetags.jinja2_filters import typogrify
 from path import path
@@ -102,7 +103,7 @@ class EngineerConfiguration(object):
                     raise Exception("Required setting '%s' is missing from config file %s." %
                                     (param, self.SETTINGS_FILE))
             self._initialize(config)
-            self.SETTINGS_FILE_LOAD_TIME = datetime.now()
+            self.SETTINGS_FILE_LOAD_TIME = times.now()
         else:
             raise SettingsFileNotFoundException("Settings file %s not found!" % settings_file)
 
@@ -176,6 +177,8 @@ class EngineerConfiguration(object):
         self.NORMALIZE_INPUT_FILE_MASK = config.pop('NORMALIZE_INPUT_FILE_MASK', u'({0}){1}-{2}.md')
         self.USE_CLIENT_SIDE_LESS = config.pop('USE_CLIENT_SIDE_LESS', (platform.system() == 'Windows'))
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
+        self.DEFAULT_TIMEZONE = pytz.timezone(config.pop('DEFAULT_TIMEZONE', 'UTC'))
+        self.TIME_FORMAT = config.pop('TIME_FORMAT', '%I:%M %p %A, %B %d, %Y')
 
         # Pull any remaining settings in the config and set them as attributes on the settings object
         for k, v in config.iteritems():

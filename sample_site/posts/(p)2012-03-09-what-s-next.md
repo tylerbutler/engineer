@@ -1,5 +1,5 @@
 title: What's Next?
-timestamp: 2012-03-09 09:41:00
+timestamp: 09:41 AM Friday, March 09, 2012
 status: published
 tags:
 - example

@@ -1,5 +1,5 @@
 title: Markdown Tutorial
-timestamp: 2012-03-07 00:00:00
+timestamp: 12:00 AM Wednesday, March 07, 2012
 status: published
 tags:
 - markdown

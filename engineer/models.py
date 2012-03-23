@@ -1,6 +1,7 @@
 # coding=utf-8
 import markdown
 import re
+import times
 import yaml
 from codecs import open
 from datetime import datetime
@@ -56,9 +57,13 @@ class Post(object):
             logger.warning("'%s': Invalid status value in metadata. Defaulting to 'draft'." % self.title)
             self.status = Status.draft
 
-        self.timestamp = metadata.get('timestamp', datetime.now())
+        self.timestamp = metadata.get('timestamp', times.now())
         if not isinstance(self.timestamp, datetime):
+            # looks like the timestamp from YAML wasn't directly convertible to a datetime, so we need to parse it
             self.timestamp = parser.parse(str(self.timestamp))
+
+        # convert to UTC assuming input time is in the DEFAULT_TIMEZONE
+        self.timestamp = times.to_universal(self.timestamp, settings.DEFAULT_TIMEZONE)
 
         self.content = typogrify(markdown.markdown(self.content_raw, extensions=['extra', 'codehilite']))
 
@@ -167,7 +172,7 @@ class Post(object):
         # A hack to guarantee the YAML output is in a sensible order.
         d = {
             'title': self.title,
-            'timestamp': self.timestamp,
+            'timestamp': times.to_local(self.timestamp, settings.DEFAULT_TIMEZONE).strftime(settings.TIME_FORMAT),
             'status': self.status.name,
             'slug': self.slug,
             'external_link': self.external_link,

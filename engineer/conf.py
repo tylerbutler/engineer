@@ -178,7 +178,7 @@ class EngineerConfiguration(object):
         self.USE_CLIENT_SIDE_LESS = config.pop('USE_CLIENT_SIDE_LESS', (platform.system() == 'Windows'))
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
         self.DEFAULT_TIMEZONE = pytz.timezone(config.pop('DEFAULT_TIMEZONE', 'UTC'))
-        self.TIME_FORMAT = config.pop('TIME_FORMAT', '%I:%M %p %A, %B %d, %Y')
+        self.TIME_FORMAT = config.pop('TIME_FORMAT', '%I:%M %p %A, %B %d, %Y %Z')
 
         # Pull any remaining settings in the config and set them as attributes on the settings object
         for k, v in config.iteritems():

@@ -46,10 +46,10 @@ class Post(object):
         self.title = metadata.get('title', self.source.namebase.replace('-', ' ').replace('_', ' '))
         self.slug = metadata.get('slug', slugify(self.title))
         self.tags = metadata.get('tags', [])
-        self.external_link = metadata.get('external_link', None)
+        self.link = metadata.get('link', None)
 
-        self.attribute_to = self.attribute_to_link = None
-        self.attribution = metadata.get('attribution', None)
+        self.via = metadata.get('via', None)
+        self.via_link = metadata.get('via_link', None)
 
         try:
             self.status = Status(metadata.get('status', Status.draft.name))
@@ -62,21 +62,25 @@ class Post(object):
             # looks like the timestamp from YAML wasn't directly convertible to a datetime, so we need to parse it
             self.timestamp = parser.parse(str(self.timestamp))
 
-        # convert to UTC assuming input time is in the DEFAULT_TIMEZONE
-        self.timestamp = times.to_universal(self.timestamp, settings.DEFAULT_TIMEZONE)
+        if self.timestamp.tzinfo is not None:
+            # parsed timestamp has an associated timezone, so convert it to UTC
+            self.timestamp = times.to_universal(self.timestamp)
+        else:
+            # convert to UTC assuming input time is in the DEFAULT_TIMEZONE
+            self.timestamp = times.to_universal(self.timestamp, settings.DEFAULT_TIMEZONE)
 
         self.content = typogrify(markdown.markdown(self.content_raw, extensions=['extra', 'codehilite']))
 
         self.markdown_file_name = unicode.format(settings.NORMALIZE_INPUT_FILE_MASK,
                                                  self.status.name[:1],
-                                                 self.timestamp.strftime('%Y-%m-%d'),
+                                                 self.timestamp_local.strftime('%Y-%m-%d'),
                                                  self.slug)
         self.url = unicode.format(u'{0}{1}/{2}/',
                                   settings.HOME_URL,
-                                  self.timestamp.strftime('%Y/%m/%d'),
+                                  self.timestamp_local.strftime('%Y/%m/%d'),
                                   self.slug)
         self.absolute_url = unicode.format(u'{0}{1}', settings.SITE_URL, self.url)
-        self.output_path = path(settings.OUTPUT_CACHE_DIR / self.timestamp.strftime('%Y/%m/%d') / self.slug)
+        self.output_path = path(settings.OUTPUT_CACHE_DIR / self.timestamp_local.strftime('%Y/%m/%d') / self.slug)
         self.output_file_name = 'index.html'#'%s.html' % self.slug
 
         self._normalize_source()
@@ -101,31 +105,11 @@ class Post(object):
 
     @property
     def is_external_link(self):
-        return self.external_link is not None
+        return self.link is not None
 
     @property
-    def attribution(self):
-        if not self.attribute_to and not self.attribute_to_link:
-            return None
-        attrib = []
-        if self.attribute_to:
-            attrib.append(self.attribute_to)
-        if self.attribute_to_link:
-            attrib.append(self.attribute_to_link)
-        return attrib
-
-    @attribution.setter
-    def attribution(self, value):
-        if not value:
-            self.attribute_to = self.attribute_to_link = None
-            return
-
-        l = len(value)
-        if l >= 1:
-            self.attribute_to = value[0]
-        if l == 2:
-            self.attribute_to_link = value[1]
-        return
+    def timestamp_local(self):
+        return times.to_local(self.timestamp, settings.DEFAULT_TIMEZONE)
 
     def _parse_source(self):
         try:
@@ -172,17 +156,18 @@ class Post(object):
         # A hack to guarantee the YAML output is in a sensible order.
         d = {
             'title': self.title,
-            'timestamp': times.to_local(self.timestamp, settings.DEFAULT_TIMEZONE).strftime(settings.TIME_FORMAT),
+            'timestamp': self.timestamp_local.strftime(settings.TIME_FORMAT),
             'status': self.status.name,
             'slug': self.slug,
-            'external_link': self.external_link,
-            'attribution': self.attribution,
+            'link': self.link,
+            'via': self.via,
+            'via_link': self.via_link,
             'tags': self.tags,
             }
-        order = ['title', 'timestamp', 'status', 'tags', 'external_link', 'attribution', 'slug', ]
+        order = ['title', 'timestamp', 'status', 'tags', 'link', 'via', 'via_link', 'slug', ]
         metadata = ''
         for k in order:
-            if d[k]:
+            if k in d and d[k] is not None and len(d[k]) > 0:
                 metadata += yaml.safe_dump(dict([[k, d[k]]]), default_flow_style=False)
         return settings.JINJA_ENV.get_template(self.markdown_template_path).render(metadata=metadata,
                                                                                    content=self.content_raw)

@@ -2,7 +2,7 @@
     {% block post_info %}
         <div class="post-info two columns">
             <div class="post-date">
-                {% with timestamp=post.timestamp %}
+                {% with timestamp=post.timestamp_local %}
                     <div class="month">{{ timestamp|date("%B")|upper }}</div>
                     <div class="day">{{ timestamp|date("%d") }}</div>
                     <div class="year">{{ timestamp|date("%Y") }}</div>
@@ -24,7 +24,7 @@
     {% block post_content %}
         {% with link=post.is_external_link %}
             <article class="post-content ten columns">
-                <time datetime="{{ post.timestamp|date("%Y-%m-%d") }}" pubdate=""></time>
+                <time datetime="{{ post.timestamp_local|date("%Y-%m-%d %Z") }}" pubdate=""></time>
                 <header>
                     <h1>
                         <a href="{% if link %}{{ post.external_link }}{% else %}

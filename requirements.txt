@@ -14,4 +14,4 @@ humanize>=0.2
 bottle==0.10.9
 pytz==2011k
 times==0.4
--e git://github.com/hyde/typogrify#egg=typogrify
+-e git://github.com/tylerbutler/typogrify.git#egg=typogrify

@@ -24,7 +24,7 @@
                 {% for post in posts %}
                     <article class="row">
                         <div class="two columns post-date">
-                            {{ post.timestamp|date('%d %b') }}
+                            {{ post.timestamp_local|date('%d %b') }}
                         </div>
                         <div class="ten columns">
                             <h1><a href="{{ post.url }}">{{ post.title }}</a></h1>

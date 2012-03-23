@@ -26,5 +26,5 @@ def localtime(value, tz=None):
 
     if tz is None:
         tz = settings.DEFAULT_TIMEZONE
-    loctime = times.to_local(value, tz)
-    return loctime.replace(tzinfo=None)
+
+    return times.to_local(value, tz)

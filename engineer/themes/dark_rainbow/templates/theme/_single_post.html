@@ -24,7 +24,7 @@
     {% block post_content %}
         {% with link=post.is_external_link %}
             <article class="post-content ten columns">
-                <time datetime="{{ post.timestamp_local|date("%Y-%m-%d %Z") }}" pubdate=""></time>
+                <time datetime="{{ post.timestamp|localtime|date("%Y-%m-%d %Z") }}" pubdate=""></time>
                 <header>
                     <h1>
                         <a href="{% if link %}{{ post.external_link }}{% else %}

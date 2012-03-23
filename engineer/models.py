@@ -11,6 +11,7 @@ from path import path
 from typogrify.templatetags.jinja2_filters import typogrify
 from zope.cachedescriptors.property import CachedProperty
 from engineer.conf import settings
+from engineer.filters import localtime
 from engineer.util import slugify, chunk, urljoin
 from engineer.log import logger
 
@@ -57,7 +58,13 @@ class Post(object):
             logger.warning("'%s': Invalid status value in metadata. Defaulting to 'draft'." % self.title)
             self.status = Status.draft
 
-        self.timestamp = metadata.get('timestamp', times.now())
+        self.timestamp = metadata.get('timestamp', None)
+        if self.timestamp is None:
+            self.timestamp = times.now()
+            utctime = True
+        else:
+            utctime = False
+
         if not isinstance(self.timestamp, datetime):
             # looks like the timestamp from YAML wasn't directly convertible to a datetime, so we need to parse it
             self.timestamp = parser.parse(str(self.timestamp))
@@ -65,7 +72,7 @@ class Post(object):
         if self.timestamp.tzinfo is not None:
             # parsed timestamp has an associated timezone, so convert it to UTC
             self.timestamp = times.to_universal(self.timestamp)
-        else:
+        elif not utctime:
             # convert to UTC assuming input time is in the DEFAULT_TIMEZONE
             self.timestamp = times.to_universal(self.timestamp, settings.DEFAULT_TIMEZONE)
 
@@ -74,6 +81,7 @@ class Post(object):
         self.markdown_file_name = unicode.format(settings.NORMALIZE_INPUT_FILE_MASK,
                                                  self.status.name[:1],
                                                  self.timestamp_local.strftime('%Y-%m-%d'),
+                                                 #times.format(self.timestamp, settings.DEFAULT_TIMEZONE, '%Y-%m-%d'),
                                                  self.slug)
         self.url = unicode.format(u'{0}{1}/{2}/',
                                   settings.HOME_URL,
@@ -113,7 +121,7 @@ class Post(object):
 
     @property
     def timestamp_local(self):
-        return times.to_local(self.timestamp, settings.DEFAULT_TIMEZONE)
+        return localtime(self.timestamp)
 
     def _parse_source(self):
         try:

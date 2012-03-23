@@ -8,7 +8,6 @@ from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 from typogrify.templatetags.jinja2_filters import typogrify
 from path import path
 from zope.cachedescriptors import property as zproperty
-from engineer.filters import format_datetime, markdown_filter
 from engineer.util import urljoin, slugify, ensure_exists
 from engineer.log import logger
 
@@ -188,6 +187,7 @@ class EngineerConfiguration(object):
     @zproperty.CachedProperty
     def JINJA_ENV(self):
         import humanize
+        from engineer.filters import format_datetime, markdown_filter, localtime
         from engineer.themes import ThemeManager
 
         # Configure Jinja2 environment
@@ -212,6 +212,7 @@ class EngineerConfiguration(object):
 
         # Filters
         env.filters['date'] = format_datetime
+        env.filters['localtime'] = localtime
         env.filters['naturaltime'] = humanize.naturaltime
         env.filters['typogrify'] = typogrify
         env.filters['markdown'] = markdown_filter

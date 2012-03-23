@@ -32,7 +32,7 @@
                 <h2>Log</h2>
                 {% if stats %}
                     <div><span class="black radius label">Last Build:</span>
-                        {{ stats['time_run']|naturaltime }}
+                        {{ stats['time_run']|localtime|naturaltime }}
                     </div>
                     <div>
                         <span class="green radius label">{{ stats['counts']['new_posts'] }}</span> New/Modified Posts
@@ -87,7 +87,7 @@
 
                 <div>SETTINGS_FILE: <span class="white radius label">{{ settings.SETTINGS_FILE }}</span></div>
                 <div>SETTINGS_FILE_LOAD_TIME: <span class="white radius label">
-                    {{ settings.SETTINGS_FILE_LOAD_TIME|naturaltime }}</span></div>
+                    {{ settings.SETTINGS_FILE_LOAD_TIME|localtime|naturaltime }}</span></div>
                 <div>SITE_URL: <span class="white radius label">{{ settings.SITE_URL }}</span></div>
                 <div>POST_DIR: <span class="white radius label">{{ settings.POST_DIR }}</span></div>
                 <div>TEMPLATE_DIR: <span class="white radius label">{{ settings.TEMPLATE_DIR }}</span></div>

@@ -137,6 +137,8 @@ class EngineerConfiguration(object):
         self.THEME_FINDERS = ['engineer.finders.DefaultFinder']
         self.THEME_SETTINGS = config.pop('THEME_SETTINGS', {})
         self.THEME = config.pop('THEME', 'dark_rainbow')
+        self.LESS_PREPROCESSOR = path(config.pop('LESS_PREPROCESSOR',
+                                                 "C:\Users\Tyler\Drop Box\utils\dotless.Compiler.exe"))
 
         # SITE SETTINGS
         self.SITE_TITLE = config.pop('SITE_TITLE', 'SITE_TITLE')
@@ -195,8 +197,13 @@ class EngineerConfiguration(object):
             setattr(self, k, v)
 
     @zproperty.CachedProperty
+    def OUTPUT_STATIC_DIR(self):
+        return path(settings.OUTPUT_CACHE_DIR / settings.ENGINEER.STATIC_DIR.basename()).abspath()
+
+    @zproperty.CachedProperty
     def JINJA_ENV(self):
         from engineer.filters import format_datetime, markdown_filter, localtime, naturaltime
+        from engineer.processors import preprocess_less
         from engineer.themes import ThemeManager
 
         # Configure Jinja2 environment
@@ -229,6 +236,7 @@ class EngineerConfiguration(object):
         # Globals
         env.globals['theme'] = ThemeManager.current_theme()
         env.globals['urlname'] = urlname
+        env.globals['preprocess_less'] = preprocess_less
         #        env.globals['url'] = url
         env.globals['STATIC_URL'] = self.STATIC_URL
         env.globals['DEBUG'] = self.DEBUG

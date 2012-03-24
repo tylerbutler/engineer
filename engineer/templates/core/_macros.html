@@ -14,6 +14,11 @@
     {%- if settings.USE_CLIENT_SIDE_LESS -%}
         <link rel="stylesheet/less" href="{{ _make_relative_path(path_input, prepend_static_url) }}" type="text/css"/>
     {%- else -%}
+        {% if path_input.endswith('.less') %}
+            {{ preprocess_less(path_input) }}
+            {% set path_input=("%s.css" % path_input[:-5]) %}
+        {% endif %}
+
         <link rel="stylesheet" href="{{ _make_relative_path(path_input, prepend_static_url) }}" type="text/css"/>
     {%- endif -%}
 {%- endmacro -%}

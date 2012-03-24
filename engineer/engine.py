@@ -60,6 +60,20 @@ def build(args=None):
     # since we're rebuilding the site
     settings.OUTPUT_CACHE_DIR.rmtree(ignore_errors=True)
 
+    # Copy static content to output dir
+    s = settings.ENGINEER.STATIC_DIR.abspath()
+    t = ( settings.OUTPUT_CACHE_DIR /
+          settings.ENGINEER.STATIC_DIR.basename()).abspath()
+    mirror_folder(s, t)
+    logger.debug("Copied static files to '%s'." % t)
+
+    # Copy theme static content to output dir
+    s = ThemeManager.current_theme().static_root.abspath()
+    t = (
+        settings.OUTPUT_CACHE_DIR / settings.ENGINEER.STATIC_DIR.basename() / 'theme').abspath()
+    mirror_folder(s, t)
+    logger.debug("Copied static files for theme to '%s'." % t)
+
     # Generate template pages
     if settings.TEMPLATE_PAGE_DIR.exists():
         logger.info("Generating template pages from %s." % settings.TEMPLATE_PAGE_DIR)
@@ -165,19 +179,11 @@ def build(args=None):
         file.write(feed_content)
         logger.debug("Output '%s'." % file.name)
 
-    # Copy static content to output dir
-    s = settings.ENGINEER.STATIC_DIR.abspath()
-    t = ( settings.OUTPUT_CACHE_DIR /
-          settings.ENGINEER.STATIC_DIR.basename()).abspath()
-    mirror_folder(s, t)
-    logger.debug("Copied static files to '%s'." % t)
-
-    # Copy theme static content to output dir
-    s = ThemeManager.current_theme().static_root.abspath()
-    t = (
-        settings.OUTPUT_CACHE_DIR / settings.ENGINEER.STATIC_DIR.basename() / 'theme').abspath()
-    mirror_folder(s, t)
-    logger.debug("Copied static files for theme to '%s'." % t)
+    # Remove LESS files if LESS preprocessing is being done
+    if not settings.USE_CLIENT_SIDE_LESS:
+        for f in settings.OUTPUT_STATIC_DIR.walkfiles(pattern="*.less"):
+            logger.debug("Deleting file: %s." % f)
+            f.remove_p()
 
     logger.info("Synchronizing output directory with output cache.")
     build_stats['files'] = mirror_folder(settings.OUTPUT_CACHE_DIR, settings.OUTPUT_DIR)

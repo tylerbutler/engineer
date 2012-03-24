@@ -308,7 +308,7 @@ header#secondary {
         background-color: lighten(@bg, 7%);
         .font-size-default(.5, .5);
         .text-center;
-        padding: .5em 0;
+        padding: .5em;
         overflow: hidden;
         p {
             .font-size-default(0, 0);
@@ -316,10 +316,14 @@ header#secondary {
         }
 
         .horizontal-list(5px, 0);
-        li:not(:last-child) {
+        ul li {
+            padding-right: 0;
+        }
+        ul li:not(:last-child) {
             &:after {
                 content: "/";
                 padding-left: 9px;
+                padding-right: 5px;
             }
         }
 
@@ -332,9 +336,6 @@ header#secondary {
             }
 
             ul {
-                padding-left: 12px;
-                padding-right: 5px;
-
                 li {
                     text-indent: 0;
                     padding-right: 0;

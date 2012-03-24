@@ -6,6 +6,7 @@ PUBLISH_DRAFTS: no
 
 THEME_SETTINGS:
   typekit_id: vty2qol
+  twitter_id: tylerbutler
+  tweet_count: 4
 
-USE_CLIENT_SIDE_LESS: yes
-DEFAULT_TIMEZONE: 'America/Los_Angeles'
+POST_TIMEZONE: 'America/Los_Angeles'

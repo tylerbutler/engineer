@@ -8,8 +8,10 @@
 {% endblock %}
 
 {%- block stylesheets %}
-    {{ render_less_link('theme/stylesheets/dark_rainbow.less') }}
-    {%- block additional_stylesheets %}{% endblock -%}
+    {% filter compress %}
+        {{ render_less_link('theme/stylesheets/dark_rainbow.less') }}
+        {%- block additional_stylesheets %}{% endblock -%}
+    {% endfilter %}
 {% endblock -%}
 
 {%- block scripts_top %}
@@ -101,6 +103,8 @@
 {% endblock body %}
 
 {%- block scripts_bottom %}
-    <script type="text/javascript"
-            src="{{ STATIC_URL }}/theme/scripts/highlight.js"></script>
+    {% filter compress %}
+        <script type="text/javascript"
+                src="{{ STATIC_URL }}/theme/scripts/highlight.js"></script>
+    {% endfilter %}
 {% endblock -%}

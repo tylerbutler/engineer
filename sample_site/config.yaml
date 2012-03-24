@@ -8,4 +8,3 @@ THEME_SETTINGS:
   typekit_id: vty2qol
 
 DEBUG: yes
-USE_CLIENT_SIDE_LESS: yes

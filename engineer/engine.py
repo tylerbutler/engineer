@@ -62,15 +62,13 @@ def build(args=None):
 
     # Copy static content to output dir
     s = settings.ENGINEER.STATIC_DIR.abspath()
-    t = ( settings.OUTPUT_CACHE_DIR /
-          settings.ENGINEER.STATIC_DIR.basename()).abspath()
+    t = settings.OUTPUT_STATIC_DIR
     mirror_folder(s, t)
     logger.debug("Copied static files to '%s'." % t)
 
     # Copy theme static content to output dir
     s = ThemeManager.current_theme().static_root.abspath()
-    t = (
-        settings.OUTPUT_CACHE_DIR / settings.ENGINEER.STATIC_DIR.basename() / 'theme').abspath()
+    t = (settings.OUTPUT_STATIC_DIR / 'theme').abspath()
     mirror_folder(s, t)
     logger.debug("Copied static files for theme to '%s'." % t)
 
@@ -180,7 +178,7 @@ def build(args=None):
         logger.debug("Output '%s'." % file.name)
 
     # Remove LESS files if LESS preprocessing is being done
-    if not settings.USE_CLIENT_SIDE_LESS:
+    if settings.PREPROCESS_LESS:
         for f in settings.OUTPUT_STATIC_DIR.walkfiles(pattern="*.less"):
             logger.debug("Deleting file: %s." % f)
             f.remove_p()

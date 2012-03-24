@@ -137,8 +137,20 @@ class EngineerConfiguration(object):
         self.THEME_FINDERS = ['engineer.finders.DefaultFinder']
         self.THEME_SETTINGS = config.pop('THEME_SETTINGS', {})
         self.THEME = config.pop('THEME', 'dark_rainbow')
-        self.LESS_PREPROCESSOR = path(config.pop('LESS_PREPROCESSOR',
-                                                 "C:\Users\Tyler\Drop Box\utils\dotless.Compiler.exe"))
+
+        # PREPROCESSOR / COMPRESSOR SETTINGS
+        self.COMPRESSOR_ENABLED = config.pop('COMPRESSOR_ENABLED', True)
+        self.COMPRESSOR_FILE_EXTENSIONS = config.pop('COMPRESSOR_FILE_EXTENSIONS', ['js', 'css'])
+        self.PREPROCESS_LESS = config.pop('PREPROCESS_LESS', True)
+        if not 'LESS_PREPROCESSOR' in config:
+            if platform.system() == 'Windows':
+                self.LESS_PREPROCESSOR = str(self.ENGINEER.ROOT_DIR /
+                                             'lib/dotless/dotless.Compiler.exe') + ' {infile} {outfile}'
+            else:
+                self.LESS_PREPROCESSOR = 'lessc {infile} {outfile}'
+        else:
+            self.LESS_PREPROCESSOR = path(config.pop('LESS_PREPROCESSOR'))
+
 
         # SITE SETTINGS
         self.SITE_TITLE = config.pop('SITE_TITLE', 'SITE_TITLE')
@@ -184,7 +196,6 @@ class EngineerConfiguration(object):
         self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
         self.NORMALIZE_INPUT_FILES = config.pop('NORMALIZE_INPUT_FILES', True)
         self.NORMALIZE_INPUT_FILE_MASK = config.pop('NORMALIZE_INPUT_FILE_MASK', u'({0}){1}-{2}.md')
-        self.USE_CLIENT_SIDE_LESS = config.pop('USE_CLIENT_SIDE_LESS', (platform.system() == 'Windows'))
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
         self.PUBLISH_PENDING = config.pop('PUBLISH_PENDING', False)
         self.POST_TIMEZONE = pytz.timezone(config.pop('POST_TIMEZONE', 'UTC'))
@@ -202,7 +213,7 @@ class EngineerConfiguration(object):
 
     @zproperty.CachedProperty
     def JINJA_ENV(self):
-        from engineer.filters import format_datetime, markdown_filter, localtime, naturaltime
+        from engineer.filters import format_datetime, markdown_filter, localtime, naturaltime, compress
         from engineer.processors import preprocess_less
         from engineer.themes import ThemeManager
 
@@ -227,6 +238,7 @@ class EngineerConfiguration(object):
             trim_blocks=False)
 
         # Filters
+        env.filters['compress'] = compress
         env.filters['date'] = format_datetime
         env.filters['localtime'] = localtime
         env.filters['naturaltime'] = naturaltime

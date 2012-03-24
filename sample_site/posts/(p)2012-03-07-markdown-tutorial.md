@@ -1,13 +1,9 @@
 title: Markdown Tutorial
-timestamp: 12:00 AM Wednesday, March 07, 2012
+timestamp: 12:00 AM Wednesday, March 07, 2012 PST
 status: published
 tags:
 - markdown
 - primer
-external_link: http://daringfireball.net/projects/markdown/basics
-attribution:
-- John Gruber
-- http://daringfireball.net/
 slug: markdown-tutorial
 
 

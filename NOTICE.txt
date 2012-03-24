@@ -9,3 +9,4 @@ jinja2htmlcompress.py Copyright (c) 2011 Armin Ronacher
 
 Included Apache 2.0 licensed software:
 LESS Copyright (c) 2009-2011 Alexis Sellier
+dotless Copyright (c) 2009-2010 dotless project, http://www.dotlesscss.com

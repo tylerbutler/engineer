@@ -8,10 +8,15 @@ __author__ = 'tyler@tylerbutler.com'
 
 # Helper function to preprocess LESS files on demand
 def preprocess_less(file):
-    file = path(settings.OUTPUT_CACHE_DIR / settings.ENGINEER.STATIC_DIR.basename() / file)
-    css_file = path("%s.css" % str(file)[:-5])
+    input_file = path(settings.OUTPUT_CACHE_DIR / settings.ENGINEER.STATIC_DIR.basename() / file)
+    css_file = path("%s.css" % str(input_file)[:-5])
     if not css_file.exists():
-        result = subprocess.check_output("\"%s\" %s" % (settings.LESS_PREPROCESSOR, file))
+        cmd = str.format(str(settings.LESS_PREPROCESSOR), infile=input_file, outfile=css_file).split()
+        try:
+            result = subprocess.check_output(cmd)
+        except subprocess.CalledProcessError as e:
+            logger.critical(e.cmd)
+            logger.critical(e.output)
+            raise
         logger.info("Preprocessed LESS file %s." % file)
-        file.remove_p()
     return ""

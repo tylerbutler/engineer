@@ -28,15 +28,17 @@
 
     {% block foundationcss %}
         {% if theme.use_foundation %}
-            {# FOUNDATION CSS #}
-            <link rel="stylesheet"
-                  href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/grid.css">
-            <link rel="stylesheet"
-                  href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/mobile.css">
+            {% filter compress %}
+                {# FOUNDATION CSS #}
+                <link rel="stylesheet"
+                      href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/grid.css">
+                <link rel="stylesheet"
+                      href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/mobile.css">
 
-            <!--[if lt IE 9]>
-            <link rel="stylesheet" href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/ie.css">
-        <![endif]-->
+                <!--[if lt IE 9]>
+                    <link rel="stylesheet" href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/ie.css">
+                <![endif]-->
+            {% endfilter %}
         {% endif %}
     {% endblock %}
 
@@ -44,7 +46,7 @@
 
     {% block lesscss %}
         {% if theme.use_lesscss %}
-            {% if settings.USE_CLIENT_SIDE_LESS %}
+            {% if not settings.PREPROCESS_LESS %}
                 <script src="{{ settings.ENGINEER.LESS_JS_URL }}"
                         type="text/javascript">
                 </script>
@@ -79,20 +81,22 @@
 
     {% block twitter %}
         {% if theme.twitter_id %}
-            <script type="text/javascript" src="{{ settings.ENGINEER.TWEET_URL }}"></script>
-            <script type='text/javascript'>
-                jQuery(function ($) {
-                    $(".tweet").tweet({
-                        username:'{{ theme.twitter_id }}',
-                        join_text:null,
-                        avatar_size:null,
-                        retweets:false,
-                        count:{{ theme.tweet_count if theme.tweet_count else 5 }},
-                        loading_text:"loading tweets...",
-                        template:"{text}{time}"
+            {% filter compress %}
+                <script type="text/javascript" src="{{ settings.ENGINEER.TWEET_URL }}"></script>
+                <script type='text/javascript'>
+                    jQuery(function ($) {
+                        $(".tweet").tweet({
+                            username:'{{ theme.twitter_id }}',
+                            join_text:null,
+                            avatar_size:null,
+                            retweets:false,
+                            count:{{ theme.tweet_count if theme.tweet_count else 5 }},
+                            loading_text:"loading tweets...",
+                            template:"{text}{time}"
+                        });
                     });
-                });
-            </script>
+                </script>
+            {% endfilter %}
         {% endif %}
     {% endblock %}
 
@@ -106,7 +110,9 @@
 
 {% block foundation_js %}
     {% if theme.use_foundation -%}
-        <script src="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}javascripts/foundation.js"></script>
+        {% filter compress %}
+            <script src="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}javascripts/foundation.js"></script>
+        {% endfilter %}
     {%- endif %}
 {% endblock %}
 

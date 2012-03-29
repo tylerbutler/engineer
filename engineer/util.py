@@ -3,6 +3,7 @@ import posixpath
 import re
 import filecmp
 import hashlib
+import translitcodec
 from itertools import chain, islice
 from path import path
 from urlparse import urljoin, urlparse, urlunparse

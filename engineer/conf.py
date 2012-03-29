@@ -8,7 +8,7 @@ from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 from typogrify.templatetags.jinja2_filters import typogrify
 from path import path
 from zope.cachedescriptors import property as zproperty
-from engineer.util import urljoin, slugify, ensure_exists
+from engineer.util import urljoin, slugify, ensure_exists, wrap_list
 from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
@@ -121,7 +121,7 @@ class EngineerConfiguration(object):
         self.CONTENT_ROOT_DIR = path(config.pop('CONTENT_ROOT_DIR',
                                                 self.SETTINGS_FILE.dirname().abspath() if self.SETTINGS_FILE is not
                                                                                           None else path.getcwd()))
-        self.POST_DIR = self.normalize(config.pop('POST_DIR', 'posts'))
+        self.POST_DIR = self.normalize_list(config.pop('POST_DIR', 'posts'))
         self.OUTPUT_DIR = self.normalize(config.pop('OUTPUT_DIR', 'output'))
         self.TEMPLATE_DIR = self.normalize(config.pop('TEMPLATE_DIR', 'templates'))
         self.TEMPLATE_PAGE_DIR = config.pop('TEMPLATE_PAGE_DIR', (self.TEMPLATE_DIR / 'pages').abspath())
@@ -272,6 +272,13 @@ class EngineerConfiguration(object):
             return path(p)
         else:
             return (self.CONTENT_ROOT_DIR / p).abspath()
+
+    def normalize_list(self, p):
+        l = wrap_list(p)
+        return_list = []
+        for p in l:
+            return_list.append(self.normalize(p))
+        return return_list
 
     def create_required_directories(self):
         required = (self.CACHE_DIR,

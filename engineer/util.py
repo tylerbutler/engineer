@@ -3,8 +3,6 @@ import posixpath
 import re
 import filecmp
 import hashlib
-import sys
-import translitcodec
 from itertools import chain, islice
 from path import path
 from urlparse import urljoin, urlparse, urlunparse
@@ -141,6 +139,15 @@ def ensure_exists(p):
     else:
         path(p).makedirs_p()
     return p
+
+
+def wrap_list(item):
+    if isinstance(item, list):
+        return item
+    elif isinstance(item, (tuple, set)):
+        return list(item)
+    else:
+        return [item]
 
 
 class Borg(object):

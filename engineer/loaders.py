@@ -11,7 +11,12 @@ class LocalLoader(object):
     def load_all(input):
         new_posts = PostCollection()
         cached_posts = PostCollection()
-        file_list = path(input).listdir('*.md') + path(input).listdir('*.markdown')
+
+        file_list = []
+        for directory in input:
+            logger.debug("Getting posts from %s." % directory)
+            file_list.extend(path(directory).listdir('*.md') + path(directory).listdir('*.markdown'))
+
         for f in file_list:
             try:
                 if not POST_CACHE.is_cached(f):

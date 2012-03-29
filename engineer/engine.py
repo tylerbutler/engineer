@@ -91,7 +91,7 @@ def build(args=None):
                 build_stats['counts']['template_pages'] += 1
 
     # Load markdown input posts
-    logger.info("Loading posts from %s." % settings.POST_DIR)
+    logger.info("Loading posts...")
     new_posts, cached_posts = LocalLoader.load_all(input=settings.POST_DIR)
     all_posts = PostCollection(new_posts + cached_posts)
 

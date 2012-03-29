@@ -130,12 +130,18 @@ class EngineerConfiguration(object):
         self.CACHE_DIR = self.normalize(config.pop('CACHE_DIR', '_cache'))
         self.OUTPUT_CACHE_DIR = config.pop('OUTPUT_CACHE_DIR', (self.CACHE_DIR / 'output_cache').abspath())
         self.JINJA_CACHE_DIR = config.pop('JINJA_CACHE_DIR', (self.CACHE_DIR / 'jinja_cache').abspath())
-        self.POST_CACHE_FILE = config.pop('POST_CACHE_FILE', (self.CACHE_DIR / 'post_cache.cache').abspath())
+
+        self.POST_CACHE_FILE = config.pop('POST_CACHE_FILE', None)
+        if self.POST_CACHE_FILE is None:
+            if self.SETTINGS_FILE is not None:
+                self.POST_CACHE_FILE = (self.CACHE_DIR / ('post_cache_%s.cache' % self.SETTINGS_FILE.name)).abspath()
+            else:
+                self.POST_CACHE_FILE = (self.CACHE_DIR / 'post_cache_None.cache').abspath()
 
         self.BUILD_STATS_FILE = config.pop('BUILD_STATS_FILE', None)
         if self.BUILD_STATS_FILE is None:
             if self.SETTINGS_FILE is not None:
-                self.BUILD_STATS_FILE = self.CACHE_DIR / ('build_stats_%s.cache' % self.SETTINGS_FILE.name)
+                self.BUILD_STATS_FILE = (self.CACHE_DIR / ('build_stats_%s.cache' % self.SETTINGS_FILE.name)).abspath()
             else:
                 self.BUILD_STATS_FILE = self.CACHE_DIR / 'build_stats_None.cache'
 

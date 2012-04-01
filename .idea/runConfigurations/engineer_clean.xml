@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="engineer clean" type="PythonConfigurationType" factoryName="Python">
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
+    </envs>
+    <option name="SDK_HOME" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/sample_site" />
+    <option name="IS_MODULE_SDK" value="true" />
+    <module name="blog-static" />
+    <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/engineer_script.py" />
+    <option name="PARAMETERS" value="clean --settings debug.yaml -v" />
+    <option name="MULTIPROCESS" value="true" />
+    <RunnerSettings RunnerId="PyDebugRunner" />
+    <RunnerSettings RunnerId="PythonRunner" />
+    <ConfigurationWrapper RunnerId="PyDebugRunner" />
+    <ConfigurationWrapper RunnerId="PythonRunner" />
+    <method />
+  </configuration>
+</component>

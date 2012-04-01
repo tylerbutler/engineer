@@ -13,7 +13,7 @@ except ImportError:
 
 __author__ = 'tyler@tylerbutler.com'
 
-def clean():
+def clean(args=None):
     from engineer.conf import settings
 
     try:
@@ -26,7 +26,9 @@ def clean():
             logger.info(
                 "Couldn't find output directory: %s" % settings.OUTPUT_DIR)
 
-    settings.POST_CACHE.clear()
+    # Close the Cache file so we can explicitly delete the cache directories
+    #settings.CACHE.close()
+    settings.CACHE_DIR.rmtree()
     logger.info('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 
 
@@ -303,6 +305,11 @@ def get_argparser():
                               action='store_true',
                               help="Clean the output directory and clear all the caches before building.")
     parser_build.set_defaults(func=build)
+
+    parser_clean = subparsers.add_parser('clean',
+                                         help="Clean the output directory and clear all caches.",
+                                         parents=[common_parser])
+    parser_clean.set_defaults(func=clean)
 
     parser_serve = subparsers.add_parser('serve',
                                          help="Start the development server.",

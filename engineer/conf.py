@@ -84,10 +84,9 @@ class EngineerConfiguration(object):
             config = {}
             try:
                 while True:
-                    logger.debug("in loop")
                     with open(settings_file, mode='rb') as file:
                         temp_config = yaml.load(file)
-                        logger.debug("Loaded %s file." % file)
+                        logger.debug("Loaded %s file." % settings_file)
                     all_configs.append((temp_config, settings_file))
                     if 'SUPER' not in temp_config:
                         break
@@ -279,7 +278,7 @@ class EngineerConfiguration(object):
             exit()
         if CACHE is None or not CACHE.has_key('version') or CACHE['version'] != version:
             # all new caches
-            logger.info("Creating new caches because the cache version is old.")
+            logger.info("Caches either don't exist or are old, so creating new ones...")
             CACHE['version'] = version
             CACHE['POST_CACHE'] = self.POST_CACHE = SimpleFileCache(version=version)
             CACHE['COMPRESSION_CACHE'] = self.COMPRESSION_CACHE = SimpleFileCache(version=version)

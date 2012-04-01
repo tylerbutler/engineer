@@ -47,7 +47,6 @@ def compress(value):
         return value
     else: # COMPRESSOR_ENABLED == True
         import html5lib
-        from engineer.cache import COMPRESSION_CACHE
         from engineer.log import logger
 
         def _min_css(css_string):
@@ -107,7 +106,7 @@ def compress(value):
                 # with the OUTPUT_CACHE_DIR to get a path
             file = path(settings.OUTPUT_CACHE_DIR / src).abspath()
 
-            if file.ext[1:] in settings.COMPRESSOR_FILE_EXTENSIONS and not file in COMPRESSION_CACHE:
+            if file.ext[1:] in settings.COMPRESSOR_FILE_EXTENSIONS and file not in settings.COMPRESSION_CACHE:
                 with open(file, mode='rb') as input:
                     logger.debug("Compressing %s." % file)
                     output = func(input.read())
@@ -115,7 +114,7 @@ def compress(value):
                 with open(file, mode='wb') as f:
                     f.write(output)
 
-                COMPRESSION_CACHE[file] = True
+                settings.COMPRESSION_CACHE[file] = output
                 logger.info("Compressed file %s." % file)
 
                 # TODO: Inline script minification.
@@ -131,5 +130,4 @@ def compress(value):
                 #        for tag in generator:
                 #            output += tag
 
-        COMPRESSION_CACHE.save()
         return value

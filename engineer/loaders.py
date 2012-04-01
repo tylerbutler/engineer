@@ -1,6 +1,6 @@
 # coding=utf-8
 from path import path
-from engineer.cache import POST_CACHE
+from engineer.conf import settings
 from engineer.log import logger
 from engineer.models import Post, MetadataError, PostCollection
 
@@ -19,7 +19,7 @@ class LocalLoader(object):
 
         for f in file_list:
             try:
-                if f not in POST_CACHE:
+                if f not in settings.POST_CACHE:
                     logger.debug("'%s': Beginning to parse." % f.basename())
                     post = Post(f)
                     logger.debug("'%s': Parsed successfully." % f.basename())
@@ -27,11 +27,12 @@ class LocalLoader(object):
                     logger.info("'%s': LOADED successfully." % f.basename())
                 else:
                     logger.debug("'%s': FROM CACHE" % f.basename())
-                    cached_posts.append(POST_CACHE[f])
+                    cached_posts.append(settings.POST_CACHE[f])
             except MetadataError as e:
                 logger.warning("SKIPPING '%s': metadata is invalid. %s" % (f.basename(), e.message))
                 continue
         logger.info(
             "Successfully parsed %d new items and loaded %s from the cache." % (len(new_posts), len(cached_posts)))
-        POST_CACHE.save()
+
+        settings.CACHE.sync()
         return new_posts, cached_posts

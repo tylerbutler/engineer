@@ -1,6 +1,5 @@
 # coding=utf-8
 import argparse
-import bottle
 import sys
 import times
 from codecs import open
@@ -26,9 +25,8 @@ def clean():
         else:
             logger.info(
                 "Couldn't find output directory: %s" % settings.OUTPUT_DIR)
-    from engineer.cache import POST_CACHE
 
-    POST_CACHE.delete()
+    settings.POST_CACHE.clear()
     logger.info('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 
 
@@ -202,12 +200,14 @@ def build(args=None):
         len(build_stats['files']['new']),
         len(build_stats['files']['overwritten']),
         len(build_stats['files']['deleted'])))
+
     with open(settings.BUILD_STATS_FILE, mode='wb') as file:
         pickle.dump(build_stats, file)
     return build_stats
 
 
 def serve(args):
+    import bottle
     from engineer.conf import settings
     from engineer import emma
 
@@ -354,6 +354,11 @@ def cmdline(args=sys.argv):
     args = get_argparser().parse_args(args[1:])
     skip_settings = ('init',)
 
+    if args.verbose:
+        import logging
+
+        logger.setLevel(logging.DEBUG)
+
     if args.parser_name in skip_settings:
         pass
     else: # try loading settings
@@ -369,11 +374,6 @@ def cmdline(args=sys.argv):
         except Exception as e:
             logger.error(e.message)
             exit()
-
-    if args.verbose:
-        import logging
-
-        logger.setLevel(logging.DEBUG)
 
     args.func(args)
     exit()

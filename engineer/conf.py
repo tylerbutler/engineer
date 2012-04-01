@@ -2,14 +2,18 @@
 from inspect import isfunction
 import platform
 import pytz
+import shelve
 import times
 import yaml
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 from typogrify.templatetags.jinja2_filters import typogrify
 from path import path
 from zope.cachedescriptors import property as zproperty
+from engineer.cache import SimpleFileCache
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list
 from engineer.log import logger
+from engineer.version import __version__ as version
+
 
 __author__ = 'tyler@tylerbutler.com'
 
@@ -127,23 +131,20 @@ class EngineerConfiguration(object):
         self.TEMPLATE_PAGE_DIR = config.pop('TEMPLATE_PAGE_DIR', (self.TEMPLATE_DIR / 'pages').abspath())
         self.LOG_DIR = self.normalize(config.pop('LOG_DIR', 'logs'))
         self.LOG_FILE = config.pop('LOG_FILE', (self.LOG_DIR / 'build.log').abspath())
-        self.CACHE_DIR = self.normalize(config.pop('CACHE_DIR', '_cache'))
+
+        self.CACHE_DIR = config.pop('CACHE_DIR', None)
+        if self.CACHE_DIR is None:
+            if self.SETTINGS_FILE is not None:
+                self.CACHE_DIR = self.normalize('_cache/%s' % self.SETTINGS_FILE.name)
+            else:
+                self.CACHE_DIR = self.normalize('_cache/None')
+        else:
+            self.CACHE_DIR = self.normalize(self.CACHE_DIR)
+
+        self.CACHE_FILE = config.pop('CACHE_FILE', (self.CACHE_DIR / 'engineer.cache').abspath())
         self.OUTPUT_CACHE_DIR = config.pop('OUTPUT_CACHE_DIR', (self.CACHE_DIR / 'output_cache').abspath())
         self.JINJA_CACHE_DIR = config.pop('JINJA_CACHE_DIR', (self.CACHE_DIR / 'jinja_cache').abspath())
-
-        self.POST_CACHE_FILE = config.pop('POST_CACHE_FILE', None)
-        if self.POST_CACHE_FILE is None:
-            if self.SETTINGS_FILE is not None:
-                self.POST_CACHE_FILE = (self.CACHE_DIR / ('post_cache_%s.cache' % self.SETTINGS_FILE.name)).abspath()
-            else:
-                self.POST_CACHE_FILE = (self.CACHE_DIR / 'post_cache_None.cache').abspath()
-
-        self.BUILD_STATS_FILE = config.pop('BUILD_STATS_FILE', None)
-        if self.BUILD_STATS_FILE is None:
-            if self.SETTINGS_FILE is not None:
-                self.BUILD_STATS_FILE = (self.CACHE_DIR / ('build_stats_%s.cache' % self.SETTINGS_FILE.name)).abspath()
-            else:
-                self.BUILD_STATS_FILE = self.CACHE_DIR / 'build_stats_None.cache'
+        self.BUILD_STATS_FILE = config.pop('BUILD_STATS_FILE', (self.CACHE_DIR / 'build_stats.cache').abspath())
 
         # THEMES
         self.THEME_FINDERS = ['engineer.finders.DefaultFinder']
@@ -221,7 +222,7 @@ class EngineerConfiguration(object):
 
     @zproperty.CachedProperty
     def OUTPUT_STATIC_DIR(self):
-        return path(settings.OUTPUT_CACHE_DIR / settings.ENGINEER.STATIC_DIR.basename()).abspath()
+        return path(self.OUTPUT_CACHE_DIR / self.ENGINEER.STATIC_DIR.basename()).abspath()
 
     @zproperty.CachedProperty
     def JINJA_ENV(self):
@@ -266,6 +267,36 @@ class EngineerConfiguration(object):
         env.globals['DEBUG'] = self.DEBUG
         env.globals['settings'] = self
         return env
+
+    @zproperty.CachedProperty
+    def CACHE(self):
+        # Use a shelf as the main cache
+        try:
+            CACHE = shelve.open(self.CACHE_FILE, writeback=True)
+        except Exception as e:
+            logger.exception(e)
+            CACHE = None
+            exit()
+        if CACHE is None or not CACHE.has_key('version') or CACHE['version'] != version:
+            # all new caches
+            logger.info("Creating new caches because the cache version is old.")
+            CACHE['version'] = version
+            CACHE['POST_CACHE'] = self.POST_CACHE = SimpleFileCache(version=version)
+            CACHE['COMPRESSION_CACHE'] = self.COMPRESSION_CACHE = SimpleFileCache(version=version)
+            CACHE['LESS_CACHE'] = self.LESS_CACHE = SimpleFileCache(version=version)
+        return CACHE
+
+    @zproperty.CachedProperty
+    def COMPRESSION_CACHE(self):
+        if not self.CACHE.has_key('COMPRESSION_CACHE'):
+            self.CACHE['COMPRESSION_CACHE'] = SimpleFileCache()
+        return self.CACHE['COMPRESSION_CACHE']
+
+    @zproperty.CachedProperty
+    def POST_CACHE(self):
+        if not self.CACHE.has_key('POST_CACHE'):
+            self.CACHE['POST_CACHE'] = SimpleFileCache()
+        return self.CACHE['POST_CACHE']
 
     def normalize(self, p):
         if path(p).isabs():

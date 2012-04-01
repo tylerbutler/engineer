@@ -94,9 +94,7 @@ class Post(object):
         self._normalize_source()
 
         # update cache
-        from engineer.cache import POST_CACHE
-
-        POST_CACHE[self.source] = self
+        settings.POST_CACHE[self.source] = self
 
     @property
     def is_draft(self):

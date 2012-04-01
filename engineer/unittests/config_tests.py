@@ -42,5 +42,5 @@ class TestConfig(CopyDataTestCase):
         from engineer.conf import settings
         from engineer.loaders import LocalLoader
 
-        posts = LocalLoader.load_all(settings.CONTENT_ROOT_DIR)
+        posts = LocalLoader.load_all(settings.POST_DIR)
         self.assertEqual(len(posts), 2)

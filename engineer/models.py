@@ -140,7 +140,7 @@ class Post(object):
         # 'Clean' the YAML section since there might be tab characters
         metadata = parsed_content.group('metadata').replace('\t', '    ')
         metadata = yaml.load(metadata)
-        if metadata is None:
+        if not isinstance(metadata, dict):
             raise MetadataError()
         content = parsed_content.group('content')
 

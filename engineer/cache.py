@@ -78,6 +78,7 @@ class SimpleFileCache(object):
                                  (temp_cache._version, self._version))
                     self.clear()
                 else:
+                    self._meta = temp_cache._meta
                     self._cache = temp_cache._cache
             except (KeyError, IOError, AttributeError, EOFError, TypeError) as e:
                 logger.exception("Error loading cache from file: %s" % e.message)
@@ -97,5 +98,6 @@ class SimpleFileCache(object):
         self.clear()
 
 
+POST_CACHE = SimpleFileCache(settings.POST_CACHE_FILE, version=1)
 COMPRESSION_CACHE = SimpleFileCache(settings.CACHE_DIR / 'compression_cache.cache', version=1)
 LESS_CACHE = SimpleFileCache(settings.CACHE_DIR / 'less.cache', version=1)

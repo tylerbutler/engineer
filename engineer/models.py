@@ -94,14 +94,9 @@ class Post(object):
         self._normalize_source()
 
         # update cache
-        from engineer.post_cache import POST_CACHE
+        from engineer.cache import POST_CACHE
 
-        POST_CACHE[self.source] = {
-            'mtime': self.source.mtime,
-            'size': self.source.size,
-            'checksum': self.source.read_hexhash('sha256'),
-            'post': self
-        }
+        POST_CACHE[self.source] = self
 
     @property
     def is_draft(self):

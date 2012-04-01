@@ -26,7 +26,7 @@ def clean():
         else:
             logger.info(
                 "Couldn't find output directory: %s" % settings.OUTPUT_DIR)
-    from engineer.post_cache import POST_CACHE
+    from engineer.cache import POST_CACHE
 
     POST_CACHE.delete()
     logger.info('Cleaned output directory: %s' % settings.OUTPUT_DIR)

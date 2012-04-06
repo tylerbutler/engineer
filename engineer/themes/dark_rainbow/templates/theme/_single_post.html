@@ -15,7 +15,8 @@
             {% if post.tags.count > 0 %}
                 <ul class="tags">
                     {% for tag in post.tags %}
-                        <li><a href="{{ urlname('tag', tag) }}">{{ tag }}</a></li>
+                        <li><a href="{{ urlname('tag', tag) }}">{{ tag }}</a>
+                        </li>
                     {% endfor %}
                 </ul>
             {% endif %}
@@ -24,10 +25,11 @@
     {% block post_content %}
         {% with link=post.is_external_link %}
             <article class="post-content ten columns">
-                <time datetime="{{ post.timestamp|localtime|date("%Y-%m-%d %Z") }}" pubdate=""></time>
+                <time datetime="{{ post.timestamp|localtime|date("%Y-%m-%d %Z") }}"
+                      pubdate=""></time>
                 <header>
                     <h1>
-                        <a href="{% if link %}{{ post.external_link }}{% else %}
+                        <a href="{% if link %}{{ post.link }}{% else %}
         {{ post.url }}{% endif %}">{{ post.title }}</a>
                         {% if link %}<span class="arrow">→</span>{% endif %}
                     </h1>
@@ -35,10 +37,10 @@
                 {{ post.content|safe }}
                 {% if post.attribute_to %}
                     <div class="attribution">
-                        {% if post.attribute_to_link %}
-                            <a href="{{ post.attribute_to_link }}">/via {{ post.attribute_to }}</a>
+                        {% if post.via_link %}
+                            <a href="{{ post.via_link }}">/via {{ post.via }}</a>
                         {% else %}
-                            /via {{ post.attribute_to }}
+                            /via {{ post.via }}
                         {% endif %}
                     </div>
                 {% endif %}

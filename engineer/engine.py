@@ -19,6 +19,7 @@ def clean(args=None):
     try:
         settings.OUTPUT_DIR.rmtree()
         settings.OUTPUT_CACHE_DIR.rmtree()
+        settings.CACHE_DIR.rmtree()
     except OSError as we:
         if hasattr(we, 'winerror') and we.winerror not in (2, 3):
             logger.exception(we.message)
@@ -26,9 +27,6 @@ def clean(args=None):
             logger.info(
                 "Couldn't find output directory: %s" % settings.OUTPUT_DIR)
 
-    # Close the Cache file so we can explicitly delete the cache directories
-    #settings.CACHE.close()
-    settings.CACHE_DIR.rmtree()
     logger.info('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 
 
@@ -74,7 +72,8 @@ def build(args=None):
 
     # Generate template pages
     if settings.TEMPLATE_PAGE_DIR.exists():
-        logger.info("Generating template pages from %s." % settings.TEMPLATE_PAGE_DIR)
+        logger.info(
+            "Generating template pages from %s." % settings.TEMPLATE_PAGE_DIR)
         template_pages = []
         for template in settings.TEMPLATE_PAGE_DIR.walkfiles('*.html'):
             # We create all the TemplatePage objects first so we have all of the URLs to them in the template
@@ -161,7 +160,8 @@ def build(args=None):
         tags_output_path = settings.OUTPUT_CACHE_DIR / 'tag'
         for tag in all_posts.all_tags:
             rendered_tag_page = all_posts.render_tag_html(tag)
-            tag_path = ensure_exists(tags_output_path / slugify(tag) / 'index.html')
+            tag_path = ensure_exists(
+                tags_output_path / slugify(tag) / 'index.html')
             with open(tag_path, mode='wb', encoding='UTF-8') as file:
                 file.write(rendered_tag_page)
                 build_stats['counts']['tag_pages'] += 1
@@ -184,7 +184,8 @@ def build(args=None):
             f.remove_p()
 
     logger.info("Synchronizing output directory with output cache.")
-    build_stats['files'] = mirror_folder(settings.OUTPUT_CACHE_DIR, settings.OUTPUT_DIR)
+    build_stats['files'] = mirror_folder(settings.OUTPUT_CACHE_DIR,
+                                         settings.OUTPUT_DIR)
     from pprint import pformat
 
     logger.debug("Folder mirroring report: %s" % pformat(build_stats['files']))
@@ -192,7 +193,8 @@ def build(args=None):
     logger.info(
         "Site: '%s' output to %s." % (settings.SITE_TITLE, settings.OUTPUT_DIR))
     logger.info("Posts: %s (%s new or updated)" % (
-        (build_stats['counts']['new_posts'] + build_stats['counts']['cached_posts']),
+        (build_stats['counts']['new_posts'] + build_stats['counts'][
+                                              'cached_posts']),
         build_stats['counts']['new_posts']))
     logger.info("Post rollup pages: %s (%s posts per page)" % (
         build_stats['counts']['rollups'], settings.ROLLUP_PAGE_SIZE))
@@ -214,7 +216,8 @@ def serve(args):
     from engineer import emma
 
     if not settings.OUTPUT_DIR.exists():
-        logger.warning("Output directory doesn't exist - did you forget to run 'engineer build'?")
+        logger.warning(
+            "Output directory doesn't exist - did you forget to run 'engineer build'?")
         exit()
 
     debug_server = bottle.Bottle()
@@ -242,13 +245,16 @@ def start_emma(args):
             em.emma_instance.prefix = args.prefix
         if args.generate:
             em.emma_instance.generate_secret()
-            logger.info("New Emma URL: %s" % em.emma_instance.get_secret_path(True))
+            logger.info(
+                "New Emma URL: %s" % em.emma_instance.get_secret_path(True))
         elif args.url:
-            logger.info("Current Emma URL: %s" % em.emma_instance.get_secret_path(True))
+            logger.info(
+                "Current Emma URL: %s" % em.emma_instance.get_secret_path(True))
         elif args.run:
             em.run(port=args.port)
     except emma.NoSecretException:
-        logger.warning("You haven't created a secret for Emma yet. Try 'engineer emma --generate' first.")
+        logger.warning(
+            "You haven't created a secret for Emma yet. Try 'engineer emma --generate' first.")
     exit()
 
 
@@ -307,7 +313,8 @@ def get_argparser():
     parser_build.set_defaults(func=build)
 
     parser_clean = subparsers.add_parser('clean',
-                                         help="Clean the output directory and clear all caches.",
+                                         help="Clean the output directory and clear all caches."
+                                         ,
                                          parents=[common_parser])
     parser_clean.set_defaults(func=clean)
 
@@ -317,7 +324,8 @@ def get_argparser():
     parser_serve.set_defaults(func=serve)
 
     parser_emma = subparsers.add_parser('emma',
-                                        help="Start Emma, the built-in management server.",
+                                        help="Start Emma, the built-in management server."
+                                        ,
                                         parents=[common_parser])
     parser_emma.add_argument('-p', '--port',
                              type=int,
@@ -343,7 +351,8 @@ def get_argparser():
                               help="Get Emma's current URL.")
     parser_emma.set_defaults(func=start_emma)
     parser_init = subparsers.add_parser('init',
-                                        help="Initialize the current directory as an engineer site.",
+                                        help="Initialize the current directory as an engineer site."
+                                        ,
                                         parents=[common_parser])
     parser_init.add_argument('--no-sample',
                              dest='no_sample',
@@ -374,7 +383,8 @@ def cmdline(args=sys.argv):
 
             if args.config_file is None:
                 default_config_file = path.getcwd() / 'config.yaml'
-                logger.info("No '--config' parameter specified, defaulting to %s." % default_config_file)
+                logger.info(
+                    "No '--config' parameter specified, defaulting to %s." % default_config_file)
                 settings.reload(default_config_file)
             else:
                 settings.reload(settings_file=args.config_file)

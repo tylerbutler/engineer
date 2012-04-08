@@ -168,11 +168,12 @@ def build(args=None):
                 logger.debug("Output '%s'." % file.name)
 
     # Generate feeds
+    #if build_stats['counts']['new_posts'] >= 0:
     feed_output_path = ensure_exists(
         settings.OUTPUT_CACHE_DIR / 'feeds/rss.xml')
     feed_content = settings.JINJA_ENV.get_template('core/rss.xml').render(
         post_list=all_posts[:settings.FEED_ITEM_LIMIT],
-        build_date=times.now())
+        build_date=all_posts[0].timestamp)
     with open(feed_output_path, mode='wb', encoding='UTF-8') as file:
         file.write(feed_content)
         logger.debug("Output '%s'." % file.name)
@@ -382,10 +383,10 @@ def cmdline(args=sys.argv):
             from engineer.conf import settings
 
             if args.config_file is None:
-                default_config_file = path.getcwd() / 'config.yaml'
+                default_settings_file = path.getcwd() / 'config.yaml'
                 logger.info(
-                    "No '--config' parameter specified, defaulting to %s." % default_config_file)
-                settings.reload(default_config_file)
+                    "No '--settings' parameter specified, defaulting to %s." % default_settings_file)
+                settings.reload(default_settings_file)
             else:
                 settings.reload(settings_file=args.config_file)
         except Exception as e:

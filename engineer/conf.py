@@ -187,7 +187,9 @@ class EngineerConfiguration(object):
         self.STATIC_URL = config.pop('STATIC_URL',
             urljoin(self.HOME_URL, 'static'))
         self.ROLLUP_PAGE_SIZE = int(config.pop('ROLLUP_PAGE_SIZE', 5))
-        self.FEED_TITLE = config.pop('FEED_TITLE_ATOM',
+
+        # RSS FEED SETTINGS
+        self.FEED_TITLE = config.pop('FEED_TITLE',
             self.SITE_TITLE + ' Feed')
         self.FEED_ITEM_LIMIT = config.pop('FEED_ITEM_LIMIT',
             self.ROLLUP_PAGE_SIZE)
@@ -226,9 +228,9 @@ class EngineerConfiguration(object):
         # Update URLs from the config setting if they're present
         self.URLS.update(config.pop('URLS', {}))
 
-        # Miscellaneous
+        # MISCELLANEOUS SETTINGS
         self.DEBUG = config.pop('DEBUG', False)
-        self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
+        #self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
         self.NORMALIZE_INPUT_FILES = config.pop('NORMALIZE_INPUT_FILES', True)
         self.NORMALIZE_INPUT_FILE_MASK = config.pop('NORMALIZE_INPUT_FILE_MASK',
             u'({0}){1}-{2}.md')
@@ -347,6 +349,7 @@ class EngineerConfiguration(object):
         return return_list
 
     def create_required_directories(self):
+        """Creates any directories required for Engineer to function if they don't already exist."""
         required = (self.CACHE_DIR,
                     self.JINJA_CACHE_DIR,
                     self.OUTPUT_DIR,)

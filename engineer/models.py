@@ -23,8 +23,9 @@ except ImportError:
 __author__ = 'tyler@tylerbutler.com'
 
 class Status(Enum):
-    draft = 0
-    published = 1
+    """Enum representing the status of a :class:`~Post`."""
+    draft = 0 #: Post is a draft.
+    published = 1 #: Post is published.
 
     def __reduce__(self):
         return 'Status'
@@ -35,22 +36,42 @@ class MetadataError(Exception):
 
 
 class Post(object):
+    """
+    Represents a post written in Markdown and stored in a file.
+
+    :param source: path to the source file for the post.
+    """
     _regex = re.compile(r'^[\n|\r\n]*(?P<metadata>.+?)[\n|\r\n]*---[\n|\r\n]*(?P<content>.*)[\n|\r\n]*', re.DOTALL)
 
     def __init__(self, source):
         self.source = path(source).abspath()
-        self.html_template_path = 'theme/post_detail.html'
-        self.markdown_template_path = 'core/post.md'
+        """The absolute path to the source file for the post."""
 
-        metadata, self.content_raw = self._parse_source()
+        self.html_template_path = 'theme/post_detail.html'
+        """The path to the template to use to transform the post into HTML."""
+
+        self.markdown_template_path = 'core/post.md'
+        """The path to the template to use to transform the post into HTML."""
+
+        metadata, self._content_raw = self._parse_source()
 
         self.title = metadata.get('title', self.source.namebase.replace('-', ' ').replace('_', ' '))
+        """The title of the post."""
+
         self.slug = metadata.get('slug', slugify(self.title))
+        """The slug for the post."""
+
         self.tags = metadata.get('tags', [])
+        """A list of strings representing the tags applied to the post."""
+
         self.link = metadata.get('link', None)
+        """The post's external link."""
 
         self.via = metadata.get('via', None)
+        """The post's attribution name."""
+
         self.via_link = metadata.get('via_link', None)
+        """The post's attribution link."""
 
         try:
             self.status = Status(metadata.get('status', Status.draft.name))
@@ -76,17 +97,17 @@ class Post(object):
             # convert to UTC assuming input time is in the DEFAULT_TIMEZONE
             self.timestamp = times.to_universal(self.timestamp, settings.POST_TIMEZONE)
 
-        self.content = typogrify(markdown.markdown(self.content_raw, extensions=['extra', 'codehilite']))
+        self.content = typogrify(markdown.markdown(self._content_raw, extensions=['extra', 'codehilite']))
 
         self.markdown_file_name = unicode.format(settings.NORMALIZE_INPUT_FILE_MASK,
-                                                 self.status.name[:1],
-                                                 self.timestamp_local.strftime('%Y-%m-%d'),
-                                                 #times.format(self.timestamp, settings.DEFAULT_TIMEZONE, '%Y-%m-%d'),
-                                                 self.slug)
+            self.status.name[:1],
+            self.timestamp_local.strftime('%Y-%m-%d'),
+            #times.format(self.timestamp, settings.DEFAULT_TIMEZONE, '%Y-%m-%d'),
+            self.slug)
         self.url = unicode.format(u'{0}{1}/{2}/',
-                                  settings.HOME_URL,
-                                  self.timestamp_local.strftime('%Y/%m/%d'),
-                                  self.slug)
+            settings.HOME_URL,
+            self.timestamp_local.strftime('%Y/%m/%d'),
+            self.slug)
         self.absolute_url = unicode.format(u'{0}{1}', settings.SITE_URL, self.url)
         self.output_path = path(settings.OUTPUT_CACHE_DIR / self.timestamp_local.strftime('%Y/%m/%d') / self.slug)
         self.output_file_name = 'index.html'#'%s.html' % self.slug
@@ -102,6 +123,9 @@ class Post(object):
 
     @property
     def is_published(self):
+        """
+        ``True`` if the post is published, ``False`` otherwise.
+        """
         return self.status == Status.published and self.timestamp <= times.now()
 
     @property
@@ -175,7 +199,7 @@ class Post(object):
             if k in d and d[k] is not None and len(d[k]) > 0:
                 metadata += yaml.safe_dump(dict([[k, d[k]]]), default_flow_style=False)
         return settings.JINJA_ENV.get_template(self.markdown_template_path).render(metadata=metadata,
-                                                                                   content=self.content_raw)
+            content=self._content_raw)
 
     def __unicode__(self):
         return self.markdown_file_name
@@ -261,5 +285,5 @@ class PostCollection(list):
 
     def render_tag_html(self, tag):
         return settings.JINJA_ENV.get_template('theme/tags_list.html').render(tag=tag,
-                                                                              post_list=self.tagged(
-                                                                                  tag).grouped_by_year)
+            post_list=self.tagged(
+                tag).grouped_by_year)

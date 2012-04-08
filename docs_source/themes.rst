@@ -3,6 +3,14 @@
 Themes
 ======
 
+Engineer includes a bundled default theme called Dark Rainbow and will include other themes soon. You can also create
+your own themes if you like.
+
+.. toctree::
+   :maxdepth: 2
+
+   dark_rainbow
+
 Creating Your Own Themes
 ========================
 
@@ -16,17 +24,17 @@ A sample theme folder might look like this::
 
     /theme_id
         - metadata.yaml
-        \static
-            \scripts
+        /static
+            /scripts
                 - script.js
                 - ...
-            \stylesheets
+            /stylesheets
                 - theme.less
                 - reset.css
                 - ...
-        \templates
-            \theme
-                \layouts
+        /templates
+            /theme
+               /layouts
                     - ...
                 - _footer.html
                 - base.html
@@ -52,65 +60,75 @@ is a simple text file in YAML format. The Dark Rainbow theme manifest looks like
 
     self_contained: yes
 
+
 Theme Manifest Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. program:: theme
+.. _theme name:
 
-.. option:: name
-
-  The verbose human-readable name of the theme.
-
-
-.. option:: id
-
-  The ID of the theme. This must match the folder name of the theme and should not contain spaces. This is used
-  internally by Engineer to identify the theme.
+``name``
+    The verbose human-readable name of the theme.
 
 
-.. option:: self_contained
+.. _theme id:
 
-  *(Optional)* Indicates whether the theme is self-contained or not.
-
-
-.. option:: description
-
-  *(Optional)* A more verbose description of the theme.
+``id``
+    The ID of the theme. This must match the folder name of the theme and should not contain spaces. This is used
+    internally by Engineer to identify the theme.
 
 
-.. option:: author
+.. _theme self_contained:
 
-  *(Optional)* The name and/or email address of the theme's author.
-
-
-.. option:: website
-
-  *(Optional)* The website where the theme or information about it can be found.
+``self_contained`` *(optional)*
+    Indicates whether the theme is self-contained or not. Defaults to ``True`` if not specified.
 
 
-.. option:: license
+.. _theme description:
 
-  *(Optional)* The license under which the theme is made available.
-
-
-.. option:: use_foundation
-
-  *(Optional)* Indicates whether the theme makes use of the Foundation CSS library included in Engineer.
+``description`` *(optional)*
+    A more verbose description of the theme.
 
 
-.. option:: use_lesscss
+.. _theme author:
 
-  *(Optional)* Indicates whether the theme makes use of the LESS CSS library included in Engineer.
-
-
-.. option:: use_moderinzr
-
-  *(Optional)* Indicates whether the theme makes use of the Modernizr library included in Engineer.
+``author`` *(optional)*
+    The name and/or email address of the theme's author.
 
 
-.. option:: use_jquery
+.. _theme website:
 
-  *(Optional)* Indicates whether the theme makes use of the jQuery library included in Engineer.
+``website`` *(optional)*
+    The website where the theme or information about it can be found.
+
+
+.. _theme license:
+
+``license`` *(optional)*
+    The license under which the theme is made available.
+
+
+.. _theme use_foundation:
+
+``use_foundation`` *(optional)*
+    Indicates whether the theme makes use of the Foundation CSS library included in Engineer. Defaults to ``False``.
+
+
+.. _theme use_lesscss:
+
+``use_lesscss`` *(optional)*
+    Indicates whether the theme makes use of the LESS CSS library included in Engineer. Defaults to ``False``.
+
+
+.. _theme use_modernizr:
+
+``use_modernizr`` *(optional)*
+    Indicates whether the theme makes use of the Modernizr library included in Engineer. Defaults to ``False``.
+
+
+.. _theme use_jquery:
+
+``use_jquery`` *(optional)*
+    Indicates whether the theme makes use of the jQuery library included in Engineer. Defaults to ``False``.
 
 Required Templates
 ------------------

@@ -66,7 +66,7 @@ def chunk(seq, chunksize, process=iter):
         yield process(chain([it.next()], islice(it, chunksize - 1)))
 
 
-def mirror_folder(source, target, level=0):
+def mirror_folder(source, target, delete_orphans=True, _level=0):
     """Mirrors a folder *source* into a target folder *target*."""
 
     def expand_tree(p):
@@ -88,24 +88,28 @@ def mirror_folder(source, target, level=0):
     compare = filecmp.dircmp(d1, d2)
 
     # Delete orphan files/folders in the target folder
-    for item in compare.right_only:
-        fullpath = path(d2 / item)
-        if fullpath.isdir():
-            logger.debug("%s ==> Deleted - doesn't exist in source" % fullpath)
-            report['deleted'].add(fullpath)
-            if len(fullpath.listdir()) > 0:
-                report['deleted'].update(expand_tree(fullpath))
-            fullpath.rmtree()
-        elif fullpath.isfile():
-            logger.debug("%s ==> Deleted - doesn't exist in source" % fullpath)
-            report['deleted'].add(fullpath)
-            fullpath.remove()
+    if delete_orphans:
+        for item in compare.right_only:
+            fullpath = path(d2 / item)
+            if fullpath.isdir():
+                logger.debug(
+                    "%s ==> Deleted - doesn't exist in source" % fullpath)
+                report['deleted'].add(fullpath)
+                if len(fullpath.listdir()) > 0:
+                    report['deleted'].update(expand_tree(fullpath))
+                fullpath.rmtree()
+            elif fullpath.isfile():
+                logger.debug(
+                    "%s ==> Deleted - doesn't exist in source" % fullpath)
+                report['deleted'].add(fullpath)
+                fullpath.remove()
 
     # Copy new files and folders from the source to the target
     for item in compare.left_only:
         fullpath = d1 / item
         if fullpath.isdir():
-            logger.debug("Copying new directory %s ==> %s" % (fullpath, (d2 / item)))
+            logger.debug(
+                "Copying new directory %s ==> %s" % (fullpath, (d2 / item)))
             fullpath.copytree(d2 / item)
             report['new'].add(d2 / item)
             report['new'].update(expand_tree(d2 / item))
@@ -116,13 +120,14 @@ def mirror_folder(source, target, level=0):
 
     # Copy modified files in the source to the target, overwriting the target file
     for item in compare.diff_files:
-        logger.debug("Overwriting existing file %s ==> %s" % ((d1 / item), (d2 / item)))
+        logger.debug(
+            "Overwriting existing file %s ==> %s" % ((d1 / item), (d2 / item)))
         (d1 / item).copy2(d2)
         report['overwritten'].add(d2 / item)
 
     # Recurse into subfolders that exist in both the source and target
     for item in compare.common_dirs:
-        rpt = mirror_folder(d1 / item, d2 / item, level + 1)
+        rpt = mirror_folder(d1 / item, d2 / item, delete_orphans, _level + 1)
         report['new'].update(rpt['new'])
         report['overwritten'].update(rpt['overwritten'])
         report['deleted'].update(rpt['deleted'])

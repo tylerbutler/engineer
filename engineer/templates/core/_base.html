@@ -105,7 +105,7 @@
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 </head>
-<body>
+<body class="{%- block body_class %}{% endblock -%}">
 {%- block body %}{% endblock -%}
 
 {% block foundation_js %}

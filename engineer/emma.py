@@ -33,7 +33,8 @@ class EmmaStandalone(object):
     @staticmethod
     @app.route('/static/<filepath:path>')
     def _serve_static(filepath):
-        response = bottle.static_file(filepath, root=settings.ENGINEER.STATIC_DIR)
+        response = bottle.static_file(filepath,
+                                      root=settings.ENGINEER.STATIC_DIR)
         if type(response) is bottle.HTTPError:
             return bottle.static_file(path(filepath) / 'index.html',
                                       root=settings.OUTPUT_DIR)
@@ -41,7 +42,8 @@ class EmmaStandalone(object):
             return response
 
     def run(self, port=8080, **kwargs):
-        self.app.mount(self.emma_instance.get_secret_path(), self.emma_instance.app)
+        self.app.mount(self.emma_instance.get_secret_path(),
+                       self.emma_instance.app)
 
         use_cherrypy = False
         if 'server' not in kwargs:
@@ -73,11 +75,14 @@ class Emma(object):
         self.app.route('/', method='POST', callback=self._home, name='home')
         self.app.route('/build', callback=self._build, name='build')
         self.app.route('/clean', callback=self._clean, name='clean')
-        self.app.route('/reload_settings', callback=self._reload_settings, name='reload_settings')
+        self.app.route('/reload_settings', callback=self._reload_settings,
+                       name='reload_settings')
         self.app.route('/disable', callback=self._disable, name='disable')
-        self.app.route('/disable/confirm', callback=self._confirm_disable, name='confirm_disable')
+        self.app.route('/disable/confirm', callback=self._confirm_disable,
+                       name='confirm_disable')
 
-        self.app.route('/static/<filepath:path>', callback=self._serve_static, name='static')
+        self.app.route('/static/<filepath:path>', callback=self._serve_static,
+                       name='static')
 
     #        try:
     #            logger.debug("Absolute URL prefix: %s" % url(None, True))
@@ -94,7 +99,8 @@ class Emma(object):
             stats = None
         current_messages = self.messages
         self.messages = []
-        return template.render(get_url=self.get_url, len=len, stats=stats, messages=current_messages)
+        return template.render(get_url=self.get_url, len=len, stats=stats,
+                               messages=current_messages)
 
     def _build(self):
         from engineer.engine import build
@@ -112,7 +118,8 @@ class Emma(object):
 
     def _reload_settings(self):
         settings.reload()
-        self.messages.append("Settings reloaded from %s." % settings.SETTINGS_FILE)
+        self.messages.append(
+            "Settings reloaded from %s." % settings.SETTINGS_FILE)
         return bottle.redirect(self.get_url('home'))
 
     def _disable(self):
@@ -124,7 +131,8 @@ class Emma(object):
         exit()
 
     def _serve_static(self, filepath):
-        response = bottle.static_file(filepath, root=settings.ENGINEER.STATIC_DIR)
+        response = bottle.static_file(filepath,
+                                      root=settings.ENGINEER.STATIC_DIR)
         if type(response) is bottle.HTTPError:
             return bottle.static_file(path(filepath) / 'index.html',
                                       root=settings.OUTPUT_DIR)
@@ -135,15 +143,16 @@ class Emma(object):
         # Wrapper method around bottle's get_url method to handle the case
         # where a prefix is set
         if self.prefix is not None:
-            url = "%s/%s" % ('/'.join(self.get_secret_path(True).split('/')[:-1]),
-                             self.app.get_url(routename, **kwargs))
+            url = "%s/%s" % (
+            '/'.join(self.get_secret_path(True).split('/')[:-1]),
+            self.app.get_url(routename, **kwargs))
             return url
         else:
             return self.app.get_url(routename, **kwargs)
 
     @property
     def secret_file(self):
-        return settings.CONTENT_ROOT_DIR / '_emma_secret.pvt'
+        return settings.SETTINGS_DIR / '_emma_secret.pvt'
 
     @property
     def secret(self):
@@ -161,7 +170,8 @@ class Emma(object):
             return '/%s' % self.secret
         else:
             if self.prefix is not None:
-                return '%s/%s/%s' % (settings.SITE_URL, self.prefix, self.secret)
+                return '%s/%s/%s' % (
+                settings.SITE_URL, self.prefix, self.secret)
             else:
                 return '%s/%s' % (settings.SITE_URL, self.secret)
 

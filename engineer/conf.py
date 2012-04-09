@@ -64,7 +64,7 @@ class EngineerConfiguration(object):
     def reload(self, settings_file=None):
         if settings_file is None:
             if hasattr(self,
-                       'SETTINGS_FILE') and self.SETTINGS_FILE is not None:
+                'SETTINGS_FILE') and self.SETTINGS_FILE is not None:
                 # First check if SETTINGS_FILE has been defined. If so, we'll reload from that file.
                 settings_file = self.SETTINGS_FILE
             else:
@@ -97,9 +97,9 @@ class EngineerConfiguration(object):
                         new_settings = path(temp_config['SUPER'])
                         if not new_settings.isabs():
                             settings_file = (
-                            settings_file.dirname() / new_settings).abspath()
-                        logger.debug("Going to next settings file... %s" % path(
-                            temp_config['SUPER']).abspath())
+                                settings_file.dirname() / new_settings).abspath()
+                        logger.debug("Going to next settings file... %s" %
+                                     path(temp_config['SUPER']).abspath())
             except Exception as e:
                 logger.exception(e.message)
 
@@ -131,18 +131,18 @@ class EngineerConfiguration(object):
 
         # CONTENT DIRECTORIES
         self.SETTINGS_DIR = path(config.pop('SETTINGS_DIR',
-                                            self.SETTINGS_FILE.dirname().abspath() if self.SETTINGS_FILE is not
-                                                                                      None else path.getcwd()))
+            self.SETTINGS_FILE.dirname().abspath() if self.SETTINGS_FILE is not
+                                                      None else path.getcwd()))
         self.CONTENT_DIR = self.normalize(config.pop('CONTENT_DIR', 'content'))
         self.POST_DIR = self.normalize_list(config.pop('POST_DIR', 'posts'))
         self.OUTPUT_DIR = self.normalize(config.pop('OUTPUT_DIR', 'output'))
         self.TEMPLATE_DIR = self.normalize(
             config.pop('TEMPLATE_DIR', 'templates'))
         self.TEMPLATE_PAGE_DIR = config.pop('TEMPLATE_PAGE_DIR', (
-        self.TEMPLATE_DIR / 'pages').abspath())
+            self.TEMPLATE_DIR / 'pages').abspath())
         self.LOG_DIR = self.normalize(config.pop('LOG_DIR', 'logs'))
         self.LOG_FILE = config.pop('LOG_FILE',
-                                   (self.LOG_DIR / 'build.log').abspath())
+            (self.LOG_DIR / 'build.log').abspath())
 
         self.CACHE_DIR = config.pop('CACHE_DIR', None)
         if self.CACHE_DIR is None:
@@ -154,14 +154,10 @@ class EngineerConfiguration(object):
         else:
             self.CACHE_DIR = self.normalize(self.CACHE_DIR)
 
-        self.CACHE_FILE = config.pop('CACHE_FILE', (
-        self.CACHE_DIR / 'engineer.cache').abspath())
-        self.OUTPUT_CACHE_DIR = config.pop('OUTPUT_CACHE_DIR', (
-        self.CACHE_DIR / 'output_cache').abspath())
-        self.JINJA_CACHE_DIR = config.pop('JINJA_CACHE_DIR', (
-        self.CACHE_DIR / 'jinja_cache').abspath())
-        self.BUILD_STATS_FILE = config.pop('BUILD_STATS_FILE', (
-        self.CACHE_DIR / 'build_stats.cache').abspath())
+        self.CACHE_FILE = config.pop('CACHE_FILE', (self.CACHE_DIR / 'engineer.cache').abspath())
+        self.OUTPUT_CACHE_DIR = config.pop('OUTPUT_CACHE_DIR', (self.CACHE_DIR / 'output_cache').abspath())
+        self.JINJA_CACHE_DIR = config.pop('JINJA_CACHE_DIR', (self.CACHE_DIR / 'jinja_cache').abspath())
+        self.BUILD_STATS_FILE = config.pop('BUILD_STATS_FILE', (self.CACHE_DIR / 'build_stats.cache').abspath())
 
         # THEMES
         self.THEME_FINDERS = ['engineer.finders.DefaultFinder']
@@ -189,27 +185,26 @@ class EngineerConfiguration(object):
         self.SITE_AUTHOR = config.pop('SITE_AUTHOR', None)
         self.HOME_URL = config.pop('HOME_URL', '/')
         self.STATIC_URL = config.pop('STATIC_URL',
-                                     urljoin(self.HOME_URL, 'static'))
+            urljoin(self.HOME_URL, 'static'))
         self.ROLLUP_PAGE_SIZE = int(config.pop('ROLLUP_PAGE_SIZE', 5))
         self.FEED_TITLE = config.pop('FEED_TITLE_ATOM',
-                                     self.SITE_TITLE + ' Feed')
+            self.SITE_TITLE + ' Feed')
         self.FEED_ITEM_LIMIT = config.pop('FEED_ITEM_LIMIT',
-                                          self.ROLLUP_PAGE_SIZE)
+            self.ROLLUP_PAGE_SIZE)
         self.FEED_DESCRIPTION = config.pop('FEED_DESCRIPTION',
-                                           'The %s most recent posts from %s.' % (
-                                           self.FEED_ITEM_LIMIT, self.SITE_URL))
+            'The %s most recent posts from %s.' % (self.FEED_ITEM_LIMIT, self.SITE_URL))
 
         # These 'constants' are updated here so they're relative to the STATIC_URL value
         self.ENGINEER.FOUNDATION_CSS_URL = urljoin(self.STATIC_URL,
-                                                   'engineer/lib/foundation/')
+            'engineer/lib/foundation/')
         self.ENGINEER.JQUERY_URL = urljoin(self.STATIC_URL,
-                                           'engineer/lib/jquery-1.6.2.min.js')
+            'engineer/lib/jquery-1.6.2.min.js')
         self.ENGINEER.MODERNIZR_URL = urljoin(self.STATIC_URL,
-                                              'engineer/lib/modernizr-2.0.6.min.js')
+            'engineer/lib/modernizr-2.0.6.min.js')
         self.ENGINEER.LESS_JS_URL = urljoin(self.STATIC_URL,
-                                            'engineer/lib/less-1.1.5.min.js')
+            'engineer/lib/less-1.1.5.min.js')
         self.ENGINEER.TWEET_URL = urljoin(self.STATIC_URL,
-                                          'engineer/lib/tweet/tweet/jquery.tweet.js')
+            'engineer/lib/tweet/tweet/jquery.tweet.js')
 
         # URL helper functions
         def page(num):
@@ -236,7 +231,7 @@ class EngineerConfiguration(object):
         self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
         self.NORMALIZE_INPUT_FILES = config.pop('NORMALIZE_INPUT_FILES', True)
         self.NORMALIZE_INPUT_FILE_MASK = config.pop('NORMALIZE_INPUT_FILE_MASK',
-                                                    u'({0}){1}-{2}.md')
+            u'({0}){1}-{2}.md')
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
         self.PUBLISH_PENDING = config.pop('PUBLISH_PENDING', False)
         self.POST_TIMEZONE = pytz.timezone(config.pop('POST_TIMEZONE', 'UTC'))
@@ -244,7 +239,7 @@ class EngineerConfiguration(object):
             'SERVER_TIMEZONE',
             None) is None else config.pop('SERVER_TIMEZONE')
         self.TIME_FORMAT = config.pop('TIME_FORMAT',
-                                      '%I:%M %p %A, %B %d, %Y %Z') # '%Y-%m-%d %H:%M:%S %Z%z'
+            '%I:%M %p %A, %B %d, %Y %Z') # '%Y-%m-%d %H:%M:%S %Z%z'
 
         # Pull any remaining settings in the config and set them as attributes on the settings object
         for k, v in config.iteritems():

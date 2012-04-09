@@ -66,7 +66,7 @@ def chunk(seq, chunksize, process=iter):
         yield process(chain([it.next()], islice(it, chunksize - 1)))
 
 
-def mirror_folder(source, target, delete_orphans=True, level=0):
+def mirror_folder(source, target, delete_orphans=True, _level=0):
     """Mirrors a folder *source* into a target folder *target*."""
 
     def expand_tree(p):
@@ -127,7 +127,7 @@ def mirror_folder(source, target, delete_orphans=True, level=0):
 
     # Recurse into subfolders that exist in both the source and target
     for item in compare.common_dirs:
-        rpt = mirror_folder(d1 / item, d2 / item, delete_orphans, level + 1)
+        rpt = mirror_folder(d1 / item, d2 / item, delete_orphans, _level + 1)
         report['new'].update(rpt['new'])
         report['overwritten'].update(rpt['overwritten'])
         report['deleted'].update(rpt['deleted'])

@@ -179,9 +179,10 @@ def build(args=None):
         logger.debug("Output '%s'." % file.name)
 
     # Copy 'raw' content to output cache
-    mirror_folder(settings.CONTENT_DIR,
-                  settings.OUTPUT_CACHE_DIR,
-                  delete_orphans=False)
+    if settings.CONTENT_DIR.exists():
+        mirror_folder(settings.CONTENT_DIR,
+                      settings.OUTPUT_CACHE_DIR,
+                      delete_orphans=False)
 
     # Remove LESS files if LESS preprocessing is being done
     if settings.PREPROCESS_LESS:

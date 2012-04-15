@@ -6,7 +6,7 @@
     <option name="SDK_HOME" value="" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/engineer/unittests/test_data/simple_site" />
     <option name="IS_MODULE_SDK" value="true" />
-    <module name="tylerbutler.com" />
+    <module name="engineer" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="" />
     <option name="CLASS_NAME" value="" />

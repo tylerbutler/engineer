@@ -15,4 +15,6 @@ pytz==2011k
 times==0.4
 cssmin>=0.1.4
 lpjsmin>=0.4
--e git://github.com/tylerbutler/typogrify.git#egg=typogrify
+
+# engineer-specific fork of typogrify
+typogrify-engineer

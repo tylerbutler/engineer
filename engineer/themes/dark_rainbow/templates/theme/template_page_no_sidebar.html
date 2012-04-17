@@ -1,0 +1,10 @@
+{# A simple template page layout that removes the default site sidebar, devoting the entire page to the template page
+ content. #}
+
+{% extends 'theme/template_page_simple.html' %}
+
+{# No sidebar. #}
+{% block section_sidebar %}{% endblock %}
+
+{# Extend the width of the main content column since there's no sidebar. #}
+{% block section_main_class %}twelve columns{% endblock %}

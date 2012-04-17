@@ -4,4 +4,6 @@
 
 {% block nav_secondary_content %}{# Empty secondary nav #}{% endblock %}
 
-{% block header_secondary_title %}{{ self.page_title() }}{% endblock %}
+{%- block header_secondary_title %}
+    {{ self.page_title() }}
+{% endblock -%}

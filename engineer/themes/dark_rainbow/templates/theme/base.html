@@ -10,7 +10,6 @@
 {%- block stylesheets %}
     {% filter compress %}
         {{ render_less_link('theme/stylesheets/dark_rainbow.less') }}
-        {%- block additional_stylesheets %}{% endblock -%}
     {% endfilter %}
 {% endblock -%}
 
@@ -24,7 +23,7 @@
         } catch (e) {
         }
     </script>
-    {%- block additional_scripts_top %}{% endblock -%}
+    {{ super() }}
 {% endblock -%}
 
 {%- block body %}
@@ -42,7 +41,7 @@
                 <nav class="
                         {%- block nav_primary_class %}seven columns{% endblock -%}">
                     {%- block nav_primary_content %}
-                        {% include 'theme/_nav_primary.html' %}
+                        {% include '_nav_primary.html' %}
                     {% endblock -%}
                 </nav>
             {% endblock -%}
@@ -85,7 +84,7 @@
         {%- block section_sidebar %}
             <section id="sidebar" class="{%- block section_sidebar_class %}three columns{% endblock -%}">
                 {%- block section_sidebar_content %}
-                    {% include 'theme/_sidebar.html' %}
+                    {% include '_sidebar.html' %}
                 {% endblock -%}
             </section>
         {% endblock -%}
@@ -95,7 +94,7 @@
             <footer class="
                     {%- block footer_class %}twelve columns centered{% endblock -%}">
                 {%- block footer_content %}
-                    {% include 'theme/_footer.html' %}
+                    {% include '_footer.html' %}
                 {% endblock -%}
             </footer>
         {% endblock -%}
@@ -103,6 +102,7 @@
 {% endblock body %}
 
 {%- block scripts_bottom %}
+    {{ super() }}
     {% filter compress %}
         <script type="text/javascript"
                 src="{{ STATIC_URL }}/theme/scripts/highlight.js"></script>

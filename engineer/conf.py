@@ -271,9 +271,9 @@ class EngineerConfiguration(object):
 
         env = Environment(
             loader=FileSystemLoader([self.TEMPLATE_DIR,
-                                     self.ENGINEER.TEMPLATE_DIR,
                                      ThemeManager.current_theme().template_root,
-                                     self.ENGINEER.THEMES_DIR / 'base_templates'])
+                                     #self.ENGINEER.THEMES_DIR / 'base_templates',
+                                     self.ENGINEER.TEMPLATE_DIR])
             ,
             extensions=['jinja2.ext.with_', ],
             #'compressinja.html.HtmlCompressor'],

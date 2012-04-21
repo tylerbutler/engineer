@@ -129,13 +129,14 @@ you can shut down the development server by pressing :kbd:`Ctrl-C`.
 
 Now let's see what happens if we make a change to the site. Let's publish one of the draft posts in the :file:`posts`
 folder. Open :file:`(d)2012-03-18-test-post.md` in a text editor (any one will do) and you should see something like
-this::
+this:
+
+.. code-block:: yaml
 
     title: Test Post
     timestamp: 05:51 PM Sunday, March 18, 2012 UTC
     status: draft
     slug: test-post
-
 
     ---
 
@@ -183,7 +184,7 @@ folders in the site directory to see what we might want to change.
 File System Structure
 ---------------------
 
-The file system in :file:`C:\my-engineer-site\` should look something like this::
+The file system in :file:`C:\\my-engineer-site\\` should look something like this::
 
    /my-engineer-site
       - base.yaml
@@ -205,7 +206,7 @@ The :file:`archives` and :file:`posts` folders contain :doc:`posts` for the site
 output content of your site after it's built by Engineer.
 
 As you can see, each of these folders contains content used to build out the site. For more information about each of
-these things, see the relevant toic guides.
+these things, see the relevant topic guides.
 
 .. seealso::
    The following topic guides have specific information about the major components used in Engineer:

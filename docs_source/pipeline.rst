@@ -25,3 +25,10 @@ All content first gets put into the output cache.
 #. Copy 'raw content' to output cache
 #. Remove source LESS files from output cache is LESS preprocessing is turned on
 #. Synchronize output directory with output cache
+
+.. _raw content:
+
+Raw Content
+-----------
+
+TODO

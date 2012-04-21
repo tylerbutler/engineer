@@ -3,13 +3,31 @@
 Themes
 ======
 
-Engineer includes a bundled default theme called Dark Rainbow and will include other themes soon. You can also create
-your own themes if you like.
+Engineer includes a bundled default theme called :doc:`dark_rainbow` and will include other themes soon. You can also
+create your own themes if you like.
+
+
+.. _bundled themes:
+
+Bundled Themes
+==============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    dark_rainbow
+
+
+Using Themes
+============
+
+By default Engineer uses the :doc:`dark_rainbow` theme. Changing the theme to something else is as simple as changing
+the :attr:`~engineer.conf.EngineerConfiguration.THEME` setting in your :doc:`settings file <settings>`.
+
+Most themes do not require any customization, though they might provide :doc:`templates` that you might find useful.
+For example, the :doc:`dark_rainbow` theme provides a few different layouts for template pages that you can use as a
+basis for your template pages.
+
 
 Creating Your Own Themes
 ========================
@@ -45,20 +63,22 @@ Theme Manifest
 --------------
 
 Each theme must contain a file called ``metadata.yaml`` that contains metadata about the theme. The theme manifest
-is a simple text file in YAML format. The Dark Rainbow theme manifest looks like this, for example::
+is a simple text file in YAML format. The Dark Rainbow theme manifest looks like this, for example:
 
-    name: 'Dark Rainbow'
-    id: dark_rainbow
-    description: A dark theme with just a hint of color.
-    author: 'Tyler Butler <tyler@tylerbutler.com>'
-    website: 'http://tylerbutler.com'
-    license: 'Creative Commons BY-SA 3.0'
-    use_foundation: yes
-    use_lesscss: yes
-    use_modernizr: no
-    use_jquery: yes
+.. code-block:: yaml
 
-    self_contained: yes
+   name: 'Dark Rainbow'
+   id: dark_rainbow
+   description: A dark theme with just a hint of color.
+   author: 'Tyler Butler <tyler@tylerbutler.com>'
+   website: 'http://tylerbutler.com'
+   license: 'Creative Commons BY-SA 3.0'
+   use_foundation: yes
+   use_lesscss: yes
+   use_modernizr: no
+   use_jquery: yes
+
+   self_contained: yes
 
 
 Theme Manifest Parameters
@@ -130,17 +150,22 @@ Theme Manifest Parameters
 ``use_jquery`` *(optional)*
     Indicates whether the theme makes use of the jQuery library included in Engineer. Defaults to ``False``.
 
+
 Required Templates
 ------------------
 
-The following templates must be present in a theme:
+The following templates must be present in a theme's :file:`templates/theme` folder:
 
 * _single_post.html
 * base.html
 * post_archives.html
 * post_detail.html
 * post_list.html
-* tags_list.html
+* template_page_base.html
+
+You can of course include additional templates or template fragments, for use either internally in your theme, or that
+users of your theme can take advantage of to further customize their site.
+
 
 API Reference
 =============

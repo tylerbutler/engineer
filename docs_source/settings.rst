@@ -49,7 +49,7 @@ These settings control the location on the local file system where Engineer shou
 
       **Default:** ``SETTINGS_DIR/content``
 
-      The path to the directory that contains any :term:`raw content` for the site. Raw content includes things like
+      The path to the directory that contains any :ref:`raw content` for the site. Raw content includes things like
       favicons, :file:`robots.txt` files, etc. Raw content is always processed last in the :ref:`build pipeline`,
       so anything in this folder will overwrite any automatically generated content.
 

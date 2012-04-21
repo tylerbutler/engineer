@@ -33,6 +33,7 @@ Narrative Documentation
    templates
    navigation
    emma
+   faq
 
 
 API Documentation

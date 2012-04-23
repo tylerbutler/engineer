@@ -166,6 +166,14 @@ The following templates must be present in a theme's :file:`templates/theme` fol
 You can of course include additional templates or template fragments, for use either internally in your theme, or that
 users of your theme can take advantage of to further customize their site.
 
+You should also ensure that your theme templates load the :ref:`built-in fragments` that Engineer users will expect.
+
+
+Useful Macros
+-------------
+
+TODO
+
 
 API Reference
 =============

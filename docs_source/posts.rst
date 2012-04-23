@@ -6,7 +6,9 @@ Posts
 .. currentmodule:: engineer.conf
 
 Posts are the bread and butter of an Engineer site. Posts are Markdown files with either a ``.md`` or ``.markdown``
-file extension and are structured like this::
+file extension and are structured like this:
+
+.. code-block:: yaml
 
     title: Why Do We Have to Reboot So Much?
     timestamp: 2012-02-03 13:36:00

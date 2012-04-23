@@ -25,6 +25,18 @@ You can change the theme for a site using the :attr:`~engineer.conf.EngineerConf
 See :ref:`navigation` and templates.
 
 
+...add a flat page, like an 'about' or 'contact' page?
+------------------------------------------------------
+
+If you have an already-generated HTML page that you just want to put in your site,
+the :ref:`raw content` feature might be what you're looking for. More likely, though, you'll want to take advantage of
+:ref:`template pages`, which provide a simple way to create flat pages while inheriting the look and feel of your
+site theme.
+
+.. seealso::
+   :ref:`template pages`, :ref:`raw content`
+
+
 .. _add script:
 
 ...add custom JavaScript or CSS?

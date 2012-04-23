@@ -48,6 +48,8 @@ will likely want to provide. In particular, users of the Dark Rainbow theme will
    :ref:`template fragments`, :ref:`navigation`, :ref:`sidebar`
 
 
+.. _dark rainbow inheritable templates:
+
 Inheritable Templates
 ---------------------
 

@@ -7,7 +7,9 @@ Settings Files
 
 Engineer is configured using a simple settings file (or several settings files if you so desire). The file should
 contain the desired site settings in `YAML <http://pyyaml.org/wiki/PyYAMLDocumentation#YAMLsyntax>`_. A typical
-settings file looks like this::
+settings file looks like this:
+
+.. code-block:: yaml
 
     SITE_TITLE: Engineer Site
     HOME_URL: '/'
@@ -42,7 +44,7 @@ These settings control the location on the local file system where Engineer shou
       **Default:** path to folder containing settings file
 
       The path to the directory containing the settings file used. This is usually set automatically based on the
-      settings file used. However, if specified, all relative paths will be assumed to be relative to it.
+      location of the settings file used.
 
 
    .. attribute:: CONTENT_DIR
@@ -50,7 +52,7 @@ These settings control the location on the local file system where Engineer shou
       **Default:** ``SETTINGS_DIR/content``
 
       The path to the directory that contains any :ref:`raw content` for the site. Raw content includes things like
-      favicons, :file:`robots.txt` files, etc. Raw content is always processed last in the :ref:`build pipeline`,
+      favicons, :file:`robots.txt` files, etc. Raw content is always processed last in :ref:`build pipeline`,
       so anything in this folder will overwrite any automatically generated content.
 
 
@@ -285,7 +287,7 @@ Preprocessor/Compressor Settings
 
       .. note::
          This setting shouldn't be used at this point - it's there because there are plans to make the minification
-         process for configurable.
+         process more configurable.
 
 
    .. attribute:: PREPROCESS_LESS

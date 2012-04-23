@@ -10,12 +10,25 @@ but it's :ref:`not for everybody <caveats>`.
 
 Engineer was inspired by `Brent Simmons`_, Marco Arment's `Second Crack`_, `Jekyll`_, `Octopress`_, and `Hyde`_.
 
+.. note::
+   The Engineer documentation is a work in progress. It is by-and-large up-to-date and the most relevant
+   sections are complete, but some of the more 'advanced' sections are not yet complete.
+
 .. Links
 .. _Brent Simmons: http://inessential.com/2011/03/16/a_plea_for_baked_weblogs
 .. _Second Crack: https://github.com/marcoarment/secondcrack
 .. _Jekyll: http://jekyllrb.com/
 .. _Octopress: http://octopress.org/
 .. _Hyde: http://hyde.github.com/
+
+
+Bugs and Feature Roadmap
+========================
+
+If you find any bugs in Engineer please file an issue in the github
+`issue tracker <https://github.com/tylerbutler/engineer/issues>`_.
+If you want to suggest a feature idea or see what's planned for future
+versions, check out the Engineer `Trello board <https://trello.com/b/o8OBJjnk>`_.
 
 
 Narrative Documentation
@@ -31,7 +44,6 @@ Narrative Documentation
    posts
    themes
    templates
-   navigation
    emma
    faq
 
@@ -44,6 +56,7 @@ API Documentation
 
    pipeline
    cmdline
+   macros
    engineer.conf
    engineer.models
 

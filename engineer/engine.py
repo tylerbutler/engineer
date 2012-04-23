@@ -84,7 +84,7 @@ def build(args=None):
             rendered_page = page.render_html()
             ensure_exists(page.output_path)
             with open(page.output_path / page.output_file_name, mode='wb',
-                      encoding='UTF-8') as file:
+                encoding='UTF-8') as file:
                 file.write(rendered_page)
                 logger.debug("Output '%s'." % file.name)
                 build_stats['counts']['template_pages'] += 1
@@ -109,7 +109,7 @@ def build(args=None):
         rendered_post = post.render_html()
         ensure_exists(post.output_path)
         with open(post.output_path / post.output_file_name, mode='wb',
-                  encoding='UTF-8') as file:
+            encoding='UTF-8') as file:
             file.write(rendered_post)
             if post in new_posts:
                 logger.info("Output new or modified post '%s'." % post.title)
@@ -129,10 +129,10 @@ def build(args=None):
         has_next = slice_num < num_slices
         has_previous = 1 < slice_num <= num_slices
         rendered_page = posts.render_listpage_html(slice_num, has_next,
-                                                   has_previous)
+            has_previous)
         ensure_exists(posts.output_path(slice_num))
         with open(posts.output_path(slice_num), mode='wb',
-                  encoding='UTF-8') as file:
+            encoding='UTF-8') as file:
             file.write(rendered_page)
             logger.debug("Output '%s'." % file.name)
             build_stats['counts']['rollups'] += 1
@@ -140,7 +140,7 @@ def build(args=None):
         # Copy first rollup page to root of site - it's the homepage.
         if slice_num == 1:
             path.copyfile(posts.output_path(slice_num),
-                          settings.OUTPUT_CACHE_DIR / 'index.html')
+                settings.OUTPUT_CACHE_DIR / 'index.html')
             logger.debug(
                 "Output '%s'." % (settings.OUTPUT_CACHE_DIR / 'index.html'))
 
@@ -181,8 +181,8 @@ def build(args=None):
     # Copy 'raw' content to output cache
     if settings.CONTENT_DIR.exists():
         mirror_folder(settings.CONTENT_DIR,
-                      settings.OUTPUT_CACHE_DIR,
-                      delete_orphans=False)
+            settings.OUTPUT_CACHE_DIR,
+            delete_orphans=False)
 
     # Remove LESS files if LESS preprocessing is being done
     if settings.PREPROCESS_LESS:
@@ -192,7 +192,7 @@ def build(args=None):
 
     logger.info("Synchronizing output directory with output cache.")
     build_stats['files'] = mirror_folder(settings.OUTPUT_CACHE_DIR,
-                                         settings.OUTPUT_DIR)
+        settings.OUTPUT_DIR)
     from pprint import pformat
 
     logger.debug("Folder mirroring report: %s" % pformat(build_stats['files']))
@@ -235,7 +235,7 @@ def serve(args):
         response = bottle.static_file(filepath, root=settings.OUTPUT_DIR)
         if type(response) is bottle.HTTPError:
             return bottle.static_file(path(filepath) / 'index.html',
-                                      root=settings.OUTPUT_DIR)
+                root=settings.OUTPUT_DIR)
         else:
             return response
 
@@ -266,7 +266,9 @@ def start_emma(args):
 
 
 def init(args):
-    sample_site_path = path(__file__).dirname().dirname() / 'sample_site'
+    from engineer import version
+
+    sample_site_path = path(version.__file__).dirname() / 'sample_site'
     target = path.getcwd()
     if target.listdir() and not args.force:
         logger.warning("Target folder %s is not empty." % target)
@@ -298,77 +300,77 @@ def get_argparser():
     # Common parameters
     common_parser = argparse.ArgumentParser(add_help=False)
     common_parser.add_argument('-v', '--verbose',
-                               dest='verbose',
-                               action='store_true',
-                               help="Display verbose output.")
+        dest='verbose',
+        action='store_true',
+        help="Display verbose output.")
     common_parser.add_argument('-s', '--config', '--settings',
-                               dest='config_file',
-                               help="Specify a configuration file to use.")
+        dest='config_file',
+        help="Specify a configuration file to use.")
 
     main_parser = argparse.ArgumentParser(
         description="Engineer static site builder.")
     subparsers = main_parser.add_subparsers(title="subcommands",
-                                            dest='parser_name')
+        dest='parser_name')
 
     parser_build = subparsers.add_parser('build',
-                                         help="Build the site.",
-                                         parents=[common_parser])
+        help="Build the site.",
+        parents=[common_parser])
     parser_build.add_argument('-c', '--clean',
-                              dest='clean',
-                              action='store_true',
-                              help="Clean the output directory and clear all the caches before building.")
+        dest='clean',
+        action='store_true',
+        help="Clean the output directory and clear all the caches before building.")
     parser_build.set_defaults(func=build)
 
     parser_clean = subparsers.add_parser('clean',
-                                         help="Clean the output directory and clear all caches."
-                                         ,
-                                         parents=[common_parser])
+        help="Clean the output directory and clear all caches."
+        ,
+        parents=[common_parser])
     parser_clean.set_defaults(func=clean)
 
     parser_serve = subparsers.add_parser('serve',
-                                         help="Start the development server.",
-                                         parents=[common_parser])
+        help="Start the development server.",
+        parents=[common_parser])
     parser_serve.set_defaults(func=serve)
 
     parser_emma = subparsers.add_parser('emma',
-                                        help="Start Emma, the built-in management server."
-                                        ,
-                                        parents=[common_parser])
+        help="Start Emma, the built-in management server."
+        ,
+        parents=[common_parser])
     parser_emma.add_argument('-p', '--port',
-                             type=int,
-                             default=8080,
-                             dest='port',
-                             help="The port Emma should listen on.")
+        type=int,
+        default=8080,
+        dest='port',
+        help="The port Emma should listen on.")
     parser_emma.add_argument('--prefix',
-                             type=str,
-                             dest='prefix',
-                             help="The prefix path the Emma site will be rooted at.")
+        type=str,
+        dest='prefix',
+        help="The prefix path the Emma site will be rooted at.")
     emma_options = parser_emma.add_mutually_exclusive_group(required=True)
     emma_options.add_argument('-r', '--run',
-                              dest='run',
-                              action='store_true',
-                              help="Run Emma.")
+        dest='run',
+        action='store_true',
+        help="Run Emma.")
     emma_options.add_argument('-g', '--generate',
-                              dest='generate',
-                              action='store_true',
-                              help="Generate a new secret location for Emma.")
+        dest='generate',
+        action='store_true',
+        help="Generate a new secret location for Emma.")
     emma_options.add_argument('-u', '--url',
-                              dest='url',
-                              action='store_true',
-                              help="Get Emma's current URL.")
+        dest='url',
+        action='store_true',
+        help="Get Emma's current URL.")
     parser_emma.set_defaults(func=start_emma)
     parser_init = subparsers.add_parser('init',
-                                        help="Initialize the current directory as an engineer site."
-                                        ,
-                                        parents=[common_parser])
+        help="Initialize the current directory as an engineer site."
+        ,
+        parents=[common_parser])
     parser_init.add_argument('--no-sample',
-                             dest='no_sample',
-                             action='store_true',
-                             help="Do not include sample content.")
+        dest='no_sample',
+        action='store_true',
+        help="Do not include sample content.")
     parser_init.add_argument('--force', '-f',
-                             dest='force',
-                             action='store_true',
-                             help="Delete target folder contents. Use with caution!")
+        dest='force',
+        action='store_true',
+        help="Delete target folder contents. Use with caution!")
     parser_init.set_defaults(func=init)
     return main_parser
 

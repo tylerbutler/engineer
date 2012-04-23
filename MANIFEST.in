@@ -1,3 +1,8 @@
-include *.txt
-recursive-include engineer *.py *.html *.js *.css *.less
-recursive-include docs_source *.rst *.py
+include *.txt *.py
+recursive-include engineer *.*
+
+prune docs
+prune engineer/sample_site/output
+prune engineer/sample_site/_cache
+
+global-exclude *.pyc

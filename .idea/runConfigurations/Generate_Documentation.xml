@@ -8,7 +8,7 @@
     <option name="IS_MODULE_SDK" value="false" />
     <module name="engineer" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-    <option name="docutils_input_file" value="C:\Users\Tyler\Code\engineer\docs_source" />
+    <option name="docutils_input_file" value="C:\Users\Tyler\Code\engineer\engineer\docs_source" />
     <option name="docutils_output_file" value="C:\Users\Tyler\Code\engineer\docs" />
     <option name="docutils_params" value="" />
     <option name="docutils_task" value="html" />

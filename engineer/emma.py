@@ -34,16 +34,16 @@ class EmmaStandalone(object):
     @app.route('/static/<filepath:path>')
     def _serve_static(filepath):
         response = bottle.static_file(filepath,
-            root=settings.ENGINEER.STATIC_DIR)
+                                      root=settings.ENGINEER.STATIC_DIR)
         if type(response) is bottle.HTTPError:
             return bottle.static_file(path(filepath) / 'index.html',
-                root=settings.OUTPUT_DIR)
+                                      root=settings.OUTPUT_DIR)
         else:
             return response
 
     def run(self, port=8080, **kwargs):
         self.app.mount(self.emma_instance.get_secret_path(),
-            self.emma_instance.app)
+                       self.emma_instance.app)
 
         use_cherrypy = False
         if 'server' not in kwargs:
@@ -76,13 +76,13 @@ class Emma(object):
         self.app.route('/build', callback=self._build, name='build')
         self.app.route('/clean', callback=self._clean, name='clean')
         self.app.route('/reload_settings', callback=self._reload_settings,
-            name='reload_settings')
+                       name='reload_settings')
         self.app.route('/disable', callback=self._disable, name='disable')
         self.app.route('/disable/confirm', callback=self._confirm_disable,
-            name='confirm_disable')
+                       name='confirm_disable')
 
         self.app.route('/static/<filepath:path>', callback=self._serve_static,
-            name='static')
+                       name='static')
 
     #        try:
     #            logger.debug("Absolute URL prefix: %s" % url(None, True))
@@ -100,7 +100,7 @@ class Emma(object):
         current_messages = self.messages
         self.messages = []
         return template.render(get_url=self.get_url, len=len, stats=stats,
-            messages=current_messages)
+                               messages=current_messages)
 
     def _build(self):
         from engineer.engine import build
@@ -132,10 +132,10 @@ class Emma(object):
 
     def _serve_static(self, filepath):
         response = bottle.static_file(filepath,
-            root=settings.ENGINEER.STATIC_DIR)
+                                      root=settings.ENGINEER.STATIC_DIR)
         if type(response) is bottle.HTTPError:
             return bottle.static_file(path(filepath) / 'index.html',
-                root=settings.OUTPUT_DIR)
+                                      root=settings.OUTPUT_DIR)
         else:
             return response
 

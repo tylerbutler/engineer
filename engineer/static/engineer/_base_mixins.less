@@ -2,37 +2,37 @@
 // MIXINS //
 ////////////
 
-.border-radius(@radius: 5px) {
+.border-radius(@radius: 5px){
     border-radius: @radius;
     -moz-border-radius: @radius;
     -webkit-border-radius: @radius;
     opacity: 1;
 }
 
-.transition(@time: 0.3s) {
-    -webkit-transition: all @time ease-out;  /* Saf3.2+, Chrome */
-       -moz-transition: all @time ease-out;  /* FF4+ */
-        -ms-transition: all @time ease-out;  /* IE10? */
-         -o-transition: all @time ease-out;  /* Opera 10.5+ */
-            transition: all @time ease-out;
+.transition(@time: 0.3s){
+    -webkit-transition: all @time ease-out; /* Saf3.2+, Chrome */
+    -moz-transition: all @time ease-out; /* FF4+ */
+    -ms-transition: all @time ease-out; /* IE10? */
+    -o-transition: all @time ease-out; /* Opera 10.5+ */
+    transition: all @time ease-out;
 }
 
-.link-color(@normal, @hover) {
-	a {
-	    text-decoration: none;
-	    color: @normal;
-		&:hover {
-			color: @hover;
+.link-color(@normal, @hover){
+    a {
+        text-decoration: none;
+        color: @normal;
+        &:hover {
+            color: @hover;
             .transition;
-		}
-	}
+        }
+    }
 }
 
-.link-color-single(@linkcolor) {
-	.link-color(@linkcolor, @linkcolor);
+.link-color-single(@linkcolor){
+    .link-color(@linkcolor, @linkcolor);
 }
 
-.horizontal-list(@padding-right: 0, @padding-left: 0) {
+.horizontal-list(@padding-right: 0, @padding-left: 0){
     ul {
         padding: 0;
         li {
@@ -43,9 +43,26 @@
     }
 }
 
-.hide           { display: none; }
-.left           { float: left; }
-.right          { float: right; }
-.text-left      { text-align: left; }
-.text-right     { text-align: right; }
-.text-center    { text-align: center; }
+.hide {
+    display: none;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}

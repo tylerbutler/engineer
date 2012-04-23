@@ -35,7 +35,7 @@ class Theme(object):
                                                                         'templates'].iteritems())
         else:
             self.templates = dict((p.namebase, 'theme/%s' % p.name) for p in
-            self.template_root.walkfiles(pattern='*.html'))
+                self.template_root.walkfiles(pattern='*.html'))
 
         for k, v in settings.THEME_SETTINGS.iteritems():
             setattr(self, k, v)

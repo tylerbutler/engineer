@@ -100,14 +100,14 @@ class Post(object):
         self.content = typogrify(markdown.markdown(self._content_raw, extensions=['extra', 'codehilite']))
 
         self.markdown_file_name = unicode.format(settings.NORMALIZE_INPUT_FILE_MASK,
-            self.status.name[:1],
-            self.timestamp_local.strftime('%Y-%m-%d'),
-            #times.format(self.timestamp, settings.DEFAULT_TIMEZONE, '%Y-%m-%d'),
-            self.slug)
+                                                 self.status.name[:1],
+                                                 self.timestamp_local.strftime('%Y-%m-%d'),
+                                                 #times.format(self.timestamp, settings.DEFAULT_TIMEZONE, '%Y-%m-%d'),
+                                                 self.slug)
         self.url = unicode.format(u'{0}{1}/{2}/',
-            settings.HOME_URL,
-            self.timestamp_local.strftime('%Y/%m/%d'),
-            self.slug)
+                                  settings.HOME_URL,
+                                  self.timestamp_local.strftime('%Y/%m/%d'),
+                                  self.slug)
         self.absolute_url = unicode.format(u'{0}{1}', settings.SITE_URL, self.url)
         self.output_path = path(settings.OUTPUT_CACHE_DIR / self.timestamp_local.strftime('%Y/%m/%d') / self.slug)
         self.output_file_name = 'index.html'#'%s.html' % self.slug
@@ -199,7 +199,7 @@ class Post(object):
             if k in d and d[k] is not None and len(d[k]) > 0:
                 metadata += yaml.safe_dump(dict([[k, d[k]]]), default_flow_style=False)
         return settings.JINJA_ENV.get_template(self.markdown_template_path).render(metadata=metadata,
-            content=self._content_raw)
+                                                                                   content=self._content_raw)
 
     def __unicode__(self):
         return self.markdown_file_name
@@ -285,5 +285,5 @@ class PostCollection(list):
 
     def render_tag_html(self, tag):
         return settings.JINJA_ENV.get_template('theme/tags_list.html').render(tag=tag,
-            post_list=self.tagged(
-                tag).grouped_by_year)
+                                                                              post_list=self.tagged(
+                                                                                  tag).grouped_by_year)

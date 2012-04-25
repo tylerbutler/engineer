@@ -1,4 +1,5 @@
 # coding=utf-8
+import logging
 import markdown
 import re
 import times
@@ -13,7 +14,6 @@ from zope.cachedescriptors.property import CachedProperty
 from engineer.conf import settings
 from engineer.filters import localtime
 from engineer.util import slugify, chunk, urljoin
-from engineer.log import logger
 
 try:
     import cPickle as pickle
@@ -21,6 +21,8 @@ except ImportError:
     import pickle
 
 __author__ = 'tyler@tylerbutler.com'
+
+logger = logging.getLogger(__name__)
 
 class Status(Enum):
     """Enum representing the status of a :class:`~Post`."""
@@ -76,7 +78,7 @@ class Post(object):
         try:
             self.status = Status(metadata.get('status', Status.draft.name))
         except ValueError:
-            logger.warning("'%s': Invalid status value in metadata. Defaulting to 'draft'." % self.title)
+            root_logger.warning("'%s': Invalid status value in metadata. Defaulting to 'draft'." % self.title)
             self.status = Status.draft
 
         self.timestamp = metadata.get('timestamp', None)

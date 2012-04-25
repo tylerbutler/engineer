@@ -1,10 +1,11 @@
 # coding=utf-8
 import argparse
+import logging
 import sys
 import times
 from codecs import open
 from path import path
-from engineer.log import logger
+from engineer.log import get_console_handler, bootstrap
 
 try:
     import cPickle as pickle
@@ -16,6 +17,7 @@ __author__ = 'tyler@tylerbutler.com'
 def clean(args=None):
     from engineer.conf import settings
 
+    logger = logging.getLogger('engineer.engine.clean')
     try:
         settings.OUTPUT_DIR.rmtree()
         settings.OUTPUT_CACHE_DIR.rmtree()
@@ -24,15 +26,15 @@ def clean(args=None):
         if hasattr(we, 'winerror') and we.winerror not in (2, 3):
             logger.exception(we.message)
         else:
-            logger.info(
-                "Couldn't find output directory: %s" % settings.OUTPUT_DIR)
+            logger.warning("Couldn't find output directory: %s" % settings.OUTPUT_DIR)
 
-    logger.info('Cleaned output directory: %s' % settings.OUTPUT_DIR)
+    logger.console('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 
 
 def build(args=None):
     from engineer.conf import settings
     from engineer.loaders import LocalLoader
+    from engineer.log import get_file_handler
     from engineer.models import PostCollection, TemplatePage
     from engineer.themes import ThemeManager
     from engineer.util import mirror_folder, ensure_exists, slugify
@@ -41,6 +43,11 @@ def build(args=None):
         clean()
 
     settings.create_required_directories()
+
+    logger = logging.getLogger('engineer.engine.build')
+    logger.parent.addHandler(get_file_handler(settings.LOG_FILE))
+
+    logger.debug("Starting build using configuration file %s." % settings.SETTINGS_FILE)
 
     build_stats = {
         'time_run': times.now(),
@@ -59,21 +66,22 @@ def build(args=None):
     settings.OUTPUT_CACHE_DIR.rmtree(ignore_errors=True)
 
     # Copy static content to output dir
+    logger.debug("Copying static files to output cache.")
     s = settings.ENGINEER.STATIC_DIR.abspath()
     t = settings.OUTPUT_STATIC_DIR
     mirror_folder(s, t)
-    logger.debug("Copied static files to '%s'." % t)
+    logger.debug("Copied static files to %s." % t)
 
     # Copy theme static content to output dir
+    logger.debug("Copying theme static files to output cache.")
     s = ThemeManager.current_theme().static_root.abspath()
     t = (settings.OUTPUT_STATIC_DIR / 'theme').abspath()
     mirror_folder(s, t)
-    logger.debug("Copied static files for theme to '%s'." % t)
+    logger.debug("Copied static files for theme to %s." % t)
 
     # Generate template pages
     if settings.TEMPLATE_PAGE_DIR.exists():
-        logger.info(
-            "Generating template pages from %s." % settings.TEMPLATE_PAGE_DIR)
+        logger.info("Generating template pages from %s." % settings.TEMPLATE_PAGE_DIR)
         template_pages = []
         for template in settings.TEMPLATE_PAGE_DIR.walkfiles('*.html'):
             # We create all the TemplatePage objects first so we have all of the URLs to them in the template
@@ -86,8 +94,9 @@ def build(args=None):
             with open(page.output_path / page.output_file_name, mode='wb',
                       encoding='UTF-8') as file:
                 file.write(rendered_page)
-                logger.debug("Output '%s'." % file.name)
+                logger.debug("Output template page %s." % file.name)
                 build_stats['counts']['template_pages'] += 1
+        logger.info("Generated %s template pages." % build_stats['counts']['template_pages'])
 
     # Load markdown input posts
     logger.info("Loading posts...")
@@ -112,7 +121,7 @@ def build(args=None):
                   encoding='UTF-8') as file:
             file.write(rendered_post)
             if post in new_posts:
-                logger.info("Output new or modified post '%s'." % post.title)
+                logger.console("Output new or modified post '%s'." % post.title)
                 build_stats['counts']['new_posts'] += 1
             elif post in cached_posts:
                 build_stats['counts']['cached_posts'] += 1
@@ -186,31 +195,33 @@ def build(args=None):
 
     # Remove LESS files if LESS preprocessing is being done
     if settings.PREPROCESS_LESS:
+        logger.debug("Deleting LESS files since PREPROCESS_LESS is True.")
         for f in settings.OUTPUT_STATIC_DIR.walkfiles(pattern="*.less"):
             logger.debug("Deleting file: %s." % f)
             f.remove_p()
 
-    logger.info("Synchronizing output directory with output cache.")
+    logger.debug("Synchronizing output directory with output cache.")
     build_stats['files'] = mirror_folder(settings.OUTPUT_CACHE_DIR,
                                          settings.OUTPUT_DIR)
     from pprint import pformat
 
     logger.debug("Folder mirroring report: %s" % pformat(build_stats['files']))
-    logger.info('')
-    logger.info(
-        "Site: '%s' output to %s." % (settings.SITE_TITLE, settings.OUTPUT_DIR))
-    logger.info("Posts: %s (%s new or updated)" % (
+    logger.console('')
+    logger.console("Site: '%s' output to %s." % (settings.SITE_TITLE, settings.OUTPUT_DIR))
+    logger.console("Posts: %s (%s new or updated)" % (
         (build_stats['counts']['new_posts'] + build_stats['counts'][
                                               'cached_posts']),
         build_stats['counts']['new_posts']))
-    logger.info("Post rollup pages: %s (%s posts per page)" % (
+    logger.console("Post rollup pages: %s (%s posts per page)" % (
         build_stats['counts']['rollups'], settings.ROLLUP_PAGE_SIZE))
-    logger.info("Template pages: %s" % build_stats['counts']['template_pages'])
-    logger.info("Tag pages: %s" % build_stats['counts']['tag_pages'])
-    logger.info("%s new items, %s modified items, and %s deleted items." % (
+    logger.console("Template pages: %s" % build_stats['counts']['template_pages'])
+    logger.console("Tag pages: %s" % build_stats['counts']['tag_pages'])
+    logger.console("%s new items, %s modified items, and %s deleted items." % (
         len(build_stats['files']['new']),
         len(build_stats['files']['overwritten']),
         len(build_stats['files']['deleted'])))
+    logger.console('')
+    logger.console("Full build log at %s." % settings.LOG_FILE)
 
     with open(settings.BUILD_STATS_FILE, mode='wb') as file:
         pickle.dump(build_stats, file)
@@ -221,6 +232,8 @@ def serve(args):
     import bottle
     from engineer.conf import settings
     from engineer import emma
+
+    logger = logging.getLogger(__name__)
 
     if not settings.OUTPUT_DIR.exists():
         logger.warning(
@@ -246,16 +259,18 @@ def serve(args):
 def start_emma(args):
     from engineer import emma
 
+    logger = logging.getLogger('engineer.engine.start_emma')
+
     em = emma.EmmaStandalone()
     try:
         if args.prefix:
             em.emma_instance.prefix = args.prefix
         if args.generate:
             em.emma_instance.generate_secret()
-            logger.info(
+            logger.console(
                 "New Emma URL: %s" % em.emma_instance.get_secret_path(True))
         elif args.url:
-            logger.info(
+            logger.console(
                 "Current Emma URL: %s" % em.emma_instance.get_secret_path(True))
         elif args.run:
             em.run(port=args.port)
@@ -267,6 +282,8 @@ def start_emma(args):
 
 def init(args):
     from engineer import version
+
+    logger = logging.getLogger('engineer.engine.init')
 
     sample_site_path = path(version.__file__).dirname() / 'sample_site'
     target = path.getcwd()
@@ -379,10 +396,14 @@ def cmdline(args=sys.argv):
     args = get_argparser().parse_args(args[1:])
     skip_settings = ('init',)
 
-    if args.verbose:
-        import logging
+    # bootstrap logging
+    bootstrap()
+    logger = logging.getLogger('engineer')
 
-        logger.setLevel(logging.DEBUG)
+    if args.verbose:
+        logger.addHandler(get_console_handler(logging.INFO))
+    else:
+        logger.addHandler(get_console_handler())
 
     if args.parser_name in skip_settings:
         pass
@@ -392,8 +413,7 @@ def cmdline(args=sys.argv):
 
             if args.config_file is None:
                 default_settings_file = path.getcwd() / 'config.yaml'
-                logger.info(
-                    "No '--settings' parameter specified, defaulting to %s." % default_settings_file)
+                logger.info("No '--settings' parameter specified, defaulting to %s." % default_settings_file)
                 settings.reload(default_settings_file)
             else:
                 settings.reload(settings_file=args.config_file)

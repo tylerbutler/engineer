@@ -1,5 +1,6 @@
 # coding=utf-8
 from inspect import isfunction
+import logging
 import platform
 import pytz
 import shelve
@@ -11,11 +12,11 @@ from path import path
 from zope.cachedescriptors import property as zproperty
 from engineer.cache import SimpleFileCache
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list
-from engineer.log import logger
 from engineer.version import __version__ as version
 
-
 __author__ = 'tyler@tylerbutler.com'
+
+logger = logging.getLogger(__name__)
 
 class SettingsFileNotFoundException(Exception):
     pass
@@ -69,10 +70,6 @@ class EngineerConfiguration(object):
                 settings_file = self.SETTINGS_FILE
             else:
                 # Looks like we're just loading the 'empty' config.
-                import threading
-
-                logger.debug(threading.currentThread().getName() + ": " + str(
-                    threading.currentThread().ident))
                 logger.info("Initializing empty configuration.")
                 self.SETTINGS_FILE = None
                 self._initialize({})
@@ -80,8 +77,7 @@ class EngineerConfiguration(object):
 
         if path(settings_file).exists() and path(settings_file).isfile():
             self.SETTINGS_FILE = settings_file = path(settings_file).abspath()
-            logger.info("Loading configuration from %s." % path(
-                settings_file).abspath())
+            logger.console("Loading configuration from %s." % path(settings_file).abspath())
             # Find the complete set of settings files based on inheritance
             all_configs = []
             config = {}
@@ -311,7 +307,7 @@ class EngineerConfiguration(object):
         if CACHE is None or not CACHE.has_key('version') or CACHE[
                                                             'version'] != version:
             # all new caches
-            logger.info(
+            logger.debug(
                 "Caches either don't exist or are old, so creating new ones...")
             CACHE['version'] = version
             CACHE['POST_CACHE'] = self.POST_CACHE = SimpleFileCache(
@@ -352,6 +348,7 @@ class EngineerConfiguration(object):
         """Creates any directories required for Engineer to function if they don't already exist."""
         required = (self.CACHE_DIR,
                     self.JINJA_CACHE_DIR,
+                    self.LOG_DIR,
                     self.OUTPUT_DIR,)
 
         for folder in required:

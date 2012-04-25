@@ -1,4 +1,5 @@
 # coding=utf-8
+import logging
 import posixpath
 import re
 import filecmp
@@ -7,7 +8,6 @@ import translitcodec
 from itertools import chain, islice
 from path import path
 from urlparse import urljoin, urlparse, urlunparse
-from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
 
@@ -68,6 +68,8 @@ def chunk(seq, chunksize, process=iter):
 
 def mirror_folder(source, target, delete_orphans=True, _level=0):
     """Mirrors a folder *source* into a target folder *target*."""
+
+    logger = logging.getLogger('engineer.util.mirror_folder')
 
     def expand_tree(p):
         tree = []

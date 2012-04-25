@@ -1,5 +1,6 @@
 # coding=utf-8
 import humanize
+import logging
 import re
 import times
 from markdown import markdown
@@ -7,6 +8,8 @@ from path import path
 from typogrify.templatetags import jinja2_filters
 
 __author__ = 'tyler@tylerbutler.com'
+
+logger = logging.getLogger(__name__)
 
 def format_datetime(value, format_string='%Y-%m-%d'):
     return value.strftime(format_string)
@@ -47,7 +50,6 @@ def compress(value):
         return value
     else: # COMPRESSOR_ENABLED == True
         import html5lib
-        from engineer.log import logger
 
         def _min_css(css_string):
             from cssmin import cssmin

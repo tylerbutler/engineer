@@ -1,10 +1,12 @@
 # coding=utf-8
+import logging
 import subprocess
 from path import path
 from engineer.conf import settings
-from engineer.log import logger
 
 __author__ = 'tyler@tylerbutler.com'
+
+logger = logging.getLogger(__name__)
 
 # Helper function to preprocess LESS files on demand
 def preprocess_less(file):

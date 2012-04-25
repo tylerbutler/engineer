@@ -1,6 +1,7 @@
 # coding=utf-8
 import os
 from path import path
+from engineer.log import bootstrap
 from engineer.unittests import CopyDataTestCase
 
 __author__ = 'tyler@tylerbutler.com'
@@ -10,6 +11,7 @@ simple_site = test_data_root / 'simple_site'
 
 class TestConfig(CopyDataTestCase):
     def setUp(self):
+        bootstrap()
         self.source_path = simple_site
         os.chdir(self.copied_data_path)
 

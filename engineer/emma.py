@@ -1,9 +1,9 @@
 # coding=utf-8
 import bottle
+import logging
 from path import path
 from uuid import uuid4
 from engineer.conf import settings
-from engineer.log import logger
 
 try:
     import cPickle as pickle
@@ -11,6 +11,8 @@ except ImportError:
     import pickle
 
 __author__ = 'tyler@tylerbutler.com'
+
+logger = logging.getLogger(__name__)
 
 class NoSecretException(Exception):
     pass
@@ -182,4 +184,4 @@ class Emma(object):
         with open(self.secret_file, mode='wb') as file:
             pickle.dump(new_secret, file)
         self._secret = new_secret
-        logger.info("Wrote secret file: %s" % self.secret_file)
+        logger.console("Wrote secret file: %s" % self.secret_file)

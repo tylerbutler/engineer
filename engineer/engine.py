@@ -253,7 +253,7 @@ def serve(args):
             return response
 
     bottle.debug(True)
-    bottle.run(app=debug_server, host='localhost', port=8000, reloader=True)
+    bottle.run(app=debug_server, host='localhost', port=args.port, reloader=True)
 
 
 def start_emma(args):
@@ -324,8 +324,7 @@ def get_argparser():
                                dest='config_file',
                                help="Specify a configuration file to use.")
 
-    main_parser = argparse.ArgumentParser(
-        description="Engineer static site builder.")
+    main_parser = argparse.ArgumentParser(description="Engineer static site builder.")
     subparsers = main_parser.add_subparsers(title="subcommands",
                                             dest='parser_name')
 
@@ -346,6 +345,11 @@ def get_argparser():
     parser_serve = subparsers.add_parser('serve',
                                          help="Start the development server.",
                                          parents=[common_parser])
+    parser_serve.add_argument('-p', '--port',
+                              type=int,
+                              default=8000,
+                              dest='port',
+                              help="The port the development server should listen on.")
     parser_serve.set_defaults(func=serve)
 
     parser_emma = subparsers.add_parser('emma',

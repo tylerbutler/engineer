@@ -35,7 +35,7 @@
                     </h1>
                 </header>
                 {{ post.content|safe }}
-                {% if post.attribute_to %}
+                {% if post.via %}
                     <div class="attribution">
                         {% if post.via_link %}
                             <a href="{{ post.via_link }}">/via {{ post.via }}</a>

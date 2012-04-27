@@ -318,7 +318,7 @@ def get_argparser():
     common_parser = argparse.ArgumentParser(add_help=False)
     common_parser.add_argument('-v', '--verbose',
                                dest='verbose',
-                               action='store_true',
+                               action='count',
                                help="Display verbose output.")
     common_parser.add_argument('-s', '--config', '--settings',
                                dest='config_file',
@@ -339,8 +339,7 @@ def get_argparser():
     parser_build.set_defaults(func=build)
 
     parser_clean = subparsers.add_parser('clean',
-                                         help="Clean the output directory and clear all caches."
-                                         ,
+                                         help="Clean the output directory and clear all caches.",
                                          parents=[common_parser])
     parser_clean.set_defaults(func=clean)
 
@@ -350,8 +349,7 @@ def get_argparser():
     parser_serve.set_defaults(func=serve)
 
     parser_emma = subparsers.add_parser('emma',
-                                        help="Start Emma, the built-in management server."
-                                        ,
+                                        help="Start Emma, the built-in management server.",
                                         parents=[common_parser])
     parser_emma.add_argument('-p', '--port',
                              type=int,
@@ -377,8 +375,7 @@ def get_argparser():
                               help="Get Emma's current URL.")
     parser_emma.set_defaults(func=start_emma)
     parser_init = subparsers.add_parser('init',
-                                        help="Initialize the current directory as an engineer site."
-                                        ,
+                                        help="Initialize the current directory as an engineer site.",
                                         parents=[common_parser])
     parser_init.add_argument('--no-sample',
                              dest='no_sample',
@@ -400,7 +397,9 @@ def cmdline(args=sys.argv):
     bootstrap()
     logger = logging.getLogger('engineer')
 
-    if args.verbose:
+    if args.verbose >= 2:
+        logger.addHandler(get_console_handler(logging.DEBUG))
+    elif args.verbose == 1:
         logger.addHandler(get_console_handler(logging.INFO))
     else:
         logger.addHandler(get_console_handler())

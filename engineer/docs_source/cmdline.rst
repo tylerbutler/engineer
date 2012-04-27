@@ -23,7 +23,10 @@ All of the Engineer commands accept the following arguments:
 
 .. option:: -v, --verbose
 
-   Display verbose command line output.
+   Display verbose command line output. You can see *extremely* verbose output by specifying the option twice. For
+   example::
+
+       engineer build -vv
 
 
 .. option:: -s, --settings, --config

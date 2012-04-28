@@ -1,10 +1,17 @@
+
+=========
+Changelog
+=========
+
 version 0.2.1 - April 28, 2012
+==============================
 
 - Fixed corrupted LESS files that made it into v0.2.0.
 - Fixed bug that prevented attribution text and links from showing up in Dark Rainbow theme.
 
 
 version 0.2.0 - April 22, 2012
+==============================
 
 - Better post timezone handling.
 - Various fixes to Dark Rainbow theme.
@@ -16,5 +23,6 @@ version 0.2.0 - April 22, 2012
 
 
 version 0.1.0 - March 13, 2012
+==============================
 
 - Initial release.

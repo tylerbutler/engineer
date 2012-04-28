@@ -46,6 +46,7 @@ Narrative Documentation
    templates
    emma
    faq
+   changelog
 
 
 API Documentation

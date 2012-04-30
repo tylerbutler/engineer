@@ -1,3 +1,9 @@
+version 0.2.2 - April 30, 2012
+
+- Updated sample site to disable :attr:`~engineer.conf.EngineerConfiguration.PREPROCESS_LESS` by default. This way
+  the site will still build even if you don't have lessc installed or aren't on Windows.
+
+
 version 0.2.1 - April 28, 2012
 
 - Fixed corrupted LESS files that made it into v0.2.0.

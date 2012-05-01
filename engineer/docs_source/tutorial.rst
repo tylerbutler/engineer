@@ -1,4 +1,3 @@
-
 ===============
 Getting Started
 ===============
@@ -191,7 +190,7 @@ The file system in :file:`C:\\my-engineer-site\\` should look something like thi
       - base.yaml
       - config.yaml
       - debug.yaml
-   /_cache
+      /_cache
       /archives
       /output
       /posts

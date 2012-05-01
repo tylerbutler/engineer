@@ -117,7 +117,7 @@ def get_install_requirements():
 
 
 def get_readme():
-    with open('README.txt') as file:
+    with open('README.md') as file:
         return file.read()
 
 setup(

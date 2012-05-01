@@ -161,6 +161,9 @@ Available navigation contexts:
 ``archive``
     This context is active whenever Engineer is rendering the archives page.
 
+``tag``
+    This context is active whenever Engineer is rendering a tag page.
+
 template page name
     In addition, all template pages are rendered with a navigation context matching their name. In the sample site,
     this is used to highlight the *about* and *themes* navigation links when you're visiting those template pages in

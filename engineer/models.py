@@ -288,4 +288,5 @@ class PostCollection(list):
     def render_tag_html(self, tag):
         return settings.JINJA_ENV.get_template('theme/tags_list.html').render(tag=tag,
                                                                               post_list=self.tagged(
-                                                                                  tag).grouped_by_year)
+                                                                                  tag).grouped_by_year,
+                                                                              nav_context='tag')

@@ -6,7 +6,7 @@
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
     <option name="SDK_HOME" value="" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/sample_site" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/engineer/sample_site" />
     <option name="IS_MODULE_SDK" value="true" />
     <module name="engineer" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />

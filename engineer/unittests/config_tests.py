@@ -2,19 +2,21 @@
 import os
 from path import path
 from engineer.log import bootstrap
-from engineer.unittests import CopyDataTestCase
+from engineer.unittests import CopyDataTestCase, SettingsTestCase
 
 __author__ = 'tyler@tylerbutler.com'
 
 test_data_root = path(__file__).dirname() / 'test_data'
 simple_site = test_data_root / 'simple_site'
 
-class TestConfig(CopyDataTestCase):
+class BaseTestCase(CopyDataTestCase):
     def setUp(self):
-        bootstrap()
+        bootstrap() #bootstrap logging infrastructure
         self.source_path = simple_site
         os.chdir(self.copied_data_path)
 
+
+class TestConfig(BaseTestCase):
     def test_config_yaml(self):
         from engineer.conf import settings
 
@@ -33,6 +35,7 @@ class TestConfig(CopyDataTestCase):
         self.assertEqual(s1.SITE_TITLE, s2.SITE_TITLE)
 
     def test_manual_config_yaml(self):
+        """Tests that creating an EngineerConfiguration manually also shares state with configs created other ways."""
         from engineer.conf import settings as s1
         from engineer.conf import EngineerConfiguration
 
@@ -40,10 +43,9 @@ class TestConfig(CopyDataTestCase):
         s2 = EngineerConfiguration('configs/config2.yaml')
         self.assertEqual(s1.SITE_TITLE, s2.SITE_TITLE)
 
-    def test_load(self):
-        from engineer.conf import settings
-        from engineer.loaders import LocalLoader
 
-        settings.create_required_directories()
-        posts = LocalLoader.load_all(settings.POST_DIR)
-        self.assertEqual(len(posts), 2)
+#class TestCommandLine(BaseTestCase):
+#    def TestBuild(self):
+#        from engineer import engine
+#
+#        engine.build()

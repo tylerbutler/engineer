@@ -2,15 +2,18 @@
 from tempfile import mkdtemp
 from unittest.case import TestCase
 from path import path
+from engineer.log import bootstrap
 
 __author__ = 'tyler@tylerbutler.com'
 
 class SettingsTestCase(TestCase):
-    def __init__(self, settings_file, *args, **kwargs):
+    settings_file = None
+
+    def __init__(self, *args, **kwargs):
         from engineer.conf import EngineerConfiguration
 
         super(SettingsTestCase, self).__init__(*args, **kwargs)
-        self._source_settings_file = settings_file
+        self._source_settings_file = self.settings_file
         EngineerConfiguration(self._source_settings_file)
 
     def tearDown(self):
@@ -20,9 +23,12 @@ class SettingsTestCase(TestCase):
 
 
 class CopyDataTestCase(TestCase):
-    tmp_dirs = []
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp_dirs = []
 
     def __init__(self, *args, **kwargs):
+        bootstrap()
         super(CopyDataTestCase, self).__init__(*args, **kwargs)
         self.copied_data_path = None
 
@@ -42,10 +48,16 @@ class CopyDataTestCase(TestCase):
 
     def tearDown(self):
         print "Marking temp folder for deletion: %s" % self.copied_data_path.dirname()
-        CopyDataTestCase.tmp_dirs.append(self.copied_data_path.dirname())
+        self.tmp_dirs.append(self.copied_data_path.dirname())
 
     @classmethod
     def tearDownClass(cls):
+        print "Teardownclass running... %s" % cls.tmp_dirs
         for dir in cls.tmp_dirs:
             print "Deleting temp folder: %s" % dir
-            dir.rmtree()
+            dir.rmtree(ignore_errors=True)
+        del cls.tmp_dirs
+
+    @staticmethod
+    def removal_error(func, path, exc_info):
+        pass

@@ -284,22 +284,25 @@ class EngineerConfiguration(object):
             # all new caches
             logger.debug("Caches either don't exist or are old, so creating new ones...")
             CACHE['version'] = version
-            CACHE['POST_CACHE'] = self.POST_CACHE = SimpleFileCache(version=version)
-            CACHE['COMPRESSION_CACHE'] = self.COMPRESSION_CACHE = SimpleFileCache(version=version)
-            CACHE['LESS_CACHE'] = self.LESS_CACHE = SimpleFileCache(version=version)
         return CACHE
 
     @zproperty.CachedProperty
     def COMPRESSION_CACHE(self):
         if not self.CACHE.has_key('COMPRESSION_CACHE'):
-            self.CACHE['COMPRESSION_CACHE'] = SimpleFileCache()
+            self.CACHE['COMPRESSION_CACHE'] = SimpleFileCache(version=version)
         return self.CACHE['COMPRESSION_CACHE']
 
     @zproperty.CachedProperty
     def POST_CACHE(self):
         if not self.CACHE.has_key('POST_CACHE'):
-            self.CACHE['POST_CACHE'] = SimpleFileCache()
+            self.CACHE['POST_CACHE'] = SimpleFileCache(version=version)
         return self.CACHE['POST_CACHE']
+
+    @zproperty.CachedProperty
+    def LESS_CACHE(self):
+        if not self.CACHE.has_key('LESS_CACHE'):
+            self.CACHE['LESS_CACHE'] = SimpleFileCache(version=version)
+        return self.CACHE['LESS_CACHE']
 
     def normalize(self, p):
         if path(p).isabs():

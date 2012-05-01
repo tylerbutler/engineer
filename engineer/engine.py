@@ -6,6 +6,7 @@ import times
 from codecs import open
 from path import path
 from engineer.log import get_console_handler, bootstrap
+from engineer.util import relpath
 
 try:
     import cPickle as pickle
@@ -70,14 +71,14 @@ def build(args=None):
     s = settings.ENGINEER.STATIC_DIR.abspath()
     t = settings.OUTPUT_STATIC_DIR
     mirror_folder(s, t)
-    logger.debug("Copied static files to %s." % t)
+    logger.debug("Copied static files to %s." % relpath(t))
 
     # Copy theme static content to output dir
     logger.debug("Copying theme static files to output cache.")
     s = ThemeManager.current_theme().static_root.abspath()
     t = (settings.OUTPUT_STATIC_DIR / 'theme').abspath()
     mirror_folder(s, t)
-    logger.debug("Copied static files for theme to %s." % t)
+    logger.debug("Copied static files for theme to %s." % relpath(t))
 
     # Generate template pages
     if settings.TEMPLATE_PAGE_DIR.exists():
@@ -94,7 +95,7 @@ def build(args=None):
             with open(page.output_path / page.output_file_name, mode='wb',
                       encoding='UTF-8') as file:
                 file.write(rendered_page)
-                logger.debug("Output template page %s." % file.name)
+                logger.debug("Output template page %s." % relpath(file.name))
                 build_stats['counts']['template_pages'] += 1
         logger.info("Generated %s template pages." % build_stats['counts']['template_pages'])
 
@@ -143,7 +144,7 @@ def build(args=None):
         with open(posts.output_path(slice_num), mode='wb',
                   encoding='UTF-8') as file:
             file.write(rendered_page)
-            logger.debug("Output '%s'." % file.name)
+            logger.debug("Output rollup page %s." % relpath(file.name))
             build_stats['counts']['rollups'] += 1
 
         # Copy first rollup page to root of site - it's the homepage.
@@ -162,7 +163,7 @@ def build(args=None):
 
         with open(archive_output_path, mode='wb', encoding='UTF-8') as file:
             file.write(rendered_archive)
-            logger.debug("Output '%s'." % file.name)
+            logger.debug("Output %s." % relpath(file.name))
 
     # Generate tag pages
     if num_posts > 0:
@@ -174,7 +175,7 @@ def build(args=None):
             with open(tag_path, mode='wb', encoding='UTF-8') as file:
                 file.write(rendered_tag_page)
                 build_stats['counts']['tag_pages'] += 1
-                logger.debug("Output '%s'." % file.name)
+                logger.debug("Output %s." % relpath(file.name))
 
     # Generate feeds
     #if build_stats['counts']['new_posts'] >= 0:
@@ -185,7 +186,7 @@ def build(args=None):
         build_date=all_posts[0].timestamp)
     with open(feed_output_path, mode='wb', encoding='UTF-8') as file:
         file.write(feed_content)
-        logger.debug("Output '%s'." % file.name)
+        logger.debug("Output %s." % relpath(file.name))
 
     # Copy 'raw' content to output cache
     if settings.CONTENT_DIR.exists():
@@ -197,7 +198,7 @@ def build(args=None):
     if settings.PREPROCESS_LESS:
         logger.debug("Deleting LESS files since PREPROCESS_LESS is True.")
         for f in settings.OUTPUT_STATIC_DIR.walkfiles(pattern="*.less"):
-            logger.debug("Deleting file: %s." % f)
+            logger.debug("Deleting file: %s." % relpath(f))
             f.remove_p()
 
     logger.debug("Synchronizing output directory with output cache.")

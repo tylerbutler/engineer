@@ -174,3 +174,9 @@ class Borg(object):
         self = object.__new__(cls)
         self.__dict__ = cls._state
         return self
+
+
+def relpath(path):
+    from engineer.conf import settings
+
+    return '/' + settings.OUTPUT_CACHE_DIR.relpathto(path)

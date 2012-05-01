@@ -1,0 +1,293 @@
+@import "../../engineer/_base_mixins.less";
+//@import "_mixins.less";
+@import "_colors.less";
+@import "_typography.less";
+@import "_element_styles.less";
+//@import "../../engineer/_solarized.less";
+
+///////////////////
+// HEADER STYLES //
+///////////////////
+
+header#primary {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    .dotted-border(bottom, @grey-light);
+    margin-bottom: 1rem;
+
+    h1 {
+        font-size: @font-size-xxl;
+
+        a {
+            text-decoration: none;
+            color: inherit;
+
+            &:hover {
+                background-color: transparent;
+            }
+        }
+    }
+
+    nav {
+        .horizontal-list(1rem, 1rem);
+        font-size: @font-size-large;
+        margin-top: 1px;
+
+        li {
+            a {
+                .border-radius();
+                padding: .4rem 1rem;
+            }
+        }
+
+        li.current a {
+            color: @red;
+            &:hover {
+                color: @red;
+                background-color: transparent;
+                cursor: text;
+            }
+        }
+    }
+}
+
+////////////////////
+// ARTICLE STYLES //
+////////////////////
+
+.post-info {
+    time {
+        font-size: @font-size-default;
+        font-weight: bold;
+        color: @red;
+    }
+}
+
+.rollup header h1 {
+    margin: 0;
+    font-size: @font-size-medium;
+}
+
+article {
+    margin: 1rem 0;
+
+    h1 {
+        font-size: @font-size-xxl;
+    }
+
+    h1, h2, h3 {
+        margin-top: 1.5em;
+        margin-bottom: .5rem;
+    }
+
+    header h1 {
+        margin-bottom: 1.5rem;
+        margin-top: 0;
+    }
+
+    hr {
+        margin: 1rem 0;
+    }
+
+    div a, p a {
+        text-decoration: underline;
+    }
+
+    sup a {
+        text-decoration: none;
+    }
+
+    time, .permalink, attribution {
+        font-size: @font-size-small;
+        color: @grey;
+
+        a {
+            text-decoration: none;
+        }
+    }
+}
+
+.footnote {
+    font-size: @font-size-small;
+    color: @grey;
+
+    hr {
+        width: 100%;
+    }
+}
+
+.image {
+    .border-radius(5px);
+    border: 1px solid @grey-light;
+    background-color: @accent;
+    width: 500px;
+    padding: 10px 10px 5px 10px;
+
+    p {
+        font-size: 1rem;
+        margin-bottom: 0;
+    }
+}
+
+.tags {
+    .horizontal-list();
+    font-size: @font-size-small;
+    color: @grey;
+    font-style: italic;
+
+    a {
+        text-decoration: none;
+    }
+
+    ul {
+        display: inline;
+    }
+
+    li:not(:last-child):after {
+        content: ", ";
+    }
+}
+
+.arrow {
+    font-size: @font-size-xl;
+}
+
+/////////////////////
+// PYGMENTS / CODE //
+/////////////////////
+
+.linenodiv {
+    color: inherit;
+    font-weight: normal;
+    padding-right: 10px;
+}
+
+pre, code, div.codehilite { // nice scrollbars in webkit
+    ::-webkit-scrollbar {
+        height: 10px;
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment {
+        background: transparent;
+        display: none;
+    }
+
+    ::-webkit-scrollbar-track-piece {
+        background: inherit; //#d0d0d0;
+    }
+
+    ::-webkit-scrollbar-thumb:vertical, ::-webkit-scrollbar-thumb:horizontal {
+        background: inherit; //#999;
+        .border-radius(5px);
+        display: block;
+        height: 50px;
+    }
+}
+
+pre {
+    border: 1px solid @grey-light;
+    padding: .5rem;
+    margin-left: -.5rem;
+}
+
+pre, code {
+    font-size: @font-size-tiny;
+    font-family: @font-mono;
+    background-color: @accent;
+    overflow: auto;
+}
+
+p > code {
+    .border-radius(2px);
+    font-size: @font-main;
+    white-space: nowrap;
+    margin: 0;
+    padding-left: .15rem;
+    padding-right: .15rem;
+    border: 1px solid @grey-light;
+}
+
+div.codehilite {
+}
+
+div.codehilite, table.codehilitetable {
+    td {
+        padding: 5px;
+    }
+}
+
+/////////////
+// SIDEBAR //
+/////////////
+
+#sidebar section {
+    background-color: @accent;
+    border: 1px solid @grey-light;
+    .border-radius(10px);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.4);
+    margin-bottom: 3em;
+    padding: 1em 20px;
+    .text-center;
+    overflow: hidden;
+
+    p {
+        font-size: @font-size-default;
+    }
+
+    .horizontal-list(5px, 0);
+
+    ul li {
+        padding-right: 0;
+    }
+
+    ul li:not(:last-child):after {
+        content: "/";
+        padding-left: 9px;
+        padding-right: 5px;
+    }
+
+    &.twitter {
+        .text-left;
+
+        h1 {
+            .text-center;
+            font-size: @font-size-medium;
+        }
+
+        ul {
+            li {
+                text-indent: 0;
+                padding-right: 0;
+                display: block;
+            }
+
+            li:not(:last-child):after {
+                .dotted-border(bottom, @grey);
+                content: "";
+                width: 40%;
+            }
+        }
+
+        .tweet_time {
+            display: block;
+            font-size: @font-size-tiny;
+            .text-right;
+            text-transform: uppercase;
+        }
+    }
+}
+
+////////////
+// FOOTER //
+////////////
+
+footer {
+    padding-top: .5rem;
+    font-size: @font-size-small;
+    .dotted-border(top, @grey-light);
+
+    p {
+        margin-bottom: 0;
+    }
+}

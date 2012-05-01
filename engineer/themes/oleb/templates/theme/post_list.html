@@ -1,0 +1,38 @@
+{% extends 'theme/base.html' %}
+
+{% block header_secondary %}
+    {# No secondary header. #}
+{% endblock %}
+
+{% block section_main_content %}
+    {% if post_list %}
+        <div class="posts">
+            {% for post in post_list %}
+                {% include 'theme/_single_post_front.html' %}
+            {% endfor %}
+        </div>
+        <div class="row archives">
+            <div class="four columns">
+                {% if has_next %}
+                    <div class="button"><a href="{{ urlname('listpage', (slice_num + 1)) }}">
+                        ← older posts</a></div>
+                {% endif %}
+            </div>
+            <div class="four columns" style="text-align: center;">
+                <a href="{{ urlname('archives') }}"> &mdash; archives &mdash; </a>
+            </div>
+            <div class="four columns">
+                <div class="button">
+                    {% if has_previous %}
+                        <a href="{{ urlname('listpage', (slice_num - 1)) }}">newer posts →</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div>
+            <h1>Hmmm, looks like there's nothing here... How about checking the
+                <a href="">archives</a>?</h1>
+        </div>
+    {% endif %}
+{% endblock %}

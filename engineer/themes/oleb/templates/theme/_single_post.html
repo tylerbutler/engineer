@@ -1,0 +1,55 @@
+<div class="row">
+    {#    {% block post_info %}#}
+    {#    {% endblock post_info %}#}
+    {% block post_content %}
+        {% with link=post.is_external_link %}
+            <article>
+                <header class="nine columns offset-by-three">
+                    <h1>
+                        {% if link %}
+                            <a href="{{ post.external_link }}">{{ post.title }}</a>
+                            <span class="arrow">→</span>
+                        {% else %}
+                            {{ post.title }}
+                        {% endif %}
+                    </h1>
+                </header>
+                <div class="row">
+                    <div class="post-info three columns">
+                        {% with timestamp=post.timestamp_local %}
+                            <time datetime="{{ post.timestamp|localtime|date("%Y-%m-%d %Z") }}" pubdate="">
+                                {{ post.timestamp|localtime|date("%B %d, %Y") }}
+                            </time>
+                            <div class="permalink">
+                                <a href="{{ post.url }}"
+                                   title="Permanent link to '{{ post.title }}'">Permalink</a>
+                                {% if post.via %}
+                                    <span class="attribution">| via
+                                        {% if post.via_link %}
+                                            <a href="{{ post.via_link }}">{{ post.via }}</a>
+                                        {% else %}
+                                            {{ post.via }}
+                                        {% endif %}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        {% endwith %}
+                        {% if post.tags|count > 0 %}
+                            <div class="tags">
+                                Tags:
+                                <ul>
+                                    {% for tag in post.tags %}
+                                        <li><a href="{{ urlname('tag', tag) }}">{{ tag }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="post-content nine columns">
+                        {{ post.content|safe }}
+                    </div>
+                </div>
+            </article>
+        {% endwith %}
+    {% endblock post_content %}
+</div>

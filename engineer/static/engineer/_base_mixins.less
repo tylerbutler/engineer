@@ -43,6 +43,41 @@
     }
 }
 
+.dotted-border(top, @color: #000, @size: 3px) {
+    border: 0;
+    border-top-color: @color;
+    border-top-style: dotted;
+    border-top-width: @size;
+}
+
+.dotted-border(right, @color: #000, @size: 3px) {
+    border: 0;
+    border-right-color: @color;
+    border-right-style: dotted;
+    border-right-width: @size;
+}
+
+.dotted-border(bottom, @color: #000, @size: 3px) {
+    border: 0;
+    border-bottom-color: @color;
+    border-bottom-style: dotted;
+    border-bottom-width: @size;
+}
+
+.dotted-border(left, @color: #000, @size: 3px) {
+    border: 0;
+    border-left-color: @color;
+    border-left-style: dotted;
+    border-left-width: @size;
+}
+
+.dotted-border(@_, @color: #000, @size: 3px) {
+    margin: 0.5em auto;
+    width: 100%;
+    display: block;
+    clear: both;
+}
+
 .hide {
     display: none;
 }
@@ -69,11 +104,24 @@
 
 .image {
     &.center {
-        margin: auto;
-        display: block;
+        margin-left: auto;
+        margin-right: auto;
         text-align: center;
+        display: block;
     }
 
     &.caption {
+    }
+
+    a, a:hover {
+        padding: 0;
+        margin: 0;
+        border: 0;
+        background-color: transparent;
+        color: transparent;
+        text-decoration: none;
+
+        .border-radius(0);
+        .transition(0);
     }
 }

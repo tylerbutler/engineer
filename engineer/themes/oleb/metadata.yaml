@@ -1,0 +1,12 @@
+name: 'Ole Begemann'
+id: oleb
+description: "A bright design based on Ole Begemann's oleb.net. Used with permission."
+author: 'Tyler Butler <tyler@tylerbutler.com>'
+website: 'http://tylerbutler.com'
+license: 'Creative Commons BY-SA 3.0'
+use_foundation: yes
+use_lesscss: yes
+use_modernizr: yes
+use_jquery: yes
+
+self_contained: yes

@@ -19,6 +19,7 @@
         <option value="$MODULE_DIR$/engineer/themes" />
         <option value="$MODULE_DIR$/engineer/themes/dark_rainbow/templates" />
         <option value="$MODULE_DIR$/engineer/templates" />
+        <option value="$MODULE_DIR$/engineer/themes/oleb/templates" />
       </list>
     </option>
   </component>

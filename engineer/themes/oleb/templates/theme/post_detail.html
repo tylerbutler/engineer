@@ -1,0 +1,10 @@
+{% extends 'theme/layouts/no_sidebar.html' %}
+
+{% block page_title %}{{ post.title }}{% endblock %}
+
+{# No secondary header. #}
+{% block header_secondary %}{% endblock %}
+
+{% block section_main_content %}
+    {% include 'theme/_single_post.html' %}
+{% endblock %}

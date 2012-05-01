@@ -182,3 +182,35 @@ def relpath(path):
     from engineer.conf import settings
 
     return '/' + settings.OUTPUT_CACHE_DIR.relpathto(path)
+
+
+def _min_css(css_string):
+    from cssmin import cssmin
+
+    return cssmin(css_string)
+
+
+def _min_js(js_string):
+    import lpjsmin
+
+    try:
+        from cStringIO import StringIO
+    except ImportError:
+        from StringIO import StringIO
+
+    input = StringIO(js_string)
+    output = StringIO()
+    lpjsmin.minify_stream(input, output)
+    to_return = output.getvalue()
+    output.close()
+    input.close()
+    return to_return
+
+
+def compress(item, compression_type):
+    if compression_type == 'css':
+        return _min_css(item)
+    elif compression_type == 'js':
+        return _min_js(item)
+    else:
+        raise ValueError("Unexpected compression_type: %s" % compression_type)

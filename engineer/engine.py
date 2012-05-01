@@ -7,7 +7,7 @@ from codecs import open
 from path import path
 from engineer.exceptions import ThemeNotFoundException
 from engineer.log import get_console_handler, bootstrap
-from engineer.util import relpath
+from engineer.util import relpath, compress
 
 try:
     import cPickle as pickle
@@ -198,6 +198,20 @@ def build(args=None):
         mirror_folder(settings.CONTENT_DIR,
                       settings.OUTPUT_CACHE_DIR,
                       delete_orphans=False)
+
+    # Compress all files marked for compression
+    for file, compression_type in settings.COMPRESS_FILE_LIST:
+        if file not in settings.COMPRESSION_CACHE:
+            with open(file, mode='rb') as input:
+                output = compress(input.read(), compression_type)
+                logger.debug("Compressed %s." % relpath(file))
+            settings.COMPRESSION_CACHE[file] = output
+        else:
+            logger.debug("Found pre-compressed file in cache: %s." % relpath(file))
+            output = settings.COMPRESSION_CACHE[file]
+        with open(file, mode='wb') as f:
+            f.write(output)
+    settings.CACHE.sync()
 
     # Remove LESS files if LESS preprocessing is being done
     if settings.PREPROCESS_LESS:

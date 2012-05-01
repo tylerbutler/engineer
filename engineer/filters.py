@@ -51,27 +51,6 @@ def compress(value):
     else: # COMPRESSOR_ENABLED == True
         import html5lib
 
-        def _min_css(css_string):
-            from cssmin import cssmin
-
-            return cssmin(css_string)
-
-        def _min_js(js_string):
-            import lpjsmin
-
-            try:
-                from cStringIO import StringIO
-            except ImportError:
-                from StringIO import StringIO
-
-            input = StringIO(js_string)
-            output = StringIO()
-            lpjsmin.minify_stream(input, output)
-            to_return = output.getvalue()
-            output.close()
-            input.close()
-            return to_return
-
         def _min_js_slim(js_string):
             # NOTE: The slimit filter seems to break some scripts. I'm not sure why. I'm leaving this code in for
             # posterity, but it's not functional right now and shouldn't be used.
@@ -86,13 +65,12 @@ def compress(value):
         for item in to_compress:
             if item.name == 'link':
                 src = item.attributes['href']
-                func = _min_css
+                compression_type = 'css'
             elif item.name == 'script':
                 if 'src' in item.attributes:
                     src = item.attributes['src']
-                    func = _min_js
+                    compression_type = 'js'
                 else: # inline script
-                    logger.debug("Skipping inline script tag.")
                     continue
                     # TODO: Inline script minification.
                     #has_inline = True
@@ -108,16 +86,8 @@ def compress(value):
                 # with the OUTPUT_CACHE_DIR to get a path
             file = path(settings.OUTPUT_CACHE_DIR / src).abspath()
 
-            if file.ext[1:] in settings.COMPRESSOR_FILE_EXTENSIONS and file not in settings.COMPRESSION_CACHE:
-                with open(file, mode='rb') as input:
-                    logger.debug("Compressing %s." % file)
-                    output = func(input.read())
-
-                with open(file, mode='wb') as f:
-                    f.write(output)
-
-                settings.COMPRESSION_CACHE[file] = output
-                logger.info("Compressed file %s." % file)
+            if file.ext[1:] in settings.COMPRESSOR_FILE_EXTENSIONS:
+                settings.COMPRESS_FILE_LIST.add((file, compression_type))
 
                 # TODO: Inline script minification.
                 #    if has_inline: # Handle inline script

@@ -61,6 +61,7 @@ class EngineerConfiguration(object):
 
     def __init__(self, settings_file=None):
         self.reload(settings_file)
+        self.COMPRESS_FILE_LIST = set()
 
     def reload(self, settings_file=None):
         if settings_file is None:

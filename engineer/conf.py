@@ -64,8 +64,7 @@ class EngineerConfiguration(object):
 
     def reload(self, settings_file=None):
         if settings_file is None:
-            if hasattr(self,
-                       'SETTINGS_FILE') and self.SETTINGS_FILE is not None:
+            if hasattr(self, 'SETTINGS_FILE') and self.SETTINGS_FILE is not None:
                 # First check if SETTINGS_FILE has been defined. If so, we'll reload from that file.
                 settings_file = self.SETTINGS_FILE
             else:
@@ -92,35 +91,29 @@ class EngineerConfiguration(object):
                     else:
                         new_settings = path(temp_config['SUPER'])
                         if not new_settings.isabs():
-                            settings_file = (
-                                settings_file.dirname() / new_settings).abspath()
-                        logger.debug("Going to next settings file... %s" %
-                                     path(temp_config['SUPER']).abspath())
+                            settings_file = (settings_file.dirname() / new_settings).abspath()
+                        logger.debug("Going to next settings file... %s" % path(temp_config['SUPER']).abspath())
             except Exception as e:
                 logger.exception(e.message)
 
             # load parent configs
             all_configs.reverse()
             for c in all_configs[:-1]:
-                logger.debug("Loading parent configuration from %s." % path(
-                    c[1]).abspath())
+                logger.debug("Loading parent configuration from %s." % path(c[1]).abspath())
                 config.update(c[0])
 
             # load main config
-            logger.debug("Finalizing configuration from %s." % path(
-                all_configs[-1][1]).abspath())
+            logger.debug("Finalizing configuration from %s." % path(all_configs[-1][1]).abspath())
             config.update(all_configs[-1][0])
 
             for param in self._required_params:
                 if param not in config:
-                    raise Exception(
-                        "Required setting '%s' is missing from config file %s." %
-                        (param, self.SETTINGS_FILE))
+                    raise Exception("Required setting '%s' is missing from config file %s." % (param,
+                                                                                               self.SETTINGS_FILE))
             self._initialize(config)
             self.SETTINGS_FILE_LOAD_TIME = times.now()
         else:
-            raise SettingsFileNotFoundException(
-                "Settings file %s not found!" % settings_file)
+            raise SettingsFileNotFoundException("Settings file %s not found!" % settings_file)
 
     def _initialize(self, config):
         self.ENGINEER = EngineerConfiguration._EngineerConstants()
@@ -132,19 +125,15 @@ class EngineerConfiguration(object):
         self.CONTENT_DIR = self.normalize(config.pop('CONTENT_DIR', 'content'))
         self.POST_DIR = self.normalize_list(config.pop('POST_DIR', 'posts'))
         self.OUTPUT_DIR = self.normalize(config.pop('OUTPUT_DIR', 'output'))
-        self.TEMPLATE_DIR = self.normalize(
-            config.pop('TEMPLATE_DIR', 'templates'))
-        self.TEMPLATE_PAGE_DIR = config.pop('TEMPLATE_PAGE_DIR', (
-            self.TEMPLATE_DIR / 'pages').abspath())
+        self.TEMPLATE_DIR = self.normalize(config.pop('TEMPLATE_DIR', 'templates'))
+        self.TEMPLATE_PAGE_DIR = config.pop('TEMPLATE_PAGE_DIR', (self.TEMPLATE_DIR / 'pages').abspath())
         self.LOG_DIR = self.normalize(config.pop('LOG_DIR', 'logs'))
-        self.LOG_FILE = config.pop('LOG_FILE',
-                                   (self.LOG_DIR / 'build.log').abspath())
+        self.LOG_FILE = config.pop('LOG_FILE', (self.LOG_DIR / 'build.log').abspath())
 
         self.CACHE_DIR = config.pop('CACHE_DIR', None)
         if self.CACHE_DIR is None:
             if self.SETTINGS_FILE is not None:
-                self.CACHE_DIR = self.normalize(
-                    '_cache/%s' % self.SETTINGS_FILE.name)
+                self.CACHE_DIR = self.normalize('_cache/%s' % self.SETTINGS_FILE.name)
             else:
                 self.CACHE_DIR = self.normalize('_cache/None')
         else:
@@ -162,8 +151,7 @@ class EngineerConfiguration(object):
 
         # PREPROCESSOR / COMPRESSOR SETTINGS
         self.COMPRESSOR_ENABLED = config.pop('COMPRESSOR_ENABLED', True)
-        self.COMPRESSOR_FILE_EXTENSIONS = config.pop(
-            'COMPRESSOR_FILE_EXTENSIONS', ['js', 'css'])
+        self.COMPRESSOR_FILE_EXTENSIONS = config.pop('COMPRESSOR_FILE_EXTENSIONS', ['js', 'css'])
         self.PREPROCESS_LESS = config.pop('PREPROCESS_LESS', True)
         if not 'LESS_PREPROCESSOR' in config:
             if platform.system() == 'Windows':
@@ -180,29 +168,21 @@ class EngineerConfiguration(object):
         self.SITE_URL = config.pop('SITE_URL', 'SITE_URL')
         self.SITE_AUTHOR = config.pop('SITE_AUTHOR', None)
         self.HOME_URL = config.pop('HOME_URL', '/')
-        self.STATIC_URL = config.pop('STATIC_URL',
-                                     urljoin(self.HOME_URL, 'static'))
+        self.STATIC_URL = config.pop('STATIC_URL', urljoin(self.HOME_URL, 'static'))
         self.ROLLUP_PAGE_SIZE = int(config.pop('ROLLUP_PAGE_SIZE', 5))
 
         # RSS FEED SETTINGS
-        self.FEED_TITLE = config.pop('FEED_TITLE',
-                                     self.SITE_TITLE + ' Feed')
-        self.FEED_ITEM_LIMIT = config.pop('FEED_ITEM_LIMIT',
-                                          self.ROLLUP_PAGE_SIZE)
+        self.FEED_TITLE = config.pop('FEED_TITLE', self.SITE_TITLE + ' Feed')
+        self.FEED_ITEM_LIMIT = config.pop('FEED_ITEM_LIMIT', self.ROLLUP_PAGE_SIZE)
         self.FEED_DESCRIPTION = config.pop('FEED_DESCRIPTION',
                                            'The %s most recent posts from %s.' % (self.FEED_ITEM_LIMIT, self.SITE_URL))
 
         # These 'constants' are updated here so they're relative to the STATIC_URL value
-        self.ENGINEER.FOUNDATION_CSS_URL = urljoin(self.STATIC_URL,
-                                                   'engineer/lib/foundation/')
-        self.ENGINEER.JQUERY_URL = urljoin(self.STATIC_URL,
-                                           'engineer/lib/jquery-1.6.2.min.js')
-        self.ENGINEER.MODERNIZR_URL = urljoin(self.STATIC_URL,
-                                              'engineer/lib/modernizr-2.0.6.min.js')
-        self.ENGINEER.LESS_JS_URL = urljoin(self.STATIC_URL,
-                                            'engineer/lib/less-1.1.5.min.js')
-        self.ENGINEER.TWEET_URL = urljoin(self.STATIC_URL,
-                                          'engineer/lib/tweet/tweet/jquery.tweet.js')
+        self.ENGINEER.FOUNDATION_CSS_URL = urljoin(self.STATIC_URL, 'engineer/lib/foundation/')
+        self.ENGINEER.JQUERY_URL = urljoin(self.STATIC_URL, 'engineer/lib/jquery-1.6.2.min.js')
+        self.ENGINEER.MODERNIZR_URL = urljoin(self.STATIC_URL, 'engineer/lib/modernizr-2.0.6.min.js')
+        self.ENGINEER.LESS_JS_URL = urljoin(self.STATIC_URL, 'engineer/lib/less-1.1.5.min.js')
+        self.ENGINEER.TWEET_URL = urljoin(self.STATIC_URL, 'engineer/lib/tweet/tweet/jquery.tweet.js')
 
         # URL helper functions
         def page(num):
@@ -228,16 +208,13 @@ class EngineerConfiguration(object):
         self.DEBUG = config.pop('DEBUG', False)
         #self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
         self.NORMALIZE_INPUT_FILES = config.pop('NORMALIZE_INPUT_FILES', True)
-        self.NORMALIZE_INPUT_FILE_MASK = config.pop('NORMALIZE_INPUT_FILE_MASK',
-                                                    u'({0}){1}-{2}.md')
+        self.NORMALIZE_INPUT_FILE_MASK = config.pop('NORMALIZE_INPUT_FILE_MASK', u'({0}){1}-{2}.md')
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
         self.PUBLISH_PENDING = config.pop('PUBLISH_PENDING', False)
         self.POST_TIMEZONE = pytz.timezone(config.pop('POST_TIMEZONE', 'UTC'))
-        self.SERVER_TIMEZONE = self.POST_TIMEZONE if config.get(
-            'SERVER_TIMEZONE',
-            None) is None else config.pop('SERVER_TIMEZONE')
-        self.TIME_FORMAT = config.pop('TIME_FORMAT',
-                                      '%I:%M %p %A, %B %d, %Y %Z') # '%Y-%m-%d %H:%M:%S %Z%z'
+        self.SERVER_TIMEZONE = self.POST_TIMEZONE if config.get('SERVER_TIMEZONE',
+                                                                None) is None else config.pop('SERVER_TIMEZONE')
+        self.TIME_FORMAT = config.pop('TIME_FORMAT', '%I:%M %p %A, %B %d, %Y %Z') # '%Y-%m-%d %H:%M:%S %Z%z'
 
         # Pull any remaining settings in the config and set them as attributes on the settings object
         for k, v in config.iteritems():
@@ -245,8 +222,7 @@ class EngineerConfiguration(object):
 
     @zproperty.CachedProperty
     def OUTPUT_STATIC_DIR(self):
-        return path(
-            self.OUTPUT_CACHE_DIR / self.ENGINEER.STATIC_DIR.basename()).abspath()
+        return path(self.OUTPUT_CACHE_DIR / self.ENGINEER.STATIC_DIR.basename()).abspath()
 
     @zproperty.CachedProperty
     def JINJA_ENV(self):
@@ -304,19 +280,13 @@ class EngineerConfiguration(object):
             logger.exception(e)
             CACHE = None
             exit()
-        if CACHE is None or not CACHE.has_key('version') or CACHE[
-                                                            'version'] != version:
+        if CACHE is None or not CACHE.has_key('version') or CACHE['version'] != version:
             # all new caches
-            logger.debug(
-                "Caches either don't exist or are old, so creating new ones...")
+            logger.debug("Caches either don't exist or are old, so creating new ones...")
             CACHE['version'] = version
-            CACHE['POST_CACHE'] = self.POST_CACHE = SimpleFileCache(
-                version=version)
-            CACHE[
-            'COMPRESSION_CACHE'] = self.COMPRESSION_CACHE = SimpleFileCache(
-                version=version)
-            CACHE['LESS_CACHE'] = self.LESS_CACHE = SimpleFileCache(
-                version=version)
+            CACHE['POST_CACHE'] = self.POST_CACHE = SimpleFileCache(version=version)
+            CACHE['COMPRESSION_CACHE'] = self.COMPRESSION_CACHE = SimpleFileCache(version=version)
+            CACHE['LESS_CACHE'] = self.LESS_CACHE = SimpleFileCache(version=version)
         return CACHE
 
     @zproperty.CachedProperty

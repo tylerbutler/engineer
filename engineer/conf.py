@@ -145,7 +145,10 @@ class EngineerConfiguration(object):
         self.BUILD_STATS_FILE = config.pop('BUILD_STATS_FILE', (self.CACHE_DIR / 'build_stats.cache').abspath())
 
         # THEMES
-        self.THEME_FINDERS = ['engineer.finders.DefaultFinder']
+        self.THEME_FINDERS = [
+            'engineer.finders.SiteFinder',
+            'engineer.finders.DefaultFinder'
+        ]
         self.THEME_SETTINGS = config.pop('THEME_SETTINGS', {})
         self.THEME = config.pop('THEME', 'dark_rainbow')
 

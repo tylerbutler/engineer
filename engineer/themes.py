@@ -2,6 +2,7 @@
 import yaml
 from path import path
 from engineer.conf import settings
+from engineer.exceptions import ThemeNotFoundException
 from engineer.util import get_class
 
 __author__ = 'tyler@tylerbutler.com'
@@ -74,7 +75,11 @@ class ThemeManager(object):
 
     @classmethod
     def current_theme(cls):
-        return ThemeManager.themes().get(settings.THEME, None)
+        theme = ThemeManager.themes().get(settings.THEME, None)
+        if theme is not None:
+            return theme
+        else:
+            raise ThemeNotFoundException("Theme with id '%s' cannot be found." % settings.THEME)
 
     @staticmethod
     def theme_path(template):
@@ -82,4 +87,7 @@ class ThemeManager(object):
 
     @staticmethod
     def theme(id):
-        return ThemeManager.themes[id]
+        if id not in ThemeManager.themes():
+            raise ThemeNotFoundException("Theme with id '%s' cannot be found." % settings.THEME)
+        else:
+            return ThemeManager.themes[id]

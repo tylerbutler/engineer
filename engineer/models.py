@@ -14,6 +14,7 @@ from zope.cachedescriptors.property import CachedProperty
 from engineer.conf import settings
 from engineer.exceptions import PostMetadataError
 from engineer.filters import localtime
+from engineer.plugins import PostPreprocessorProvider, PostPostprocessorProvider
 from engineer.util import slugify, chunk, urljoin, wrap_list
 
 try:
@@ -43,6 +44,10 @@ class Post(object):
     """
     _regex = re.compile(r'^[\n|\r\n]*(?P<metadata>.+?)[\n|\r\n]*---[\n|\r\n]*(?P<content>.*)[\n|\r\n]*', re.DOTALL)
 
+    @staticmethod
+    def wrap_content(content):
+        return typogrify(markdown.markdown(content, extensions=['extra', 'codehilite']))
+
     def __init__(self, source):
         self.source = path(source).abspath()
         """The absolute path to the source file for the post."""
@@ -54,6 +59,13 @@ class Post(object):
         """The path to the template to use to transform the post back into a :ref:`post source file <posts>`."""
 
         metadata, self._content_raw = self._parse_source()
+
+        # handle any preprocessor plugins
+        for plugin in PostPreprocessorProvider.plugins:
+            plugin.process(self)
+
+        if not hasattr(self, 'content_preprocessed'):
+            self.content_preprocessed = self.content_raw
 
         self.title = metadata.pop('title', self.source.namebase.replace('-', ' ').replace('_', ' '))
         """The title of the post."""
@@ -101,7 +113,7 @@ class Post(object):
             # convert to UTC assuming input time is in the DEFAULT_TIMEZONE
             self.timestamp = times.to_universal(self.timestamp, settings.POST_TIMEZONE)
 
-        self.content = typogrify(markdown.markdown(self._content_raw, extensions=['extra', 'codehilite']))
+        self.content = Post.wrap_content(self.content_preprocessed)
         """The post's content in HTML format."""
 
         self.markdown_file_name = unicode.format(settings.NORMALIZE_INPUT_FILE_MASK,
@@ -125,10 +137,18 @@ class Post(object):
         metadata.pop('url', None) # remove the url property from the metadata dict before copy
         self.custom_properties = metadata.copy()
 
+        # handle any postprocessor plugins
+        for plugin in PostPostprocessorProvider.plugins:
+            plugin.process(self)
+
         self._normalize_source()
 
         # update cache
         settings.POST_CACHE[self.source] = self
+
+    @property
+    def content_raw(self):
+        return self._content_raw
 
     @property
     def is_draft(self):
@@ -234,12 +254,11 @@ class Post(object):
                 metadata += yaml.safe_dump(dict([(k, v)]), default_flow_style=False)
 
         # handle custom metadata
-        #for k, v in self.custom_properties:
         if len(self.custom_properties):
             metadata += '\n'
             metadata += yaml.safe_dump(self.custom_properties, default_flow_style=False)
         return settings.JINJA_ENV.get_template(self.markdown_template_path).render(metadata=metadata,
-                                                                                   content=self._content_raw)
+                                                                                   content=self.content_preprocessed)
 
     def __unicode__(self):
         return self.markdown_file_name

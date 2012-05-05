@@ -42,8 +42,12 @@ def build(args=None):
     from engineer.loaders import LocalLoader
     from engineer.log import get_file_handler
     from engineer.models import PostCollection, TemplatePage
+    from engineer.plugins import load_plugins
     from engineer.themes import ThemeManager
     from engineer.util import mirror_folder, ensure_exists, slugify
+
+    # Load all plugins
+    load_plugins()
 
     if args and args.clean:
         clean()

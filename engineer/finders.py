@@ -1,16 +1,37 @@
 # coding=utf-8
+import os
+from logging import getLogger
+from path import path
+from tempfile import mkdtemp
+from zipfile import ZipFile
 from engineer.conf import settings
+from engineer.exceptions import ThemeDirectoryNotFoundException
 from engineer.themes import Theme
 
 __author__ = 'tyler@tylerbutler.com'
 
+logger = getLogger('engineer.finders')
+
 class BaseFinder(object):
     @classmethod
     def get_from_directory(cls, directory):
+        if not path(directory).exists():
+            raise ThemeDirectoryNotFoundException(directory)
         themes = []
         for file in directory.walkfiles('metadata.yaml'):
             themes.append(Theme.from_yaml(file))
+
+        for zipped_file in directory.walkfiles('*.zip'):
+            temp = path(mkdtemp())
+            with ZipFile(zipped_file, 'r') as theme:
+                theme.extractall(path=temp)
+            logger.debug("Zipped theme %s unzipped to %s." % (zipped_file, temp))
+            themes.extend(cls.get_from_directory(temp))
         return themes
+
+    @classmethod
+    def get_themes(cls):
+        return NotImplementedError()
 
 
 class DefaultFinder(BaseFinder):
@@ -32,3 +53,18 @@ class SiteFinder(BaseFinder):
             return cls.get_from_directory(themes_path)
         else:
             return []
+
+
+class ThemeDirsFinder(BaseFinder):
+    """Loads themes from the directories specified in :attr:`~engineer.conf.EngineerConfiguration.THEME_DIRS`."""
+
+    @classmethod
+    def get_themes(cls):
+        themes = []
+        for dir in settings.THEME_DIRS:
+            try:
+                themes.extend(cls.get_from_directory(dir))
+            except ThemeDirectoryNotFoundException as e:
+                logger.warning(e.message)
+                continue
+        return themes

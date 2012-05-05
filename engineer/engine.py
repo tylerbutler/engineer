@@ -5,6 +5,7 @@ import sys
 import times
 from codecs import open
 from path import path
+from engineer.exceptions import ThemeNotFoundException
 from engineer.log import get_console_handler, bootstrap
 from engineer.util import relpath
 
@@ -75,7 +76,11 @@ def build(args=None):
 
     # Copy theme static content to output dir
     logger.debug("Copying theme static files to output cache.")
-    s = ThemeManager.current_theme().static_root.abspath()
+    try:
+        s = ThemeManager.current_theme().static_root.abspath()
+    except ThemeNotFoundException as e:
+        logger.critical(e.message)
+        exit()
     t = (settings.OUTPUT_STATIC_DIR / 'theme').abspath()
     mirror_folder(s, t)
     logger.debug("Copied static files for theme to %s." % relpath(t))
@@ -407,7 +412,7 @@ def cmdline(args=sys.argv):
     elif args.verbose == 1:
         logger.addHandler(get_console_handler(logging.INFO))
     else:
-        logger.addHandler(get_console_handler())
+        logger.addHandler(get_console_handler(logging.WARNING))
 
     if args.parser_name in skip_settings:
         pass

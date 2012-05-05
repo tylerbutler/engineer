@@ -31,7 +31,12 @@ Dark Rainbow supports the following settings which can be configured using the
 Fonts
 =====
 
-TODO.
+Dark Rainbow requires the following fonts:
+
+- `Museo Slab <https://typekit.com/fonts/museo-slab>`_
+- `Myriad Pro <https://typekit.com/fonts/myriad-pro>`_
+- `Kulturista Web <https://typekit.com/fonts/kulturista-web>`_
+- `Anonymous Pro <https://typekit.com/fonts/anonymous-pro>`_ *(optional)*
 
 
 Templates

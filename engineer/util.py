@@ -150,7 +150,9 @@ def ensure_exists(p):
 
 
 def wrap_list(item):
-    if isinstance(item, list):
+    if item is None:
+        return []
+    elif isinstance(item, list):
         return item
     elif isinstance(item, (tuple, set)):
         return list(item)

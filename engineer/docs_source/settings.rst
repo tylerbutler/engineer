@@ -250,6 +250,17 @@ Theme Settings
       The :ref:`ID <theme id>` of the theme to be used for the site.
 
 
+   .. attribute:: THEME_DIRS
+
+      **Default:** ``None``
+
+      A list of paths that contain :doc:`themes` for the site. You can specify a single path here or multiple paths.
+
+      .. note::
+         You do not need to use this setting if custom themes are found inside the :file:`themes` folder within the
+         site's folder.
+
+
    .. attribute:: THEME_SETTINGS
 
       **Default:** ``{}``
@@ -260,7 +271,8 @@ Theme Settings
 
    .. attribute:: THEME_FINDERS
 
-      **Default:** ``['engineer.finders.DefaultFinder']``
+      **Default:** ``['engineer.finders.ThemeDirsFinder', 'engineer.finders.SiteFinder',
+      'engineer.finders.DefaultFinder']``
 
       TODO
 

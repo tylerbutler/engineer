@@ -145,7 +145,9 @@ class EngineerConfiguration(object):
         self.BUILD_STATS_FILE = config.pop('BUILD_STATS_FILE', (self.CACHE_DIR / 'build_stats.cache').abspath())
 
         # THEMES
+        self.THEME_DIRS = self.normalize_list(config.pop('THEME_DIRS', None))
         self.THEME_FINDERS = [
+            'engineer.finders.ThemeDirsFinder',
             'engineer.finders.SiteFinder',
             'engineer.finders.DefaultFinder'
         ]

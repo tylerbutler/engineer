@@ -36,7 +36,8 @@ Theme Package Structure
 -----------------------
 
 Themes are essentially a folder with a manifest and a collection of templates and supporting static files (images,
-CSS, Javascript, etc.).
+CSS, Javascript, etc.). Custom themes should be in a :file:`themes` folder within the site's root. You can put
+themes elsewhere by specifying the :attr:`~engineer.conf.EngineerConfiguration.THEME_DIRS` setting.
 
 A sample theme folder might look like this::
 
@@ -173,6 +174,13 @@ Useful Macros
 -------------
 
 TODO
+
+
+Zipping Themes
+--------------
+
+You can optionally put your theme directory in a zip file. The file should have a ``.zip`` file extension. Engineer
+will unzip the folder to a temporary location during a build and load the theme from that temporary location.
 
 
 API Reference

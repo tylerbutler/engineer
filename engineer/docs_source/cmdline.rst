@@ -50,9 +50,9 @@ Initialize a directory with a basic structure for an Engineer site, optionally i
 using the ``init`` command is *not* required to create an Engineer site; all it does is a create a general purpose
 folder structure, a :doc:`settings file <settings>`, and optionally some sample content.
 
-::
+**Usage**::
 
-    usage: engineer init [-h] [-v] [-s CONFIG_FILE] [--no-sample] [-f]
+    engineer init [-h] [-v] [-s CONFIG_FILE] [--no-sample] [-f]
 
 .. option:: --no-sample
 
@@ -74,9 +74,9 @@ folder structure, a :doc:`settings file <settings>`, and optionally some sample 
 
 Build an Engineer site from an input settings file and other source files.
 
-::
+**Usage**::
 
-    usage: engineer build [-h] [-v] [-s CONFIG_FILE] [-c]
+    engineer build [-h] [-v] [-s CONFIG_FILE] [-c]
 
 .. option:: -c, --clean
 
@@ -94,9 +94,9 @@ Build an Engineer site from an input settings file and other source files.
 Clears all caches and the output directory. This can be useful if you're seeing strange errors such as changes not
 being picked up properly or you simply want to 'start fresh.'
 
-::
+**Usage**::
 
-    usage: engineer clean [-h] [-v] [-s CONFIG_FILE]
+    engineer clean [-h] [-v] [-s CONFIG_FILE] [-p PORT]
 
 
 .. _engineer serve:
@@ -120,9 +120,9 @@ implemented.
    part of the benefit in using Engineer in the first place is that you can just copy the output to an existing
    production web server and go. Why take on additional overhead of running your own server if you don't need to?
 
-::
+**Usage**::
 
-    usage: engineer serve [-h] [-v] [-s CONFIG_FILE] [-p PORT]
+    engineer serve [-h] [-v] [-s CONFIG_FILE] [-p PORT]
 
 .. option:: -p, --port
 
@@ -138,7 +138,6 @@ implemented.
 
 Documentation TBD.
 
-::
+**Usage**::
 
-    usage: engineer emma [-h] [-v] [-s CONFIG_FILE] [-p PORT]
-                                   [--prefix PREFIX] (-r | -g | -u)
+    engineer emma [-h] [-v] [-s CONFIG_FILE] [-p PORT] [--prefix PREFIX] (-r | -g | -u)

@@ -44,7 +44,11 @@ class DefaultFinder(BaseFinder):
 
 
 class SiteFinder(BaseFinder):
-    """Loads themes from the ``/themes`` directory inside a site folder."""
+    """
+    Loads themes from the ``/themes`` directory inside a site folder.
+
+    .. versionadded:: 0.2.3
+    """
 
     @classmethod
     def get_themes(cls):
@@ -56,7 +60,11 @@ class SiteFinder(BaseFinder):
 
 
 class ThemeDirsFinder(BaseFinder):
-    """Loads themes from the directories specified in :attr:`~engineer.conf.EngineerConfiguration.THEME_DIRS`."""
+    """
+    Loads themes from the directories specified in :attr:`~engineer.conf.EngineerConfiguration.THEME_DIRS`.
+
+    .. versionadded:: 0.2.3
+    """
 
     @classmethod
     def get_themes(cls):

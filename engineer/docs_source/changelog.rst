@@ -3,6 +3,21 @@
 Changelog
 =========
 
+version 0.2.3 - May 6, 2012
+===========================
+
+- External themes are now supported. You can place your custom theme either inside a :file:`themes` directory in your
+  site's root directory or in any directory you'd like using the
+  :attr:`~engineer.conf.EngineerConfiguration.THEME_DIRS` setting.
+- Themes can now specify :ref:`settings defaults <theme default>` in their manifest.
+- :ref:`Zipped themes <zipping themes>` are now supported.
+- Multiple :option:`verbosity levels <engineer -v>` are supported by the command line script now.
+- :ref:`engineer serve` now supports a :option:`--port <serve -p>` option.
+- Build logs are now always written to a ``build.log`` file in the ``logs`` directory.
+- CSS/JS compression process is now more efficient.
+- Miscellaneous logging and cache fixes.
+
+
 version 0.2.2 - April 30, 2012
 ==============================
 

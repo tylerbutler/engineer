@@ -260,6 +260,8 @@ Theme Settings
          You do not need to use this setting if custom themes are found inside the :file:`themes` folder within the
          site's folder.
 
+      .. versionadded:: 0.2.3
+
 
    .. attribute:: THEME_SETTINGS
 
@@ -275,6 +277,9 @@ Theme Settings
       'engineer.finders.DefaultFinder']``
 
       TODO
+
+      .. versionchanged:: 0.2.3
+
 
 Preprocessor/Compressor Settings
 ================================

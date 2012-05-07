@@ -165,6 +165,10 @@ Theme Manifest Parameters
     custom settings, you must specify defaults. Due to the way Engineer loads your theme settings and a user's
     site settings, your settings may not be created at all unless you specify them here.
 
+    .. versionadded:: 0.2.3
+
+    .. seealso:: :ref:`use theme settings`
+
 
 Required Templates
 ------------------
@@ -184,11 +188,36 @@ users of your theme can take advantage of to further customize their site.
 You should also ensure that your theme templates load the :ref:`built-in fragments` that Engineer users will expect.
 
 
+.. _use theme settings:
+
+Referring to Custom Theme Settings in Templates
+-----------------------------------------------
+
+Custom theme settings are available in all Engineer templates. Every template is passed a context variable called
+``theme`` that represents the current theme. Any custom settings specified are available as attributes on that
+object. For example, if your theme defines a custom setting called ``typekit_id``, then you can refer to that setting
+in any Engineer template like so:
+
+.. code-block:: html+jinja
+
+    {# TYPEKIT #}
+    <script type="text/javascript"
+           src="http://use.typekit.com/{{ theme.typekit_id }}.js"></script>
+    <script type="text/javascript">
+       try {
+           Typekit.load();
+       } catch (e) {
+       }
+    </script>
+
+
 Useful Macros
 -------------
 
 TODO
 
+
+.. _zipping themes:
 
 Zipping Themes
 --------------

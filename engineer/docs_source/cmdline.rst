@@ -28,6 +28,7 @@ All of the Engineer commands accept the following arguments:
 
        engineer build -vv
 
+   .. versionchanged:: 0.2.3
 
 .. option:: -s, --settings, --config
 
@@ -127,6 +128,8 @@ implemented.
 .. option:: -p, --port
 
    Specify the port the development server should run on. If not specified, the default is 8000.
+
+   .. versionadded:: 0.2.3
 
 
 .. _engineer emma:

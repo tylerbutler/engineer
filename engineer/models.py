@@ -136,7 +136,7 @@ class Post(object):
 
     @property
     def is_external_link(self):
-        return self.link is not None
+        return self.link is not None and self.link != ''
 
     @property
     def timestamp_local(self):

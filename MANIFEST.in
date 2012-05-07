@@ -1,4 +1,4 @@
-include *.txt *.py
+include *.txt *.py *.md *.markdown
 recursive-include engineer *.*
 
 prune docs

@@ -69,8 +69,8 @@ is a simple text file in YAML format. The Dark Rainbow theme manifest looks like
 .. code-block:: yaml
 
    name: 'Dark Rainbow'
-   id: dark_rainbow
-   description: A dark theme with just a hint of color.
+   id: 'dark_rainbow'
+   description: 'A dark theme with just a hint of color.'
    author: 'Tyler Butler <tyler@tylerbutler.com>'
    website: 'http://tylerbutler.com'
    license: 'Creative Commons BY-SA 3.0'
@@ -78,6 +78,11 @@ is a simple text file in YAML format. The Dark Rainbow theme manifest looks like
    use_lesscss: yes
    use_modernizr: no
    use_jquery: yes
+
+   defaults:
+     typekit_id: null
+     twitter_id: tylerbutler
+     tweet_count: 4
 
    self_contained: yes
 
@@ -150,6 +155,15 @@ Theme Manifest Parameters
 
 ``use_jquery`` *(optional)*
     Indicates whether the theme makes use of the jQuery library included in Engineer. Defaults to ``False``.
+
+
+.. _theme default:
+
+``settings`` *(optional)*
+    A dictionary of all the themes-specific settings that users of your theme can provide via
+    :attr:`~engineer.conf.EngineerConfiguration.THEME_SETTINGS` and their default values. If your theme supports
+    custom settings, you must specify defaults. Due to the way Engineer loads your theme settings and a user's
+    site settings, your settings may not be created at all unless you specify them here.
 
 
 Required Templates

@@ -27,18 +27,22 @@ class Theme(object):
         self.use_jquery = kwargs.get('use_jquery', False)
 
         self.self_contained = kwargs.get('self_contained', True)
-        self.static_root = path(
-            kwargs.get('static_root', self.root_path / 'static/')).abspath()
-        self.template_root = path(
-            kwargs.get('template_root', self.root_path / 'templates')).abspath()
+        self.static_root = path(kwargs.get('static_root', self.root_path / 'static/')).abspath()
+        self.template_root = path(kwargs.get('template_root', self.root_path / 'templates')).abspath()
 
         if 'templates' in kwargs:
-            self.templates = dict((k, self.theme_path(v)) for (k, v) in kwargs[
-                                                                        'templates'].iteritems())
+            self.templates = dict((k, self.theme_path(v)) for (k, v) in kwargs['templates'].iteritems())
         else:
             self.templates = dict((p.namebase, 'theme/%s' % p.name) for p in
                 self.template_root.walkfiles(pattern='*.html'))
 
+        # set the default theme settings values
+        default_settings = kwargs.get('settings', None)
+        if default_settings:
+            for k, v in default_settings.iteritems():
+                setattr(self, k, v)
+
+        # update the theme settings based on anything passed in via the site settings
         for k, v in settings.THEME_SETTINGS.iteritems():
             setattr(self, k, v)
 

@@ -9,4 +9,9 @@ use_lesscss: yes
 use_modernizr: no
 use_jquery: yes
 
+settings:
+  typekit_id: null
+  twitter_id: tylerbutler
+  tweet_count: 4
+
 self_contained: yes

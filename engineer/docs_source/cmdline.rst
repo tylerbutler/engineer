@@ -122,7 +122,11 @@ implemented.
 
 ::
 
-    usage: engineer serve [-h] [-v] [-s CONFIG_FILE]
+    usage: engineer serve [-h] [-v] [-s CONFIG_FILE] [-p PORT]
+
+.. option:: -p, --port
+
+   Specify the port the development server should run on. If not specified, the default is 8000.
 
 
 .. _engineer emma:

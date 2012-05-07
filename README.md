@@ -17,8 +17,8 @@ solution.
 
 **Preview your site locally**
 
-Engineer includes a small :ref:`development web server <engineer serve>` that you can use to preview your site
-locally without deploying anywhere.
+Engineer includes a small development web server that you can use to preview your site locally without deploying
+anywhere.
 
 **Manage your site remotely**
 

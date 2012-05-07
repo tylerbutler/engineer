@@ -8,6 +8,7 @@ from path import path
 from engineer.exceptions import ThemeNotFoundException
 from engineer.log import get_console_handler, bootstrap
 from engineer.util import relpath, compress
+from engineer import version
 
 try:
     import cPickle as pickle
@@ -344,7 +345,8 @@ def get_argparser():
                                dest='config_file',
                                help="Specify a configuration file to use.")
 
-    main_parser = argparse.ArgumentParser(description="Engineer static site builder.")
+    desc = "Engineer static site builder. [v%s, %s]" % (version.__version__, version.__date__)
+    main_parser = argparse.ArgumentParser(description=desc)
     subparsers = main_parser.add_subparsers(title="subcommands",
                                             dest='parser_name')
 

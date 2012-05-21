@@ -1,10 +1,9 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-    <title></title>
-</head>
-<body>
+{% extends 'theme/base.html' %}
 
-</body>
-</html>
+{% block page_title %}Template Page Base{% endblock %}
+
+{% block nav_secondary_content %}{# Empty secondary nav #}{% endblock %}
+
+{%- block header_secondary_title %}
+    {{ self.page_title() }}
+{% endblock -%}

@@ -6,12 +6,14 @@
 
 {% block section_main_content %}
     {% filter typogrify %}
-        {% block content %}
-            <div class="replace-me">
-                <h1>A Simple Template Page</h1>
+        <article class="template-page">
+            {% block content %}
+                <div class="replace-me">
+                    <h1>A Simple Template Page</h1>
 
-                <p>This is a simple template page!</p>
-            </div>
-        {% endblock %}
+                    <p>This is a simple template page!</p>
+                </div>
+            {% endblock %}
+        </article>
     {% endfilter %}
 {% endblock %}

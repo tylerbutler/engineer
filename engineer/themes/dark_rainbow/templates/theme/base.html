@@ -31,11 +31,14 @@
     {%- block header_primary %}
         <header id="primary" class="row">
             {%- block header_primary_content %}
-                <h1 class="
-                        {%- block header_primary_h1_class %}five columns{% endblock -%}">
-                    <a href="{{ urlname('home') }}">
-                        {%- block header_primary_title %}{{ settings.SITE_TITLE|lower }}{% endblock -%}</a>
-                </h1>
+                {% with split_title=settings.SITE_TITLE.split(' ') %}
+                    <h1 class="{%- block header_primary_h1_class %}five columns{% endblock -%}">
+                        <a href="{{ urlname('home') }}">
+                            {%- block header_primary_title %}{{ ' '.join(settings.SITE_TITLE.split(' ')[0:-1])|lower }}
+                                <span class="highlight">{{ settings.SITE_TITLE.split(' ')[-1]|lower }}</span>
+                            {% endblock -%}</a>
+                    </h1>
+                {% endwith %}
             {% endblock -%}
             {%- block nav_primary %}
                 <nav class="
@@ -103,8 +106,8 @@
 
 {%- block scripts_bottom %}
     {{ super() }}
-    {% filter compress %}
-        <script type="text/javascript"
-                src="{{ STATIC_URL }}/theme/scripts/highlight.js"></script>
-    {% endfilter %}
+{#    {% filter compress %}#}
+{#        <script type="text/javascript"#}
+{#                src="{{ STATIC_URL }}/theme/scripts/highlight.js"></script>#}
+{#    {% endfilter %}#}
 {% endblock -%}

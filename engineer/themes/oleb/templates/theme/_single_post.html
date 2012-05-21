@@ -3,7 +3,7 @@
     {#    {% endblock post_info %}#}
     {% block post_content %}
         {% with link=post.is_external_link %}
-            <article>
+            <article class="post-content">
                 <header class="nine columns offset-by-three">
                     <h1>
                         {% if link %}

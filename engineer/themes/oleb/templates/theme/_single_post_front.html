@@ -2,7 +2,7 @@
     {% block post_content %}
         <div class="twelve columns">
             {% with link=post.is_external_link %}
-                <article class="post-content rollup">
+                <article class="rollup post-content">
                     <header>
                         <h1>
                             <a href="{% if link %}{{ post.link }}{% else %}
@@ -16,7 +16,9 @@
                     {% if link %}
                         <span class="permalink"> | <a href="{{ post.url }}"
                                                       title="Permanent link to '{{ post.title }}'">Permalink</a>
-                            {% if post.via %}
+                    </span>
+                    {% endif %}
+                    {% if post.via %}
                                 <span class="attribution">
                                 | via {% if post.via_link %}
                                         <a href="{{ post.via_link }}">{{ post.via }}</a>
@@ -25,8 +27,6 @@
                                     {% endif %}
                                 </span>
                             {% endif %}
-                        </span>
-                    {% endif %}
                     {{ post.content|safe }}
                 </article>
             {% endwith %}

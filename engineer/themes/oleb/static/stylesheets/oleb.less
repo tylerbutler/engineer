@@ -34,9 +34,14 @@ header#primary {
         margin-top: 1px;
 
         li {
+            &:first-child {
+                margin-left: -1rem
+            }
+
             a {
                 .border-radius();
                 padding: .4rem 1rem;
+                margin-left: -.7em;
             }
         }
 
@@ -56,6 +61,51 @@ header#primary {
 ////////////////////
 
 .post-info {
+}
+
+.post-content {
+    h1 {
+        font-size: @font-size-xxxl;
+        margin-bottom: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    h2, h3 {
+        margin-top: 1.5em;
+        margin-bottom: .5rem;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        a {
+            text-decoration: none;
+        }
+    }
+
+    hr {
+        margin: 1rem 0;
+    }
+
+    a {
+        text-decoration: underline;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    sup a {
+        text-decoration: none;
+    }
+
+    .permalink, .attribution {
+        font-size: @font-size-small;
+        color: @grey;
+
+        a {
+            text-decoration: none;
+        }
+    }
+
     time {
         font-size: @font-size-default;
         font-weight: bold;
@@ -63,47 +113,18 @@ header#primary {
     }
 }
 
-.rollup header h1 {
-    margin: 0;
-    font-size: @font-size-medium;
-}
-
-article {
-    margin: 1rem 0;
+.rollup {
+    margin-bottom: 2.5rem;
 
     h1 {
+        margin: 0;
         font-size: @font-size-xxl;
     }
 
-    h1, h2, h3 {
-        margin-top: 1.5em;
-        margin-bottom: .5rem;
-    }
-
-    header h1 {
-        margin-bottom: 1.5rem;
-        margin-top: 0;
-    }
-
-    hr {
-        margin: 1rem 0;
-    }
-
-    div a, p a {
-        text-decoration: underline;
-    }
-
-    sup a {
-        text-decoration: none;
-    }
-
-    time, .permalink, attribution {
-        font-size: @font-size-small;
+    time {
         color: @grey;
-
-        a {
-            text-decoration: none;
-        }
+        font-weight: normal;
+        font-size: @font-size-small;
     }
 }
 
@@ -150,6 +171,46 @@ article {
 
 .arrow {
     font-size: @font-size-xl;
+}
+
+.archives {
+    header#secondary {
+        margin-bottom: 2rem;
+        h1 {
+            font-size: @font-size-xxxl;
+        }
+    }
+
+    h1.year {
+        font-size: @font-size-xxl;
+        color: @red;
+        .dotted-border(bottom, @grey-light);
+        padding-bottom: .25rem;
+        margin-bottom: 1rem;
+    }
+
+    h1.month {
+        font-size: @font-size-large;
+        margin-bottom: 1rem;
+    }
+
+    article {
+        margin-bottom: 1.5rem;
+        &:not(:last-child) {
+            margin-bottom: .5rem
+        }
+
+        h1 {
+            font-weight: normal;
+        }
+
+        time.one.column {
+            margin-left: 1.5rem;
+            margin-right: -1.5rem;
+            text-align: right;
+            color: @grey;
+        }
+    }
 }
 
 /////////////////////
@@ -247,6 +308,10 @@ div.codehilite, table.codehilitetable {
         padding-right: 5px;
     }
 
+    hr + h1, hr + h2 {
+        margin-top: 1rem;
+    }
+
     &.twitter {
         .text-left;
 
@@ -283,9 +348,10 @@ div.codehilite, table.codehilitetable {
 ////////////
 
 footer {
-    padding-top: .5rem;
-    font-size: @font-size-small;
     .dotted-border(top, @grey-light);
+    padding-top: .5rem;
+    margin-top: 1.5rem;
+    font-size: @font-size-small;
 
     p {
         margin-bottom: 0;

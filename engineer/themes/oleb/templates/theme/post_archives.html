@@ -1,10 +1,62 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-    <title></title>
-</head>
-<body>
+{% extends 'theme/layouts/no_sidebar.html' %}
 
-</body>
-</html>
+{% block page_title %}Archives{% endblock %}
+
+{% block nav_secondary %}
+    {# No secondary nav. #}
+{% endblock %}
+
+{% block section_main_class %}
+    {{ super() }} archives
+{% endblock %}
+{##}
+{#{% block header_secondary_h1_class %}twelve columns{% endblock %}#}
+{##}
+{#{% block header_secondary_title %}#}
+{#    {{ self.page_title() }}#}
+{#{% endblock %}#}
+
+{% block section_main_content %}
+    <div class="row">
+    <div class="ten columns offset-by-two">
+    <header id="secondary" class="row">
+        <h1 class="eleven columns offset-by-one">{{ self.page_title() }}</h1>
+    </header>
+    {% for year, year_posts in post_list|groupby('timestamp.year')|sort(reverse=True, attribute='grouper') %}
+        <section class="row">
+            <header class="eleven columns offset-by-one">
+                <h1 class="year"><a name="{{ year }}"></a>{{ year }}</h1>
+            </header>
+            {% for month, posts in year_posts|groupby('timestamp.month')|sort(reverse=True, attribute='grouper') %}
+                <section class="row">
+                    <header class="eleven columns offset-by-one">
+                        <h1 class="month">{{ posts[0].timestamp|date('%B') }}</h1>
+                    </header>
+                    {% for post in posts|sort(reverse=True, attribute='timestamp') %}
+                        <article class="row">
+                            <time datetime="{{ post.timestamp|localtime|date("%Y-%m-%d %Z") }}" pubdate=""
+                                  class="one column">
+                                {{ post.timestamp|localtime|date("%d") }}
+                            </time>
+                            <h1 class="eleven columns"><a href="{{ post.url }}">{{ post.title }}</a></h1>
+                        </article>
+                    {% endfor %}
+                </section>
+            {% endfor %}
+        </section>
+    {% endfor %}
+    </div>
+    </div>
+{% endblock %}
+
+{#{% block section_sidebar_content %}#}
+{#    <section>#}
+{#        <nav>#}
+{#            <ul>#}
+{#                {% for year, posts in post_list %}#}
+{#                    <li><a href="#{{ year }}">{{ year }}</a></li>#}
+{#                {% endfor %}#}
+{#            </ul>#}
+{#        </nav>#}
+{#    </section>#}
+{#{% endblock %}#}

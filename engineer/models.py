@@ -180,8 +180,10 @@ class Post(object):
             self.source = output_filename
         return
 
-    def render_html(self):
-        return settings.JINJA_ENV.get_template(self.html_template_path).render(post=self, nav_context='post')
+    def render_html(self, all_posts=None):
+        return settings.JINJA_ENV.get_template(self.html_template_path).render(post=self,
+                                                                               all_posts=all_posts,
+                                                                               nav_context='post')
 
     def render_markdown(self):
         # A hack to guarantee the YAML output is in a sensible order.
@@ -258,16 +260,6 @@ class PostCollection(list):
             tags.update(post.tags)
         return list(tags)
 
-    @CachedProperty
-    def grouped_by_year(self):
-        years = map(lambda x: x.timestamp.year, self)
-        years = set(years)
-
-        to_return = [(year, filter(lambda p: p.timestamp.year == year, self)) for year in years]
-        to_return = sorted(to_return, reverse=True)
-
-        return to_return
-
     def tagged(self, tag):
         return PostCollection([p for p in self if tag in p.tags])
 
@@ -280,13 +272,16 @@ class PostCollection(list):
             slice_num=slice_num,
             has_next=has_next,
             has_previous=has_previous,
+            all_posts=self,
             nav_context='listpage')
 
     def render_archive_html(self):
-        return self.archive_template.render(post_list=self.grouped_by_year, nav_context='archive')
+        return self.archive_template.render(post_list=self,
+                                            all_posts=self,
+                                            nav_context='archive')
 
     def render_tag_html(self, tag):
         return settings.JINJA_ENV.get_template('theme/tags_list.html').render(tag=tag,
-                                                                              post_list=self.tagged(
-                                                                                  tag).grouped_by_year,
+                                                                              post_list=self.tagged(tag),
+                                                                              all_posts=self,
                                                                               nav_context='tag')

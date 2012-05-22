@@ -44,9 +44,21 @@ Narrative Documentation
    posts
    themes
    templates
+   cmdline
    emma
    faq
    changelog
+
+
+Developer Documentation
+=======================
+
+.. toctree::
+   :maxdepth: 2
+
+   dev/pipeline
+   dev/theme_creation
+   dev/macros
 
 
 API Documentation
@@ -54,12 +66,9 @@ API Documentation
 
 .. toctree::
    :maxdepth: 2
+   :glob:
 
-   pipeline
-   cmdline
-   macros
-   engineer.conf
-   engineer.models
+   api/*
 
 
 Indices and tables

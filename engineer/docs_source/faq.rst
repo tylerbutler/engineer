@@ -72,3 +72,10 @@ of your site, put the file in the :attr:`~engineer.conf.EngineerConfiguration.CO
 
 .. seealso::
    :ref:`raw content`
+
+
+...put my site at a non-root path on my domain, such as ``http://www.example.com/blog/``?
+-----------------------------------------------------------------------------------------
+
+You can set the :attr:`~engineer.conf.EngineerConfiguration.HOME_URL` setting in your settings file as needed.
+

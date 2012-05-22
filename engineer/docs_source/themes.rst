@@ -1,10 +1,14 @@
 
+.. currentmodule:: engineer.conf
+
 ======
 Themes
 ======
 
-Engineer includes a bundled default theme called :doc:`dark_rainbow` and will include other themes soon. You can also
-create your own themes if you like.
+Engineer currently includes two bundled themes: :ref:`dark rainbow` and :ref:`oleb`. You can also
+:doc:`create your own themes <dev/theme_creation>` if you like.
+
+.. seealso:: :doc:`dev/theme_creation`
 
 
 .. _bundled themes:
@@ -13,223 +17,29 @@ Bundled Themes
 ==============
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
+   :glob:
 
-   dark_rainbow
+   themes/*
 
 
 Using Themes
 ============
 
-By default Engineer uses the :doc:`dark_rainbow` theme. Changing the theme to something else is as simple as changing
-the :attr:`~engineer.conf.EngineerConfiguration.THEME` setting in your :doc:`settings file <settings>`.
+By default Engineer uses the :ref:`dark rainbow` theme. Changing the theme to something else is as simple as
+changing the :attr:`~engineer.conf.EngineerConfiguration.THEME` setting in your :doc:`settings file <settings>`.
 
 Most themes do not require any customization, though they might provide :doc:`templates` that you might find useful.
-For example, the :doc:`dark_rainbow` theme provides a few different layouts for template pages that you can use as a
-basis for your template pages.
+For example, the :ref:`dark rainbow` theme provides a few different layouts for template pages that you can use
+as a basis for your template pages.
 
 
-Creating Your Own Themes
-========================
+Installing New Themes
+=====================
 
-Theme Package Structure
------------------------
+Engineer themes can be used without installation. Simply download the theme, place it in the :file:`themes` directory
+within your site directory, and change your :attr:`~EngineerConfiguration.THEME` setting to use the new theme.
 
-Themes are essentially a folder with a manifest and a collection of templates and supporting static files (images,
-CSS, Javascript, etc.). Custom themes should be in a :file:`themes` folder within the site's root. You can put
-themes elsewhere by specifying the :attr:`~engineer.conf.EngineerConfiguration.THEME_DIRS` setting.
-
-A sample theme folder might look like this::
-
-    /theme_id
-        - metadata.yaml
-        /static
-            /scripts
-                - script.js
-                - ...
-            /stylesheets
-                - theme.less
-                - reset.css
-                - ...
-        /templates
-            /theme
-               /layouts
-                    - ...
-                - _footer.html
-                - base.html
-                - post_list.html
-                - ...
-
-Theme Manifest
---------------
-
-Each theme must contain a file called ``metadata.yaml`` that contains metadata about the theme. The theme manifest
-is a simple text file in YAML format. The Dark Rainbow theme manifest looks like this, for example:
-
-.. code-block:: yaml
-
-   name: 'Dark Rainbow'
-   id: 'dark_rainbow'
-   description: 'A dark theme with just a hint of color.'
-   author: 'Tyler Butler <tyler@tylerbutler.com>'
-   website: 'http://tylerbutler.com'
-   license: 'Creative Commons BY-SA 3.0'
-   use_foundation: yes
-   use_lesscss: yes
-   use_modernizr: no
-   use_jquery: yes
-
-   defaults:
-     typekit_id: null
-     twitter_id: tylerbutler
-     tweet_count: 4
-
-   self_contained: yes
-
-
-Theme Manifest Parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. _theme name:
-
-``name``
-    The verbose human-readable name of the theme.
-
-
-.. _theme id:
-
-``id``
-    The ID of the theme. This must match the folder name of the theme and should not contain spaces. This is used
-    internally by Engineer to identify the theme.
-
-
-.. _theme self_contained:
-
-``self_contained`` *(optional)*
-    Indicates whether the theme is self-contained or not. Defaults to ``True`` if not specified.
-
-
-.. _theme description:
-
-``description`` *(optional)*
-    A more verbose description of the theme.
-
-
-.. _theme author:
-
-``author`` *(optional)*
-    The name and/or email address of the theme's author.
-
-
-.. _theme website:
-
-``website`` *(optional)*
-    The website where the theme or information about it can be found.
-
-
-.. _theme license:
-
-``license`` *(optional)*
-    The license under which the theme is made available.
-
-
-.. _theme use_foundation:
-
-``use_foundation`` *(optional)*
-    Indicates whether the theme makes use of the Foundation CSS library included in Engineer. Defaults to ``False``.
-
-
-.. _theme use_lesscss:
-
-``use_lesscss`` *(optional)*
-    Indicates whether the theme makes use of the LESS CSS library included in Engineer. Defaults to ``False``.
-
-
-.. _theme use_modernizr:
-
-``use_modernizr`` *(optional)*
-    Indicates whether the theme makes use of the Modernizr library included in Engineer. Defaults to ``False``.
-
-
-.. _theme use_jquery:
-
-``use_jquery`` *(optional)*
-    Indicates whether the theme makes use of the jQuery library included in Engineer. Defaults to ``False``.
-
-
-.. _theme default:
-
-``settings`` *(optional)*
-    A dictionary of all the themes-specific settings that users of your theme can provide via
-    :attr:`~engineer.conf.EngineerConfiguration.THEME_SETTINGS` and their default values. If your theme supports
-    custom settings, you must specify defaults. Due to the way Engineer loads your theme settings and a user's
-    site settings, your settings may not be created at all unless you specify them here.
-
-    .. versionadded:: 0.2.3
-
-    .. seealso:: :ref:`use theme settings`
-
-
-Required Templates
-------------------
-
-The following templates must be present in a theme's :file:`templates/theme` folder:
-
-* _single_post.html
-* base.html
-* post_archives.html
-* post_detail.html
-* post_list.html
-* template_page_base.html
-
-You can of course include additional templates or template fragments, for use either internally in your theme, or that
-users of your theme can take advantage of to further customize their site.
-
-You should also ensure that your theme templates load the :ref:`built-in fragments` that Engineer users will expect.
-
-
-.. _use theme settings:
-
-Referring to Custom Theme Settings in Templates
------------------------------------------------
-
-Custom theme settings are available in all Engineer templates. Every template is passed a context variable called
-``theme`` that represents the current theme. Any custom settings specified are available as attributes on that
-object. For example, if your theme defines a custom setting called ``typekit_id``, then you can refer to that setting
-in any Engineer template like so:
-
-.. code-block:: html+jinja
-
-    {# TYPEKIT #}
-    <script type="text/javascript"
-           src="http://use.typekit.com/{{ theme.typekit_id }}.js"></script>
-    <script type="text/javascript">
-       try {
-           Typekit.load();
-       } catch (e) {
-       }
-    </script>
-
-
-Useful Macros
--------------
-
-TODO
-
-
-.. _zipping themes:
-
-Zipping Themes
---------------
-
-You can optionally put your theme directory in a zip file. The file should have a ``.zip`` file extension. Engineer
-will unzip the folder to a temporary location during a build and load the theme from that temporary location.
-
-
-API Reference
-=============
-
-.. currentmodule:: engineer.themes
-
-.. autoclass:: Theme
-   :members:
+Alternatively, some themes might be available as an installable :ref:`plugin <theme plugins>`. If this is the case
+for the theme you want to use, then follow the installation instructions for the theme. Once installed,
+it will be available to any Engineer site.

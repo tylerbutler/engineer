@@ -124,13 +124,27 @@ Engineer requires Python 2.7+ and runs on Linux (Ubuntu and CentOS have been tes
 run on most platforms that Python and the Python packages Engineer depend on support,
 though exhaustive tests have not been run.
 
-All relevant dependencies except Python itself will be installed when you :doc:`install Engineer <installation>`.
-
 Engineer *has not* been tested on Python 3, and almost certainly will not work as-is since I have been a bit sloppy in
 my use of Python constructs that are deprecated in Python 3.
 
+All relevant dependencies except Python itself will be installed when you :doc:`install Engineer <installation>`. The
+complete set of packages Engineer depends on is as follows:
 
-History
-=======
-
-TODO
+* path.py
+* markdown
+* pyYAML
+* flufl.enum
+* translitcodec
+* jinja2
+* compressinja
+* pygments
+* html5lib
+* python-dateutil
+* zope.cachedescriptors
+* humanize
+* bottle
+* pytz
+* times
+* cssmin
+* lpjsmin
+* typogrify-engineer

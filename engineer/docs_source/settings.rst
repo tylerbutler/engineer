@@ -141,7 +141,8 @@ These settings control the location on the local file system where Engineer shou
 
       **Default:** ``SETTINGS_DIR/logs``
 
-      TODO
+      The Engineer log directory. All build logs will be stored in this directory. **In general you should not need
+      to modify this.**
 
 
    .. attribute:: LOG_FILE
@@ -161,7 +162,7 @@ Site Settings
       **Default:** ``'SITE_TITLE'``
 
       The title of your site. Where this text appears depends on your theme, but you should always set it since it
-      generally appears very prominently, such as in the main header.
+      usually appears very prominently, such as in the main header.
 
 
    .. attribute:: SITE_URL
@@ -286,7 +287,7 @@ Preprocessor/Compressor Settings
 ================================
 
 .. seealso::
-   :doc:`pipeline`
+   :ref:`build pipeline`
 
 .. class:: EngineerConfiguration
 
@@ -353,7 +354,7 @@ Miscellaneous Settings
 
    .. attribute:: NORMALIZE_INPUT_FILE_MASK
 
-      **Default:** ``{0}){1}-{2}.md``
+      **Default:** ``({0}){1}-{2}.md``
 
       TODO
 

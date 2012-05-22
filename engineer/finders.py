@@ -78,6 +78,12 @@ class ThemeDirsFinder(BaseFinder):
 
 
 class PluginFinder(BaseFinder):
+    """
+    Loads themes from any installed :ref:`theme plugins`.
+
+    .. versionadded:: 0.2.4
+    """
+
     @staticmethod
     def find_theme_plugins():
         try:

@@ -1,4 +1,6 @@
 
+.. _posts:
+
 =====
 Posts
 =====
@@ -8,19 +10,8 @@ Posts
 Posts are the bread and butter of an Engineer site. Posts are Markdown files with either a ``.md`` or ``.markdown``
 file extension and are structured like this:
 
-.. code-block:: yaml
-
-    title: Why Do We Have to Reboot So Much?
-    timestamp: 2012-02-03 13:36:00
-    status: published
-    tags:
-    - software design
-    - grandma
-    slug: why-do-we-have-to-reboot-so-much
-
-    ---
-
-    Because it's the easiest way to kill/restart processes.
+.. literalinclude:: ../sample_site/posts/(p)2012-03-09-what-s-next.md
+   :language: yaml
 
 Posts are typically stored in a folder called :file:`posts` within your site's source directory,
 but you can put them anywhere - even in multiple folders - by changing the :attr:`~EngineerConfiguration.POST_DIR`
@@ -67,8 +58,12 @@ Metadata Parameters
     and time that the site is next built.
 
     .. note::
+
        Unless you specifically provide a timezone offset in your ``timestamp``
-       value, the time will be assumed to be
+       value, the time will be assumed to be in the same time zone as your
+       :attr:`~engineer.conf.EngineerConfiguration.POST_TIMEZONE` setting.
+
+    .. seealso:: :ref:`timezones`
 
 
 .. _post status:
@@ -148,4 +143,65 @@ format. You can disable normalization for your site using the
 A Note About Timezones
 ~~~~~~~~~~~~~~~~~~~~~~
 
-TODO
+Time zones are a tricky thing in the best of circumstances, and unfortunately
+one of Python's few weaknesses is how it deals with them. It's particularly
+difficult to get the current system time zone, especially on Windows,
+so Engineer forces you to set a time zone explicitly. If you don't, Engineer
+assumes that times are in UTC. You can use the
+:attr:`~EngineerConfiguration.POST_TIMEZONE` setting to set which timezone
+Engineer should assume your post timestamps are in.
+
+You can see a complete list of the valid timezone settings
+`at the PostgreSQL site`__. Yes, it's a bit weird, but the list
+there is the most comprehensive one I've seen that doesn't threaten to utterly
+confuse and overwhelm mere mortals when they see it. Keep in mind that some
+rows in the table list multiple valid strings that happen to correspond to the
+same time zone. For example, ``Asia/Jerusalem``, ``Asia/Tel_Aviv``, and
+``Israel`` all correspond to the same timezone, and all are valid strings. (Why
+they could not simply put a delimiter *other than a space* between the strings
+in a single row I'll never understand.)
+
+You can also choose to put a date/time string *with a UTC offset* in relevant
+places, in which case Engineer will understand that the time is in a specific
+zone. For example, if you specify your post's :ref:`timestamp <post timestamp>`
+as something like ``2012-04-17 08:47:00-08:00``, Engineer will understand that
+the time specified is 8 hours behind UTC. Generally I have found this to be
+a hassle, since forgetting the offset can cause incorrect post timestamps,
+and setting the :attr:`~EngineerConfiguration.POST_TIMEZONE` is much more
+straightforward.
+
+You might also find yourself in a situation where you write your posts in one
+timezone, but your server is in another. This generally isn't a problem *unless*
+you're using :doc:`Emma <emma>`. In that case you should be sure to set your
+:attr:`~EngineerConfiguration.SERVER_TIMEZONE` as well.
+
+.. __: http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
+
+
+Post Content
+============
+
+Your post content should be written in Markdown, and all the usual Markdown syntax rules apply. Engineer does provide
+some helpful CSS styles that might be useful when writing your posts. In addition to these,
+individual themes might provide their own.
+
+
+Images
+------
+
+If you have images in your posts, you should wrap them in an outer ``div`` with the class ``image``. If the image has
+a caption, you can also apply the ``caption`` class to the outer ``div`` and include the caption in a ``p`` tag just
+below the image. Finally, you can apply the ``left``, ``right``, and ``center`` classes to the outer ``div`` to
+align the image. For example:
+
+.. code-block:: html
+
+    <div class="image caption center">
+        <a href="http://www.flickr.com/photos/76037594@N06/7206331966/">
+            <img src="http://farm8.staticflickr.com/7241/7206331966_66d2e5e577.jpg"
+                 width="500"
+                 height="375"
+                 alt="An xkcd.com comic in Reeder">
+        </a>
+        <p>An xkcd.com comic in Reeder</p>
+    </div>

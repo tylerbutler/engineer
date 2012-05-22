@@ -50,7 +50,7 @@ class Post(object):
         """The path to the template to use to transform the post into HTML."""
 
         self.markdown_template_path = 'core/post.md'
-        """The path to the template to use to transform the post into HTML."""
+        """The path to the template to use to transform the post back into a :ref:`post source file <posts>`."""
 
         metadata, self._content_raw = self._parse_source()
 
@@ -64,7 +64,7 @@ class Post(object):
         """A list of strings representing the tags applied to the post."""
 
         self.link = metadata.get('link', None)
-        """The post's external link."""
+        """The post's :ref:`external link <post link>`."""
 
         self.via = metadata.get('via', None)
         """The post's attribution name."""
@@ -74,11 +74,15 @@ class Post(object):
 
         try:
             self.status = Status(metadata.get('status', Status.draft.name))
+            """The status of the post (published or draft)."""
+
         except ValueError:
             root_logger.warning("'%s': Invalid status value in metadata. Defaulting to 'draft'." % self.title)
             self.status = Status.draft
 
         self.timestamp = metadata.get('timestamp', None)
+        """The date/time the post was published or written."""
+
         if self.timestamp is None:
             self.timestamp = times.now()
             utctime = True
@@ -97,6 +101,7 @@ class Post(object):
             self.timestamp = times.to_universal(self.timestamp, settings.POST_TIMEZONE)
 
         self.content = typogrify(markdown.markdown(self._content_raw, extensions=['extra', 'codehilite']))
+        """The post's content in HTML format."""
 
         self.markdown_file_name = unicode.format(settings.NORMALIZE_INPUT_FILE_MASK,
                                                  self.status.name[:1],
@@ -107,7 +112,11 @@ class Post(object):
                                   settings.HOME_URL,
                                   self.timestamp_local.strftime('%Y/%m/%d'),
                                   self.slug)
+        """The site-relative URL to the post."""
+
         self.absolute_url = unicode.format(u'{0}{1}', settings.SITE_URL, self.url)
+        """The absolute URL to the post."""
+
         self.output_path = path(settings.OUTPUT_CACHE_DIR / self.timestamp_local.strftime('%Y/%m/%d') / self.slug)
         self.output_file_name = 'index.html'#'%s.html' % self.slug
 
@@ -118,25 +127,31 @@ class Post(object):
 
     @property
     def is_draft(self):
+        """``True`` if the post is a draft, ``False`` otherwise."""
         return self.status == Status.draft
 
     @property
     def is_published(self):
-        """
-        ``True`` if the post is published, ``False`` otherwise.
-        """
+        """``True`` if the post is published, ``False`` otherwise."""
         return self.status == Status.published and self.timestamp <= times.now()
 
     @property
     def is_pending(self):
+        """``True`` if the post is marked as published but has a timestamp set in the future."""
         return self.status == Status.published and self.timestamp >= times.now()
 
     @property
     def is_external_link(self):
+        """``True`` if the post has an associated external link. ``False`` otherwise."""
         return self.link is not None and self.link != ''
 
     @property
     def timestamp_local(self):
+        """
+        The post's :attr:`timestamp` in 'local' time.
+
+        Local time is determined by the :attr:`~engineer.conf.EngineerConfiguration.POST_TIMEZONE` setting.
+        """
         return localtime(self.timestamp)
 
     def _parse_source(self):
@@ -178,11 +193,23 @@ class Post(object):
         return
 
     def render_html(self, all_posts=None):
+        """
+        Renders the Post as HTML using the template specified in :attr:`html_template_path`.
+
+        :param all_posts: An optional :class:`PostCollection` containing all of the posts in the site.
+        :return: The rendered HTML as a string.
+        """
         return settings.JINJA_ENV.get_template(self.html_template_path).render(post=self,
                                                                                all_posts=all_posts,
                                                                                nav_context='post')
 
     def render_markdown(self):
+        """
+        Renders the post as Markdown using the template specified in :attr:`markdown_template_path`.
+
+        This method is used to output a post during the :ref:`post normalization` process.
+        """
+
         # A hack to guarantee the YAML output is in a sensible order.
         d = {
             'title': self.title,
@@ -209,6 +236,7 @@ class Post(object):
 
 
 class PostCollection(list):
+    """A collection of :class:`Posts <engineer.models.Post>`."""
     def __init__(self, seq=()):
         list.__init__(self, seq)
         self.listpage_template = settings.JINJA_ENV.get_template('theme/post_list.html')
@@ -221,24 +249,29 @@ class PostCollection(list):
 
     @CachedProperty
     def published(self):
+        """Returns a new PostCollection containing the subset of posts that are published."""
         return PostCollection([p for p in self if p.is_published == True])
 
     @CachedProperty
     def drafts(self):
+        """Returns a new PostCollection containing the subset of posts that are drafts."""
         return PostCollection([p for p in self if p.is_draft == True])
 
     @property
     def pending(self):
+        """Returns a new PostCollection containing the subset of posts that are pending."""
         return PostCollection([p for p in self if p.is_pending == True])
 
     @CachedProperty
     def all_tags(self):
+        """Returns a list of all the unique tags, as strings, that posts in the collection have."""
         tags = set()
         for post in self:
             tags.update(post.tags)
         return list(tags)
 
     def tagged(self, tag):
+        """Returns a new PostCollection containing the subset of posts that are tagged with *tag*."""
         return PostCollection([p for p in self if tag in p.tags])
 
     def output_path(self, slice_num):

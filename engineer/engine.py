@@ -35,6 +35,7 @@ def clean(args=None):
 
 
 def build(args=None):
+    """Builds an Engineer site using the settings specified in *args*."""
     from engineer.conf import settings
     from engineer.loaders import LocalLoader
     from engineer.log import get_file_handler

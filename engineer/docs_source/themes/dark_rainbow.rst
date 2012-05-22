@@ -1,15 +1,21 @@
 
+.. _dark rainbow:
+
 ============
 Dark Rainbow
 ============
 
-The default Engineer theme, Dark Rainbow has also been called 'Voldemort's Skittles,' 'Unicorn Vomit,' and
+The default Engineer theme, **Dark Rainbow** has also been called 'Voldemort's Skittles,' 'Unicorn Vomit,' and
 other names not fit to repeat here. Needless to say, the parade of colors isn't for everyone. That said,
 Dark Rainbow showcases several of the key features Engineer provides, including customizable navigation with
 contextual highlighting, LESS support, TypeKit and JQuery integration, and Foundation CSS-based layouts.
 
+Dark Rainbow was created by `Tyler Butler <http://tylerbutler.com>`_ and is available under a `Creative Commons
+Attribution-ShareAlike 3.0 Unported License <http://creativecommons.org/licenses/by-sa/3.0/>`_.
+
 .. note::
-   Dark Rainbow uses several fonts available at TypeKit. These fonts are available as part of TypeKit's trial plan.
+   :ref:`dark rainbow` uses several fonts available at TypeKit. These fonts are available as part of TypeKit's trial
+   plan.
 
 Settings
 ========
@@ -79,17 +85,5 @@ Dark Rainbow does not support any additional :ref:`template fragments` beyond th
 Metadata
 ========
 
-.. code-block:: yaml
-
-   name: 'Dark Rainbow'
-   id: dark_rainbow
-   description: A dark theme with just a hint of color.
-   author: 'Tyler Butler <tyler@tylerbutler.com>'
-   website: 'http://tylerbutler.com'
-   license: 'Creative Commons BY-SA 3.0'
-   use_foundation: yes
-   use_lesscss: yes
-   use_modernizr: no
-   use_jquery: yes
-
-   self_contained: yes
+.. literalinclude:: ../../themes/dark_rainbow/metadata.yaml
+   :language: yaml

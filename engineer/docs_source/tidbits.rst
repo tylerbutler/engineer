@@ -1,4 +1,6 @@
 
+:orphan:
+
 **List Pages**
   List pages are simply roll-up pages of posts. Think of the front page of a
   blog, or a tag page listing all the posts tagged with a certain tag. You generally won't need to create these
@@ -39,10 +41,11 @@ In Engineer you can add content to the site using :doc:`posts` or :ref:`template
 
 
 .. note::
+
    For all settings that specify a file system path, relative paths are assumed to be relative to
-   :attr:`~EngineerConfiguration.SETTINGS_DIR`, the directory that contains the settings file being used. Absolute
-   paths are accepted and won't be modified, but relative paths are always relative to the settings file unless
-   otherwise stated.
+   :attr:`~engineer.conf.EngineerConfiguration.SETTINGS_DIR`, the directory that contains the settings file being
+   used. Absolute paths are accepted and won't be modified, but relative paths are always relative to the settings
+   file unless otherwise stated.
 
 A website isn't much use without some sort of navigation, and Engineer-based sites are no exception. While at its
 core, navigation constructs are nothing more than links to pages in the site, Engineer provides a few features that

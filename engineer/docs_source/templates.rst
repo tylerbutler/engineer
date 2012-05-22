@@ -41,7 +41,9 @@ all you need to do is create a file with the same name as the fragment you're us
 :attr:`~engineer.conf.EngineerConfiguration.TEMPLATE_DIR`. For example, creating a :file:`_footer.html` file in your
 template directory will make Engineer put the contents of that file in the footer of your site.
 
-.. tip:: Template fragments should always be put in your site's
+.. tip::
+
+   Template fragments should always be put in your site's
    :attr:`~engineer.conf.EngineerConfiguration.TEMPLATE_DIR`. The built-in fragments should all be in the root of the
    template dir, but themes might also support other fragments that should be located in slightly different places.
    Check your theme's documentation for details.

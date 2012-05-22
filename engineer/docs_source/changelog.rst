@@ -3,6 +3,18 @@
 Changelog
 =========
 
+version 0.2.4 - May 27, 2012
+============================
+
+- A new theme, :ref:`oleb`, has been added. This theme is based on Ole Begemann's oleb.net design and was created with
+  his permission.
+- During rendering, a new variable called ``all_posts`` is passed. It is a :class:`~engineer.models.PostCollection`
+  containing all the posts on the site and can be used to display links to related posts, similarly tagged posts, etc.
+- Themes can now be wrapped in a Python package, installed, and register themselves as a
+  :ref:`theme plugin <theme plugins>`.
+- Bug fixes related to sites hosted at non-root paths.
+
+
 version 0.2.3 - May 6, 2012
 ===========================
 

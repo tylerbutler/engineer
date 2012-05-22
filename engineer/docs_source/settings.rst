@@ -92,8 +92,9 @@ These settings control the location on the local file system where Engineer shou
       **Default:** ``TEMPLATE_DIR/pages``
 
       The path to the directory containing :ref:`template pages`. These can be outside your standard
-      :attr:`~EngineerConf.TEMPLATE_DIR` if you wish; for example, you may set this to be ``/pages`` and place your
-      template pages in the root of your site content directory rather than with other templates.
+      :attr:`~engineer.conf.EngineerConfiguration.TEMPLATE_DIR` if you wish; for example,
+      you may set this to be ``/pages`` and place your template pages in the root of your site content directory
+      rather than with other templates.
 
       .. seealso::
          :ref:`template pages`, :doc:`themes`

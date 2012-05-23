@@ -150,6 +150,7 @@ class EngineerConfiguration(object):
         self.THEME_FINDERS = [
             'engineer.finders.ThemeDirsFinder',
             'engineer.finders.SiteFinder',
+            'engineer.finders.PluginFinder',
             'engineer.finders.DefaultFinder'
         ]
         self.THEME_SETTINGS = config.pop('THEME_SETTINGS', {})

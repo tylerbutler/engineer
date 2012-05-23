@@ -1,5 +1,4 @@
 # coding=utf-8
-import os
 from logging import getLogger
 from path import path
 from tempfile import mkdtemp
@@ -75,4 +74,30 @@ class ThemeDirsFinder(BaseFinder):
             except ThemeDirectoryNotFoundException as e:
                 logger.warning(e.message)
                 continue
+        return themes
+
+
+class PluginFinder(BaseFinder):
+    @staticmethod
+    def find_theme_plugins():
+        try:
+            import pkg_resources
+        except ImportError:
+            pkg_resources = None
+
+        if pkg_resources is None:
+            return
+        for entrypoint in pkg_resources.iter_entry_points('engineer.themes'):
+            yield entrypoint.name, entrypoint.load()
+
+    @classmethod
+    def get_themes(cls):
+        themes = []
+        try:
+            for name, theme_path in PluginFinder.find_theme_plugins():
+                themes.extend(cls.get_from_directory(theme_path))
+        except ImportError as e:
+            logger.warning(e.message)
+            return []
+
         return themes

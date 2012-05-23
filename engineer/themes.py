@@ -67,6 +67,12 @@ class Theme(object):
         theme = Theme(path(yaml_file).dirname(), **yaml_doc)
         return theme
 
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+    def __unicode__(self):
+        return self.name
+
 
 class ThemeManager(object):
     @classmethod
@@ -76,7 +82,6 @@ class ThemeManager(object):
         for f in settings.THEME_FINDERS:
             finder = get_class(f)
             themes.extend(finder.get_themes())
-
         return dict([t.id, t] for t in themes)
 
     @classmethod

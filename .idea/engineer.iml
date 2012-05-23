@@ -2,9 +2,12 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.tox" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/docs" />
       <excludeFolder url="file://$MODULE_DIR$/engineer.egg-info" />
+      <excludeFolder url="file://$MODULE_DIR$/engineer/sample_site/_cache" />
     </content>
     <orderEntry type="jdk" jdkName="Python 2.7.2 virtualenv at ~\.virtualenvs\engineer" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -2,7 +2,8 @@
 import logging
 from path import path
 from engineer.conf import settings
-from engineer.models import Post, MetadataError, PostCollection
+from engineer.exceptions import PostMetadataError
+from engineer.models import Post, PostCollection
 
 __author__ = 'tyler@tylerbutler.com'
 
@@ -30,7 +31,7 @@ class LocalLoader(object):
                 else:
                     logger.info("'%s': FROM CACHE" % f.basename())
                     cached_posts.append(settings.POST_CACHE[f])
-            except MetadataError as e:
+            except PostMetadataError as e:
                 logger.warning("SKIPPING '%s': metadata is invalid. %s" % (f.basename(), e.message))
                 continue
         logger.console("Found %d new posts and loaded %s from the cache." % (len(new_posts), len(cached_posts)))

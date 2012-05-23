@@ -12,6 +12,7 @@ from path import path
 from typogrify.templatetags.jinja2_filters import typogrify
 from zope.cachedescriptors.property import CachedProperty
 from engineer.conf import settings
+from engineer.exceptions import PostMetadataError
 from engineer.filters import localtime
 from engineer.util import slugify, chunk, urljoin
 
@@ -31,10 +32,6 @@ class Status(Enum):
 
     def __reduce__(self):
         return 'Status'
-
-
-class MetadataError(Exception):
-    pass
 
 
 class Post(object):
@@ -154,13 +151,13 @@ class Post(object):
 
         if parsed_content is None or parsed_content.group('metadata') is None:
             # Parsing failed, maybe there's no metadata
-            raise MetadataError()
+            raise PostMetadataError()
 
         # 'Clean' the YAML section since there might be tab characters
         metadata = parsed_content.group('metadata').replace('\t', '    ')
         metadata = yaml.load(metadata)
         if not isinstance(metadata, dict):
-            raise MetadataError()
+            raise PostMetadataError()
         content = parsed_content.group('content')
 
         return metadata, content

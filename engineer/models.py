@@ -208,25 +208,6 @@ class Post(object):
     __repr__ = __unicode__
 
 
-class TemplatePage(object):
-    def __init__(self, template_path):
-        self.html_template = settings.JINJA_ENV.get_template(
-            str(settings.TEMPLATE_DIR.relpathto(template_path)).replace('\\', '/'))
-        namebase = template_path.namebase
-        name_components = settings.TEMPLATE_PAGE_DIR.relpathto(template_path).splitall()[1:]
-        name_components[-1] = namebase
-        self.name = '/'.join(name_components)
-        self.absolute_url = urljoin(settings.HOME_URL, self.name)
-        self.output_path = path(settings.OUTPUT_CACHE_DIR / self.name)
-        self.output_file_name = 'index.html'
-
-        settings.URLS[self.name] = self.absolute_url
-
-    def render_html(self):
-        rendered = self.html_template.render(nav_context=self.name)
-        return rendered
-
-
 class PostCollection(list):
     def __init__(self, seq=()):
         list.__init__(self, seq)
@@ -263,22 +244,41 @@ class PostCollection(list):
     def output_path(self, slice_num):
         return path(settings.OUTPUT_CACHE_DIR / ("page/%s/index.html" % slice_num))
 
-    def render_listpage_html(self, slice_num, has_next, has_previous):
+    def render_listpage_html(self, slice_num, has_next, has_previous, all_posts=None):
         return self.listpage_template.render(
             post_list=self,
             slice_num=slice_num,
             has_next=has_next,
             has_previous=has_previous,
-            all_posts=self,
+            all_posts=all_posts,
             nav_context='listpage')
 
-    def render_archive_html(self):
+    def render_archive_html(self, all_posts=None):
         return self.archive_template.render(post_list=self,
-                                            all_posts=self,
+                                            all_posts=all_posts,
                                             nav_context='archive')
 
-    def render_tag_html(self, tag):
+    def render_tag_html(self, tag, all_posts=None):
         return settings.JINJA_ENV.get_template('theme/tags_list.html').render(tag=tag,
                                                                               post_list=self.tagged(tag),
-                                                                              all_posts=self,
+                                                                              all_posts=all_posts,
                                                                               nav_context='tag')
+
+class TemplatePage(object):
+    def __init__(self, template_path):
+        self.html_template = settings.JINJA_ENV.get_template(
+            str(settings.TEMPLATE_DIR.relpathto(template_path)).replace('\\', '/'))
+        namebase = template_path.namebase
+        name_components = settings.TEMPLATE_PAGE_DIR.relpathto(template_path).splitall()[1:]
+        name_components[-1] = namebase
+        self.name = '/'.join(name_components)
+        self.absolute_url = urljoin(settings.HOME_URL, self.name)
+        self.output_path = path(settings.OUTPUT_CACHE_DIR / self.name)
+        self.output_file_name = 'index.html'
+
+        settings.URLS[self.name] = self.absolute_url
+
+    def render_html(self, all_posts=None):
+        rendered = self.html_template.render(nav_context=self.name,
+                                             all_posts=all_posts)
+        return rendered

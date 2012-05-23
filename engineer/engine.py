@@ -86,25 +86,6 @@ def build(args=None):
     mirror_folder(s, t)
     logger.debug("Copied static files for theme to %s." % relpath(t))
 
-    # Generate template pages
-    if settings.TEMPLATE_PAGE_DIR.exists():
-        logger.info("Generating template pages from %s." % settings.TEMPLATE_PAGE_DIR)
-        template_pages = []
-        for template in settings.TEMPLATE_PAGE_DIR.walkfiles('*.html'):
-            # We create all the TemplatePage objects first so we have all of the URLs to them in the template
-            # environment. Without this step, template pages might have broken links if they link to a page that is
-            # loaded after them, since the URL to the not-yet-loaded page will be missing.
-            template_pages.append(TemplatePage(template))
-        for page in template_pages:
-            rendered_page = page.render_html()
-            ensure_exists(page.output_path)
-            with open(page.output_path / page.output_file_name, mode='wb',
-                      encoding='UTF-8') as file:
-                file.write(rendered_page)
-                logger.debug("Output template page %s." % relpath(file.name))
-                build_stats['counts']['template_pages'] += 1
-        logger.info("Generated %s template pages." % build_stats['counts']['template_pages'])
-
     # Load markdown input posts
     logger.info("Loading posts...")
     new_posts, cached_posts = LocalLoader.load_all(input=settings.POST_DIR)
@@ -119,6 +100,25 @@ def build(args=None):
 
     all_posts = PostCollection(
         sorted(to_publish, reverse=True, key=lambda post: post.timestamp))
+
+    # Generate template pages
+    if settings.TEMPLATE_PAGE_DIR.exists():
+        logger.info("Generating template pages from %s." % settings.TEMPLATE_PAGE_DIR)
+        template_pages = []
+        for template in settings.TEMPLATE_PAGE_DIR.walkfiles('*.html'):
+            # We create all the TemplatePage objects first so we have all of the URLs to them in the template
+            # environment. Without this step, template pages might have broken links if they link to a page that is
+            # loaded after them, since the URL to the not-yet-loaded page will be missing.
+            template_pages.append(TemplatePage(template))
+        for page in template_pages:
+            rendered_page = page.render_html(all_posts)
+            ensure_exists(page.output_path)
+            with open(page.output_path / page.output_file_name, mode='wb',
+                      encoding='UTF-8') as file:
+                file.write(rendered_page)
+                logger.debug("Output template page %s." % relpath(file.name))
+                build_stats['counts']['template_pages'] += 1
+        logger.info("Generated %s template pages." % build_stats['counts']['template_pages'])
 
     # Generate individual post pages
     for post in all_posts:
@@ -165,7 +165,7 @@ def build(args=None):
         archive_output_path = settings.OUTPUT_CACHE_DIR / 'archives/index.html'
         ensure_exists(archive_output_path)
 
-        rendered_archive = all_posts.render_archive_html()
+        rendered_archive = all_posts.render_archive_html(all_posts)
 
         with open(archive_output_path, mode='wb', encoding='UTF-8') as file:
             file.write(rendered_archive)
@@ -175,7 +175,7 @@ def build(args=None):
     if num_posts > 0:
         tags_output_path = settings.OUTPUT_CACHE_DIR / 'tag'
         for tag in all_posts.all_tags:
-            rendered_tag_page = all_posts.render_tag_html(tag)
+            rendered_tag_page = all_posts.render_tag_html(tag, all_posts)
             tag_path = ensure_exists(
                 tags_output_path / slugify(tag) / 'index.html')
             with open(tag_path, mode='wb', encoding='UTF-8') as file:
@@ -185,8 +185,7 @@ def build(args=None):
 
     # Generate feeds
     #if build_stats['counts']['new_posts'] >= 0:
-    feed_output_path = ensure_exists(
-        settings.OUTPUT_CACHE_DIR / 'feeds/rss.xml')
+    feed_output_path = ensure_exists(settings.OUTPUT_CACHE_DIR / 'feeds/rss.xml')
     feed_content = settings.JINJA_ENV.get_template('core/rss.xml').render(
         post_list=all_posts[:settings.FEED_ITEM_LIMIT],
         build_date=all_posts[0].timestamp)

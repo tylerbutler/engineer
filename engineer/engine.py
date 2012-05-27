@@ -336,7 +336,7 @@ def init(args):
         (sample_site_path / 'config.yaml').copyfile(target / 'config.yaml')
     else:
         mirror_folder(sample_site_path, target)
-    logger.info("Initialization complete.")
+    logger.console("Initialization complete.")
     exit()
 
 

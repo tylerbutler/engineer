@@ -77,7 +77,7 @@ class Post(object):
             """The status of the post (published or draft)."""
 
         except ValueError:
-            root_logger.warning("'%s': Invalid status value in metadata. Defaulting to 'draft'." % self.title)
+            logger.warning("'%s': Invalid status value in metadata. Defaulting to 'draft'." % self.title)
             self.status = Status.draft
 
         self.timestamp = metadata.get('timestamp', None)

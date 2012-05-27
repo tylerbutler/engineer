@@ -266,6 +266,12 @@ def serve(args):
 
     @debug_server.route('/<filepath:path>')
     def serve_static(filepath):
+        if settings.HOME_URL != '/':
+            # if HOME_URL is not root, we need to adjust the paths
+            if filepath.startswith(settings.HOME_URL[1:]):
+                filepath = filepath[len(settings.HOME_URL)-1:]
+            else:
+                return bottle.HTTPResponse(status=404)
         response = bottle.static_file(filepath, root=settings.OUTPUT_DIR)
         if type(response) is bottle.HTTPError:
             return bottle.static_file(path(filepath) / 'index.html',

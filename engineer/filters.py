@@ -81,9 +81,13 @@ def compress(value):
             else:
                 raise Exception("Hmmm, wasn't expecting a '%s' here." % item.name)
 
-            if src.startswith('/'):
-                src = src[1:] # trim the leading '/' from the src so we can combine it
-                # with the OUTPUT_CACHE_DIR to get a path
+            if src.startswith(settings.HOME_URL):
+                # trim the HOME_URL since it won't be part of the local path to the file
+                src = src[len(settings.HOME_URL):]
+            elif src.startswith('/'):
+                # trim the leading '/' from the src so we can combine it with the OUTPUT_CACHE_DIR to get a path
+                src = src[1:]
+
             file = path(settings.OUTPUT_CACHE_DIR / src).abspath()
 
             if file.ext[1:] in settings.COMPRESSOR_FILE_EXTENSIONS:

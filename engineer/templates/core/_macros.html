@@ -19,7 +19,9 @@
             {% set path_input=("%s.css" % path_input[:-5]) %}
         {% endif %}
 
-        <link rel="stylesheet" href="{{ _make_relative_path(path_input, prepend_static_url) }}" type="text/css"/>
+        {% filter compress %}
+            <link rel="stylesheet" href="{{ _make_relative_path(path_input, prepend_static_url) }}" type="text/css"/>
+        {% endfilter %}
     {%- endif -%}
 {%- endmacro -%}
 

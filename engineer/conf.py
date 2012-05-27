@@ -6,6 +6,7 @@ import pytz
 import shelve
 import times
 import yaml
+from datetime import datetime
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 from typogrify.templatetags.jinja2_filters import typogrify
 from path import path
@@ -129,7 +130,13 @@ class EngineerConfiguration(object):
         self.TEMPLATE_DIR = self.normalize(config.pop('TEMPLATE_DIR', 'templates'))
         self.TEMPLATE_PAGE_DIR = config.pop('TEMPLATE_PAGE_DIR', (self.TEMPLATE_DIR / 'pages').abspath())
         self.LOG_DIR = self.normalize(config.pop('LOG_DIR', 'logs'))
-        self.LOG_FILE = config.pop('LOG_FILE', (self.LOG_DIR / 'build.log').abspath())
+
+        if self.SETTINGS_FILE is None:
+            self.LOG_FILE = config.pop('LOG_FILE', (self.LOG_DIR / 'build.log').abspath())
+        else:
+            self.LOG_FILE = config.pop('LOG_FILE',
+                (self.LOG_DIR / ('%s-%s.log' % (datetime.now().strftime('%m.%d_%H.%M.%S'),
+                                                      self.SETTINGS_FILE.name))).abspath())
 
         self.CACHE_DIR = config.pop('CACHE_DIR', None)
         if self.CACHE_DIR is None:

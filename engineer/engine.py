@@ -76,6 +76,15 @@ def build(args=None):
     mirror_folder(s, t)
     logger.debug("Copied static files to %s." % relpath(t))
 
+    # Copy 'raw' content to output cache - first pass
+    # This first pass ensures that any static content - JS/LESS/CSS - that
+    # is needed by site-specific pages (like template pages) is available
+    # during the build
+    if settings.CONTENT_DIR.exists():
+        mirror_folder(settings.CONTENT_DIR,
+                      settings.OUTPUT_CACHE_DIR,
+                      delete_orphans=False)
+
     # Copy theme static content to output dir
     logger.debug("Copying theme static files to output cache.")
     try:
@@ -194,7 +203,7 @@ def build(args=None):
         file.write(feed_content)
         logger.debug("Output %s." % relpath(file.name))
 
-    # Copy 'raw' content to output cache
+    # Copy 'raw' content to output cache - second/final pass
     if settings.CONTENT_DIR.exists():
         mirror_folder(settings.CONTENT_DIR,
                       settings.OUTPUT_CACHE_DIR,

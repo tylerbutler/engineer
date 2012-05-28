@@ -8,9 +8,7 @@
 {% endblock %}
 
 {%- block stylesheets %}
-    {% filter compress %}
-        {{ render_less_link('theme/stylesheets/dark_rainbow.less') }}
-    {% endfilter %}
+    {{ render_less_link('theme/stylesheets/dark_rainbow.less') }}
 {% endblock -%}
 
 {%- block scripts_top %}

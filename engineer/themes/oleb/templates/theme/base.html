@@ -10,8 +10,10 @@
 {%- block stylesheets %}
     {{ render_less_link('theme/stylesheets/oleb.less') }}
     {%- block additional_stylesheets %}
-        <link rel="stylesheet"
-              href="{{ settings.STATIC_URL }}/engineer/github.css" />
+        {% filter compress %}
+            <link rel="stylesheet"
+                  href="{{ settings.STATIC_URL }}/engineer/github.css"/>
+        {% endfilter %}
     {% endblock -%}
 {% endblock -%}
 

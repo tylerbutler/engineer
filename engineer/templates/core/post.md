@@ -1,5 +1,4 @@
 {{ metadata|safe }}
-
 ---
 
 {{ content|safe }}

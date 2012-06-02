@@ -213,13 +213,13 @@ class Post(object):
         # A hack to guarantee the YAML output is in a sensible order.
         d = (
             ('title', self.title),
-            ('url', self.url),
-            ('timestamp', self.timestamp_local.strftime(settings.TIME_FORMAT)),
             ('status', self.status.name),
-            ('slug', self.slug),
+            ('timestamp', self.timestamp_local.strftime(settings.TIME_FORMAT)),
+            ('url', self.url),
             ('link', self.link),
             ('via', self.via),
             ('via_link', self.via_link),
+            ('slug', self.slug),
             ('tags', self.tags),
             )
 

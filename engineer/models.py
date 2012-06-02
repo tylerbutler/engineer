@@ -69,7 +69,7 @@ class Post(object):
         self.via = metadata.get('via', None)
         """The post's attribution name."""
 
-        self.via_link = metadata.get('via_link', None)
+        self.via_link = metadata.get('via-link', metadata.get('via_link', None))
         """The post's attribution link."""
 
         try:
@@ -218,7 +218,7 @@ class Post(object):
             ('url', self.url),
             ('link', self.link),
             ('via', self.via),
-            ('via_link', self.via_link),
+            ('via-link', self.via_link),
             ('slug', self.slug),
             ('tags', self.tags),
             )

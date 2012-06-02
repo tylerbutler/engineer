@@ -29,6 +29,7 @@ class Status(Enum):
     """Enum representing the status of a :class:`~Post`."""
     draft = 0 #: Post is a draft.
     published = 1 #: Post is published.
+    review = 2 #: Post is in review.
 
     def __reduce__(self):
         return 'Status'
@@ -263,6 +264,11 @@ class PostCollection(list):
     def pending(self):
         """Returns a new PostCollection containing the subset of posts that are pending."""
         return PostCollection([p for p in self if p.is_pending == True])
+
+    @CachedProperty
+    def review(self):
+        """Returns a new PostCollection containing the subset of posts whose status is :attr:`~Status.review`."""
+        return PostCollection([p for p in self if p.status == Status.review])
 
     @CachedProperty
     def all_tags(self):

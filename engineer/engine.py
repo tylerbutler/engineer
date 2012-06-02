@@ -102,9 +102,11 @@ def build(args=None):
     all_posts = PostCollection(new_posts + cached_posts)
 
     if settings.PUBLISH_DRAFTS:
-        to_publish = all_posts
+        to_publish = PostCollection(all_posts.published + all_posts.drafts)
     elif settings.PUBLISH_PENDING:
         to_publish = PostCollection(all_posts.published + all_posts.pending)
+    elif settings.PUBLISH_REVIEW:
+        to_publish = PostCollection(all_posts.published + all_posts.review)
     else:
         to_publish = PostCollection(all_posts.published)
 

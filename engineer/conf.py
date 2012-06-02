@@ -225,6 +225,7 @@ class EngineerConfiguration(object):
         self.NORMALIZE_INPUT_FILE_MASK = config.pop('NORMALIZE_INPUT_FILE_MASK', u'({0}){1}-{2}.md')
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
         self.PUBLISH_PENDING = config.pop('PUBLISH_PENDING', False)
+        self.PUBLISH_REVIEW = config.pop('PUBLISH_REVIEW', False)
         self.POST_TIMEZONE = pytz.timezone(config.pop('POST_TIMEZONE', 'UTC'))
         self.SERVER_TIMEZONE = self.POST_TIMEZONE if config.get('SERVER_TIMEZONE',
                                                                 None) is None else config.pop('SERVER_TIMEZONE')

@@ -374,7 +374,19 @@ Miscellaneous Settings
 
       Ordinarily Engineer only generates output for posts whose :ref:`timestamp <post timestamp>` is in the past.
       Published posts that have a future date are considered 'pending.' When ``PUBLISH_PENDING`` is ``True``,
-      Engineer will output these future posts.
+      Engineer will output these future posts regardless of the current time.
+
+
+   .. attribute:: PUBLISH_REVIEW
+
+      **Default:** ``False``
+
+      If ``True``, posts marked with a status of :attr:`~engineer.models.Status.review` will be output. This is
+      useful for draft posts that you want to preview in the context of a site. These posts can be marked ``review``
+      and a settings file with ``PUBLISH_REVIEW`` set to true can be used to output them for review purposes. Using
+      :attr:`~engineer.models.Status.review` instead of :attr:`~engineer.models.Status.published` and
+      :attr:`PUBLISH_PENDING` helps preview posts without setting arbitrary dates in the future and eliminates
+      concerns about accidental publication.
 
 
    .. attribute:: POST_TIMEZONE

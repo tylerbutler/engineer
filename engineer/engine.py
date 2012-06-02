@@ -2,6 +2,7 @@
 import argparse
 import logging
 import sys
+import humanize
 import times
 from codecs import open
 from path import path
@@ -109,6 +110,14 @@ def build(args=None):
         to_publish = PostCollection(all_posts.published + all_posts.review)
     else:
         to_publish = PostCollection(all_posts.published)
+
+    if not settings.PUBLISH_PENDING and len(all_posts.pending) > 0:
+        logger.warning("This site contains the following pending posts:")
+        for post in all_posts.pending:
+            logger.warning("\t'%s' - publish time: %s, %s." % (post.title,
+                                                               humanize.naturaltime(post.timestamp),
+                                                               post.timestamp_local))
+        logger.warning("These posts won't be published until you build the site again after their publish time.")
 
     all_posts = PostCollection(
         sorted(to_publish, reverse=True, key=lambda post: post.timestamp))
@@ -280,7 +289,7 @@ def serve(args):
         if settings.HOME_URL != '/':
             # if HOME_URL is not root, we need to adjust the paths
             if filepath.startswith(settings.HOME_URL[1:]):
-                filepath = filepath[len(settings.HOME_URL)-1:]
+                filepath = filepath[len(settings.HOME_URL) - 1:]
             else:
                 return bottle.HTTPResponse(status=404)
         response = bottle.static_file(filepath, root=settings.OUTPUT_DIR)

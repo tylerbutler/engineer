@@ -213,6 +213,7 @@ class Post(object):
         # A hack to guarantee the YAML output is in a sensible order.
         d = {
             'title': self.title,
+            'url': self.url,
             'timestamp': self.timestamp_local.strftime(settings.TIME_FORMAT),
             'status': self.status.name,
             'slug': self.slug,
@@ -221,7 +222,7 @@ class Post(object):
             'via_link': self.via_link,
             'tags': self.tags,
             }
-        order = ['title', 'timestamp', 'status', 'tags', 'link', 'via', 'via_link', 'slug', ]
+        order = ['title', 'url', 'timestamp', 'status', 'tags', 'link', 'via', 'via_link', 'slug', ]
         metadata = ''
         for k in order:
             if k in d and d[k] is not None and len(d[k]) > 0:

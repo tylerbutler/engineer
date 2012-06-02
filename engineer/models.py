@@ -211,22 +211,22 @@ class Post(object):
         """
 
         # A hack to guarantee the YAML output is in a sensible order.
-        d = {
-            'title': self.title,
-            'url': self.url,
-            'timestamp': self.timestamp_local.strftime(settings.TIME_FORMAT),
-            'status': self.status.name,
-            'slug': self.slug,
-            'link': self.link,
-            'via': self.via,
-            'via_link': self.via_link,
-            'tags': self.tags,
-            }
-        order = ['title', 'url', 'timestamp', 'status', 'tags', 'link', 'via', 'via_link', 'slug', ]
+        d = (
+            ('title', self.title),
+            ('url', self.url),
+            ('timestamp', self.timestamp_local.strftime(settings.TIME_FORMAT)),
+            ('status', self.status.name),
+            ('slug', self.slug),
+            ('link', self.link),
+            ('via', self.via),
+            ('via_link', self.via_link),
+            ('tags', self.tags),
+            )
+
         metadata = ''
-        for k in order:
-            if k in d and d[k] is not None and len(d[k]) > 0:
-                metadata += yaml.safe_dump(dict([[k, d[k]]]), default_flow_style=False)
+        for k, v in d:
+            if v is not None and len(v) > 0:
+                metadata += yaml.safe_dump(dict([(k, v)]), default_flow_style=False)
         return settings.JINJA_ENV.get_template(self.markdown_template_path).render(metadata=metadata,
                                                                                    content=self._content_raw)
 
@@ -238,6 +238,7 @@ class Post(object):
 
 class PostCollection(list):
     """A collection of :class:`Posts <engineer.models.Post>`."""
+
     def __init__(self, seq=()):
         list.__init__(self, seq)
         self.listpage_template = settings.JINJA_ENV.get_template('theme/post_list.html')
@@ -297,6 +298,7 @@ class PostCollection(list):
                                                                               post_list=self.tagged(tag),
                                                                               all_posts=all_posts,
                                                                               nav_context='tag')
+
 
 class TemplatePage(object):
     def __init__(self, template_path):

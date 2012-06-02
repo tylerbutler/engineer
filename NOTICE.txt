@@ -6,6 +6,7 @@ Foundation Copyright (c) 2011 ZURB, http://www.zurb.com/
 
 Included BSD licensed software:
 jinja2htmlcompress.py Copyright (c) 2011 Armin Ronacher
+ansistrm.py Copyright (c) 2010-2012 Vinay Sajip
 
 Included Apache 2.0 licensed software:
 LESS Copyright (c) 2009-2011 Alexis Sellier

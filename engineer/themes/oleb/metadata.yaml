@@ -8,6 +8,7 @@ use_foundation: yes
 use_lesscss: yes
 use_modernizr: yes
 use_jquery: yes
+use_tweet: yes
 
 settings:
   typekit_id: null

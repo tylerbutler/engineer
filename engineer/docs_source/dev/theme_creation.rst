@@ -113,6 +113,12 @@ Theme Manifest Parameters
     Indicates whether the theme makes use of the jQuery library included in Engineer. Defaults to ``False``.
 
 
+.. _theme use_tweet:
+
+``use_tweet`` *(optional)*
+    Indicates whether the theme makes use of the Tweet library included in Engineer. Defaults to ``False``.
+
+
 .. _theme default:
 
 ``settings`` *(optional)*

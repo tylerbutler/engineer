@@ -25,6 +25,7 @@ class Theme(object):
         self.use_lesscss = kwargs.get('use_lesscss', False)
         self.use_modernizr = kwargs.get('use_moderinzr', False)
         self.use_jquery = kwargs.get('use_jquery', False)
+        self.use_tweet = kwargs.get('use_tweet', False)
 
         self.self_contained = kwargs.get('self_contained', True)
         self.static_root = path(kwargs.get('static_root', self.root_path / 'static/')).abspath()

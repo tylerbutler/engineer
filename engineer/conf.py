@@ -52,6 +52,7 @@ class EngineerConfiguration(object):
         TEMPLATE_DIR = (ROOT_DIR / 'templates').abspath()
         STATIC_DIR = (ROOT_DIR / 'static').abspath()
         THEMES_DIR = (ROOT_DIR / 'themes').abspath()
+        LIB_DIR = (STATIC_DIR / 'engineer/lib').abspath()
 
         # URLs to included libraries - will be updated in the EngineerConfiguration.initialize() method.
         FOUNDATION_CSS_URL = None

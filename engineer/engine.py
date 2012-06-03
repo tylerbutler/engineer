@@ -72,9 +72,46 @@ def build(args=None):
 
     # Copy static content to output dir
     logger.debug("Copying static files to output cache.")
-    s = settings.ENGINEER.STATIC_DIR.abspath()
-    t = settings.OUTPUT_STATIC_DIR
-    mirror_folder(s, t)
+    s = (settings.ENGINEER.STATIC_DIR / 'engineer').abspath()
+    t = settings.OUTPUT_STATIC_DIR / 'engineer'
+    mirror_folder(s, t, recurse=False) # Copy only the files in this folder - don't recurse
+
+    theme = ThemeManager.current_theme()
+    # Copy Foundation files if used
+    if theme.use_foundation:
+        s = settings.ENGINEER.LIB_DIR / 'foundation'
+        t = settings.OUTPUT_STATIC_DIR / 'engineer/lib/foundation'
+        mirror_folder(s, t)
+        logger.debug("Copied Foundation library files.")
+
+    # Copy LESS js file if needed
+    if theme.use_lesscss and not settings.PREPROCESS_LESS:
+        s = settings.ENGINEER.LIB_DIR / 'less-1.3.0.min.js'
+        t = settings.OUTPUT_STATIC_DIR / 'engineer/lib/'
+        s.copy(t)
+        logger.debug("Copied LESS CSS files.")
+
+    # Copy jQuery files if needed
+    if theme.use_jquery or theme.use_tweet:
+        s = settings.ENGINEER.LIB_DIR / 'jquery-1.7.1.min.js'
+        t = settings.OUTPUT_STATIC_DIR / 'engineer/lib/'
+        s.copy(t)
+        logger.debug("Copied jQuery files.")
+
+    # Copy Tweet files if needed
+    if theme.use_tweet:
+        s = settings.ENGINEER.LIB_DIR / 'tweet'
+        t = settings.OUTPUT_STATIC_DIR / 'engineer/lib/tweet'
+        mirror_folder(s, t)
+        logger.debug("Copied Tweet files.")
+
+    # Copy modernizr files if needed
+    if theme.use_modernizr:
+        s = settings.ENGINEER.LIB_DIR / 'modernizr-2.5.3.min.js'
+        t = settings.OUTPUT_STATIC_DIR / 'engineer/lib/'
+        s.copy(t)
+        logger.debug("Copied Modernizr files.")
+
     logger.debug("Copied static files to %s." % relpath(t))
 
     # Copy 'raw' content to output cache - first pass
@@ -89,7 +126,7 @@ def build(args=None):
     # Copy theme static content to output dir
     logger.debug("Copying theme static files to output cache.")
     try:
-        s = ThemeManager.current_theme().static_root.abspath()
+        s = theme.static_root.abspath()
     except ThemeNotFoundException as e:
         logger.critical(e.message)
         exit()

@@ -66,7 +66,7 @@ def chunk(seq, chunksize, process=iter):
         yield process(chain([it.next()], islice(it, chunksize - 1)))
 
 
-def mirror_folder(source, target, delete_orphans=True, _level=0):
+def mirror_folder(source, target, delete_orphans=True, recurse=True, _level=0):
     """Mirrors a folder *source* into a target folder *target*."""
 
     logger = logging.getLogger('engineer.util.mirror_folder')
@@ -93,7 +93,7 @@ def mirror_folder(source, target, delete_orphans=True, _level=0):
     if delete_orphans:
         for item in compare.right_only:
             fullpath = path(d2 / item)
-            if fullpath.isdir():
+            if fullpath.isdir() and recurse:
                 logger.debug(
                     "%s ==> Deleted - doesn't exist in source" % fullpath)
                 report['deleted'].add(fullpath)
@@ -109,7 +109,7 @@ def mirror_folder(source, target, delete_orphans=True, _level=0):
     # Copy new files and folders from the source to the target
     for item in compare.left_only:
         fullpath = d1 / item
-        if fullpath.isdir():
+        if fullpath.isdir() and recurse:
             logger.debug(
                 "Copying new directory %s ==> %s" % (fullpath, (d2 / item)))
             fullpath.copytree(d2 / item)
@@ -128,11 +128,12 @@ def mirror_folder(source, target, delete_orphans=True, _level=0):
         report['overwritten'].add(d2 / item)
 
     # Recurse into subfolders that exist in both the source and target
-    for item in compare.common_dirs:
-        rpt = mirror_folder(d1 / item, d2 / item, delete_orphans, _level + 1)
-        report['new'].update(rpt['new'])
-        report['overwritten'].update(rpt['overwritten'])
-        report['deleted'].update(rpt['deleted'])
+    if recurse:
+        for item in compare.common_dirs:
+            rpt = mirror_folder(d1 / item, d2 / item, delete_orphans, _level + 1)
+            report['new'].update(rpt['new'])
+            report['overwritten'].update(rpt['overwritten'])
+            report['deleted'].update(rpt['deleted'])
     return report
 
 

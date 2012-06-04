@@ -42,10 +42,9 @@
         {% endif %}
     {% endblock %}
 
-    {% block stylesheets %}
-        {% block stylesheets_include %}
-            {% include ['_stylesheets.html', 'theme/_stylesheets.html'] ignore missing %}
-        {% endblock %}
+    {% block stylesheets %}{% endblock %}
+    {% block stylesheets_include %}
+        {% include ['_stylesheets.html', 'theme/_stylesheets.html'] ignore missing %}
     {% endblock %}
 
     {% block lesscss %}
@@ -64,10 +63,9 @@
         {% endif %}
     {% endblock %}
 
-    {% block scripts_top %}
-        {% block scripts_top_include %}
-            {% include ['_scripts_top.html', 'theme/_scripts_top.html'] ignore missing %}
-        {% endblock %}
+    {% block scripts_top %}{% endblock %}
+    {% block scripts_top_include %}
+        {% include ['_scripts_top.html', 'theme/_scripts_top.html'] ignore missing %}
     {% endblock %}
 
     {% block modernizr %}
@@ -124,10 +122,10 @@
     {%- endif %}
 {% endblock %}
 
-{% block scripts_bottom %}
-    {% block scripts_bottom_include %}
-        {% include ['_scripts_bottom.html', 'theme/_scripts_bottom.html'] ignore missing %}
-    {% endblock %}
+{% block scripts_bottom %}{% endblock %}
+{% block scripts_bottom_include %}
+    {% include ['_scripts_bottom.html', 'theme/_scripts_bottom.html'] ignore missing %}
 {% endblock %}
+
 </body>
 </html>

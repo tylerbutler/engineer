@@ -1,5 +1,6 @@
 # coding=utf-8
 import argparse
+import gzip
 import logging
 import sys
 import humanize
@@ -248,6 +249,14 @@ def build(args=None):
         build_date=all_posts[0].timestamp)
     with open(feed_output_path, mode='wb', encoding='UTF-8') as file:
         file.write(feed_content)
+        logger.debug("Output %s." % relpath(file.name))
+
+    # Generate sitemap
+    sitemap_output_path = ensure_exists(settings.OUTPUT_CACHE_DIR / 'sitemap.xml.gz')
+    sitemap_content = settings.JINJA_ENV.get_or_select_template(['sitemap.xml', 'core/sitemap.xml']).render(
+        post_list=all_posts)
+    with gzip.open(sitemap_output_path, mode='wb') as file:
+        file.write(sitemap_content)
         logger.debug("Output %s." % relpath(file.name))
 
     # Copy 'raw' content to output cache - second/final pass

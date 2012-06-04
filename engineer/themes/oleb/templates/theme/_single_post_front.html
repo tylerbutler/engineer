@@ -6,7 +6,7 @@
                     <header>
                         <h1>
                             <a href="{% if link %}{{ post.link }}{% else %}
-        {{ post.url }}{% endif %}">{{ post.title }}</a>
+        {{ post.url }}{% endif %}">{{ post.title|typogrify }}</a>
                             {% if link %}<span class="arrow">→</span>{% endif %}
                         </h1>
                     </header>

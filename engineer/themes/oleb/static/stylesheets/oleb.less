@@ -131,6 +131,10 @@ header#secondary {
         font-size: @font-size-small;
         color: @grey;
 
+        &:not(:first-child):before {
+            content: " | ";
+        }
+
         a {
             text-decoration: none;
         }

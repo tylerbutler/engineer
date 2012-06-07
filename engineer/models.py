@@ -55,33 +55,33 @@ class Post(object):
 
         metadata, self._content_raw = self._parse_source()
 
-        self.title = metadata.get('title', self.source.namebase.replace('-', ' ').replace('_', ' '))
+        self.title = metadata.pop('title', self.source.namebase.replace('-', ' ').replace('_', ' '))
         """The title of the post."""
 
-        self.slug = metadata.get('slug', slugify(self.title))
+        self.slug = metadata.pop('slug', slugify(self.title))
         """The slug for the post."""
 
-        self.tags = metadata.get('tags', [])
+        self.tags = metadata.pop('tags', [])
         """A list of strings representing the tags applied to the post."""
 
-        self.link = metadata.get('link', None)
+        self.link = metadata.pop('link', None)
         """The post's :ref:`external link <post link>`."""
 
-        self.via = metadata.get('via', None)
+        self.via = metadata.pop('via', None)
         """The post's attribution name."""
 
-        self.via_link = metadata.get('via-link', metadata.get('via_link', None))
+        self.via_link = metadata.pop('via-link', metadata.pop('via_link', None))
         """The post's attribution link."""
 
         try:
-            self.status = Status(metadata.get('status', Status.draft.name))
+            self.status = Status(metadata.pop('status', Status.draft.name))
             """The status of the post (published or draft)."""
 
         except ValueError:
             logger.warning("'%s': Invalid status value in metadata. Defaulting to 'draft'." % self.title)
             self.status = Status.draft
 
-        self.timestamp = metadata.get('timestamp', None)
+        self.timestamp = metadata.pop('timestamp', None)
         """The date/time the post was published or written."""
 
         if self.timestamp is None:
@@ -120,6 +120,10 @@ class Post(object):
 
         self.output_path = path(settings.OUTPUT_CACHE_DIR / self.timestamp_local.strftime('%Y/%m/%d') / self.slug)
         self.output_file_name = 'index.html'#'%s.html' % self.slug
+
+        # keep track of any remaining properties in the post metadata
+        metadata.pop('url', None) # remove the url property from the metadata dict before copy
+        self.custom_properties = metadata.copy()
 
         self._normalize_source()
 
@@ -228,6 +232,11 @@ class Post(object):
         for k, v in d:
             if v is not None and len(v) > 0:
                 metadata += yaml.safe_dump(dict([(k, v)]), default_flow_style=False)
+
+        # handle custom metadata
+        #for k, v in self.custom_properties:
+        metadata += '\n'
+        metadata += yaml.safe_dump(self.custom_properties, default_flow_style=False)
         return settings.JINJA_ENV.get_template(self.markdown_template_path).render(metadata=metadata,
                                                                                    content=self._content_raw)
 

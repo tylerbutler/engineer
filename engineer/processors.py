@@ -1,5 +1,6 @@
 # coding=utf-8
 import logging
+import platform
 import subprocess
 from path import path
 from engineer.conf import settings
@@ -17,8 +18,18 @@ def preprocess_less(file):
         try:
             result = subprocess.check_output(cmd)
         except subprocess.CalledProcessError as e:
-            logger.critical(e.cmd)
+            logger.critical("Error pre-processing LESS file %s." % file)
             logger.critical(e.output)
-            raise
+            exit(1355)
+        except WindowsError as e:
+            logger.critical("Unexpected error pre-processing LESS file %s." % file)
+            logger.critical(e.strerror)
+            exit(1355)
+        except Exception as e:
+            logger.critical("Unexpected error pre-processing LESS file %s." % file)
+            logger.critical(e.message)
+            if platform.system() != 'Windows':
+                logger.critical("Are you sure lessc is on your path?")
+            exit(1355)
         logger.info("Preprocessed LESS file %s." % file)
     return ""

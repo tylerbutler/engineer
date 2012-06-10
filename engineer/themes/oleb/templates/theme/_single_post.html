@@ -7,10 +7,10 @@
                 <header class="nine columns offset-by-three">
                     <h1>
                         {% if link %}
-                            <a href="{{ post.external_link }}">{{ post.title|typogrify }}</a>
+                            <a href="{{ post.external_link }}">{{ post.title|typogrify_no_widont }}</a>
                             <span class="arrow">→</span>
                         {% else %}
-                            {{ post.title|typogrify }}
+                            {{ post.title|typogrify_no_widont }}
                         {% endif %}
                     </h1>
                 </header>

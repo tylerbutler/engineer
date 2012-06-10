@@ -8,10 +8,11 @@ import times
 import yaml
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
-from typogrify.templatetags.jinja2_filters import typogrify
+from typogrify.templatetags.jinja2_filters import register
 from path import path
 from zope.cachedescriptors import property as zproperty
 from engineer.cache import SimpleFileCache
+from engineer.filters import typogrify_no_widont
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list
 from engineer.version import __version__ as version
 
@@ -274,8 +275,9 @@ class EngineerConfiguration(object):
         env.filters['date'] = format_datetime
         env.filters['localtime'] = localtime
         env.filters['naturaltime'] = naturaltime
-        env.filters['typogrify'] = typogrify
         env.filters['markdown'] = markdown_filter
+        env.filters['typogrify_no_widont'] = typogrify_no_widont
+        register(env) # register typogrify filters
 
         # Globals
         env.globals['theme'] = ThemeManager.current_theme()

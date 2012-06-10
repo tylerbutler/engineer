@@ -5,6 +5,7 @@ import re
 import times
 from markdown import markdown
 from path import path
+from typogrify import Typogrify
 from typogrify.templatetags import jinja2_filters
 
 __author__ = 'tyler@tylerbutler.com'
@@ -107,3 +108,10 @@ def compress(value):
                 #            output += tag
 
         return value
+
+def typogrify_no_widont(value):
+    value = Typogrify.amp(value)
+    value = Typogrify.smartypants(value)
+    value = Typogrify.caps(value)
+    value = Typogrify.initial_quotes(value)
+    return value

@@ -5,31 +5,31 @@
 {% endblock %}
 
 {% block section_main_content %}
-    {% if post_list %}
-        <div class="posts">
-            {% for post in post_list %}
-                {% include 'theme/_single_post_front.html' %}
-            {% endfor %}
-        </div>
-        <div class="row">
-            <div class="four columns">
+    <div class="posts">
+        {% for post in post_list %}
+            {% include 'theme/_single_post_front.html' %}
+        {% endfor %}
+    </div>
+    <div class="row">
+    <div class="twelve columns">
+        <ul class="block-grid three-up">
+            <li style="text-align: left;">
                 {% if has_next %}
                     <a href="{{ urlname('listpage', (slice_num + 1)) }}">← older posts</a>
+                {% else %}
+                    &nbsp;
                 {% endif %}
-            </div>
-            <div class="four columns" style="text-align: center;">
-                <a href="{{ urlname('archives') }}"> &mdash; archives &mdash; </a>
-            </div>
-            <div class="four columns" style="text-align: right;">
+            </li>
+            <li style="text-align: center;">
+                <a href="{{ urlname('archives') }}"> &ndash; archives &ndash; </a>
+            </li>
+            <li style="text-align: right;">
                 {% if has_previous %}
                     <a href="{{ urlname('listpage', (slice_num - 1)) }}">newer posts →</a>
+                {% else %}
+                    &nbsp;
                 {% endif %}
-            </div>
-        </div>
-    {% else %}
-        <div>
-            <h1>Hmmm, looks like there's nothing here... How about checking the
-                <a href="{{ urlname('archives') }}">archives</a>?</h1>
-        </div>
-    {% endif %}
+            </li>
+        </ul>
+    </div>
 {% endblock %}

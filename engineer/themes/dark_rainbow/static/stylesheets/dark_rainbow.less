@@ -121,12 +121,10 @@ article {
 
     h2 {
         .font-size-medium(.8, .2);
-        //font-weight: bold;
     }
 
     h3, h4, h5, h6 {
         .font-size-default(.8, .2);
-        //font-weight: bold;
     }
 
     p:first-child {
@@ -169,11 +167,11 @@ pre, code, div.codehilite {
     }
 
     ::-webkit-scrollbar-track-piece {
-        background: @bg-accent;//#d0d0d0;
+        background: @bg-accent;
     }
 
     ::-webkit-scrollbar-thumb:vertical, ::-webkit-scrollbar-thumb:horizontal {
-        background: @blue;//#999;
+        background: @blue;
         .border-radius(5px);
         display: block;
         height: 50px;
@@ -215,18 +213,15 @@ header#primary {
         .font-size-xxl(1, 0);
         .margin-calc(@line-height-double, .9, .1, -5px, -5px);
         .link-color-single(@strong-blue);
-        //float: left;
-        //.six.columns();
-        //.phone-one;
     }
 
     nav {
         .font-size-xl(1, 0);
         .margin-calc(@line-height-double, .9, .1, -1px, -5px);
         .link-color(@strong-blue, @orange);
-        text-align: right;
-        //float: right;
         .horizontal-list(0, 16px);
+        text-align: right;
+
         ul {
             li.current {
                 .link-color(@orange-burnt, @orange);
@@ -262,15 +257,11 @@ header#secondary {
 // POSTS
 @media only screen and (min-width: 767px) {
     .post-info {
-        //margin-top: 10px;
         font-family: museo-slab;
         text-align: center;
 
         .post-date {
             .font-size-default(1, 0);
-            //margin-top: 10px;
-            //margin-bottom: 10px;
-            //padding-bottom: 10px;
             text-transform: uppercase;
             @calendar-border: 1px dotted @purple;
             border-bottom: @calendar-border;
@@ -283,79 +274,6 @@ header#secondary {
                 line-height: 75px;
             }
         }
-    }
-}
-
-// Phone adjustments
-@media only screen and (max-width: 767px) {
-    header#primary {
-        padding-bottom: 0;
-
-        h1 {
-            margin-top: 0;
-            margin-bottom: 0;
-        }
-
-        nav {
-            margin-top: 0;
-            text-align: left;
-
-            ul li {
-                padding-left: 0;
-                padding-right: 16px;
-            }
-        }
-    }
-
-    .post-info {
-        .margin-calc(@line-height-default, .5, .5, 0px, 0px);
-        padding-bottom: @line-height-default * .5;
-        border-bottom: 1px dotted @purple;
-        margin-bottom: 0;
-
-        .post-date, .post-date div, div.attribution {
-            display: inline;
-        }
-
-        ul.tags {
-            display: none;
-        }
-
-        .post-date {
-            font-family: @font-heading;
-
-            .day {
-                font-size: @font-size-base;
-                line-height: @line-height-default;
-            }
-        }
-
-        .permalink, .attribution {
-            font-size: @font-size-base;
-
-            &:before{
-               // content: " • ";
-                content: " / ";
-            }
-        }
-    }
-
-    article {
-        header {
-            border-bottom: 1px dotted @purple;
-            h1 {
-                .font-size-xl(.5, .5);
-                .link-color(@green, @orange);
-            }
-        }
-    }
-}
-
-// Tablet adjustments
-@media only screen and (max-width: 950px) and (min-width: 767px) {
-    .post-info .post-date .day {
-        font-size: 50px;
-        line-height: 50px;
     }
 }
 
@@ -432,7 +350,6 @@ footer {
 .archives {
     h2 {
         .font-size-large(.2, 0);
-        //margin-top: 10px;
     }
     article {
         border-bottom: 1px dotted @purple;
@@ -478,7 +395,6 @@ ul.tags {
         display: inline-block;
         height: @line-height-default;
         line-height: @line-height-default;
-        //white-space: pre;
     }
 
     .link-color(@light-blue, @orange);
@@ -518,5 +434,82 @@ ul.tags {
             height: 4px;
             background: @bg;
         }
+    }
+}
+
+//////////////////////////////
+// PHONE LAYOUT ADJUSTMENTS //
+//////////////////////////////
+
+@media only screen and (max-width: 767px) {
+    header#primary {
+        padding-bottom: 0;
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        nav {
+            margin-top: 0;
+            text-align: left;
+
+            ul li {
+                padding-left: 0;
+                padding-right: 16px;
+            }
+        }
+    }
+
+    .post-info {
+        .margin-calc(@line-height-default, .5, .5, 0px, 0px);
+        padding-bottom: @line-height-default * .5;
+        border-bottom: 1px dotted @purple;
+        margin-bottom: 0;
+
+        .post-date, .post-date div, div.attribution {
+            display: inline;
+        }
+
+        ul.tags {
+            display: none;
+        }
+
+        .post-date {
+            font-family: @font-heading;
+
+            .day {
+                font-size: @font-size-base;
+                line-height: @line-height-default;
+            }
+        }
+
+        .permalink, .attribution {
+            font-size: @font-size-base;
+
+            &:before{
+                content: " / ";
+            }
+        }
+    }
+
+    article {
+        header {
+            border-bottom: 1px dotted @purple;
+            h1 {
+                .font-size-xl(.5, .5);
+                .link-color(@green, @orange);
+            }
+        }
+    }
+}
+
+///////////////////////////////
+// TABLET LAYOUT ADJUSTMENTS //
+///////////////////////////////
+@media only screen and (max-width: 950px) and (min-width: 767px) {
+    .post-info .post-date .day {
+        font-size: 50px;
+        line-height: 50px;
     }
 }

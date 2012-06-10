@@ -3,7 +3,7 @@
         <div class="post-info two columns">
             <div class="post-date">
                 {% with timestamp=post.timestamp_local %}
-                    <div class="month">{{ timestamp|date("%B")|upper }}</div>
+                    <div class="month">{{ timestamp|date("%b")|upper }}</div>
                     <div class="day">{{ timestamp|date("%d") }}</div>
                     <div class="year">{{ timestamp|date("%Y") }}</div>
                     <div class="permalink">

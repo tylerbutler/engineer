@@ -215,7 +215,7 @@ header#primary {
         .font-size-xxl(1, 0);
         .margin-calc(@line-height-double, .9, .1, -5px, -5px);
         .link-color-single(@strong-blue);
-        float: left;
+        //float: left;
         //.six.columns();
         //.phone-one;
     }
@@ -225,7 +225,7 @@ header#primary {
         .margin-calc(@line-height-double, .9, .1, -1px, -5px);
         .link-color(@strong-blue, @orange);
         text-align: right;
-        float: right;
+        //float: right;
         .horizontal-list(0, 16px);
         ul {
             li.current {
@@ -286,35 +286,56 @@ header#secondary {
     }
 }
 
+// Phone adjustments
 @media only screen and (max-width: 767px) {
+    header#primary {
+        padding-bottom: 0;
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        nav {
+            margin-top: 0;
+            text-align: left;
+
+            ul li {
+                padding-left: 0;
+                padding-right: 16px;
+            }
+        }
+    }
+
     .post-info {
         .margin-calc(@line-height-default, .5, .5, 0px, 0px);
         padding-bottom: @line-height-default * .5;
         border-bottom: 1px dotted @purple;
+        margin-bottom: 0;
 
         .post-date, .post-date div, div.attribution {
             display: inline;
         }
 
         ul.tags {
-            padding: 0;
-            li {
-                display: inline;
-                padding-right: 8px;
-            }
+            display: none;
         }
 
         .post-date {
             font-family: @font-heading;
-        }
 
-        .tags {
-            float: right;
+            .day {
+                font-size: @font-size-base;
+                line-height: @line-height-default;
+            }
         }
 
         .permalink, .attribution {
+            font-size: @font-size-base;
+
             &:before{
-                content: " • ";
+               // content: " • ";
+                content: " / ";
             }
         }
     }
@@ -327,6 +348,14 @@ header#secondary {
                 .link-color(@green, @orange);
             }
         }
+    }
+}
+
+// Tablet adjustments
+@media only screen and (max-width: 950px) and (min-width: 767px) {
+    .post-info .post-date .day {
+        font-size: 50px;
+        line-height: 50px;
     }
 }
 
@@ -443,6 +472,7 @@ ul.tags {
     padding: 0;
     list-style: none;
     text-align: left;
+    overflow: hidden;
 
     li {
         display: inline-block;

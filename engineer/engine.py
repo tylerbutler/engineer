@@ -337,7 +337,7 @@ def serve(args):
             return response
 
     bottle.debug(True)
-    bottle.run(app=debug_server, host='localhost', port=args.port, reloader=True)
+    bottle.run(app=debug_server, host='0.0.0.0', port=args.port, reloader=True)
 
 
 def start_emma(args):

@@ -280,6 +280,7 @@ pre, code, div.codehilite {
 
 pre {
     border: 1px solid @grey-light;
+    .border-radius(2px);
     padding: .5rem;
     margin-left: -.5rem;
 }
@@ -291,7 +292,7 @@ pre, code {
     overflow: auto;
 }
 
-p > code, em > code, strong > code {
+p > code, em > code, strong > code, li > code {
     .border-radius(2px);
     font-size: @font-main;
     white-space: nowrap;

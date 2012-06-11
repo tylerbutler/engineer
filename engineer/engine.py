@@ -139,14 +139,13 @@ def build(args=None):
     new_posts, cached_posts = LocalLoader.load_all(input=settings.POST_DIR)
     all_posts = PostCollection(new_posts + cached_posts)
 
+    to_publish = PostCollection(all_posts.published)
     if settings.PUBLISH_DRAFTS:
-        to_publish = PostCollection(all_posts.published + all_posts.drafts)
-    elif settings.PUBLISH_PENDING:
-        to_publish = PostCollection(all_posts.published + all_posts.pending)
-    elif settings.PUBLISH_REVIEW:
-        to_publish = PostCollection(all_posts.published + all_posts.review)
-    else:
-        to_publish = PostCollection(all_posts.published)
+        to_publish.extend(all_posts.drafts)
+    if settings.PUBLISH_PENDING:
+        to_publish.extend(all_posts.pending)
+    if settings.PUBLISH_REVIEW:
+        to_publish.extend(all_posts.review)
 
     if not settings.PUBLISH_PENDING and len(all_posts.pending) > 0:
         logger.warning("This site contains the following pending posts:")

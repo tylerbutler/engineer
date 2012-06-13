@@ -235,8 +235,9 @@ class Post(object):
 
         # handle custom metadata
         #for k, v in self.custom_properties:
-        metadata += '\n'
-        metadata += yaml.safe_dump(self.custom_properties, default_flow_style=False)
+        if len(self.custom_properties):
+            metadata += '\n'
+            metadata += yaml.safe_dump(self.custom_properties, default_flow_style=False)
         return settings.JINJA_ENV.get_template(self.markdown_template_path).render(metadata=metadata,
                                                                                    content=self._content_raw)
 

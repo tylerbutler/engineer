@@ -14,7 +14,7 @@ from zope.cachedescriptors.property import CachedProperty
 from engineer.conf import settings
 from engineer.exceptions import PostMetadataError
 from engineer.filters import localtime
-from engineer.util import slugify, chunk, urljoin
+from engineer.util import slugify, chunk, urljoin, wrap_list
 
 try:
     import cPickle as pickle
@@ -61,7 +61,7 @@ class Post(object):
         self.slug = metadata.pop('slug', slugify(self.title))
         """The slug for the post."""
 
-        self.tags = metadata.pop('tags', [])
+        self.tags = wrap_list(metadata.pop('tags', []))
         """A list of strings representing the tags applied to the post."""
 
         self.link = metadata.pop('link', None)

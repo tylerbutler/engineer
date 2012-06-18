@@ -7,7 +7,9 @@
 {% block section_main_content %}
     <div class="posts">
         {% for post in post_list %}
-            {% include 'theme/_single_post.html' %}
+            {% with listpage = True %}
+                {% include 'theme/_single_post.html' %}
+            {% endwith %}
         {% endfor %}
     </div>
     <div class="row archives">

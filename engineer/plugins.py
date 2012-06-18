@@ -1,4 +1,5 @@
 # coding=utf-8
+import re
 
 __author__ = 'tyler@tylerbutler.com'
 
@@ -65,3 +66,21 @@ class PostPostprocessorProvider(object):
     @staticmethod
     def process(post):
         raise NotImplementedError
+
+
+class PostBreaksProcessor(PostPostprocessorProvider):
+    _regex = re.compile(r'^(?P<teaser_content>.*)(?P<break>-- more --)(?P<rest_of_content>.*)', re.DOTALL)
+
+    @staticmethod
+    def process(post):
+        from engineer.models import Post
+
+        parsed_content = re.match(PostBreaksProcessor._regex, post.content_raw)
+        if parsed_content is None or parsed_content.group('teaser_content') is None:
+            post.content_teaser = None
+            return
+
+        post.content_teaser = Post.wrap_content(parsed_content.group('teaser_content'))
+        post.content = Post.wrap_content(parsed_content.group('teaser_content') +
+                                         parsed_content.group('rest_of_content'))
+        return

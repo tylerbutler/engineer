@@ -34,7 +34,14 @@
                         {% if link %}<span class="arrow">→</span>{% endif %}
                     </h1>
                 </header>
-                {{ post.content|safe }}
+                {% if listpage and post.content_teaser %}
+                    {{ post.content_teaser|safe }}
+                    <div>
+                        <a href="{{ post.url }}" class="button">Read more →</a>
+                    </div>
+                {% else %}
+                    {{ post.content|safe }}
+                {% endif %}
                 {% if post.via %}
                     <div class="attribution">
                         {% if post.via_link %}

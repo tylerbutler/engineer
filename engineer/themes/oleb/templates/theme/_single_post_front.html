@@ -27,7 +27,13 @@
                         {% endif %}
                                 </span>
                     {% endif %}
-                    {{ post.content|safe }}
+
+                    {% if post.content_teaser %}
+                        {{ post.content_teaser|safe }}
+                        <a href="{{ post.url }}" class="button">Read more <span class="arrow">→</span></a>
+                    {% else %}
+                        {{ post.content|safe }}
+                    {% endif %}
                 </article>
             {% endwith %}
         </div>

@@ -207,8 +207,29 @@ header#secondary {
         }
     }
 }
+
 .arrow {
     font-size: @font-size-xl;
+}
+
+a.button {
+    .border-radius();
+    border: solid 1px @grey-light;
+    background-color: @accent;
+    padding: 10px;
+    text-decoration: none;
+    margin-left: 0;
+    display: inline-block;
+
+    &:hover {
+        border-color: @blue;
+        background-color: @blue;
+        color: @white;
+    }
+
+    .arrow {
+        font-size: @font-size-medium;
+    }
 }
 
 .archives {

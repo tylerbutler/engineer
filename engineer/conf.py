@@ -184,6 +184,11 @@ class EngineerConfiguration(object):
         self.SITE_URL = config.pop('SITE_URL', 'SITE_URL')
         self.SITE_AUTHOR = config.pop('SITE_AUTHOR', None)
         self.HOME_URL = config.pop('HOME_URL', '/')
+
+        # HOME_URL must end with a slash
+        if not self.HOME_URL.endswith('/'):
+            self.HOME_URL += '/'
+
         self.STATIC_URL = config.pop('STATIC_URL', urljoin(self.HOME_URL, 'static'))
         self.ROLLUP_PAGE_SIZE = int(config.pop('ROLLUP_PAGE_SIZE', 5))
 

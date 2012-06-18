@@ -1,3 +1,6 @@
 [submodule "engineer/static/engineer/lib/tweet"]
 	path = engineer/static/engineer/lib/tweet
 	url = https://github.com/seaofclouds/tweet.git
+[submodule "engineer/static/engineer/lib/bootstrap"]
+	path = engineer/static/engineer/lib/bootstrap
+	url = git://github.com/twitter/bootstrap.git

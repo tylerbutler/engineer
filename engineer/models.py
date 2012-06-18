@@ -15,7 +15,7 @@ from engineer.conf import settings
 from engineer.exceptions import PostMetadataError
 from engineer.filters import localtime
 from engineer.plugins import PostPreprocessorProvider, PostPostprocessorProvider
-from engineer.util import slugify, chunk, urljoin, wrap_list
+from engineer.util import setonce, slugify, chunk, urljoin, wrap_list
 
 try:
     import cPickle as pickle
@@ -43,6 +43,10 @@ class Post(object):
     :param source: path to the source file for the post.
     """
     _regex = re.compile(r'^[\n|\r\n]*(?P<metadata>.+?)[\n|\r\n]*---[\n|\r\n]*(?P<content>.*)[\n|\r\n]*', re.DOTALL)
+
+    # Make _content_raw only settable once. This is just to help prevent data loss that might be caused by
+    # inadvertantly messing with this property.
+    _content_raw = setonce()
 
     @staticmethod
     def wrap_content(content):

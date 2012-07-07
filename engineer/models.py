@@ -228,7 +228,19 @@ class Post(object):
         :param all_posts: An optional :class:`PostCollection` containing all of the posts in the site.
         :return: The rendered HTML as a string.
         """
+        index = all_posts.index(self)
+        if index > 0: # has newer posts
+            newer_post = all_posts[index - 1]
+        else:
+            newer_post = None
+
+        if index < len(all_posts) - 1: # has older posts
+            older_post = all_posts[index + 1]
+        else:
+            older_post = None
         return settings.JINJA_ENV.get_template(self.html_template_path).render(post=self,
+                                                                               newer_post=newer_post,
+                                                                               older_post=older_post,
                                                                                all_posts=all_posts,
                                                                                nav_context='post')
 

@@ -51,6 +51,33 @@
                         {% endif %}
                     </div>
                 {% endif %}
+                {% if nav_context in ('post',) %}
+                    {# remember that all_posts is sorted such that newer posts have lower indexes #}
+                    {% set current_index = all_posts.index(post) %}
+                    {% set has_older = (current_index < all_posts|count - 1) %}
+                    {% set has_newer = (current_index > 0) %}
+
+                    <div class="row">
+                        <div class="twelve columns">
+                            <ul class="block-grid two-up">
+                                <li style="text-align: left;">
+                                    {% if older_post %}
+                                        <a href="{{ older_post.url }}">← {{ older_post.title }}</a>
+                                    {% else %}
+                                        &nbsp;
+                                    {% endif %}
+                                </li>
+                                <li style="text-align: right;">
+                                    {% if newer_post %}
+                                        <a href="{{ newer_post.url }}">{{ newer_post.title }} →</a>
+                                    {% else %}
+                                        &nbsp;
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
             </article>
         {% endwith %}
     {% endblock post_content %}

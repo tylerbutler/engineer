@@ -52,6 +52,26 @@
                     </div>
                 </div>
             </article>
+            <div class="row post-nav">
+                <div class="nine columns offset-by-three">
+                    <ul class="block-grid two-up">
+                        <li style="text-align: left;">
+                            {% if older_post %}
+                                <a href="{{ older_post.url }}">← {{ older_post.title }}</a>
+                            {% else %}
+                                &nbsp;
+                            {% endif %}
+                        </li>
+                        <li style="text-align: right;">
+                            {% if newer_post %}
+                                <a href="{{ newer_post.url }}">{{ newer_post.title }} →</a>
+                            {% else %}
+                                &nbsp;
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
         {% endwith %}
     {% endblock post_content %}
 </div>

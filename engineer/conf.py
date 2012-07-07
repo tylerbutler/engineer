@@ -197,6 +197,7 @@ class EngineerConfiguration(object):
         self.FEED_ITEM_LIMIT = config.pop('FEED_ITEM_LIMIT', self.ROLLUP_PAGE_SIZE)
         self.FEED_DESCRIPTION = config.pop('FEED_DESCRIPTION',
                                            'The %s most recent posts from %s.' % (self.FEED_ITEM_LIMIT, self.SITE_URL))
+        self.FEED_URL = config.pop('FEED_URL', urljoin(self.HOME_URL, 'feeds/rss.xml'))
 
         # These 'constants' are updated here so they're relative to the STATIC_URL value
         self.ENGINEER.FOUNDATION_CSS_URL = urljoin(self.STATIC_URL, 'engineer/lib/foundation/')
@@ -218,7 +219,7 @@ class EngineerConfiguration(object):
         self.URLS = {
             'home': self.HOME_URL,
             'archives': urljoin(self.HOME_URL, 'archives'),
-            'feed': urljoin(self.HOME_URL, 'feeds/rss.xml'),
+            'feed': self.FEED_URL,
             'listpage': page,
             'tag': tag,
             }

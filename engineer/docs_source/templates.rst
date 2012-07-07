@@ -171,6 +171,9 @@ template page name
     this is used to highlight the *about* and *themes* navigation links when you're visiting those template pages in
     the site.
 
+
+.. _urlname:
+
 The ``urlname`` Function
 ************************
 

@@ -25,6 +25,12 @@ You can change the theme for a site using the :attr:`~engineer.conf.EngineerConf
 See :ref:`navigation` and templates.
 
 
+...use a custom RSS feed URL, e.g. Feedburner?
+----------------------------------------------
+
+See the :attr:`~engineer.conf.EngineerConfiguration.FEED_URL` setting.
+
+
 ...add a flat page, like an 'about' or 'contact' page?
 ------------------------------------------------------
 

@@ -234,7 +234,18 @@ RSS Feed Settings
 
       **Default:** ``The FEED_ITEM_LIMIT most recent posts from SITE_TITLE.``
 
-      Controls how many posts are listed in the site RSS feed.
+      The description of the site's RSS feed.
+
+
+   .. attribute:: FEED_URL
+
+      **Default:** ``HOME_URL/feeds/rss.xml``
+
+      The URL of the site's RSS feed. This only affects the links to the feed that
+      are output in templates using :ref:`urlname('feed') <urlname>`. The feed itself
+      will still be written out to ``HOME_URL/feeds/rss.xml``, so you can
+      configure a Feedburner URL, for example, as your feed URL, and then point
+      Feedburner to ``HOME_URL/feeds/rss.xml``.
 
 
 Theme Settings

@@ -137,8 +137,8 @@ class EngineerConfiguration(object):
             self.LOG_FILE = config.pop('LOG_FILE', (self.LOG_DIR / 'build.log').abspath())
         else:
             self.LOG_FILE = config.pop('LOG_FILE',
-                (self.LOG_DIR / ('%s-%s.log' % (datetime.now().strftime('%m.%d_%H.%M.%S'),
-                                                      self.SETTINGS_FILE.name))).abspath())
+                                       (self.LOG_DIR / ('%s-%s.log' % (datetime.now().strftime('%m.%d_%H.%M.%S'),
+                                                                       self.SETTINGS_FILE.name))).abspath())
 
         self.CACHE_DIR = config.pop('CACHE_DIR', None)
         if self.CACHE_DIR is None:
@@ -272,9 +272,8 @@ class EngineerConfiguration(object):
             ,
             extensions=['jinja2.ext.with_', ],
             #'compressinja.html.HtmlCompressor'],
-            bytecode_cache=FileSystemBytecodeCache(
-                directory=self.JINJA_CACHE_DIR),
-            trim_blocks=False)
+            bytecode_cache=FileSystemBytecodeCache(directory=self.JINJA_CACHE_DIR),
+            trim_blocks=True)
 
         # Filters
         env.filters['compress'] = compress

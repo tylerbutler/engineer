@@ -20,24 +20,20 @@ def find_plugins(entrypoint):
 def load_plugins():
     """Load all plugins."""
 
-    # Themes
-    for theme, theme_path in find_plugins('engineer.themes'):
-        ThemeProvider.themes.append(theme_path)
-
-    # Post Preprocessors
-    for plugin in find_plugins('engineer/post_preprocessors'):
+    # Load registered plugin modules
+    for name, module in find_plugins('engineer.plugins'):
+        # No need to import the module manually because find_plugins will do that.
         pass
 
-    # Post Postprocessors
-    for plugin in find_plugins('engineer.post_postprocessors'):
-        pass
+        # Themes
 
-
-class ThemeProvider(object):
-    themes = []
+#    for theme, theme_path in find_plugins('engineer.themes'):
+#        ThemeProvider.themes.append(theme_path)
 
 
 class PluginMount(type):
+    """A metaclass used to identify :ref:`plugins`."""
+
     def __init__(cls, name, bases, attrs):
         if not hasattr(cls, 'plugins'):
             # This branch only executes when processing the mount point itself.
@@ -52,35 +48,76 @@ class PluginMount(type):
             cls.plugins.append(cls)
 
 
-class PostPreprocessorProvider(object):
+class ThemeProvider(object):
+    """
+    Base class for Theme :ref:`plugins`.
+
+    ThemeProvider subclasses must provide a value for :attr:`~engineer.plugins.ThemeProvider.paths`.
+
+    .. versionchanged:: 0.3.0
+    """
     __metaclass__ = PluginMount
 
-    @staticmethod
-    def process(post):
-        raise NotImplementedError
+    paths = () # empty tuple
+    """An iterable of absolute paths containing one or more :ref:`theme manifests <theme manifest>`."""
 
 
-class PostPostprocessorProvider(object):
+class PostProcessor(object):
+    """
+    Base class for Post Processor :ref:`plugins`.
+
+    PostProcessor subclasses should provide implementations for :meth:`~engineer.plugins.PostProcessor.preprocess` or
+    :meth:`~engineer.plugins.PostProcessor.postprocess` (or both) as appropriate.
+    """
     __metaclass__ = PluginMount
 
-    @staticmethod
-    def process(post):
-        raise NotImplementedError
+    @classmethod
+    def preprocess(cls, post, metadata):
+        """
+        The ``preprocess`` method is called during the Post import process, before any post metadata defaults have been
+        set. It is called before the content is converted to HTML, and prior to any :ref:`post normalization`.
+
+        :param post: The post being currently processed by Engineer. The preprocess method should use the
+            ``content_preprocessed`` attribute to get/modify the content of *post*. This ensures that preprocessors
+            from other plugins can be chained together.
+
+        :param metadata: A dict of the post metadata contained in the post source file. It contains no
+            default values - only the values contained within the post source file itself. The preprocess method can
+            add, update, or otherwise manipulate metadata prior to it being processed by Engineer manipulating this
+            parameter.
+
+        In addition, the preprocess method can add/remove/update properties on the *post* object itself as needed.
+
+        :return: The *post* and *metadata* values should be returned (as a 2-tuple) by the method.
+        """
+        return post, metadata
+
+    @classmethod
+    def postprocess(cls, post):
+        """
+        The ``postprocess`` method is called after the post has been imported and processed as well as converted to
+        HTML and output, but prior to any :ref:`post normalization`.
+
+        :param post: The post being currently processed by Engineer.
+        :return: The *post* parameter should be returned.
+        """
+        return post
 
 
-class PostBreaksProcessor(PostPostprocessorProvider):
-    _regex = re.compile(r'^(?P<teaser_content>.*)(?P<break>-- more --)(?P<rest_of_content>.*)', re.DOTALL)
+class PostBreaksProcessor(PostProcessor):
+    _regex = re.compile(r'^(?P<teaser_content>.*?)(?P<break>\s*<?!?-{2,}\s*more\s*-{2,}>?)(?P<rest_of_content>.*)',
+                        re.DOTALL)
 
-    @staticmethod
-    def process(post):
+    @classmethod
+    def preprocess(cls, post, metadata):
         from engineer.models import Post
 
-        parsed_content = re.match(PostBreaksProcessor._regex, post.content_raw)
+        parsed_content = re.match(cls._regex, post.content_preprocessed)
         if parsed_content is None or parsed_content.group('teaser_content') is None:
             post.content_teaser = None
-            return
+            return post
 
-        post.content_teaser = Post.wrap_content(parsed_content.group('teaser_content'))
-        post.content = Post.wrap_content(parsed_content.group('teaser_content') +
-                                         parsed_content.group('rest_of_content'))
-        return
+        post.content_teaser = Post.convert_to_html(parsed_content.group('teaser_content'))
+        post.content_preprocessed = str(parsed_content.group('teaser_content') +
+                                        parsed_content.group('rest_of_content'))
+        return post

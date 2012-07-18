@@ -88,6 +88,7 @@ class PluginFinder(BaseFinder):
     @classmethod
     def get_themes(cls):
         themes = []
-        for p in ThemeProvider.themes:
-            themes.extend(cls.get_from_directory(p))
+        for p in ThemeProvider.plugins:
+            for t in p.paths:
+                themes.extend(cls.get_from_directory(t))
         return themes

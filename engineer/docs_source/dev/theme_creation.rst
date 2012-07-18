@@ -33,6 +33,8 @@ A sample theme folder might look like this::
                 - post_list.html
                 - ...
 
+.. _theme manifest:
+
 Theme Manifest
 ==============
 
@@ -63,6 +65,8 @@ Theme Manifest Parameters
 
 ``self_contained`` *(optional)*
     Indicates whether the theme is self-contained or not. Defaults to ``True`` if not specified.
+
+    .. note:: This parameter is not currently used and may be deprecated in the future.
 
 
 .. _theme description:
@@ -204,36 +208,8 @@ The simplest way to share your theme is to :ref:`zip it up <zipping themes>` and
 can then download it and use it by placing it in their site's :file:`themes` directory or in another one of their
 :attr:`~EngineerConfiguration.THEME_DIRS`.
 
-
-.. _theme plugins:
-
-Theme Plugins
--------------
-
-You may wish to deliver your theme as an installable Python package. This allows users to download and install your
-theme via ``pip`` or any other tool. You can do this by wrapping your theme in a Python package and adding some
-specific entry points to your :file:`setup.py` file.
-
-In particular, within the `setup` function call in your :file:`setup.py` file, add something like the following:
-
-.. code-block:: python
-
-    entry_points={
-        'engineer.themes': ['jordanm_light=jordanm:light'],
-        }
-
-The above code registers the ``jordanm_light`` theme with Engineer. It tells Engineer that within the ``jordanm``
-module there is a property/function ``light`` that will return the path to the theme. Engineer will automatically
-find all themes registered in this way and make them available to sites.
-
-The actual Python code needed to register your theme in this way is very minimal, but it is overhead compared
-to simply downloading a theme directly. The benefit, of course, is that users can manage the installation of the
-theme alongside Engineer itself, and since the theme is globally available, users don't need to copy the theme to
-each site they want to use it in.
-
-.. versionadded:: 0.2.4
-
-.. seealso:: :ref:`plugins`
+You may wish instead to deliver your theme as an installable Python package. This allows users to download and install
+your theme via ``pip`` or any other tool. See :ref:`theme plugins` for more details.
 
 
 Add Your Theme to Engineer

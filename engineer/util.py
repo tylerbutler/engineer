@@ -37,6 +37,10 @@ def get_class( class_string ):
     return m
 
 
+def import_module(module_string):
+    """Given a string representing a path to a module, imports the module."""
+
+
 def count_iterable(i):
     return sum(1 for e in i)
 

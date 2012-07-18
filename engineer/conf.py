@@ -154,6 +154,12 @@ class EngineerConfiguration(object):
         self.JINJA_CACHE_DIR = config.pop('JINJA_CACHE_DIR', (self.CACHE_DIR / 'jinja_cache').abspath())
         self.BUILD_STATS_FILE = config.pop('BUILD_STATS_FILE', (self.CACHE_DIR / 'build_stats.cache').abspath())
 
+        # PLUGINS
+        self.PLUGINS = self.normalize_list(config.pop('PLUGINS', None))
+        if self.PLUGINS is not None:
+            for plugin in self.PLUGINS:
+                __import__(plugin)
+
         # THEMES
         self.THEME_DIRS = self.normalize_list(config.pop('THEME_DIRS', None))
         self.THEME_FINDERS = [

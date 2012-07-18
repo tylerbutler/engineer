@@ -58,6 +58,7 @@ Developer Documentation
 
    dev/pipeline
    dev/theme_creation
+   dev/plugins
    dev/macros
 
 

@@ -14,7 +14,7 @@ from zope.cachedescriptors.property import CachedProperty
 from engineer.conf import settings
 from engineer.exceptions import PostMetadataError
 from engineer.filters import localtime
-from engineer.plugins import PostPreprocessorProvider, PostPostprocessorProvider
+from engineer.plugins import PostProcessor
 from engineer.util import setonce, slugify, chunk, urljoin, wrap_list
 
 try:
@@ -49,7 +49,7 @@ class Post(object):
     _content_raw = setonce()
 
     @staticmethod
-    def wrap_content(content):
+    def convert_to_html(content):
         return typogrify(markdown.markdown(content, extensions=['extra', 'codehilite']))
 
     def __init__(self, source):
@@ -64,12 +64,12 @@ class Post(object):
 
         metadata, self._content_raw = self._parse_source()
 
-        # handle any preprocessor plugins
-        for plugin in PostPreprocessorProvider.plugins:
-            plugin.process(self)
-
         if not hasattr(self, 'content_preprocessed'):
             self.content_preprocessed = self.content_raw
+
+        # Handle any preprocessor plugins
+        for plugin in PostProcessor.plugins:
+            plugin.preprocess(self, metadata)
 
         self.title = metadata.pop('title', self.source.namebase.replace('-', ' ').replace('_', ' '))
         """The title of the post."""
@@ -117,7 +117,7 @@ class Post(object):
             # convert to UTC assuming input time is in the DEFAULT_TIMEZONE
             self.timestamp = times.to_universal(self.timestamp, settings.POST_TIMEZONE)
 
-        self.content = Post.wrap_content(self.content_preprocessed)
+        self.content = Post.convert_to_html(self.content_preprocessed)
         """The post's content in HTML format."""
 
         self.markdown_file_name = unicode.format(settings.NORMALIZE_INPUT_FILE_MASK,
@@ -142,8 +142,8 @@ class Post(object):
         self.custom_properties = metadata.copy()
 
         # handle any postprocessor plugins
-        for plugin in PostPostprocessorProvider.plugins:
-            plugin.process(self)
+        for plugin in PostProcessor.plugins:
+            plugin.postprocess(self)
 
         self._normalize_source()
 
@@ -274,7 +274,7 @@ class Post(object):
             metadata += '\n'
             metadata += yaml.safe_dump(self.custom_properties, default_flow_style=False)
         return settings.JINJA_ENV.get_template(self.markdown_template_path).render(metadata=metadata,
-                                                                                   content=self.content_preprocessed)
+                                                                                   content=self.content_raw)
 
     def __unicode__(self):
         return self.markdown_file_name

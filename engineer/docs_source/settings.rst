@@ -430,6 +430,16 @@ Miscellaneous Settings
       TODO
 
 
+   .. attribute:: PLUGINS
+
+      **Default:** None
+
+      A list of modules that contain Engineer :ref:`plugins`.
+
+      .. seealso::
+         :ref:`plugins`
+
+
 .. _settings inheritance:
 
 Settings File Inheritance

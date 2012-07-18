@@ -1,3 +1,7 @@
+{% if fence %}
+---
+
+{% endif %}
 {{ metadata|safe }}
 ---
 

@@ -42,7 +42,7 @@ class Post(object):
 
     :param source: path to the source file for the post.
     """
-    _regex = re.compile(r'^[\n|\r\n]*(?P<metadata>.+?)[\n|\r\n]*---[\n|\r\n]*(?P<content>.*)[\n|\r\n]*', re.DOTALL)
+    _regex = re.compile(r'^[\n|\r\n]*(?P<fence>---)?[\n|\r\n]*(?P<metadata>.+?)[\n|\r\n]*---[\n|\r\n]*(?P<content>.*)[\n|\r\n]*', re.DOTALL)
 
     # Make _content_raw only settable once. This is just to help prevent data loss that might be caused by
     # inadvertantly messing with this property.
@@ -61,6 +61,9 @@ class Post(object):
 
         self.markdown_template_path = 'core/post.md'
         """The path to the template to use to transform the post back into a :ref:`post source file <posts>`."""
+
+        # This will get set to `True in _parse_source if the source file has 'fenced metadata' (like Jekyll)
+        self._fence = False
 
         metadata, self._content_raw = self._parse_source()
 
@@ -196,6 +199,9 @@ class Post(object):
         if parsed_content is None or parsed_content.group('metadata') is None:
             # Parsing failed, maybe there's no metadata
             raise PostMetadataError()
+
+        if parsed_content.group('fence') is not None:
+            self._fence = True
 
         # 'Clean' the YAML section since there might be tab characters
         metadata = parsed_content.group('metadata').replace('\t', '    ')

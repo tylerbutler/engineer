@@ -144,6 +144,7 @@ class Post(object):
         # keep track of any remaining properties in the post metadata
         metadata.pop('url', None) # remove the url property from the metadata dict before copy
         self.custom_properties = metadata.copy()
+        """A dict of any custom metadata properties specified in the post."""
 
         # handle any postprocessor plugins
         for plugin in PostProcessor.plugins:

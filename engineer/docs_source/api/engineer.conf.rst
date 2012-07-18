@@ -1,6 +1,4 @@
 
-.. currentmodule:: engineer.conf
-
 =============
 engineer.conf
 =============

@@ -41,9 +41,3 @@ class TestConfig(BaseTestCase):
         s2 = EngineerConfiguration('configs/config2.yaml')
         self.assertEqual(s1.SITE_TITLE, s2.SITE_TITLE)
 
-
-#class TestCommandLine(BaseTestCase):
-#    def TestBuild(self):
-#        from engineer import engine
-#
-#        engine.build()

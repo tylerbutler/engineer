@@ -143,6 +143,9 @@ As you can see, ``navigation_link`` takes three arguments: the text to display f
 the actual URL of the link, and a list of contexts in which the link should be highlighted. A highlighted link
 simply has the ``current`` CSS class applied to it.
 
+
+.. _navigation contexts:
+
 Navigation Contexts
 *******************
 
@@ -227,6 +230,19 @@ looks like this:
            </ul>
        </nav>
    </section>
+
+
+.. _rss template:
+
+RSS and Sitemap Templates
+-------------------------
+
+If you need to customize either the RSS feed or sitemap that Engineer generates for you,
+you can provide your own templates that Engineer will use to generate them. These templates
+should be named :file:`rss.xml` and :file:`sitemap.xml` respectively, and should be in the
+root of your site's :attr:`~engineer.conf.EngineerConfiguration.TEMPLATE_DIR`.
+
+.. versionadded:: 0.3.0
 
 
 .. _template pages:

@@ -14,8 +14,8 @@ Dark Rainbow was created by `Tyler Butler <http://tylerbutler.com>`_ and is avai
 Attribution-ShareAlike 3.0 Unported License <http://creativecommons.org/licenses/by-sa/3.0/>`_.
 
 .. note::
-   :ref:`dark rainbow` uses several fonts available at TypeKit. These fonts are available as part of TypeKit's trial
-   plan.
+   By default :ref:`dark rainbow` uses several fonts available at TypeKit. These fonts are available as part of
+   TypeKit's trial plan.
 
 Settings
 ========

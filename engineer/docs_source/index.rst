@@ -46,6 +46,7 @@ Narrative Documentation
    templates
    cmdline
    emma
+   compatibility
    faq
    changelog
 

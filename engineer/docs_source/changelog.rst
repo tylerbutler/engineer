@@ -3,6 +3,42 @@
 Changelog
 =========
 
+version 0.3.0
+=============
+
+.. important::
+   The :ref:`theme plugin model <theme plugins>` has changed with version 0.3.0. Installable themes will need to be
+   changed to be compatible with the new model.
+
+- A new :ref:`plugin model <plugins>` provides a more flexible way to integrate with Engineer.
+- Posts can now have :ref:`custom metadata <post custom properties>`.
+- New :ref:`teaser content` (post breaks) support.
+- A sitemap is now generated automatically.
+- A custom RSS feed url can be specified using the :attr:`~engineer.conf.EngineerConfiguration.FEED_URL` setting.
+- Both :ref:`dark rainbow` and :ref:`oleb` now include next/previous post links.
+- Site-relative URLs for posts are now included in the post metadata during :ref:`post normalization`. This is useful
+  in some cases where you need to know the URL of a post (for example, to link to it in another post) but are offline
+  or otherwise unable to get the URL. If you put a manual URL in the post metadata,
+  it will be overwritten - it's not used to actually allocate a URL for the post.
+- Post metadata now accepts either ``via-link`` or ``via_link``. Normalized metadata will now use ``via-link`` instead
+  of ``via_link`` since the former feels more natural in YAML.
+- The build process will now output a warning if there are pending posts in the site and
+  :attr:`~engineer.conf.EngineerConfiguration.PUBLISH_PENDING` is ``False``.
+- Bundled libraries updated:
+
+  - LESS: version 1.3.0
+  - jQuery: version 1.7.1
+  - modernizr: version 2.5.3
+
+- Themes can now indicate whether they use the bundled Tweet library by setting the :ref:`use_tweet <theme use_tweet>`
+  property.
+- Fixed bug preventing some :ref:`template fragments` from being included properly in some themes.
+- The included :ref:`Development server <engineer serve>` no longer restricts requests to those coming from the same
+  machine.
+- Various build performance enhancements.
+- Several fixes to bundled theme styles, including better mobile styles in Dark Rainbow.
+
+
 version 0.2.4 - May 27, 2012
 ============================
 

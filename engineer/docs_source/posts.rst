@@ -33,6 +33,12 @@ and must be the first thing in your post file. The YAML document separator
 None of the metadata is strictly *required* since there are defaults for everything but you must have at least one
 piece of metadata in your post file.
 
+.. versionchanged:: 0.3.0
+   The metadata can now have a YAML document separator (``---``) above it as well as below it. This format is used by
+   Jekyll, and by extension, Octopress, so posts written for those systems will migrate to Engineer without problems.
+
+   .. seealso:: :ref:`compatibility`
+
 Metadata Parameters
 -------------------
 
@@ -110,7 +116,8 @@ Metadata Parameters
 ``tags``
     A list of tags to be applied to the post. Completely optional. Tags will
     be used to generate tag pages - pages with all of the posts tagged with
-    a specific tag listed.
+    a specific tag listed. You can specify a single tag or multiple tags.
+    If you specify multiple tags, they must be YAML list format.
 
 
 .. _post link:
@@ -131,14 +138,18 @@ Metadata Parameters
     string - the name of the person or site that you want to credit.
 
 
-.. _post via_link:
+.. _post via-link:
 
-``via_link``
+``via-link``
     If you want to link to a different URL as part of your attribution, you
     can provide an optional link to the blog or individual's personal site
     (or perhaps the article that linked you to the external link originally).
     Exactly how this attribution metadata is used in the site depends on the
     theme.
+
+    .. versionchanged:: 0.3.0
+       Prior to version 0.3.0, this property was ``via_link``. Both forms of
+       the property are supported in version 0.3.0+.
 
 
 .. _post normalization:
@@ -156,6 +167,18 @@ The normalization process also renames your post files to follow a standard
 format. You can disable normalization for your site using the
 :attr:`~EngineerConfiguration.NORMALIZE_INPUT_FILES` setting.
 
+.. _post custom properties:
+
+Custom Metadata
+---------------
+
+In addition to the metadata properties listed above, each post can include other
+custom metadata, specified in YAML just like regular metadata. Engineer will add
+these custom properties to the Post's :attr:`~engineer.models.Post.custom_properties`
+property, where they can be used by themes or plugins.
+
+Custom properties are not manipulated in any way by Engineer itself (though plugins
+may change/update them) and they are maintained during :ref:`post normalization`.
 
 .. _timezones:
 
@@ -224,3 +247,17 @@ align the image. For example:
         </a>
         <p>An xkcd.com comic in Reeder</p>
     </div>
+
+
+.. _teaser content:
+
+Teaser Content
+--------------
+
+Some themes support 'teaser content.' As part of a post, you can specify a break in the content. Only content before
+the break will be displayed on list pages, such as the homepage, but individual post pages will contain the full
+post.
+
+You can specify the break in your post with either ``-- more --`` or the Octopress-style ``<!-- more -->``.
+
+.. versionadded:: 0.3.0

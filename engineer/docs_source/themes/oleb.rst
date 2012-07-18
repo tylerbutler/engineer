@@ -10,7 +10,8 @@ created with his permission. The theme was written from scratch by `Tyler Butler
 Ole's site as a reference.
 
 .. note::
-   :ref:`oleb` uses several fonts available at TypeKit. These fonts are available as part of TypeKit's trial plan.
+   By default :ref:`oleb` uses several fonts available at TypeKit. These fonts are available as part of TypeKit's
+   trial plan.
 
 Settings
 ========

@@ -56,9 +56,9 @@ the code for the :func:`engineer.engine.build` function - it is the primary entr
 
    Tag pages are generated and placed in the output cache.
 
-#. **Generate feed**
+#. **Generate feed and sitemap**
 
-   The RSS feed is generated and placed in the output cache.
+   The RSS feed and sitemap are generated and placed in the output cache.
 
 #. **Copy raw content to output cache**
 

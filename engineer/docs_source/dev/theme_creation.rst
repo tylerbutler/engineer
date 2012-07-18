@@ -122,6 +122,7 @@ Theme Manifest Parameters
 ``use_tweet`` *(optional)*
     Indicates whether the theme makes use of the Tweet library included in Engineer. Defaults to ``False``.
 
+    .. versionadded:: 0.3.0
 
 .. _theme default:
 
@@ -152,6 +153,15 @@ You can of course include additional templates or template fragments, for use ei
 users of your theme can take advantage of to further customize their site.
 
 You should also ensure that your theme templates load the :ref:`built-in fragments` that Engineer users will expect.
+
+
+RSS and Sitemap Templates
+-------------------------
+
+Themes can provide custom templates for the RSS feed and sitemap, just as :ref:`individual sites can <rss template>`.
+These templates should be in the theme's :file:`templates/theme` folder.
+
+.. versionadded:: 0.3.0
 
 
 Required Styles

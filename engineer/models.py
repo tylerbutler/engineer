@@ -10,6 +10,7 @@ from dateutil import parser
 from flufl.enum._enum import Enum
 from path import path
 from typogrify.templatetags.jinja2_filters import typogrify
+from yaml.scanner import ScannerError
 from zope.cachedescriptors.property import CachedProperty
 from engineer.conf import settings
 from engineer.exceptions import PostMetadataError
@@ -205,7 +206,11 @@ class Post(object):
 
         # 'Clean' the YAML section since there might be tab characters
         metadata = parsed_content.group('metadata').replace('\t', '    ')
-        metadata = yaml.load(metadata)
+        try:
+            metadata = yaml.load(metadata)
+        except ScannerError:
+            raise PostMetadataError()
+
         if not isinstance(metadata, dict):
             raise PostMetadataError()
         content = parsed_content.group('content')

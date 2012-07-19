@@ -209,10 +209,10 @@ class Post(object):
         try:
             metadata = yaml.load(metadata)
         except ScannerError:
-            raise PostMetadataError()
+            raise PostMetadataError("YAML error parsing metadata.")
 
         if not isinstance(metadata, dict):
-            raise PostMetadataError()
+            raise PostMetadataError("Metadata isn't a dict. Instead, it's a %s." % type(metadata))
         content = parsed_content.group('content')
 
         return metadata, content

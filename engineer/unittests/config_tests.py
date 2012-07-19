@@ -25,9 +25,7 @@ class TestConfig(BaseTestCase):
         self.assertEqual(settings.HOME_URL, '/')
 
     def test_global_settings(self):
-        """
-        Tests that all EngineerConfiguration instances share state.
-        """
+        """All EngineerConfiguration instances share state"""
         from engineer.conf import settings as s1
         from engineer.conf import EngineerConfiguration
 
@@ -35,7 +33,7 @@ class TestConfig(BaseTestCase):
         self.assertEqual(s1.SITE_TITLE, s2.SITE_TITLE)
 
     def test_manual_config_yaml(self):
-        """Tests that creating an EngineerConfiguration manually also shares state with configs created other ways."""
+        """Creating an EngineerConfiguration manually also shares state with configs created other ways"""
         from engineer.conf import settings as s1
         from engineer.conf import EngineerConfiguration
 

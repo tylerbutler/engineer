@@ -3,8 +3,8 @@
 Changelog
 =========
 
-version 0.3.0
-=============
+version 0.3.0 - July 22, 2012
+=============================
 
 .. important::
    The :ref:`theme plugin model <theme plugins>` has changed with version 0.3.0. Installable themes will need to be

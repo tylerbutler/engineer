@@ -1,7 +1,7 @@
 # coding=utf-8
 from path import path
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 class SimpleFileCache(object):
     def __init__(self, version=None, *args):

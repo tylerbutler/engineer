@@ -10,7 +10,7 @@ from itertools import chain, islice
 from path import path
 from urlparse import urljoin, urlparse, urlunparse
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 _punctuation_regex = re.compile(r'[\t :!"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
 

@@ -4,7 +4,7 @@ from path import path
 from engineer.log import bootstrap
 from engineer.unittests import CopyDataTestCase, SettingsTestCase
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 test_data_root = path(__file__).dirname() / 'test_data'
 simple_site = test_data_root / 'simple_site'

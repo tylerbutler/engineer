@@ -5,7 +5,7 @@ import subprocess
 from path import path
 from engineer.conf import settings
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 logger = logging.getLogger(__name__)
 

@@ -6,7 +6,7 @@ from engineer.conf import settings
 from engineer.exceptions import ThemeNotFoundException
 from engineer.util import get_class
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 class Theme(object):
     """

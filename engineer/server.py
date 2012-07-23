@@ -4,7 +4,7 @@ from SocketServer import TCPServer
 from os import getcwd, chdir
 from engineer.conf import settings
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 def serve(path=settings.OUTPUT_DIR, port=8000):
     old_working_dir = getcwd()

@@ -3,7 +3,7 @@ import sys, platform
 import logging
 from engineer.lib.ansistrm import ColorizingStreamHandler
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 CONSOLE = 1000
 

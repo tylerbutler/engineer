@@ -4,7 +4,7 @@ from unittest.case import TestCase
 from path import path
 from engineer.log import bootstrap
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 class SettingsTestCase(TestCase):
     settings_file = None

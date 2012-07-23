@@ -10,7 +10,7 @@ try:
 except ImportError:
     import pickle
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 logger = logging.getLogger(__name__)
 

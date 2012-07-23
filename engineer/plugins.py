@@ -1,7 +1,7 @@
 # coding=utf-8
 import re
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 # Adapted from Marty Alchin: http://martyalchin.com/2008/jan/10/simple-plugin-framework/
 

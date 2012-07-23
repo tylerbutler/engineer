@@ -1,6 +1,6 @@
 # coding=utf-8
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 class ThemeNotFoundException(Exception):
     pass

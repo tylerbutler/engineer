@@ -8,7 +8,7 @@ from engineer.exceptions import ThemeDirectoryNotFoundException
 from engineer.plugins import ThemeProvider
 from engineer.themes import Theme
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 logger = getLogger('engineer.finders')
 

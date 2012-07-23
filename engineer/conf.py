@@ -16,7 +16,7 @@ from engineer.filters import typogrify_no_widont
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list
 from engineer.version import __version__ as version
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 logger = logging.getLogger(__name__)
 

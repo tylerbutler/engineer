@@ -6,7 +6,7 @@ from path import path
 from engineer.exceptions import PostMetadataError
 from engineer.models import Post
 
-__author__ = 'tyler@tylerbutler.com'
+__author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 test_data_root = path(__file__).dirname() / 'test_data'
 post_tests_dir = test_data_root / 'post_tests'

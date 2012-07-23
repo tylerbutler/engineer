@@ -35,6 +35,7 @@ can [see the source for it by adding '.text' to the URL] [src].
   [src]: http://daringfireball.net/projects/markdown/basics.text
   [gist]: http://daringfireball.net/projects/markdown/basics
 
+<!-- more -->
 
 ## Paragraphs, Headers, Blockquotes ##
 

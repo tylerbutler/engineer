@@ -58,16 +58,16 @@
                     {% set has_newer = (current_index > 0) %}
 
                     <div class="row">
-                        <div class="twelve columns">
+                        <div class="twelve columns post-links">
                             <ul class="block-grid two-up">
-                                <li style="text-align: left;">
+                                <li>
                                     {% if older_post %}
                                         <a href="{{ older_post.url }}">← {{ older_post.title }}</a>
                                     {% else %}
                                         &nbsp;
                                     {% endif %}
                                 </li>
-                                <li style="text-align: right;">
+                                <li>
                                     {% if newer_post %}
                                         <a href="{{ newer_post.url }}">{{ newer_post.title }} →</a>
                                     {% else %}

@@ -13,9 +13,9 @@
         {% endfor %}
     </div>
     <div class="row archives">
-        <div class="twelve columns">
+        <div class="twelve columns post-links">
             <ul class="block-grid three-up">
-                <li style="text-align: left;">
+                <li>
                     {% if has_next %}
                         <a href="{{ urlname('listpage', (slice_num + 1)) }}">← older posts</a>
                     {% else %}
@@ -25,7 +25,7 @@
                 <li style="text-align: center;">
                     <a href="{{ urlname('archives') }}"> &ndash; archives &ndash; </a>
                 </li>
-                <li style="text-align: right;">
+                <li>
                     {% if has_previous %}
                         <a href="{{ urlname('listpage', (slice_num - 1)) }}">newer posts →</a>
                     {% else %}

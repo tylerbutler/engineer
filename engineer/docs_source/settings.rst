@@ -27,7 +27,7 @@ settings file looks like this:
 
     POST_TIMEZONE: 'America/Los_Angeles'
 
-All top-level Engineer settings are in all caps with underscores separating words. Themes and other addons may have
+All top-level Engineer settings are in all caps with underscores separating words. Themes or other plugins may have
 their own specific settings that do not follow this convention. A comprehensive list of all the settings is below,
 but in practice only a few of them are needed.
 

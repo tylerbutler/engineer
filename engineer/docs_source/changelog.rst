@@ -23,7 +23,9 @@ version 0.3.0 - July 22, 2012
 - Post metadata now accepts either ``via-link`` or ``via_link``. Normalized metadata will now use ``via-link`` instead
   of ``via_link`` since the former feels more natural in YAML.
 - The build process will now output a warning if there are pending posts in the site and
-  :attr:`~engineer.conf.EngineerConfiguration.PUBLISH_PENDING` is ``False``.
+  :attr:`~engineer.conf.EngineerConfiguration.PUBLISH_PENDING` is ``False``. This should help remind users that
+  don't run a build automatically that they will need to run another build at a later date/time if they want the
+  pending post to actually become visible.
 - Bundled libraries updated:
 
   - LESS: version 1.3.0

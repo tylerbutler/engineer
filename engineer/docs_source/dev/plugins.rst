@@ -42,9 +42,22 @@ In particular, within the `setup` function call in your :file:`setup.py` file, a
 The above code registers two plugin modules with Engineer. Engineer will import these modules,
 and any subclasses of the plugin base classes will be automatically discovered and run with Engineer.
 
+The identifiers to the left of the equals sign (i.e. ``post_processors`` and ``themes``) can be anything at all.
+Engineer doesn't look at them or use them. For clarity, in the above example the plugins have been broken into
+different modules by type, and each module has an identifier based on the type of plugin that module contains. But
+again, this is not required. It could just as easily read:
+
+.. code-block:: python
+
+    ['foo=dotted.path.to.module',
+     'bar=another.module.path']
+
+The type of the plugin is determined by its parent class, not by its module or a specific identifier in the setup
+function.
+
 .. tip::
 
-   The only requirement to get your plugin loaded is for the module containing it to be imported. Thus,
+   The *only* requirement to get your plugin loaded is for the module containing it to be imported. Thus,
    if you have a number of plugins in different modules, you could create a wrapper module that simply imported the
    others, then sent your entry point to point to the wrapper module. When the wrapper module is imported,
    the other modules will also be imported, and then your plugins will be magically loaded.

@@ -119,9 +119,9 @@ class PostBreaksProcessor(PostProcessor):
             return post
 
         # Post is meant to be broken apart, so normalize the break marker to the HTML comment form.
-        post.content_preprocessed = str(parsed_content.group('teaser_content') +
-                                        '<!-- more -->' +
-                                        parsed_content.group('rest_of_content'))
+        post.content_preprocessed = unicode(parsed_content.group('teaser_content') +
+                                            '<!-- more -->' +
+                                            parsed_content.group('rest_of_content'))
 
         # Convert the full post to HTML, then use the regex again to split the resulting HTML post. This is needed
         # since Markdown might have links in the first half of the post that are listed at the bottom. By converting

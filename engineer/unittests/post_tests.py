@@ -118,3 +118,13 @@ class ContentTests(PostTestCase):
         post = Post(file)
 
         self.assertTrue(hasattr(post, 'content_teaser'))
+
+    def unicode_content_test(self):
+        """Unicode post content."""
+        file = post_tests_dir / 'unicode_content.md'
+
+        # Just loading the post will throw an exception if the unicode handling is broken - no need to specifically
+        # assert anything for that case.
+        post = Post(file)
+
+        self.assertIn(u"also a “unicode character” in the metadata!", post.tags)

@@ -3,6 +3,14 @@
 Changelog
 =========
 
+version 0.3.1 - August 5, 2012
+==============================
+
+- Fixes a rather nasty bug that would cause a fatal exception if there were non-ASCII characters in a post using
+  the :ref:`teaser content` (post breaks) support that was added in version 0.3.0.
+- Minor style fixes to Dark Rainbow theme.
+
+
 version 0.3.0 - July 22, 2012
 =============================
 

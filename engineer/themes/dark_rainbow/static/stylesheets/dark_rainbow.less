@@ -85,6 +85,47 @@ blockquote {
     }
 }
 
+table {
+    border: 1px solid @bg-accent;
+    border-collapse: separate;
+    border-spacing: 0;
+    .border-radius(4px);
+    .margin-calc(@line-height-default, 0, 1, -1px, -1px);
+    width: 100%;
+    max-width: 100%;
+}
+
+th {
+    font-weight: bold;
+}
+
+th, td {
+    border-left: 1px solid @bg-accent;
+    border-top: 1px solid @bg-accent;
+    vertical-align: top;
+    padding: 8px;
+    text-align: left;
+}
+
+thead {
+    tr:first-child {
+        td, th {
+            border-top: none;
+            &:first-child {
+                border-left: none;
+            }
+        }
+    }
+}
+
+tbody {
+    tr {
+        td:first-child {
+            border-left: none;
+        }
+    }
+}
+
 sup {
     .font-size-tiny();
     vertical-align: baseline;

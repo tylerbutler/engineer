@@ -143,6 +143,47 @@ header#secondary {
         font-weight: bold;
         color: @red;
     }
+
+    table {
+        border: 1px solid @grey-light;
+        border-collapse: separate;
+        border-spacing: 0;
+        .border-radius(4px);
+        margin-bottom: .5rem;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    th {
+        font-weight: bold;
+    }
+
+    th, td {
+        border-left: 1px solid @grey-light;
+        border-top: 1px solid @grey-light;
+        vertical-align: top;
+        padding: 8px;
+        text-align: left;
+    }
+
+    thead {
+        tr:first-child {
+            td, th {
+                border-top: none;
+                &:first-child {
+                    border-left: none;
+                }
+            }
+        }
+    }
+
+    tbody {
+        tr {
+            td:first-child {
+                border-left: none;
+            }
+        }
+    }
 }
 
 .rollup {

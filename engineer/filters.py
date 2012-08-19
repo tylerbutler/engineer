@@ -17,10 +17,41 @@ def format_datetime(value, format_string='%Y-%m-%d'):
 
 
 def markdown_filter(value, typogrify=True, extensions=('extra', 'codehilite')):
-    match = re.match(r'\s*', value)
-    s, e = match.span()
-    pattern = r'\n {%s}' % (e - s - 1)
-    output = re.sub(pattern, r'\n', value)
+    """
+    A smart wrapper around the ``markdown`` and ``typogrify`` functions that automatically removes leading
+    whitespace before every line. This is necessary because Markdown is whitespace-sensitive. Consider some Markdown
+    content in a template that looks like this:
+
+    ..  codeblock:: html+jinja
+        <article>
+            {% filter markdown %}
+                ## A Heading
+
+                Some content here.
+
+                    Code goes here.
+                    More lines of code
+                    And more.
+
+                Closing thoughts
+            {% endfilter %}
+        </article>
+
+    In this example, a typical Markdown filter would see the leading whitespace before the first heading and assume
+    it was a code block, which would then cause the entire Markdown document to be rendered incorrectly. You may have
+    a document with spacing like this because your text editor automatically 'pretty-prints' the markup,
+    including the content within the filter tag.
+
+    This filter automatically removes the leading whitespace - leaving code block and other expected offsets in place
+    of course - so that rendering occurs correctly regardless of the nested spacing of the source document.
+    """
+
+    # Determine how many leading spaces there are, then remove that number from the beginning of each line.
+    match = re.match(r'(\n*)(\s*)', value)
+    s, e = match.span(2)
+    pattern = re.compile(r'^ {%s}' % (e - s), # use ^ in the pattern so mid-string matches won't be removed
+                         flags=re.MULTILINE) # use multi-line mode so ^ will match the start of each line
+    output = pattern.sub(u'', value)
     if typogrify:
         return jinja2_filters.typogrify(markdown(output, extensions=extensions))
     else:
@@ -108,6 +139,7 @@ def compress(value):
                 #            output += tag
 
         return value
+
 
 def typogrify_no_widont(value):
     value = Typogrify.amp(value)

@@ -30,7 +30,9 @@
 
                     {% if post.content_teaser %}
                         {{ post.content_teaser|safe }}
-                        <a href="{{ post.url }}" class="button">Read more <span class="arrow">→</span></a>
+                        <div>
+                            <a href="{{ post.url }}" class="button">Read more <span class="arrow">→</span></a>
+                        </div>
                     {% else %}
                         {{ post.content|safe }}
                     {% endif %}

@@ -1,10 +1,12 @@
 # coding=utf-8
-from datetime import timedelta
 import times
+from datetime import timedelta
 from unittest.case import TestCase
 from path import path
 from engineer.exceptions import PostMetadataError
+from engineer.log import bootstrap
 from engineer.models import Post
+from engineer.plugins import load_plugins
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -14,6 +16,8 @@ simple_site = test_data_root / 'simple_site'
 
 class PostTestCase(TestCase):
     def setUp(self):
+        bootstrap() #bootstrap logging infrastructure
+        load_plugins() #load plugins
         from engineer.conf import settings
 
         settings.reload(settings_file=post_tests_dir / 'settings.yaml')

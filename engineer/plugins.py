@@ -1,5 +1,4 @@
 # coding=utf-8
-import re
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -20,15 +19,13 @@ def find_plugins(entrypoint):
 def load_plugins():
     """Load all plugins."""
 
+    # Ensure the built-in plugins are loaded by importing the module
+    from engineer.contrib import plugins
+
     # Load registered plugin modules
     for name, module in find_plugins('engineer.plugins'):
         # No need to import the module manually because find_plugins will do that.
         pass
-
-        # Themes
-
-#    for theme, theme_path in find_plugins('engineer.themes'):
-#        ThemeProvider.themes.append(theme_path)
 
 
 class PluginMount(type):
@@ -104,28 +101,62 @@ class PostProcessor(object):
         return post
 
 
-class PostBreaksProcessor(PostProcessor):
-    _regex = re.compile(r'^(?P<teaser_content>.*?)(?P<break>\s*<?!?-{2,}\s*more\s*-{2,}>?)(?P<rest_of_content>.*)',
-                        re.DOTALL)
+class CommandPlugin(object):
+    """
+    Base class for Command :ref:`plugins`.
+
+    Command plugins add new commands to the :ref:`cmdline`. CommandPlugin subclasses must provide an implementation
+    for :meth:`~engineer.plugins.CommandPlugin.add_command`, and can optionally override
+    the :meth:`~engineer.plugins.CommandPlugin.active` classmethod to determine whether or not the plugin should
+    actually be loaded.
+
+    .. note::
+        Because Engineer uses :mod:`argparse` for parsing out its commands, you should be somewhat familiar with
+        it in order to implement a Command plugin.
+
+    .. seealso:: :ref:`command plugin examples`
+    """
+    __metaclass__ = PluginMount
 
     @classmethod
-    def preprocess(cls, post, metadata):
-        from engineer.models import Post
+    def active(cls):
+        """
+        If this method returns ``False``, the plugin will not run and any commands added by the plugin will not
+        be available.
 
-        # First check if either form of the break marker is present using the regex
-        parsed_content = re.match(cls._regex, post.content_preprocessed)
-        if parsed_content is None or parsed_content.group('teaser_content') is None:
-            post.content_teaser = None
-            return post
+        This method can be overridden to make commands available only if certain criteria are met (for example,
+        a custom :ref:`setting<settings>`).
 
-        # Post is meant to be broken apart, so normalize the break marker to the HTML comment form.
-        post.content_preprocessed = unicode(parsed_content.group('teaser_content') +
-                                            '<!-- more -->' +
-                                            parsed_content.group('rest_of_content'))
+        :return: A boolean value indicating whether or not the plugin is active and should run. Default
+            implementation always returns ``True``.
+        """
+        return True
 
-        # Convert the full post to HTML, then use the regex again to split the resulting HTML post. This is needed
-        # since Markdown might have links in the first half of the post that are listed at the bottom. By converting
-        # the whole post to HTML first then splitting we get a correctly processed HTML teaser.
-        parsed_content = re.match(cls._regex, Post.convert_to_html(post.content_preprocessed))
-        post.content_teaser = parsed_content.group('teaser_content')
-        return post
+    @classmethod
+    def add_command(cls, subparser, main_parser, common_parser):
+        """
+        This method is called by Engineer while it is building its :class:`~argparse.ArgumentParser`,
+        allowing one to add addition parsers and subparsers to supplement the core :ref:`Engineer commands<cmdline>`.
+
+        :param subparser:
+            Since Engineer's built-in commands are subparsers, :meth:`~argparse.ArgumentParser.add_subparsers` is
+            called to generate a subparser. :mod:`argparse` only supports
+            calling :meth:`~argparse.ArgumentParser.add_subparsers` once, so the subparser object itself (the result
+            of the initial :meth:`~argparse.ArgumentParser.add_subparsers` call Engineer made when building its
+            parser) is passed in this parameter. This allows you to add either another top-level command by calling
+            ``add_parser()`` then adding arguments directly, or to create further nested commands by adding a parser
+            with additional subparsers within it.
+
+        :param main_parser:
+            The top level :class:`~argparse.ArgumentParser` used by Engineer. This is generally only useful if you're
+            using an :mod:`argparse` wrapper library such as `argh <http://packages.python.org/argh/index.html>`_ in
+            your plugin. Most wrapper libraries require the root :class:`~argparse.ArgumentParser` object to add their
+            subparsers to. If you're using :mod:`argparse` directly, you can ignore this parameter and work with
+            the ``subparser`` parameter exclusively.
+
+        :param common_parser:
+            Engineer provides several :ref:`common arguments<engineer>` for its commands. If you wish to makes these
+            arguments available for your custom commands, you should pass ``common_parser`` in
+            to ``add_parser()`` via the ``parents`` parameter.
+        """
+        raise NotImplementedError()

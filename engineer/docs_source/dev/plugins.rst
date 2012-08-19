@@ -84,4 +84,19 @@ theme alongside Engineer itself, and since the theme is globally available, user
 each site they want to use it in.
 
 
+.. _command plugins:
+
+Command Plugins
+===============
+
+.. autoclass:: engineer.plugins.CommandPlugin
+   :members:
+
+
+.. _command plugin examples:
+
+Examples
+--------
+
+
 .. _entry point: http://peak.telecommunity.com/DevCenter/setuptools#extensible-applications-and-frameworks

@@ -1,4 +1,6 @@
 
+.. _settings:
+
 ==============
 Settings Files
 ==============

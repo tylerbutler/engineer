@@ -9,6 +9,7 @@ from codecs import open
 from path import path
 from engineer.exceptions import ThemeNotFoundException
 from engineer.log import get_console_handler, bootstrap
+from engineer.plugins import CommandPlugin, load_plugins
 from engineer.util import relpath, compress
 from engineer import version
 
@@ -42,12 +43,8 @@ def build(args=None):
     from engineer.loaders import LocalLoader
     from engineer.log import get_file_handler
     from engineer.models import PostCollection, TemplatePage
-    from engineer.plugins import load_plugins
     from engineer.themes import ThemeManager
     from engineer.util import mirror_folder, ensure_exists, slugify
-
-    # Load all plugins
-    load_plugins()
 
     if args and args.clean:
         clean()
@@ -489,23 +486,33 @@ def get_argparser():
                              action='store_true',
                              help="Delete target folder contents. Use with caution!")
     parser_init.set_defaults(func=init)
+
+    for cmd_plugin in CommandPlugin.plugins:
+        if cmd_plugin.active():
+            cmd_plugin.add_command(subparsers, main_parser, common_parser)
+
     return main_parser
 
 
 def cmdline(args=sys.argv):
+    # bootstrap logging
+    bootstrap()
+
+    # Load all plugins
+    load_plugins()
+
     args = get_argparser().parse_args(args[1:])
     skip_settings = ('init',)
 
-    # bootstrap logging
-    bootstrap()
     logger = logging.getLogger('engineer')
-
     if args.verbose >= 2:
+        logger.removeHandler(get_console_handler(logging.WARNING))
         logger.addHandler(get_console_handler(logging.DEBUG))
     elif args.verbose == 1:
+        logger.removeHandler(get_console_handler(logging.WARNING))
         logger.addHandler(get_console_handler(logging.INFO))
     else:
-        logger.addHandler(get_console_handler(logging.WARNING))
+        pass # WARNING level is added by default in bootstrap method
 
     if args.parser_name in skip_settings:
         pass

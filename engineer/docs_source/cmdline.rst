@@ -1,4 +1,6 @@
 
+.. _cmdline:
+
 ====================
 Engineer Commandline
 ====================

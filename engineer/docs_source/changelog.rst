@@ -3,6 +3,14 @@
 Changelog
 =========
 
+version 0.3.2 - August 18, 2012
+===============================
+
+- Fixes a bug in the Markdown filter (used in :ref:`template pages`) that caused incorrect Markdown processing if
+  there is leading white space in the Markdown content.
+- Add table styles to included themes.
+
+
 version 0.3.1 - August 5, 2012
 ==============================
 

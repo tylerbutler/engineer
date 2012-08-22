@@ -42,7 +42,7 @@ Dark Rainbow requires the following fonts:
 - `Museo Slab <https://typekit.com/fonts/museo-slab>`_
 - `Myriad Pro <https://typekit.com/fonts/myriad-pro>`_
 - `Kulturista Web <https://typekit.com/fonts/kulturista-web>`_
-- `Anonymous Pro <https://typekit.com/fonts/anonymous-pro>`_ *(optional)*
+- `Ubuntu Mono <https://typekit.com/fonts/ubuntu-mono>`_ *(optional)*
 
 
 Templates

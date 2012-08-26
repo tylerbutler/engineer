@@ -99,7 +99,7 @@ Navigation
 ----------
 
 .. warning:: Navigation is an area of active development in Engineer. The current system is kludgy at best and I plan
-   to give it a proper overhaul in the next Engineer release.
+   to give it a proper overhaul in an upcoming Engineer release.
 
 Navigation links are critical to any website. In Engineer, the primary navigation links for your site should be put
 in the :file:`_nav_primary.html` template fragment. This file should contain an unordered list (``<ul>`` element) in

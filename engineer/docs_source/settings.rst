@@ -400,6 +400,17 @@ Miscellaneous Settings
 
 .. class:: EngineerConfiguration
 
+   .. attribute:: ACTIVE_NAV_CLASS
+
+      **Default:** ``current``
+
+      When set, active navigation links (output using the :ref:`navigation_link<navigation>` macro) will have the
+      specified class.
+
+      .. note::
+         This value can still be overridden in individual calls to ``navigation_link`` by passing an ``active_class``
+         parameter.
+
    .. attribute:: DEBUG
 
       **Default:** ``False``

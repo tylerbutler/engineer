@@ -253,6 +253,7 @@ class EngineerConfiguration(object):
         self.URLS.update(config.pop('URLS', {}))
 
         # MISCELLANEOUS SETTINGS
+        self.ACTIVE_NAV_CLASS = config.pop('ACTIVE_NAV_CLASS', 'current')
         self.DEBUG = config.pop('DEBUG', False)
         #self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
         self.NORMALIZE_INPUT_FILES = config.pop('NORMALIZE_INPUT_FILES', True)

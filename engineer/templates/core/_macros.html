@@ -25,8 +25,10 @@
     {%- endif -%}
 {%- endmacro -%}
 
-{% macro navigation_link(name, url, section) -%}
-    {#    <li>section: {{ section }}, current_section: {{ current_section }}</li>#}
-    <li{% if nav_context in section %} class="current"{% endif %}><a href="{{ url }}">
-        {{ name }}</a></li>
+{% macro navigation_link(name, url, section, active_class=None) -%}
+    {% if active_class is none %}
+        {% set active_class=settings.ACTIVE_NAV_CLASS %}
+    {% endif %}
+    <li{% if nav_context in section %} class="{{ active_class }}"{% endif %}>
+        <a href="{{ url }}">{{ name }}</a></li>
 {%- endmacro %}

@@ -17,7 +17,7 @@
 {% endblock %}
 
 {% block section_main_content %}
-    {% for year, posts in post_list|groupby('timestamp.year') %}
+    {% for year, posts in post_list|groupby('timestamp.year')|sort(reverse=True, attribute='grouper') %}
         <div class="row">
             <div class="two columns"><h2><a name="{{ year }}"></a>{{ year }}</h2></div>
             <div class="ten columns">
@@ -40,7 +40,7 @@
     <section>
         <nav>
             <ul>
-                {% for year, posts in post_list|groupby('timestamp.year') %}
+                {% for year, posts in post_list|groupby('timestamp.year')|sort(reverse=True, attribute='grouper') %}
                     <li><a href="#{{ year }}">{{ year }}</a></li>
                 {% endfor %}
             </ul>

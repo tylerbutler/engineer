@@ -3,6 +3,6 @@ title: Post Breaks
 
 Teaser
 
-<!-- more -->
+<!--more-->
 
 Full content.

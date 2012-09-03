@@ -39,8 +39,8 @@ Engineer will handle Jekyll-style metadata with no trouble, and will maintain yo
 Post Breaks
 -----------
 
-Engineer supports Octopress-style ``<!-- more -->`` post breaks in addition to the simpler ``-- more --`` Engineer
-style.
+Engineer supports Octopress-style ``<!--more-->`` post breaks in addition to the simpler ``-- more --`` Engineer
+style using the bundled :ref:`Post Breaks plugin<post breaks plugin>`.
 
 .. versionadded:: 0.3.0
 

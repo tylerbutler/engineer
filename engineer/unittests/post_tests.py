@@ -114,14 +114,14 @@ class ContentTests(PostTestCase):
         file = post_tests_dir / 'post_breaks_simple.md'
         post = Post(file)
 
-        self.assertTrue(hasattr(post, 'content_teaser'))
+        self.assertNotEqual(getattr(post, 'content_teaser', None), None)
 
     def post_breaks_octopress_test(self):
         """Post breaks of the form: <!-- more -->"""
         file = post_tests_dir / 'post_breaks_octopress.md'
         post = Post(file)
 
-        self.assertTrue(hasattr(post, 'content_teaser'))
+        self.assertNotEqual(getattr(post, 'content_teaser', None), None)
 
     def unicode_content_test(self):
         """Unicode post content."""

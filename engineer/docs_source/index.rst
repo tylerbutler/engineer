@@ -44,6 +44,7 @@ Narrative Documentation
    posts
    themes
    templates
+   bundled_plugins
    cmdline
    emma
    compatibility

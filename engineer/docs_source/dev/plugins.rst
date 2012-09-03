@@ -67,7 +67,8 @@ Post Processor Plugins
 ======================
 
 .. autoclass:: engineer.plugins.PostProcessor
-   :members: preprocess, postprocess
+   :members:
+   :inherited-members:
 
 
 .. _theme plugins:
@@ -77,6 +78,7 @@ Theme Plugins
 
 .. autoclass:: engineer.plugins.ThemeProvider
    :members:
+   :inherited-members:
 
 The actual Python code needed to register your theme as a plugin is very minimal, but it is overhead compared
 to simply downloading a theme directly. The benefit, of course, is that users can manage the installation of the
@@ -91,6 +93,7 @@ Command Plugins
 
 .. autoclass:: engineer.plugins.CommandPlugin
    :members:
+   :inherited-members:
 
 
 .. _command plugin examples:

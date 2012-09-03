@@ -1,4 +1,5 @@
 # coding=utf-8
+import logging
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -45,7 +46,14 @@ class PluginMount(type):
             cls.plugins.append(cls)
 
 
-class ThemeProvider(object):
+class PluginMixin(object):
+    @classmethod
+    def get_logger(cls):
+        """Returns a logger for the plugin."""
+        return logging.getLogger('.'.join([cls.__module__, cls.__name__]))
+
+
+class ThemeProvider(PluginMixin):
     """
     Base class for Theme :ref:`plugins`.
 
@@ -59,7 +67,7 @@ class ThemeProvider(object):
     """An iterable of absolute paths containing one or more :ref:`theme manifests <theme manifest>`."""
 
 
-class PostProcessor(object):
+class PostProcessor(PluginMixin):
     """
     Base class for Post Processor :ref:`plugins`.
 
@@ -101,7 +109,7 @@ class PostProcessor(object):
         return post
 
 
-class CommandPlugin(object):
+class CommandPlugin(PluginMixin):
     """
     Base class for Command :ref:`plugins`.
 

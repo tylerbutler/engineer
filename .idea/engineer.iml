@@ -14,9 +14,12 @@
     <orderEntry type="module" module-name="tylerbutler.com" />
   </component>
   <component name="TemplatesService">
-    <option name="templateLanguage" value="Jinja2" />
+    <option name="templateFileTypes">
+      <list>
+        <option value="JavaScript" />
+      </list>
+    </option>
     <option name="TEMPLATE_CONFIGURATION" value="Jinja2" />
-    <option name="TEMPLATES_IN_JAVASCRIPT" value="true" />
     <option name="TEMPLATE_FOLDERS">
       <list>
         <option value="$MODULE_DIR$/engineer/themes" />

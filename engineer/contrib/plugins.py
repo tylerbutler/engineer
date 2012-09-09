@@ -21,7 +21,7 @@ class PostBreaksProcessor(PostProcessor):
 
         # Post is meant to be broken apart, so normalize the break marker to the HTML comment form.
         post.content_preprocessed = unicode(parsed_content.group('teaser_content') +
-                                            '<!-- more -->' +
+                                            '\n\n<!-- more -->\n\n' +
                                             parsed_content.group('rest_of_content'))
 
         # Convert the full post to HTML, then use the regex again to split the resulting HTML post. This is needed

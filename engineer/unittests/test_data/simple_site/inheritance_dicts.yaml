@@ -1,0 +1,5 @@
+SUPER: inheritance.yaml
+
+test_dict:
+  key1: value1new
+  key3: value3

@@ -13,7 +13,7 @@ from path import path
 from zope.cachedescriptors import property as zproperty
 from engineer.cache import SimpleFileCache
 from engineer.filters import typogrify_no_widont
-from engineer.util import urljoin, slugify, ensure_exists, wrap_list
+from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive
 from engineer.version import __version__ as version
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
@@ -104,11 +104,11 @@ class EngineerConfiguration(object):
             all_configs.reverse()
             for c in all_configs[:-1]:
                 logger.debug("Loading parent configuration from %s." % path(c[1]).abspath())
-                config.update(c[0])
+                update_additive(config, c[0])
 
             # load main config
             logger.debug("Finalizing configuration from %s." % path(all_configs[-1][1]).abspath())
-            config.update(all_configs[-1][0])
+            update_additive(config, all_configs[-1][0])
 
             for param in self._required_params:
                 if param not in config:

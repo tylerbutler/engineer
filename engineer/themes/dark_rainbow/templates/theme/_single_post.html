@@ -78,6 +78,16 @@
                         </div>
                     </div>
                 {% endif %}
+                {% if not listpage and theme.comments %}
+                    <section id="comments">
+                        {% if theme.comments != 'intensedebate' %}
+                            <header>
+                                <h1>Comments</h1>
+                            </header>
+                        {% endif %}
+                        {% include '_comments.html' %}
+                    </section>
+                {% endif %}
             </article>
         {% endwith %}
     {% endblock post_content %}

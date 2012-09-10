@@ -10,9 +10,14 @@ use_modernizr: no
 use_jquery: yes
 use_tweet: yes
 
+template_dirs:
+  - '../_shared/templates/'
+
 settings:
   typekit_id: null
   twitter_id: tylerbutler
   tweet_count: 4
+  comments: ~
+  comments_account: ~
 
 self_contained: yes

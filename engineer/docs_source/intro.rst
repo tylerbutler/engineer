@@ -116,6 +116,9 @@ Components
     Engineer exposes a basic infrastructure and API that lets you create your own themes or use themes that others
     have created.
 
+**Plugin Architecture**
+
+    Engineer provides a set of :ref:`bundled plugins` plus a way to :ref:`create your own<plugins>`.
 
 Requirements and Dependencies
 =============================

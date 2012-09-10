@@ -23,6 +23,17 @@ Settings
 Dark Rainbow supports the following settings which can be configured using the
 :attr:`~engineer.conf.EngineerConfiguration.THEME_SETTINGS` setting.
 
+``comments``
+    Set this setting to enable comments on your site. Comments are off by default. You can use either
+    `Disqus <http://www.disqus.com/>`_ or `Instense Debate <https//intensedebate.com/>`_ as your comment system. To
+    use Disqus, set the ``comments`` setting to ``disqus``. To use Intense Debate instead,
+    set the ``comments`` setting to ``intensedebate``. Be sure to also set the ``comments_account`` setting properly
+    as well.
+
+``comments_account``
+    Both Disqus and Intense Debate require an account ID in order to associate comments properly with your site. Set
+    this setting to the account ID for your respective comment account.
+
 ``typekit_id``
     The ID of the TypeKit kit that should be used. Dark Rainbow uses specific fonts that should be included in the kit.
 

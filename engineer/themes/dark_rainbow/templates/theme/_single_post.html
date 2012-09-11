@@ -12,6 +12,15 @@
                     </div>
                 {% endwith %}
             </div>
+            {% if post.via %}
+                <div class="attribution">
+                    {% if post.via_link %}
+                        via <a href="{{ post.via_link }}">{{ post.via }}</a>
+                    {% else %}
+                        via {{ post.via }}
+                    {% endif %}
+                </div>
+            {% endif %}
             {% if post.tags|count > 0 %}
                 <ul class="tags">
                     {% for tag in post.tags %}
@@ -41,15 +50,6 @@
                     </div>
                 {% else %}
                     {{ post.content|safe }}
-                {% endif %}
-                {% if post.via %}
-                    <div class="attribution">
-                        {% if post.via_link %}
-                            <a href="{{ post.via_link }}">/via {{ post.via }}</a>
-                        {% else %}
-                            /via {{ post.via }}
-                        {% endif %}
-                    </div>
                 {% endif %}
                 {% if nav_context in ('post',) %}
                     {# remember that all_posts is sorted such that newer posts have lower indexes #}

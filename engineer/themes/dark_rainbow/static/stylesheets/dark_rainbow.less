@@ -19,7 +19,7 @@
 ////////////////////
 // ELEMENT STYLES //
 ////////////////////
-.link-color(@green, @orange)
+    .link-color(@green, @orange)
 
 ;
 
@@ -442,7 +442,14 @@ div.row.archives {
 }
 
 .attribution {
+    font-family: @font-main;
+    font-size: @font-size-tiny;
+    line-height: @line-height-default / 2;
+    margin-top: @line-height-default / 4;
+    padding-bottom: @line-height-default / 4;
+    color: @purple;
     .link-color(@purple, @orange);
+    border-bottom: 1px dotted @purple;
 }
 
 .arrow {
@@ -533,7 +540,7 @@ ul.tags {
         border-bottom: 1px dotted @purple;
         margin-bottom: 0;
 
-        .post-date, .post-date div, div.attribution {
+        .post-date, .post-date div, .attribution {
             display: inline;
         }
 
@@ -547,14 +554,6 @@ ul.tags {
             .day {
                 font-size: @font-size-base;
                 line-height: @line-height-default;
-            }
-        }
-
-        .permalink, .attribution {
-            font-size: @font-size-base;
-
-            &:before {
-                content: " / ";
             }
         }
     }

@@ -298,9 +298,9 @@ def update_additive(dict1, dict2):
     or you want to overwrite all values with the exact content of then you should simply use ``dict.update()``.
     """
     for key, value in dict2.items():
-        if key not in dict1.keys():
+        if key not in dict1:
             dict1[key] = value
-        else: # key in dict1.keys()
+        else: # key in dict1
             if isinstance(dict1[key], collections.Mapping):
                 assert isinstance(value, collections.Mapping)
                 update_additive(dict1[key], value)

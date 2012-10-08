@@ -7,12 +7,12 @@ jinja2>=2.6
 compressinja>=0.0.1
 pygments>=1.4
 html5lib>=0.90
-python-dateutil==1.5
+python-dateutil==1.5 # python 2.x-specific version - version 2.0+ are Python 3 only
 zope.cachedescriptors>=3.5.1
 humanize>=0.2
-bottle==0.10.9
-pytz==2011k
-times==0.4
+bottle>=0.10.9
+pytz>=2011k
+times>=0.4
 cssmin>=0.1.4
 lpjsmin>=0.4
 brownie>=0.5

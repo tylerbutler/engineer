@@ -3,7 +3,14 @@
     <title>{{ post.title }}{% if link %} →{% endif %}</title>
     <link>{% if link %}{{ post.link }}{% else %}{{ post.absolute_url }}{% endif %}</link>
     <description><![CDATA[
-            {{ post.content }}
+            {% if post.content_teaser and not settings.FEED_FULL_CONTENT %}
+                {{ post.content_teaser }}
+                <div>
+                    <a href="{{ post.absolute_url }}" class="button">Read more →</a>
+                </div>
+            {% else %}
+                {{ post.content }}
+            {% endif %}
             ]]></description>
     <pubDate>{{ post.timestamp|date("%a, %d %b %Y %H:%M:%S UTC") }}</pubDate>
     <guid>{{ post.absolute_url }}</guid>

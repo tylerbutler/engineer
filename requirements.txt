@@ -16,6 +16,7 @@ times>=0.6
 cssmin>=0.1.4
 lpjsmin>=0.4
 brownie>=0.5
+propane>=0.1.2
 
 # engineer-specific fork of typogrify
 typogrify-engineer

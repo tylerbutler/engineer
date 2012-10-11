@@ -79,6 +79,15 @@ class MetadataTests(PostTestCase):
         self.assertIsInstance(post.custom_properties['custom_list'], list)
         self.assertIsInstance(post.custom_properties['custom_dict'], dict)
 
+    def cased_metadata_test(self):
+        """Cased metadata"""
+        file = post_tests_dir / 'cased_metadata.md'
+        post = Post(file)
+
+        self.assertEqual(post.title, 'Cased Metadata')
+        self.assertEqual(post.custom_properties['customproperty'], 'custom')
+        self.assertEqual(len(post.tags), 2)
+
 
 class StatusTests(PostTestCase):
     def draft_default_test(self):

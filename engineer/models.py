@@ -5,10 +5,12 @@ import re
 import times
 import yaml
 from codecs import open
+from copy import copy
 from datetime import datetime
 from dateutil import parser
 from flufl.enum._enum import Enum
 from path import path
+from propane.datastructures import CaseInsensitiveDict
 from typogrify.templatetags.jinja2_filters import typogrify
 from yaml.scanner import ScannerError
 from zope.cachedescriptors.property import CachedProperty
@@ -143,7 +145,7 @@ class Post(object):
 
         # keep track of any remaining properties in the post metadata
         metadata.pop('url', None) # remove the url property from the metadata dict before copy
-        self.custom_properties = metadata.copy()
+        self.custom_properties = copy(metadata)
         """A dict of any custom metadata properties specified in the post."""
 
         # handle any postprocessor plugins
@@ -214,8 +216,11 @@ class Post(object):
 
         if not isinstance(metadata, dict):
             raise PostMetadataError("Metadata isn't a dict. Instead, it's a %s." % type(metadata))
-        content = parsed_content.group('content')
 
+        # Make the metadata dict case insensitive
+        metadata = CaseInsensitiveDict(metadata)
+
+        content = parsed_content.group('content')
         return metadata, content
 
     def _normalize_source(self):

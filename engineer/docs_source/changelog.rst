@@ -75,7 +75,7 @@ version 0.2.3 - May 6, 2012
 - External themes are now supported. You can place your custom theme either inside a :file:`themes` directory in your
   site's root directory or in any directory you'd like using the
   :attr:`~engineer.conf.EngineerConfiguration.THEME_DIRS` setting.
-- Themes can now specify :ref:`settings defaults <theme default>` in their manifest.
+- Themes can now specify :ref:`settings defaults <theme settings>` in their manifest.
 - :ref:`Zipped themes <zipping themes>` are now supported.
 - Multiple :option:`verbosity levels <engineer -v>` are supported by the command line script now.
 - :ref:`engineer serve` now supports a :option:`--port <serve -p>` option.

@@ -82,35 +82,35 @@ def build(args=None):
     # Copy Foundation files if used
     if theme.use_foundation:
         s = settings.ENGINEER.LIB_DIR / 'foundation'
-        t = settings.OUTPUT_STATIC_DIR / 'engineer/lib/foundation'
+        t = ensure_exists(settings.OUTPUT_STATIC_DIR / 'engineer/lib/foundation')
         mirror_folder(s, t)
         logger.debug("Copied Foundation library files.")
 
     # Copy LESS js file if needed
     if theme.use_lesscss and not settings.PREPROCESS_LESS:
         s = settings.ENGINEER.LIB_DIR / 'less-1.3.0.min.js'
-        t = settings.OUTPUT_STATIC_DIR / 'engineer/lib/'
+        t = ensure_exists(settings.OUTPUT_STATIC_DIR / 'engineer/lib/')
         s.copy(t)
         logger.debug("Copied LESS CSS files.")
 
     # Copy jQuery files if needed
     if theme.use_jquery or theme.use_tweet:
         s = settings.ENGINEER.LIB_DIR / 'jquery-1.7.1.min.js'
-        t = settings.OUTPUT_STATIC_DIR / 'engineer/lib/'
+        t = ensure_exists(settings.OUTPUT_STATIC_DIR / 'engineer/lib/')
         s.copy(t)
         logger.debug("Copied jQuery files.")
 
     # Copy Tweet files if needed
     if theme.use_tweet:
         s = settings.ENGINEER.LIB_DIR / 'tweet'
-        t = settings.OUTPUT_STATIC_DIR / 'engineer/lib/tweet'
+        t = ensure_exists(settings.OUTPUT_STATIC_DIR / 'engineer/lib/tweet')
         mirror_folder(s, t)
         logger.debug("Copied Tweet files.")
 
     # Copy modernizr files if needed
     if theme.use_modernizr:
         s = settings.ENGINEER.LIB_DIR / 'modernizr-2.5.3.min.js'
-        t = settings.OUTPUT_STATIC_DIR / 'engineer/lib/'
+        t = ensure_exists(settings.OUTPUT_STATIC_DIR / 'engineer/lib/')
         s.copy(t)
         logger.debug("Copied Modernizr files.")
 
@@ -135,6 +135,17 @@ def build(args=None):
     t = (settings.OUTPUT_STATIC_DIR / 'theme').abspath()
     mirror_folder(s, t)
     logger.debug("Copied static files for theme to %s." % relpath(t))
+
+    # Copy any theme additional content to output dir if needed
+    if theme.content_mappings:
+        logger.debug("Copying additional theme content to output cache.")
+        for s, t in theme.content_mappings.iteritems():
+            t = settings.OUTPUT_STATIC_DIR / 'theme' / t
+            if s.isdir():
+                mirror_folder(s, t)
+            else:
+                s.copy(ensure_exists(t))
+            logger.debug("Copied additional files for theme to %s." % relpath(t))
 
     # Load markdown input posts
     logger.info("Loading posts...")

@@ -2,6 +2,7 @@
 from inspect import isfunction
 import logging
 import platform
+from jinja2.loaders import ChoiceLoader
 import pytz
 import shelve
 import times
@@ -302,11 +303,12 @@ class EngineerConfiguration(object):
                 return url
 
         env = Environment(
-            loader=FileSystemLoader([self.TEMPLATE_DIR,
-                                     ThemeManager.current_theme().template_root,
-                                     #self.ENGINEER.THEMES_DIR / 'base_templates',
-                                     self.ENGINEER.TEMPLATE_DIR])
-            ,
+            loader=ChoiceLoader(
+                [FileSystemLoader([self.TEMPLATE_DIR]),
+                 ThemeManager.current_theme().template_loader,
+                 #self.ENGINEER.THEMES_DIR / 'base_templates',
+                 FileSystemLoader([self.ENGINEER.TEMPLATE_DIR])]
+            ),
             extensions=['jinja2.ext.with_', ],
             #'compressinja.html.HtmlCompressor'],
             bytecode_cache=FileSystemBytecodeCache(directory=self.JINJA_CACHE_DIR),

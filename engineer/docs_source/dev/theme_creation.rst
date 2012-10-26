@@ -124,17 +124,68 @@ Theme Manifest Parameters
 
     .. versionadded:: 0.3.0
 
-.. _theme default:
+
+.. _theme settings:
 
 ``settings`` *(optional)*
     A dictionary of all the themes-specific settings that users of your theme can provide via
     :attr:`~engineer.conf.EngineerConfiguration.THEME_SETTINGS` and their default values. If your theme supports
-    custom settings, you must specify defaults. Due to the way Engineer loads your theme settings and a user's
+    custom settings, you **must** specify defaults. Due to the way Engineer loads your theme settings and a user's
     site settings, your settings may not be created at all unless you specify them here.
 
     .. versionadded:: 0.2.3
 
     .. seealso:: :ref:`use theme settings`
+
+
+.. _theme template_dirs:
+
+``template_dirs`` *(optional)*
+    A list of paths, each relative to the path to the theme manifest file itself,
+    that should be included when searching for theme templates. These paths are in addition to the ``templates``
+    folder within the theme's folder itself, and will be searched in the order specified *after* the theme's
+    ``templates`` folder.
+
+    Like :ref:`copy_content<theme copy_content>`, this parameter is useful if you are creating multiple themes that
+    share common templates. You can specify the paths to the common templates and they will be available during the
+    build process.
+
+    .. code-block:: yaml
+
+        template_dirs:
+          - '../_shared/templates/'
+
+    .. versionadded:: 0.4.0
+
+
+.. _theme copy_content:
+
+``copy_content`` *(optional)*
+    A list of paths to files or directories that should be copied to the theme's output location during a build. This
+    is useful if you are creating multiple themes that all share some common static content (JavaScript files, images,
+    etc.). By specifying this parameter, content will be copied to a central location for you during the build
+    process so you can include it in your theme templates, LESS files, etc.
+
+    This parameter should be a 'list of lists.' Each entry in the list is a list itself containing two items. The
+    first item is the path to the file or folder that should be copied. *This path should be relative to the location
+    of the theme manifest.*
+
+    The second parameter should be the target location for the file or folder. *The target path should be relative to
+    the static/theme folder in the output folder.*
+
+    For example, consider the following ``copy_content`` parameter in a theme manifest:
+
+    .. code-block:: yaml
+
+        copy_content:
+          - ['../Font-Awesome-More/font', 'font']
+          - ['../bootswatch/img/', 'img']
+          - ['../bootstrap/js/', 'js']
+
+    In this example, the ``../Font-Awesome-More/font`` (a path relative to the location of the theme manifest file
+    itself) will be copied to ``static/theme/font``.
+
+    .. versionadded:: 0.4.0
 
 
 Required Templates

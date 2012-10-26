@@ -13,6 +13,7 @@ from path import path
 from zope.cachedescriptors import property as zproperty
 from engineer.cache import SimpleFileCache
 from engineer.filters import typogrify_no_widont
+from engineer.plugins import get_all_plugin_types
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive
 from engineer.version import __version__ as version
 
@@ -257,6 +258,11 @@ class EngineerConfiguration(object):
         self.SERVER_TIMEZONE = self.POST_TIMEZONE if config.get('SERVER_TIMEZONE',
                                                                 None) is None else config.pop('SERVER_TIMEZONE')
         self.TIME_FORMAT = config.pop('TIME_FORMAT', '%I:%M %p %A, %B %d, %Y %Z') # '%Y-%m-%d %H:%M:%S %Z%z'
+
+        # Let plugins deal with their settings in their own way if needed
+        for plugin_type in get_all_plugin_types():
+            for plugin in plugin_type.plugins:
+                config = plugin.handle_settings(config, self)
 
         # Pull any remaining settings in the config and set them as attributes on the settings object
         for k, v in config.iteritems():

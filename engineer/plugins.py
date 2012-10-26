@@ -29,6 +29,10 @@ def load_plugins():
         pass
 
 
+def get_all_plugin_types():
+    return ThemeProvider, PostProcessor, CommandPlugin
+
+
 class PluginMount(type):
     """A metaclass used to identify :ref:`plugins`."""
 
@@ -51,6 +55,10 @@ class PluginMixin(object):
     def get_logger(cls):
         """Returns a logger for the plugin."""
         return logging.getLogger('.'.join([cls.__module__, cls.__name__]))
+
+    @classmethod
+    def handle_settings(cls, config_dict, settings):
+        return config_dict
 
 
 class ThemeProvider(PluginMixin):

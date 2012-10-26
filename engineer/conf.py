@@ -27,6 +27,11 @@ permalink_styles = {
     'fulldate': '{year}/{month}/{day}/{title}/'
 }
 
+deprecated_settings = (
+    # ('SETTING_NAME', version_deprecated, 'Message.')
+	)
+	
+	
 class SettingsFileNotFoundException(Exception):
     pass
 
@@ -127,6 +132,7 @@ class EngineerConfiguration(object):
             raise SettingsFileNotFoundException("Settings file %s not found!" % settings_file)
 
     def _initialize(self, config):
+        self._check_deprecated_settings(config)
         self.ENGINEER = EngineerConfiguration._EngineerConstants()
 
         # CONTENT DIRECTORIES
@@ -267,6 +273,11 @@ class EngineerConfiguration(object):
         # Pull any remaining settings in the config and set them as attributes on the settings object
         for k, v in config.iteritems():
             setattr(self, k, v)
+
+    def _check_deprecated_settings(self, config):
+        for setting in deprecated_settings:
+            if config.pop(setting[0], None) is not None:
+                logger.warning("The %s setting was deprecated in version %s: %s" % setting)
 
     @zproperty.CachedProperty
     def OUTPUT_STATIC_DIR(self):

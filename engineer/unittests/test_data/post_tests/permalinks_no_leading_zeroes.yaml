@@ -1,0 +1,2 @@
+SUPER: settings.yaml
+PERMALINK_STYLE: '{year}/{i_month}/{i_day}/{slug}'

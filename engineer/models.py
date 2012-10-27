@@ -45,7 +45,9 @@ class Post(object):
 
     :param source: path to the source file for the post.
     """
-    _regex = re.compile(r'^[\n|\r\n]*(?P<fence>---)?[\n|\r\n]*(?P<metadata>.+?)[\n|\r\n]*---[\n|\r\n]*(?P<content>.*)[\n|\r\n]*', re.DOTALL)
+    _regex = re.compile(
+        r'^[\n|\r\n]*(?P<fence>---)?[\n|\r\n]*(?P<metadata>.+?)[\n|\r\n]*---[\n|\r\n]*(?P<content>.*)[\n|\r\n]*',
+        re.DOTALL)
 
     # Make _content_raw only settable once. This is just to help prevent data loss that might be caused by
     # inadvertantly messing with this property.
@@ -131,17 +133,24 @@ class Post(object):
                                                  self.timestamp_local.strftime('%Y-%m-%d'),
                                                  #times.format(self.timestamp, settings.DEFAULT_TIMEZONE, '%Y-%m-%d'),
                                                  self.slug)
-        self.url = unicode.format(u'{0}{1}/{2}/',
-                                  settings.HOME_URL,
-                                  self.timestamp_local.strftime('%Y/%m/%d'),
-                                  self.slug)
-        """The site-relative URL to the post."""
 
-        self.absolute_url = unicode.format(u'{0}{1}', settings.SITE_URL, self.url)
-        """The absolute URL to the post."""
-
-        self.output_path = path(settings.OUTPUT_CACHE_DIR / self.timestamp_local.strftime('%Y/%m/%d') / self.slug)
-        self.output_file_name = 'index.html'#'%s.html' % self.slug
+        # determine the URL based on the HOME_URL and the PERMALINK_STYLE settings
+        permalink = settings.PERMALINK_STYLE.format(year=unicode(self.timestamp.year),
+                                                    month=u'{0:02d}'.format(self.timestamp.month),
+                                                    day=u'{0:02d}'.format(self.timestamp.day),
+                                                    i_month=self.timestamp.month,
+                                                    i_day=self.timestamp.day,
+                                                    title=self.slug, # for Jekyll compatibility
+                                                    slug=self.slug,
+                                                    timestamp=self.timestamp,
+                                                    post=self)
+        if permalink.endswith('index.html'):
+            permalink = permalink[:-10]
+        elif permalink.endswith('.html') or permalink.endswith('/'):
+            pass
+        else:
+            permalink += '.html'
+        self._permalink = permalink
 
         # keep track of any remaining properties in the post metadata
         metadata.pop('url', None) # remove the url property from the metadata dict before copy
@@ -156,6 +165,31 @@ class Post(object):
 
         # update cache
         settings.POST_CACHE[self.source] = self
+
+    @CachedProperty
+    def url(self):
+        """The site-relative URL to the post."""
+        url = u'{home_url}{permalink}'.format(home_url=settings.HOME_URL,
+                                              permalink=self._permalink)
+        url = re.sub(r'/{2,}', r'/', url)
+        return url
+
+    @CachedProperty
+    def absolute_url(self):
+        """The absolute URL to the post."""
+        return u'{0}{1}'.format(settings.SITE_URL, self.url)
+
+    @CachedProperty
+    def output_path(self):
+        url = self._permalink
+        if url.endswith('/'):
+            url += 'index.html'
+        return path(settings.OUTPUT_CACHE_DIR / url)
+
+    @CachedProperty
+    def output_file_name(self):
+        r = self.output_path.name
+        return r
 
     @property
     def content_raw(self):

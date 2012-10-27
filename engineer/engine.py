@@ -183,7 +183,7 @@ def build(args=None):
     for post in all_posts:
         rendered_post = post.render_html(all_posts)
         ensure_exists(post.output_path)
-        with open(post.output_path / post.output_file_name, mode='wb',
+        with open(post.output_path, mode='wb',
                   encoding='UTF-8') as file:
             file.write(rendered_post)
             if post in new_posts:

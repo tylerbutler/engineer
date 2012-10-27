@@ -192,6 +192,62 @@ Site Settings
       The relative URL to your static content such as JavaScript and CSS files.
 
 
+   .. attribute:: PERMALINK_STYLE
+
+      **Default:** ``fulldate``
+
+      .. note:: While the ``fulldate`` style is the current Engineer default, this will change in an upcoming
+         version. If you wish to continue using that style, you should update your settings files to specify the
+         fulldate style rather than rely on the default.
+
+      A format string that controls how links to your posts are formatted. You can use one of the built-in permalink
+      styles (described below) or provide a custom one. Permalink format strings should use standard
+      `Python string formatting <http://docs.python.org/library/string.html#format-specification-mini-language>`_.
+      The following named parameters are available for you to use in your format string:
+
+      ``year``
+         The year portion of the post's timestamp as an integer.
+
+      ``month``
+         The month portion of the post's timestamp as string - includes a leading zero if needed.
+
+      ``day``
+         The day portion of the post's timestamp as a string - includes a leading zero if needed.
+
+      ``i_month``
+         The month portion of the post's timestamp as an integer.
+
+      ``i_day``
+         The day portion of the post's timestamp as an integer.
+
+      ``title`` (or ``slug``)
+         The post's slug.
+
+      ``timestamp``
+         The post's timestamp as a datetime.
+
+      ``post``
+         The post object itself.
+
+      Using the post and timestamp parameters you can create complex permalink styles, but for most purposes the
+      year/month/day/slug convenience parameters are enough and simpler to use.
+
+      **Built-in styles:**
+
+      Engineer also provides some styles you can use directly. Simply use the name of the style below instead of
+      defining your own.
+
+      +--------------+----------------------------------------------+
+      | Style        | Format String                                |
+      +==============+==============================================+
+      | ``pretty``   | ``{year}/{month}/{title}/``                  |
+      +--------------+----------------------------------------------+
+      | ``fulldate`` | ``{year}/{month}/{day}/{title}/``            |
+      +--------------+----------------------------------------------+
+      | ``slugdate`` | ``{year}/{month}/{day}/{title}.html``        |
+      +--------------+----------------------------------------------+
+
+
    .. attribute:: SITE_AUTHOR
 
       **Default:** ``None``

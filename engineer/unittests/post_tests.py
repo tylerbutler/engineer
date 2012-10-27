@@ -141,3 +141,85 @@ class ContentTests(PostTestCase):
         post = Post(file)
 
         self.assertIn(u"also a “unicode character” in the metadata!", post.tags)
+
+
+class PermalinkTests(PostTestCase):
+    def test_fulldate(self):
+        from engineer.conf import settings
+
+        settings.reload(post_tests_dir / 'permalinks_fulldate.yaml')
+        file = post_tests_dir / 'tag_multiple.md'
+        post = Post(file)
+
+        self.assertEqual(post.url, '/test/2012/09/04/tag-multiple/')
+        self.assertEqual(post.output_file_name, 'index.html')
+
+    def test_slug(self):
+        from engineer.conf import settings
+
+        settings.reload(post_tests_dir / 'permalinks_slug.yaml')
+        file = post_tests_dir / 'tag_multiple.md'
+        post = Post(file)
+
+        self.assertEqual(post.url, '/test/2012/09/04/tag-multiple.html')
+        self.assertEqual(post.output_file_name, 'tag-multiple.html')
+
+    def test_pretty(self):
+        from engineer.conf import settings
+
+        settings.reload(post_tests_dir / 'permalinks_pretty.yaml')
+        file = post_tests_dir / 'tag_multiple.md'
+        post = Post(file)
+
+        self.assertEqual(post.url, '/test/2012/09/tag-multiple/')
+        self.assertEqual(post.output_file_name, 'index.html')
+
+    def test_timestamp_custom(self):
+        from engineer.conf import settings
+
+        settings.reload(post_tests_dir / 'permalinks_timestamp_custom.yaml')
+        file = post_tests_dir / 'tag_multiple.md'
+        post = Post(file)
+
+        self.assertEqual(post.url, '/test/2012-09-04/tag-multiple.html')
+        self.assertEqual(post.output_file_name, 'tag-multiple.html')
+
+    def test_leading_slash(self):
+        from engineer.conf import settings
+
+        settings.reload(post_tests_dir / 'permalinks_leading_slash.yaml')
+        file = post_tests_dir / 'tag_multiple.md'
+        post = Post(file)
+
+        self.assertEqual(post.url, '/test/2012-09-04/tag-multiple.html')
+        self.assertEqual(post.output_file_name, 'tag-multiple.html')
+
+    def test_no_end_slash(self):
+        from engineer.conf import settings
+
+        settings.reload(post_tests_dir / 'permalinks_no_end_slash.yaml')
+        file = post_tests_dir / 'tag_multiple.md'
+        post = Post(file)
+
+        self.assertEqual(post.url, '/test/test/tag-multiple.html')
+        self.assertEqual(post.output_file_name, 'tag-multiple.html')
+
+    def test_end_slash(self):
+        from engineer.conf import settings
+
+        settings.reload(post_tests_dir / 'permalinks_end_slash.yaml')
+        file = post_tests_dir / 'tag_multiple.md'
+        post = Post(file)
+
+        self.assertEqual(post.url, '/test/test/tag-multiple/')
+        self.assertEqual(post.output_file_name, 'index.html')
+
+    def test_no_leading_zeroes(self):
+        from engineer.conf import settings
+
+        settings.reload(post_tests_dir / 'permalinks_no_leading_zeroes.yaml')
+        file = post_tests_dir / 'tag_multiple.md'
+        post = Post(file)
+
+        self.assertEqual(post.url, '/test/2012/9/4/tag-multiple.html')
+        self.assertEqual(post.output_file_name, 'tag-multiple.html')

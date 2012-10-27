@@ -1,0 +1,2 @@
+SUPER: settings.yaml
+PERMALINK_STYLE: '/{timestamp:%Y-%m-%d}/{slug}.html'

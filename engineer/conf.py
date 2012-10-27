@@ -20,6 +20,12 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 logger = logging.getLogger(__name__)
 
+permalink_styles = {
+    'slug': '{year}/{month}/{day}/{title}.html',
+    'pretty': '{year}/{month}/{title}/',
+    'fulldate': '{year}/{month}/{day}/{title}/'
+}
+
 class SettingsFileNotFoundException(Exception):
     pass
 
@@ -196,6 +202,13 @@ class EngineerConfiguration(object):
             self.HOME_URL += '/'
 
         self.STATIC_URL = config.pop('STATIC_URL', urljoin(self.HOME_URL, 'static'))
+
+        # starting in version 0.5, the default permalink style will change to 'pretty'
+        permalink_setting = config.pop('PERMALINK_STYLE', None)
+        if permalink_setting is None:
+            self.PERMALINK_STYLE = permalink_styles['fulldate']
+        else:
+            self.PERMALINK_STYLE = permalink_styles.get(permalink_setting, permalink_setting)
         self.ROLLUP_PAGE_SIZE = int(config.pop('ROLLUP_PAGE_SIZE', 5))
 
         # RSS FEED SETTINGS

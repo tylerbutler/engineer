@@ -19,5 +19,6 @@ settings:
   tweet_count: 4
   comments: ~
   comments_account: ~
+  simple_search: yes
 
 self_contained: yes

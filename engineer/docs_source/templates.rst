@@ -87,7 +87,7 @@ sample content for your site's sidebar and navigation.
 
        .. code-block:: jinja
 
-          {% include 'core/_powered_by.html' %}
+          {% include 'snippets/_powered_by.html' %}
 
        That will insert a little 'Powered by Engineer' link into your footer. Don't feel obligated to do this,
        of course, but if you do I really do appreciate it!
@@ -218,18 +218,8 @@ The :file:`_sidebar.html` should contain HTML markup you wish to display in a si
 should be wrapped in a ``<section>`` container as appropriate. For example, the sample site :file:`_sidebar.html`
 looks like this:
 
-.. code-block:: html+jinja
-
-   <section>
-       <p>Welcome to the Engineer sample site.</p>
-       <hr/>
-       <nav>
-           <ul>
-               <li><a href="{{ urlname('about') }}">about</a></li>
-               <li><a href="{{ urlname('themes') }}">themes</a></li>
-           </ul>
-       </nav>
-   </section>
+.. literalinclude:: ../sample_site/templates/_sidebar.html
+   :language: html+jinja
 
 
 .. _rss template:
@@ -243,6 +233,21 @@ should be named :file:`rss.xml` and :file:`sitemap.xml` respectively, and should
 root of your site's :attr:`~engineer.conf.EngineerConfiguration.TEMPLATE_DIR`.
 
 .. versionadded:: 0.3.0
+
+
+Snippets
+========
+
+In addition to :ref:`template fragments`, some themes might provide 'snippets': small pieces of content or layout
+that you might want to include in your sidebar, footer, etc. For example, the :ref:`dark rainbow` theme provides
+snippets for a search bar and RSS feed links to include in your sidebar. Also, the 'Powered by Engineer' footer is a
+snippet. By convention, snippets are placed in the 'snippets' folder. Because some themes might not provide snippets,
+you should use the ``ignore missing`` command when including them in your site. For example:
+
+.. literalinclude:: ../sample_site/templates/_sidebar.html
+   :language: html+jinja
+
+.. versionadded:: 0.4.0
 
 
 .. _template pages:

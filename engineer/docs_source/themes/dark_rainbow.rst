@@ -44,6 +44,14 @@ Dark Rainbow supports the following settings which can be configured using the
 ``tweet_count``
     The number of tweets to include in the Twitter sidebar. *Defaults to 4 if not provided.*
 
+``simple_search``
+    A boolean indicating whether simple search should be enabled for the site. *Defaults to true.*
+
+    Note that if you have customized your sidebar, you must include the ``_search.html`` snippet in your sidebar file
+    or the search box will not be visible. See :ref:`dark rainbow snippets` for more information.
+
+    .. versionadded:: 0.4.0
+
 
 Fonts
 =====
@@ -77,20 +85,42 @@ Inheritable Templates
 
 Dark Rainbow includes several base templates that sites can inherit from to create :ref:`template pages`.
 
-:file:`template_page_simple`
+:file:`template_page_simple.html`
+    A simple template page layout that includes the default site sidebar.
 
-A simple template page layout that includes the default site sidebar.
-
-:file:`template_page_no_sidebar`
-
-A simple template page layout that removes the default site sidebar, devoting the entire page to the template page
-content.
+:file:`template_page_no_sidebar.html`
+    A simple template page layout that removes the default site sidebar, devoting the entire page to the template page
+    content.
 
 
 Template Fragments
 ------------------
 
 Dark Rainbow does not support any additional :ref:`template fragments` beyond those available for all Engineer sites.
+
+
+.. _dark rainbow snippets:
+
+Snippets
+--------
+
+Dark Rainbow provides some small snippets that can be included in the sidebar of your site. These snippets are designed
+to be used in the sidebar, so using them is as simple as including them in your site's :ref:`_sidebar.html<sidebar>`
+template fragment. In order to maintain maximum compatibility with themes that might not provide these same widgets,
+you should specify ``ignore missing`` on the ``include`` directive.
+
+For example, the Engineer sample site includes these widgets like so:
+
+.. literalinclude:: ../../sample_site/templates/_sidebar.html
+   :language: html+jinja
+
+The following snippets are available:
+
+:file:`snippets/_feed_links.html`
+    Adds a link to your RSS feed.
+
+:file:`snippets/_search.html`
+    Adds a search box to your site sidebar.
 
 
 Metadata

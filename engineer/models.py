@@ -142,7 +142,7 @@ class Post(object):
                                                     i_day=self.timestamp.day,
                                                     title=self.slug, # for Jekyll compatibility
                                                     slug=self.slug,
-                                                    timestamp=self.timestamp,
+                                                    timestamp=self.timestamp_local,
                                                     post=self)
         if permalink.endswith('index.html'):
             permalink = permalink[:-10]

@@ -1,33 +1,38 @@
 # coding=utf-8
-import times
+import os
 from datetime import timedelta
-from unittest.case import TestCase
+
+import times
 from path import path
+
 from engineer.exceptions import PostMetadataError
 from engineer.log import bootstrap
 from engineer.models import Post
 from engineer.plugins import load_plugins
+from engineer.unittests import CopyDataTestCase
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 test_data_root = path(__file__).dirname() / 'test_data'
-post_tests_dir = test_data_root / 'post_tests'
-simple_site = test_data_root / 'simple_site'
 
-class PostTestCase(TestCase):
+class PostTestCase(CopyDataTestCase):
     def setUp(self):
-        bootstrap() #bootstrap logging infrastructure
-        load_plugins() #load plugins
         from engineer.conf import settings
 
-        settings.reload(settings_file=post_tests_dir / 'settings.yaml')
+        bootstrap()  #bootstrap logging infrastructure
+        load_plugins()  #load plugins
+        self.source_path = test_data_root
+        os.chdir(self.copied_data_path)
+        self.post_tests_dir = self.copied_data_path / 'post_tests'
+
+        settings.reload(self.post_tests_dir / 'settings.yaml')
         settings.create_required_directories()
 
 
 class MetadataTests(PostTestCase):
     def default_metadata_test(self):
         """Metadata defaults"""
-        file = post_tests_dir / 'fenced_metadata.md'
+        file = self.post_tests_dir / 'fenced_metadata.md'
         post = Post(file)
 
         self.assertNotEqual(post.slug, None)
@@ -36,20 +41,20 @@ class MetadataTests(PostTestCase):
 
     def missing_metadata_test(self):
         """Missing metadata"""
-        file = post_tests_dir / 'missing_metadata.md'
+        file = self.post_tests_dir / 'missing_metadata.md'
         with self.assertRaises(PostMetadataError):
             Post(file)
 
     def fenced_metadata_test(self):
         """Fenced metadata"""
-        file = post_tests_dir / 'fenced_metadata.md'
+        file = self.post_tests_dir / 'fenced_metadata.md'
         post = Post(file)
 
         self.assertEqual(post._fence, True)
 
     def single_tag_test(self):
         """Single tag"""
-        file = post_tests_dir / 'tag_single.md'
+        file = self.post_tests_dir / 'tag_single.md'
         post = Post(file)
 
         self.assertEqual(post.tags, ['single'])
@@ -57,7 +62,7 @@ class MetadataTests(PostTestCase):
 
     def multiple_tag_test(self):
         """Multiple tags"""
-        file = post_tests_dir / 'tag_multiple.md'
+        file = self.post_tests_dir / 'tag_multiple.md'
         post = Post(file)
 
         self.assertEqual(len(post.tags), 3)
@@ -65,14 +70,14 @@ class MetadataTests(PostTestCase):
 
     def no_custom_properties_test(self):
         """No custom properties"""
-        file = post_tests_dir / 'fenced_metadata.md'
+        file = self.post_tests_dir / 'fenced_metadata.md'
         post = Post(file)
 
         self.assertEqual(post.custom_properties, {})
 
     def custom_properties_test(self):
         """Custom properties"""
-        file = post_tests_dir / 'custom_properties.md'
+        file = self.post_tests_dir / 'custom_properties.md'
         post = Post(file)
 
         self.assertEqual(len(post.custom_properties), 2)
@@ -81,7 +86,7 @@ class MetadataTests(PostTestCase):
 
     def cased_metadata_test(self):
         """Cased metadata"""
-        file = post_tests_dir / 'cased_metadata.md'
+        file = self.post_tests_dir / 'cased_metadata.md'
         post = Post(file)
 
         self.assertEqual(post.title, 'Cased Metadata')
@@ -92,7 +97,7 @@ class MetadataTests(PostTestCase):
 class StatusTests(PostTestCase):
     def draft_default_test(self):
         """Draft default status"""
-        file = post_tests_dir / 'fenced_metadata.md'
+        file = self.post_tests_dir / 'fenced_metadata.md'
         post = Post(file)
 
         self.assertTrue(post.is_draft)
@@ -100,7 +105,7 @@ class StatusTests(PostTestCase):
 
     def published_test(self):
         """Published status"""
-        file = post_tests_dir / 'published.md'
+        file = self.post_tests_dir / 'published.md'
         post = Post(file)
 
         self.assertTrue(post.is_published)
@@ -108,7 +113,7 @@ class StatusTests(PostTestCase):
 
     def pending_test(self):
         """Pending status"""
-        file = post_tests_dir / 'published.md'
+        file = self.post_tests_dir / 'published.md'
         post = Post(file)
         post.timestamp = times.now() + timedelta(days=1)
 
@@ -120,21 +125,21 @@ class StatusTests(PostTestCase):
 class ContentTests(PostTestCase):
     def post_breaks_simple_test(self):
         """Post breaks of the form: -- more --"""
-        file = post_tests_dir / 'post_breaks_simple.md'
+        file = self.post_tests_dir / 'post_breaks_simple.md'
         post = Post(file)
 
         self.assertNotEqual(getattr(post, 'content_teaser', None), None)
 
     def post_breaks_octopress_test(self):
         """Post breaks of the form: <!-- more -->"""
-        file = post_tests_dir / 'post_breaks_octopress.md'
+        file = self.post_tests_dir / 'post_breaks_octopress.md'
         post = Post(file)
 
         self.assertNotEqual(getattr(post, 'content_teaser', None), None)
 
     def unicode_content_test(self):
         """Unicode post content."""
-        file = post_tests_dir / 'unicode_content.md'
+        file = self.post_tests_dir / 'unicode_content.md'
 
         # Just loading the post will throw an exception if the unicode handling is broken - no need to specifically
         # assert anything for that case.
@@ -147,8 +152,8 @@ class PermalinkTests(PostTestCase):
     def test_fulldate(self):
         from engineer.conf import settings
 
-        settings.reload(post_tests_dir / 'permalinks_fulldate.yaml')
-        file = post_tests_dir / 'tag_multiple.md'
+        settings.reload(self.post_tests_dir / 'permalinks_fulldate.yaml')
+        file = self.post_tests_dir / 'tag_multiple.md'
         post = Post(file)
 
         self.assertEqual(post.url, '/test/2012/09/04/tag-multiple/')
@@ -157,8 +162,8 @@ class PermalinkTests(PostTestCase):
     def test_slug(self):
         from engineer.conf import settings
 
-        settings.reload(post_tests_dir / 'permalinks_slug.yaml')
-        file = post_tests_dir / 'tag_multiple.md'
+        settings.reload(self.post_tests_dir / 'permalinks_slug.yaml')
+        file = self.post_tests_dir / 'tag_multiple.md'
         post = Post(file)
 
         self.assertEqual(post.url, '/test/2012/09/04/tag-multiple.html')
@@ -167,8 +172,8 @@ class PermalinkTests(PostTestCase):
     def test_pretty(self):
         from engineer.conf import settings
 
-        settings.reload(post_tests_dir / 'permalinks_pretty.yaml')
-        file = post_tests_dir / 'tag_multiple.md'
+        settings.reload(self.post_tests_dir / 'permalinks_pretty.yaml')
+        file = self.post_tests_dir / 'tag_multiple.md'
         post = Post(file)
 
         self.assertEqual(post.url, '/test/2012/09/tag-multiple/')
@@ -177,8 +182,8 @@ class PermalinkTests(PostTestCase):
     def test_timestamp_custom(self):
         from engineer.conf import settings
 
-        settings.reload(post_tests_dir / 'permalinks_timestamp_custom.yaml')
-        file = post_tests_dir / 'tag_multiple.md'
+        settings.reload(self.post_tests_dir / 'permalinks_timestamp_custom.yaml')
+        file = self.post_tests_dir / 'tag_multiple.md'
         post = Post(file)
 
         self.assertEqual(post.url, '/test/2012-09-04/tag-multiple.html')
@@ -187,8 +192,8 @@ class PermalinkTests(PostTestCase):
     def test_leading_slash(self):
         from engineer.conf import settings
 
-        settings.reload(post_tests_dir / 'permalinks_leading_slash.yaml')
-        file = post_tests_dir / 'tag_multiple.md'
+        settings.reload(self.post_tests_dir / 'permalinks_leading_slash.yaml')
+        file = self.post_tests_dir / 'tag_multiple.md'
         post = Post(file)
 
         self.assertEqual(post.url, '/test/2012-09-04/tag-multiple.html')
@@ -197,8 +202,8 @@ class PermalinkTests(PostTestCase):
     def test_no_end_slash(self):
         from engineer.conf import settings
 
-        settings.reload(post_tests_dir / 'permalinks_no_end_slash.yaml')
-        file = post_tests_dir / 'tag_multiple.md'
+        settings.reload(self.post_tests_dir / 'permalinks_no_end_slash.yaml')
+        file = self.post_tests_dir / 'tag_multiple.md'
         post = Post(file)
 
         self.assertEqual(post.url, '/test/test/tag-multiple.html')
@@ -207,8 +212,8 @@ class PermalinkTests(PostTestCase):
     def test_end_slash(self):
         from engineer.conf import settings
 
-        settings.reload(post_tests_dir / 'permalinks_end_slash.yaml')
-        file = post_tests_dir / 'tag_multiple.md'
+        settings.reload(self.post_tests_dir / 'permalinks_end_slash.yaml')
+        file = self.post_tests_dir / 'tag_multiple.md'
         post = Post(file)
 
         self.assertEqual(post.url, '/test/test/tag-multiple/')
@@ -217,8 +222,8 @@ class PermalinkTests(PostTestCase):
     def test_no_leading_zeroes(self):
         from engineer.conf import settings
 
-        settings.reload(post_tests_dir / 'permalinks_no_leading_zeroes.yaml')
-        file = post_tests_dir / 'tag_multiple.md'
+        settings.reload(self.post_tests_dir / 'permalinks_no_leading_zeroes.yaml')
+        file = self.post_tests_dir / 'tag_multiple.md'
         post = Post(file)
 
         self.assertEqual(post.url, '/test/2012/9/4/tag-multiple.html')

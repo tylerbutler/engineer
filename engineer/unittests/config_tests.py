@@ -1,6 +1,10 @@
 # coding=utf-8
+import logging
 import os
+
 from path import path
+from testfixtures import LogCapture
+
 from engineer.log import bootstrap
 from engineer.plugins import load_plugins
 from engineer.unittests import CopyDataTestCase, SettingsTestCase
@@ -61,3 +65,18 @@ class TestConfig(BaseTestCase):
             'key3': 'value3'
         }
         self.assertEqual(settings.test_dict, expected)
+
+    def test_deprecated_settings(self):
+        from engineer.conf import settings
+
+        with LogCapture('engineer.conf', level=logging.WARNING) as log_output:
+            settings.reload('deprecated_settings.yaml')
+            log_output.check(
+                ('engineer.conf',
+                 'CONSOLE',
+                 "Loading configuration from %s\deprecated_settings.yaml." % self.copied_data_path),
+                ('engineer.conf', 'WARNING', "The 'NORMALIZE_INPUT_FILES' setting was deprecated in version 0.4: This "
+                                             "setting is now ignored."),
+                ('engineer.conf', 'WARNING', "The 'NORMALIZE_INPUT_FILE_MASK' setting was deprecated in version 0.4: "
+                                             "This setting is now ignored.")
+            )

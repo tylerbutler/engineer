@@ -32,7 +32,7 @@ version 0.3.0 - July 22, 2012
 - A sitemap is now generated automatically.
 - A custom RSS feed url can be specified using the :attr:`~engineer.conf.EngineerConfiguration.FEED_URL` setting.
 - Both :ref:`dark rainbow` and :ref:`oleb` now include next/previous post links.
-- Site-relative URLs for posts are now included in the post metadata during :ref:`post normalization`. This is useful
+- Site-relative URLs for posts are now included in the post metadata during post normalization. This is useful
   in some cases where you need to know the URL of a post (for example, to link to it in another post) but are offline
   or otherwise unable to get the URL. If you put a manual URL in the post metadata,
   it will be overwritten - it's not used to actually allocate a URL for the post.

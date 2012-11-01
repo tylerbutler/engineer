@@ -63,8 +63,7 @@ These settings control the location on the local file system where Engineer shou
       **Default:** ``[SETTINGS_DIR/posts]``
 
       A list of paths that contain :doc:`posts` for the site. You can specify a single path here or multiple paths.
-      When specifying multiple paths the files will always be processed (and :ref:`normalized <post normalization>`,
-      if applicable) in their original directory.
+      When specifying multiple paths the files will always be processed in their original directory.
 
       .. seealso::
          :ref:`build pipeline`
@@ -427,16 +426,16 @@ Miscellaneous Settings
 
    .. attribute:: NORMALIZE_INPUT_FILES
 
-      **Default:** ``True``
-
-      Turns :ref:`post normalization` on or off.
+      .. deprecated:: 0.4.0
+         This setting is now ignored. Use :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA`
+         and :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA_CONFIG` instead.
 
 
    .. attribute:: NORMALIZE_INPUT_FILE_MASK
 
-      **Default:** ``({0}){1}-{2}.md``
-
-      TODO
+      .. deprecated:: 0.4.0
+         This setting is now ignored. Use :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA`
+         and :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA_CONFIG` instead.
 
 
    .. attribute:: PUBLISH_DRAFTS

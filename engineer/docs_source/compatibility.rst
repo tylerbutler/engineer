@@ -31,7 +31,7 @@ separator, like so:
 
 Engineer, in contrast, does not require the metadata to be preceded by a ``---``. However,
 Engineer will handle Jekyll-style metadata with no trouble, and will maintain your post format during
-:ref:`post normalization`.
+:ref:`metadata finalization`.
 
 .. versionadded:: 0.3.0
 

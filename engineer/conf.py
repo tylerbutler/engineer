@@ -13,6 +13,7 @@ from typogrify.templatetags.jinja2_filters import register
 from path import path
 from zope.cachedescriptors import property as zproperty
 from engineer.cache import SimpleFileCache
+from engineer.enums import Status
 from engineer.filters import typogrify_no_widont
 from engineer.plugins import get_all_plugin_types
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive
@@ -29,7 +30,9 @@ permalink_styles = {
 }
 
 deprecated_settings = (
-    # ('SETTING_NAME', version_deprecated, 'Message.')
+        # ('SETTING_NAME', version_deprecated, 'Message.')
+        ('NORMALIZE_INPUT_FILES', 0.4, 'This setting is now ignored.'),
+        ('NORMALIZE_INPUT_FILE_MASK', 0.4, 'This setting is now ignored.')
 	)
 	
 	
@@ -249,7 +252,7 @@ class EngineerConfiguration(object):
             'feed': self.FEED_URL,
             'listpage': page,
             'tag': tag,
-            }
+        }
         # Update URLs from the config setting if they're present
         self.URLS.update(config.pop('URLS', {}))
 
@@ -257,8 +260,6 @@ class EngineerConfiguration(object):
         self.ACTIVE_NAV_CLASS = config.pop('ACTIVE_NAV_CLASS', 'current')
         self.DEBUG = config.pop('DEBUG', False)
         #self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
-        self.NORMALIZE_INPUT_FILES = config.pop('NORMALIZE_INPUT_FILES', True)
-        self.NORMALIZE_INPUT_FILE_MASK = config.pop('NORMALIZE_INPUT_FILE_MASK', u'({0}){1}-{2}.md')
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
         self.PUBLISH_PENDING = config.pop('PUBLISH_PENDING', False)
         self.PUBLISH_REVIEW = config.pop('PUBLISH_REVIEW', False)
@@ -279,7 +280,7 @@ class EngineerConfiguration(object):
     def _check_deprecated_settings(self, config):
         for setting in deprecated_settings:
             if config.pop(setting[0], None) is not None:
-                logger.warning("The %s setting was deprecated in version %s: %s" % setting)
+                logger.warning("The '%s' setting was deprecated in version %s: %s" % setting)
 
     @zproperty.CachedProperty
     def OUTPUT_STATIC_DIR(self):

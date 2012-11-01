@@ -31,7 +31,8 @@ and must be the first thing in your post file. The YAML document separator
 (``---``) separates the post content and metadata.
 
 None of the metadata is strictly *required* since there are defaults for everything but you must have at least one
-piece of metadata in your post file.
+piece of metadata in your post file. In addition, Engineer will automatically update the metadata in your source post
+file during a build. This behavior is customizable; see the :ref:`metadata finalization` plugin for more information.
 
 .. versionchanged:: 0.3.0
    The metadata can now have a YAML document separator (``---``) above it as well as below it. This format is used by
@@ -117,7 +118,7 @@ Metadata Parameters
     A list of tags to be applied to the post. Completely optional. Tags will
     be used to generate tag pages - pages with all of the posts tagged with
     a specific tag listed. You can specify a single tag or multiple tags.
-    If you specify multiple tags, they must be YAML list format.
+    If you specify multiple tags, they must be in YAML list format.
 
 
 .. _post link:
@@ -152,21 +153,6 @@ Metadata Parameters
        the property are supported in version 0.3.0+.
 
 
-.. _post normalization:
-
-Metadata Normalization
-----------------------
-
-By default, Engineer normalizes your post metadata when it builds your site.
-This process rewrites the metadata, filling in any of the 'canonical'
-properties with default values if they're missing. For example,
-if you didn't provide a timestamp, then Engineer would add one and rewrite
-your post metadata section to include the timestamp it set for you.
-
-The normalization process also renames your post files to follow a standard
-format. You can disable normalization for your site using the
-:attr:`~EngineerConfiguration.NORMALIZE_INPUT_FILES` setting.
-
 .. _post custom properties:
 
 Custom Metadata
@@ -178,7 +164,8 @@ these custom properties to the Post's :attr:`~engineer.models.Post.custom_proper
 property, where they can be used by themes or plugins.
 
 Custom properties are not manipulated in any way by Engineer itself (though plugins
-may change/update them) and they are maintained during :ref:`post normalization`.
+may change/update them) and they are maintained during :ref:`metadata finalization`.
+
 
 .. _timezones:
 

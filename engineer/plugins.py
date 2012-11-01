@@ -87,8 +87,8 @@ class PostProcessor(PluginMixin):
     @classmethod
     def preprocess(cls, post, metadata):
         """
-        The ``preprocess`` method is called during the Post import process, before any post metadata defaults have been
-        set. It is called before the content is converted to HTML, and prior to any :ref:`post normalization`.
+        The ``preprocess`` method is called during the Post import process, before any post metadata defaults
+        have been set.
 
         :param post: The post being currently processed by Engineer. The preprocess method should use the
             ``content_preprocessed`` attribute to get/modify the content of *post*. This ensures that preprocessors
@@ -109,7 +109,7 @@ class PostProcessor(PluginMixin):
     def postprocess(cls, post):
         """
         The ``postprocess`` method is called after the post has been imported and processed as well as converted to
-        HTML and output, but prior to any :ref:`post normalization`.
+        HTML and output.
 
         :param post: The post being currently processed by Engineer.
         :return: The *post* parameter should be returned.

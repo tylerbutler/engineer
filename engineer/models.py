@@ -118,12 +118,6 @@ class Post(object):
         self.content = Post.convert_to_html(self.content_preprocessed)
         """The post's content in HTML format."""
 
-        self.markdown_file_name = unicode.format(settings.NORMALIZE_INPUT_FILE_MASK,
-                                                 self.status.name[:1],
-                                                 self.timestamp_local.strftime('%Y-%m-%d'),
-                                                 #times.format(self.timestamp, settings.DEFAULT_TIMEZONE, '%Y-%m-%d'),
-                                                 self.slug)
-
         # determine the URL based on the HOME_URL and the PERMALINK_STYLE settings
         permalink = settings.PERMALINK_STYLE.format(year=unicode(self.timestamp.year),
                                                     month=u'{0:02d}'.format(self.timestamp.month),
@@ -150,8 +144,6 @@ class Post(object):
         # handle any postprocessor plugins
         for plugin in PostProcessor.plugins:
             plugin.postprocess(self)
-
-        self._normalize_source()
 
         # update cache
         settings.POST_CACHE[self.source] = self
@@ -247,21 +239,6 @@ class Post(object):
         content = parsed_content.group('content')
         return metadata, content
 
-    def _normalize_source(self):
-        if settings.NORMALIZE_INPUT_FILES:
-            output = self.render_markdown()
-            output_filename = (self.source.dirname() / self.markdown_file_name).abspath()
-            with open(output_filename, mode='wb', encoding='UTF-8') as file:
-                file.write(output)
-
-            if self.source.abspath() != output_filename:
-                # remove the original source file unless it has
-                # the same name as the new target file
-                self.source.remove_p()
-
-            self.source = output_filename
-        return
-
     def render_html(self, all_posts=None):
         """
         Renders the Post as HTML using the template specified in :attr:`html_template_path`.
@@ -285,40 +262,8 @@ class Post(object):
                                                                                all_posts=all_posts,
                                                                                nav_context='post')
 
-    def render_markdown(self):
-        """
-        Renders the post as Markdown using the template specified in :attr:`markdown_template_path`.
-
-        This method is used to output a post during the :ref:`post normalization` process.
-        """
-
-        # A hack to guarantee the YAML output is in a sensible order.
-        d = (
-            ('title', self.title),
-            ('status', self.status.name),
-            ('timestamp', self.timestamp_local.strftime(settings.TIME_FORMAT)),
-            ('url', self.url),
-            ('link', self.link),
-            ('via', self.via),
-            ('via-link', self.via_link),
-            ('slug', self.slug),
-            ('tags', self.tags),
-            )
-
-        metadata = ''
-        for k, v in d:
-            if v is not None and len(v) > 0:
-                metadata += yaml.safe_dump(dict([(k, v)]), default_flow_style=False)
-
-        # handle custom metadata
-        if len(self.custom_properties):
-            metadata += '\n'
-            metadata += yaml.safe_dump(self.custom_properties, default_flow_style=False)
-        return settings.JINJA_ENV.get_template(self.markdown_template_path).render(metadata=metadata,
-                                                                                   content=self.content_raw)
-
     def __unicode__(self):
-        return self.markdown_file_name
+        return self.slug
 
     __repr__ = __unicode__
 

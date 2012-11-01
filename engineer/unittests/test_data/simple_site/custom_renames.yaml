@@ -1,0 +1,5 @@
+SUPER: config.yaml
+
+POST_RENAME_CONFIG:
+  draft: ~
+  review: '{year}-{month}-{day}-{slug}.md'

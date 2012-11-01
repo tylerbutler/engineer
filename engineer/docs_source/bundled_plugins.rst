@@ -96,10 +96,9 @@ setting.
          :ref:`metadata finalization`, :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA`
 
 
-.. versionchanged:: 0.4.0
-   Prior to version 0.4.0, this process also renamed files and was far less customizable. In versions
-   0.4.0+, post files will no longer be renamed by this plugin and it can be easily disabled with the
-   :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA`setting.
+.. versionadded:: 0.4.0
+   In version 0.4.0, the old post normalization process has been superceded by the
+   :ref:`metadata finalization` and :ref:`post renamer plugin` plugins.
 
 
 .. _post breaks plugin:
@@ -121,4 +120,80 @@ Engineer settings file.
 The Post Breaks plugin does not need to be activated in any way; it always runs but has no effect on posts that don't
 include a break marker.
 
+.. versionadded:: 0.3.0
+
 .. seealso:: :ref:`compatibility`
+
+
+.. _post renamer plugin:
+
+Post Renamer
+============
+
+It can be handy when your post source files have names that tell you a little about the post itself. While you can
+obviously name post files whatever you like, Engineer can automatically rename your files during the build process to
+help keep things organized. When combined with :ref:`metadata finalization`, Engineer can do a lot of heavy lifting
+to keep your posts organized and easy to manage.
+
+The Post Renamer plugin is enabled by default, and can be disabled by setting the ``POST_RENAME_ENABLED`` setting to
+false. When enabled, the plugin uses the ``POST_RENAME_CONFIG`` setting to determine how to rename files. This
+configuration setting is similar in form to the :attr:`~engineer.conf.EngineerConfiguration.PERMALINK_STYLE``
+setting, and specifies a mapping of :ref:`post status<post status>` to a rename format string.
+
+For example, the default ``POST_RENAME_CONFIG`` setting is:
+
+.. code-block:: yaml
+
+    POST_RENAME_CONFIG:
+      draft: '({status}) {slug}.md'
+      review: '({status}) {year}-{month}-{day} {slug}.md'
+      published: '({status_short}) {year}-{month}-{day} {slug}.md'
+
+With this configuration, a draft post with the title "Welcome to Engineer" would be renamed to
+``(draft) welcome-to-engineer.md``. The format strings should follow standard
+`Python string formatting <http://docs.python.org/library/string.html#format-specification-mini-language>`_ rules.
+The following named parameters are available for you to use in your format string:
+
+``year``
+    The year portion of the post's timestamp as an integer.
+
+``month``
+    The month portion of the post's timestamp as string - includes a leading zero if needed.
+
+``day``
+    The day portion of the post's timestamp as a string - includes a leading zero if needed.
+
+``i_month``
+    The month portion of the post's timestamp as an integer.
+
+``i_day``
+    The day portion of the post's timestamp as an integer.
+
+``slug``
+    The post's slug.
+
+``status``
+    The post's status as a string (e.g. ``draft``).
+
+``status_short``
+    The post's status in a short form (e.g. ``d`` for ``draft``, ``p`` for ``published``, etc.).
+
+``timestamp``
+    The post's timestamp as a datetime.
+
+``post``
+    The post object itself.
+
+If you wish for posts of a certain status to not be renamed at all, simply use a ``~`` ( tilde - YAML's equivalent to
+``None`` or null) in your ``POST_RENAME_CONFIG`` setting. For example, the following setting will not rename draft
+and review posts, but will rename published posts according to the default configuration:
+
+.. code-block:: yaml
+
+    POST_RENAME_CONFIG:
+      draft: ~
+      review: ~
+
+.. versionadded:: 0.4.0
+   In version 0.4.0, the old post normalization process has been superceded by the
+   :ref:`metadata finalization` and :ref:`post renamer plugin` plugins.

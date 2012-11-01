@@ -5,8 +5,9 @@ import re
 import yaml
 from path import path
 
-from engineer.plugins import PostProcessor
 from engineer.enums import Status
+from engineer.plugins import PostProcessor
+from engineer.util import ensure_exists
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -127,3 +128,76 @@ class FinalizationPlugin(PostProcessor):
             metadata += yaml.safe_dump(dict(post.custom_properties), default_flow_style=False)
         return settings.JINJA_ENV.get_template(post.markdown_template_path).render(metadata=metadata,
                                                                                    content=post.content_raw)
+
+
+class PostRenamerPlugin(PostProcessor):
+    enabled_setting_name = 'POST_RENAME_ENABLED'
+    config_setting_name = 'POST_RENAME_CONFIG'
+    default_config = {
+        Status.published: u'({status_short}) {year}-{month}-{day} {slug}.md',
+        Status.draft: u'({status}) {slug}.md',
+        Status.review: u'({status}) {year}-{month}-{day} {slug}.md'
+    }
+
+    @classmethod
+    def handle_settings(cls, config_dict, settings):
+        logger = cls.get_logger()
+        if not config_dict.pop(cls.enabled_setting_name, True):
+            setattr(settings, cls.enabled_setting_name, False)
+            return config_dict
+        else:
+            setattr(settings, cls.enabled_setting_name, True)
+
+        plugin_config = config_dict.pop(cls.config_setting_name, None)
+        if plugin_config is None:
+            plugin_config = cls.default_config
+        else:
+            custom_config = dict([(Status(k), v) for k, v in plugin_config.iteritems()])
+            plugin_config = cls.default_config.copy()
+            plugin_config.update(custom_config)
+
+        logger.debug("Setting the %s setting to %s." % (cls.config_setting_name, plugin_config))
+        setattr(settings, cls.config_setting_name, plugin_config)
+        return config_dict
+
+    @classmethod
+    def postprocess(cls, post):
+        from engineer.conf import settings
+
+        logger = cls.get_logger()
+
+        if not hasattr(settings, cls.config_setting_name):
+            logger.debug("Post Renamer plugin disabled.")
+            return post  # early return - plugin is disabled
+
+        config = getattr(settings, cls.config_setting_name)
+        mask = config[post.status]
+        if mask is None:
+            logger.debug("Not renaming post '%s' since its status is configured to be ignored." % post)
+            return post
+
+        new_file_name = mask.format(year=unicode(post.timestamp.year),
+                                    month=u'{0:02d}'.format(post.timestamp.month),
+                                    day=u'{0:02d}'.format(post.timestamp.day),
+                                    i_month=post.timestamp.month,
+                                    i_day=post.timestamp.day,
+                                    timestamp=post.timestamp_local,
+                                    status=post.status.name,
+                                    status_short=post.status.name[:1],
+                                    slug=post.slug,
+                                    post=post)
+        new_file = post.source.parent / new_file_name
+
+        if new_file == post.source:
+            logger.debug("No need to rename post '%s'; it already has the correct name." % post)
+            return post
+
+        if new_file.exists():
+            logger.warning("Couldn't rename post '%s' to %s. A file with that name already exists. Skipping it." %
+                           (post.title, new_file.abspath()))
+            return post
+
+        post.source.rename(new_file)
+        post.source = new_file
+        logger.info("Renamed post '%s' to %s." % (post.title, new_file.abspath()))
+        return post

@@ -271,6 +271,7 @@ class EngineerConfiguration(object):
         # Let plugins deal with their settings in their own way if needed
         for plugin_type in get_all_plugin_types():
             for plugin in plugin_type.plugins:
+                logger.debug("Calling handle_settings on plugin: %s. config dict is: %s" % (plugin, config))
                 config = plugin.handle_settings(config, self)
 
         # Pull any remaining settings in the config and set them as attributes on the settings object

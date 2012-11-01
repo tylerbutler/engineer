@@ -8,13 +8,13 @@ from codecs import open
 from copy import copy
 from datetime import datetime
 from dateutil import parser
-from flufl.enum._enum import Enum
 from path import path
 from propane.datastructures import CaseInsensitiveDict
 from typogrify.templatetags.jinja2_filters import typogrify
 from yaml.scanner import ScannerError
 from zope.cachedescriptors.property import CachedProperty
 from engineer.conf import settings
+from engineer.enums import Status
 from engineer.exceptions import PostMetadataError
 from engineer.filters import localtime
 from engineer.plugins import PostProcessor
@@ -28,16 +28,6 @@ except ImportError:
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 logger = logging.getLogger(__name__)
-
-class Status(Enum):
-    """Enum representing the status of a :class:`~Post`."""
-    draft = 0 #: Post is a draft.
-    published = 1 #: Post is published.
-    review = 2 #: Post is in review.
-
-    def __reduce__(self):
-        return 'Status'
-
 
 class Post(object):
     """

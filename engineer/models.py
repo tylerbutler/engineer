@@ -69,7 +69,7 @@ class Post(object):
         for plugin in PostProcessor.plugins:
             plugin.preprocess(self, metadata)
 
-        self.title = metadata.pop('title', self.source.namebase.replace('-', ' ').replace('_', ' '))
+        self.title = metadata.pop('title', self.source.namebase.replace('-', ' ').replace('_', ' ').title())
         """The title of the post."""
 
         self.slug = metadata.pop('slug', slugify(self.title))

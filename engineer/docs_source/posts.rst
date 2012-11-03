@@ -258,6 +258,7 @@ Some themes support 'teaser content.' As part of a post, you can specify a break
 the break will be displayed on list pages, such as the homepage, but individual post pages will contain the full
 post.
 
-You can specify the break in your post with either ``-- more --`` or the Octopress-style ``<!-- more -->``.
+You can specify the break in your post with either ``-- more --`` or the Octopress-style ``<!-- more -->``. See
+:ref:`post breaks plugin` for more information.
 
 .. versionadded:: 0.3.0

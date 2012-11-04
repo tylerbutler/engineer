@@ -222,3 +222,64 @@ and review posts, but will rename published posts according to the default confi
 
 .. versionchanged:: 0.4.2
    The plugin is now disabled by default. Renaming post files caused confusion and headaches for new Engineer users.
+   
+
+.. _global links plugin:
+
+Global/Shared Links
+===================
+
+If you find yourself often inserting the same links in your posts, you might benefit from using the Global Links
+plugin. Using this plugin, you can create a list of common links and store them in a file along with your site
+settings. You can reference these links in any post; they are always available to all posts.
+
+Usage
+-----
+
+Activating the Plugin
+~~~~~~~~~~~~~~~~~~~~~
+
+In order to use global links, you first need to do two things:
+
+1. Create a file to store the links. This file can be anywhere, but it is generally easiest to put it alongside your
+   site's :ref:`settings file(s)<settings>`. The convention is to call the file ``global_links.md`` but this is by no
+   means required.
+2. Set the ``GLOBAL_LINKS_FILE`` setting in your settings file. It should be set to the path of your global
+   links file. It can either be an absolute path, or a path *relative to the location of the settings file.*
+
+Once you have done this, the links in the file you created in step 1 will be available to all posts.
+
+
+Adding Links
+~~~~~~~~~~~~
+
+The Global Links plugin utilizes a feature in Markdown called '`reference-style links`_'. Reference-style links look
+like this:
+
+.. code-block:: text
+
+   This is an example of a [reference-style link][rsl]. You can also use implicit link names like [Google][] if you
+   prefer.
+
+   [rsl]: http://daringfireball.net/projects/markdown/syntax#link
+   [Google]: http://www.google.com
+
+As you can see, reference-style links allow you to link to things using definitions defined later in the Markdown
+document. The Global Links plugin simply takes advantage of this. If you put the following in your
+``GLOBAL_LINKS_FILE``, it will be available to all posts:
+
+.. code-block:: text
+
+   [rsl]: http://daringfireball.net/projects/markdown/syntax#link
+   [Google]: http://www.google.com
+
+Then you can write your posts and reference the links defined in your ``GLOBAL_LINKS_FILE``.
+
+.. tip::
+   The Global Links plugin isn't limited to just links. You can also put `abbreviations`_ or even `footnotes`_
+   (though I can't think of any reason why you'd want to use 'global footnotes'), in your ``GLOBAL_LINKS_FILE``,
+   and it will be available to your posts.
+
+.. _`reference-style links`: http://daringfireball.net/projects/markdown/syntax#link
+.. _`abbreviations`: http://packages.python.org/Markdown/extensions/abbreviations.html
+.. _`footnotes`: http://packages.python.org/Markdown/extensions/footnotes.html

@@ -1,8 +1,9 @@
 # coding=utf-8
-from codecs import open
 import re
+from codecs import open
 
 import yaml
+from path import path
 
 from engineer.enums import Status
 from engineer.plugins.core import PostProcessor
@@ -255,3 +256,35 @@ class PostRenamerPlugin(PostProcessor):
         post.source = new_file
         logger.info("Renamed post '%s' to %s." % (post.title, new_file.abspath()))
         return post
+
+
+class GlobalLinksPlugin(PostProcessor):
+    setting_name = 'GLOBAL_LINKS_FILE'
+    not_enabled_log_message = "Settings don't include a %s setting, " \
+                              "so Global Links plugin will not run." % setting_name
+    file_not_found_message = "%s %s not found. Global Links plugin will not run."
+    error_displayed = False  # flag so 'file not found' error is only displayed once per build
+
+    @classmethod
+    def preprocess(cls, post, metadata):
+        from engineer.conf import settings
+
+        logger = cls.get_logger()
+        if not hasattr(settings, cls.setting_name):
+            logger.info(cls.not_enabled_log_message)
+            return post, metadata  # early return
+
+        file_path = path(getattr(settings, cls.setting_name)).expand()
+        if not file_path.isabs():
+            file_path = (settings.SETTINGS_DIR / file_path).abspath()
+        try:
+            with open(file_path, 'rb') as f:
+                abbreviations = f.read()
+        except IOError:
+            if not cls.error_displayed:
+                logger.error(cls.file_not_found_message % (cls.setting_name, file_path))
+                cls.error_displayed = True
+            return
+
+        post.content_preprocessed += abbreviations
+        return post, metadata

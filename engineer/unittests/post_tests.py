@@ -233,3 +233,21 @@ class PermalinkTests(PostTestCase):
 
         self.assertEqual(post.url, '/test/2012/9/4/tag-multiple.html')
         self.assertEqual(post.output_file_name, 'tag-multiple.html')
+
+
+class GlobalLinksTests(PostTestCase):
+    def global_links_test(self):
+        """Global links test."""
+        from engineer.conf import settings
+
+        settings.reload(self.post_tests_dir / 'global_links_settings.yaml')
+        post = Post(self.post_tests_dir / 'global_links_post.md')
+
+        expected_content = """
+<p><a href="http://tylerbutler.com">Tyler Butler</a> is the author of&nbsp;Engineer.</p>
+<p>He does not like to be called <a href="http://tylerbutler.com">Ty</a>.</p>
+        """
+
+        actual_content = unicode(post.convert_to_html(post.content_preprocessed))
+        self.assertEqual(actual_content.strip(), expected_content.strip())
+

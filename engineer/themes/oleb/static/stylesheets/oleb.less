@@ -398,7 +398,7 @@ div.codehilite, table.codehilitetable {
     border: 1px solid @grey-light;
     .border-radius(10px);
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.4);
-    margin-bottom: 3em;
+    margin-bottom: 2em;
     padding: 1em 20px;
     .text-center;
     overflow: hidden;
@@ -452,6 +452,36 @@ div.codehilite, table.codehilitetable {
             text-transform: uppercase;
         }
     }
+}
+
+////////////
+// SEARCH //
+////////////
+
+section#search {
+    font-size: @font-size-default;
+}
+
+input.search {
+    .border-radius(5px);
+    font-family: @font-main;
+    font-size: @font-size-default;
+    margin: auto;
+    width: 90%;
+    background-color: @white;
+    border: 1px solid @grey-light;
+    padding: .2em .3em;
+    color: @black;
+}
+
+input::-webkit-input-placeholder {
+    color: @black;
+}
+input:-moz-placeholder {
+    color: @black;
+}
+input:-ms-input-placeholder {
+    color: @black;
 }
 
 ////////////

@@ -34,6 +34,14 @@ Dark Rainbow supports the following settings which can be configured using the
     Both Disqus and Intense Debate require an account ID in order to associate comments properly with your site. Set
     this setting to the account ID for your respective comment account.
 
+``simple_search``
+    A boolean indicating whether simple search should be enabled for the site. *Defaults to true.*
+
+    Note that if you have customized your sidebar, you must include the ``_search.html`` snippet in your sidebar file
+    or the search box will not be visible. See :ref:`dark rainbow snippets` for more information.
+
+    .. versionadded:: 0.4.0
+
 ``typekit_id``
     The ID of the TypeKit kit that should be used. Dark Rainbow uses specific fonts that should be included in the kit.
 
@@ -43,14 +51,6 @@ Dark Rainbow supports the following settings which can be configured using the
 
 ``tweet_count``
     The number of tweets to include in the Twitter sidebar. *Defaults to 4 if not provided.*
-
-``simple_search``
-    A boolean indicating whether simple search should be enabled for the site. *Defaults to true.*
-
-    Note that if you have customized your sidebar, you must include the ``_search.html`` snippet in your sidebar file
-    or the search box will not be visible. See :ref:`dark rainbow snippets` for more information.
-
-    .. versionadded:: 0.4.0
 
 
 Fonts
@@ -123,7 +123,7 @@ The following snippets are available:
     Adds a search box to your site sidebar.
 
 
-Metadata
+Manifest
 ========
 
 .. literalinclude:: ../../themes/dark_rainbow/metadata.yaml

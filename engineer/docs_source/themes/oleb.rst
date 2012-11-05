@@ -30,6 +30,14 @@ Ole B supports the following settings which can be configured using the
     Both Disqus and Intense Debate require an account ID in order to associate comments properly with your site. Set
     this setting to the account ID for your respective comment account.
 
+``simple_search``
+    A boolean indicating whether simple search should be enabled for the site. *Defaults to true.*
+
+    Note that if you have customized your sidebar, you must include the ``_search.html`` snippet in your sidebar file
+    or the search box will not be visible. See :ref:`oleb snippets` for more information.
+
+    .. versionadded:: 0.4.0
+
 ``typekit_id``
     The ID of the TypeKit kit that should be used. Ole B uses specific fonts that should be included in the kit.
 
@@ -72,8 +80,7 @@ Inheritable Templates
 Ole B includes several base templates that sites can inherit from to create :ref:`template pages`.
 
 :file:`template_page_simple`
-
-A simple template page layout that includes the default site sidebar.
+    A simple template page layout that includes the default site sidebar.
 
 
 Template Fragments
@@ -82,7 +89,31 @@ Template Fragments
 Ole B does not support any additional :ref:`template fragments` beyond those available for all Engineer sites.
 
 
-Metadata
+.. _oleb snippets:
+
+Snippets
+--------
+
+OleB provides some small snippets that can be included in the sidebar of your site. These snippets are designed
+to be used in the sidebar, so using them is as simple as including them in your site's :ref:`_sidebar.html<sidebar>`
+template fragment. In order to maintain maximum compatibility with themes that might not provide these same widgets,
+you should specify ``ignore missing`` on the ``include`` directive.
+
+For example, the Engineer sample site includes these widgets like so:
+
+.. literalinclude:: ../../sample_site/templates/_sidebar.html
+   :language: html+jinja
+
+The following snippets are available:
+
+:file:`snippets/_feed_links.html`
+    Adds a link to your RSS feed.
+
+:file:`snippets/_search.html`
+    Adds a search box to your site sidebar.
+
+
+Manifest
 ========
 
 .. literalinclude:: ../../themes/oleb/metadata.yaml

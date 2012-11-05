@@ -13,8 +13,11 @@ use_tweet: yes
 template_dirs:
   - '../_shared/templates/'
 
+copy_content:
+  - ['../_shared/images/rss/37.png', 'images/rss.png']
+
 settings:
-  typekit_id: null
+  typekit_id: ~
   twitter_id: tylerbutler
   tweet_count: 4
   comments: ~

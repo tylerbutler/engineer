@@ -88,7 +88,7 @@ def build(args=None):
 
     # Copy LESS js file if needed
     if theme.use_lesscss and not settings.PREPROCESS_LESS:
-        s = settings.ENGINEER.LIB_DIR / 'less-1.3.0.min.js'
+        s = settings.ENGINEER.LIB_DIR / 'less-1.3.1.min.js'
         t = ensure_exists(settings.OUTPUT_STATIC_DIR / 'engineer/lib/')
         s.copy(t)
         logger.debug("Copied LESS CSS files.")

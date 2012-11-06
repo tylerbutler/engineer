@@ -122,6 +122,9 @@ include a break marker.
 
 .. versionadded:: 0.3.0
 
+.. versionchanged:: 0.4.0
+   Added the ``FEED_FULL_CONTENT`` setting.
+
 .. seealso:: :ref:`compatibility`
 
 
@@ -137,7 +140,7 @@ to keep your posts organized and easy to manage.
 
 The Post Renamer plugin is enabled by default, and can be disabled by setting the ``POST_RENAME_ENABLED`` setting to
 false. When enabled, the plugin uses the ``POST_RENAME_CONFIG`` setting to determine how to rename files. This
-configuration setting is similar in form to the :attr:`~engineer.conf.EngineerConfiguration.PERMALINK_STYLE``
+configuration setting is similar in form to the :attr:`~engineer.conf.EngineerConfiguration.PERMALINK_STYLE`
 setting, and specifies a mapping of :ref:`post status<post status>` to a rename format string.
 
 For example, the default ``POST_RENAME_CONFIG`` setting is:

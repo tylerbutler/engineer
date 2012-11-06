@@ -78,18 +78,18 @@ Metadata Parameters
 ``status``
     The status of the post. Valid values are:
 
-    :attr:`~engineer.models.Status.draft`
+    :attr:`~engineer.enums.Status.draft`
         Draft posts are never output when a site is built. Status always defaults to
-        :attr:`~engineer.models.Status.draft` if it's missing or set to an unknown
+        :attr:`~engineer.enums.Status.draft` if it's missing or set to an unknown
         value to avoid accidentally publishing something that wasn't meant to be published.
 
-    :attr:`~engineer.models.Status.published`
+    :attr:`~engineer.enums.Status.published`
         Published posts are always output when a site is built *unless* they have a
         :ref:`timestamp <post timestamp>` in the future, in which case they are not output.
         This behavior can be customized using the
         :attr:`~engineer.conf.EngineerConfiguration.PUBLISH_PENDING` setting.
 
-    :attr:`~engineer.models.Status.review`
+    :attr:`~engineer.enums.Status.review`
         Posts marked ``review`` are only output if the setting
         :attr:`~engineer.conf.EngineerConfiguration.PUBLISH_REVIEW` is set to true.
 

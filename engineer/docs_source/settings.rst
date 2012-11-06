@@ -460,10 +460,10 @@ Miscellaneous Settings
 
       **Default:** ``False``
 
-      If ``True``, posts marked with a status of :attr:`~engineer.models.Status.review` will be output. This is
+      If ``True``, posts marked with a status of :attr:`~engineer.enums.Status.review` will be output. This is
       useful for draft posts that you want to preview in the context of a site. These posts can be marked ``review``
       and a settings file with ``PUBLISH_REVIEW`` set to true can be used to output them for review purposes. Using
-      :attr:`~engineer.models.Status.review` instead of :attr:`~engineer.models.Status.published` and
+      :attr:`~engineer.enums.Status.review` instead of :attr:`~engineer.enums.Status.published` and
       :attr:`PUBLISH_PENDING` helps preview posts without setting arbitrary dates in the future and eliminates
       concerns about accidental publication.
 

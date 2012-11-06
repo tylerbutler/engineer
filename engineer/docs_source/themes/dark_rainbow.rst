@@ -63,6 +63,11 @@ Dark Rainbow requires the following fonts:
 - `Kulturista Web <https://typekit.com/fonts/kulturista-web>`_
 - `Ubuntu Mono <https://typekit.com/fonts/ubuntu-mono>`_ *(optional)*
 
+.. versionchanged:: 0.4.0
+   The Anonymous monospace font has been replaced by Ubuntu Mono by default. If you are using TypeKit you'll need to
+   update your kit to include the Ubuntu Mono font. If you wish to continue using Anonymous you'll need to add your
+   own CSS stylesheet.
+
 
 Templates
 =========

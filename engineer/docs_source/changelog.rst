@@ -1,7 +1,41 @@
 
+.. _changelog:
+
 =========
 Changelog
 =========
+
+version 0.4.0 - November 28, 2012
+=================================
+
+- Added support for custom URL/permalink schemes with the :attr:`~engineer.conf.EngineerConfiguration.PERMALINK_STYLE`
+  setting.
+
+  .. important:: Note that while the default has not changed in this release, it will in 0.5.0,
+     so if you wish to continue to use the current Engineer URL scheme, you should update your settings
+     files now.
+
+- Broad changes to post and metadata normalization. These features have been broken out into two separate plugins,
+  the :ref:`metadata finalization` plugin and the :ref:`post renamer plugin`. Accordingly, the
+  settings :attr:`~engineer.conf.EngineerConfiguration.NORMALIZE_INPUT_FILES`
+  and :attr:`~engineer.conf.EngineerConfiguration.NORMALIZE_INPUT_FILE_MASK` have been deprecated. See the
+  documentation for the two new plugins for more details.
+- The :ref:`dark rainbow` and :ref:`oleb` themes can now support comments using either
+  `Disqus <http://www.disqus.com/>`_ or `Instense Debate <https//intensedebate.com/>`_.
+- The :ref:`dark rainbow` and :ref:`oleb` themes now support simple site search using Google.
+- Added the :attr:`~engineer.conf.EngineerConfiguration.ACTIVE_NAV_CLASS` setting to enable users to change the class
+  that is applied to active navigation nodes. This should make it easier to integrate with CSS frameworks that use a
+  different class name.
+- Theme creators can now more easily share content between several themes using the
+  :ref:`copy_content<theme copy_content>` and :ref:`template dirs<theme template_dirs>` theme manifest settings.
+- The :ref:`post breaks plugin<post breaks plugin>` now outputs only the teaser content into the site RSS feed by
+  default. This behavior can be changed using the ``FEED_FULL_CONTENT`` setting.
+- Added a new :class:`~engineer.plugins.CommandPlugin` class. This enables other developers to write plugins that add
+  new command line commands to Engineer.
+- Standardized a set of common classmethods that are available to all plugins - ``handle_settings`` and
+  ``get_logger``.
+- Updated bundled less.js to version 1.3.1.
+- Lots of bug fixes.
 
 version 0.3.2 - August 18, 2012
 ===============================

@@ -3,6 +3,15 @@
 Engineer: A Static Website Generator for Fellow Engineers
 =========================================================
 
+.. sidebar:: What's New in Version |release|?
+
+   * Custom URL and permalink schemes
+   * Comments integration using Disqus or IntenseDebate
+   * Big changes to metadata normalization and automated file renaming
+
+   There's more! See the full :ref:`changelog` for details.
+
+
 At its core, Engineer is a static website generator. In other words, Engineer let's you build a website from a bunch
 of files - articles written in Markdown, templates, and other stuff - and outputs *another* bunch of files - HTML,
 mostly - that you can then copy wherever you want. It has some very nice :ref:`features` that will make you happy,
@@ -25,10 +34,9 @@ Engineer was inspired by `Brent Simmons`_, Marco Arment's `Second Crack`_, `Jeky
 Bugs and Feature Roadmap
 ========================
 
-If you find any bugs in Engineer please file an issue in the github
-`issue tracker <https://github.com/tylerbutler/engineer/issues>`_.
-If you want to suggest a feature idea or see what's planned for future
-versions, check out the Engineer `Trello board <https://trello.com/b/o8OBJjnk>`_.
+If you find any bugs in Engineer please file an issue in the Github
+`issue tracker <https://github.com/tylerbutler/engineer/issues>`_ (or fork and fix it yourself
+and send me a pull request). Feature ideas and other feedback are welcome as well!
 
 
 Narrative Documentation

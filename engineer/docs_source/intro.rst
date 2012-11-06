@@ -70,11 +70,6 @@ Caveats
 
 Despite all of these great features, there are some things that you might *not* like:
 
-**No built-in search**
-
-    Search isn't built in. You can configure Google site search or something, but it's not baked into Engineer. But...
-    do people really use anything besides Google/Bing to find stuff anyway?
-
 **Dynamic things require a bit more work**
 
     Static sites can feel limited if you're accustomed to doing something super-dynamic every time a page is loaded.

@@ -119,11 +119,11 @@ class Post(object):
         """The post's content in HTML format."""
 
         # determine the URL based on the HOME_URL and the PERMALINK_STYLE settings
-        permalink = settings.PERMALINK_STYLE.format(year=unicode(self.timestamp.year),
-                                                    month=u'{0:02d}'.format(self.timestamp.month),
-                                                    day=u'{0:02d}'.format(self.timestamp.day),
-                                                    i_month=self.timestamp.month,
-                                                    i_day=self.timestamp.day,
+        permalink = settings.PERMALINK_STYLE.format(year=unicode(self.timestamp_local.year),
+                                                    month=u'{0:02d}'.format(self.timestamp_local.month),
+                                                    day=u'{0:02d}'.format(self.timestamp_local.day),
+                                                    i_month=self.timestamp_local.month,
+                                                    i_day=self.timestamp_local.day,
                                                     title=self.slug, # for Jekyll compatibility
                                                     slug=self.slug,
                                                     timestamp=self.timestamp_local,

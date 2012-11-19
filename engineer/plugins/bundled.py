@@ -3,11 +3,9 @@ from codecs import open
 import re
 
 import yaml
-from path import path
 
 from engineer.enums import Status
-from engineer.plugins import PostProcessor
-from engineer.util import ensure_exists
+from engineer.plugins.core import PostProcessor
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 

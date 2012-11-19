@@ -21,7 +21,7 @@ def load_plugins():
     """Load all plugins."""
 
     # Ensure the built-in plugins are loaded by importing the module
-    from engineer.contrib import plugins
+    from engineer.plugins import bundled
 
     # Load registered plugin modules
     for name, module in find_plugins('engineer.plugins'):

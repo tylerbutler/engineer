@@ -174,11 +174,11 @@ class PostRenamerPlugin(PostProcessor):
             logger.debug("Not renaming post '%s' since its status is configured to be ignored." % post)
             return post
 
-        new_file_name = mask.format(year=unicode(post.timestamp.year),
-                                    month=u'{0:02d}'.format(post.timestamp.month),
-                                    day=u'{0:02d}'.format(post.timestamp.day),
-                                    i_month=post.timestamp.month,
-                                    i_day=post.timestamp.day,
+        new_file_name = mask.format(year=unicode(post.timestamp_local.year),
+                                    month=u'{0:02d}'.format(post.timestamp_local.month),
+                                    day=u'{0:02d}'.format(post.timestamp_local.day),
+                                    i_month=post.timestamp_local.month,
+                                    i_day=post.timestamp_local.day,
                                     timestamp=post.timestamp_local,
                                     status=post.status.name,
                                     status_short=post.status.name[:1],

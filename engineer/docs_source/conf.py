@@ -60,9 +60,9 @@ copyright = u'2011, %s' % AUTHOR_NAME
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-from engineer.version import __version__
+from engineer import version
 # The short X.Y version.
-version = str(__version__)
+version = version
 # The full version, including alpha/beta/rc tags.
 release = version
 

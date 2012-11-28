@@ -17,7 +17,7 @@ from engineer.enums import Status
 from engineer.filters import typogrify_no_widont
 from engineer.plugins import get_all_plugin_types
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive
-from engineer.version import __version__ as version
+from engineer import version
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 

@@ -41,3 +41,4 @@ engineer/sample_site/output/
 engineer/sample_site/_cache/
 engineer/sample_site/logs/
 _emma_secret.pvt
+_version.py

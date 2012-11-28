@@ -7,8 +7,9 @@ distribute_setup.use_setuptools()
 import os, sys
 from fnmatch import fnmatchcase
 from distutils.util import convert_path
+from propane_distribution import cmdclassdict
 from setuptools import setup, find_packages
-from engineer.version import __version__
+from engineer import version
 
 PROJECT = 'engineer'
 
@@ -122,20 +123,21 @@ def get_readme():
 
 setup(
     name=PROJECT,
-    version=__version__,
+    version=version.string,
     author='Tyler Butler',
     author_email='tyler@tylerbutler.com',
     platforms='any',
     packages=find_packages(),
     entry_points={
         'console_scripts': ['engineer=engineer.engine:cmdline'],
-        },
+    },
     url='http://github.com/tylerbutler/engineer',
     license='MIT',
     description='A static website generator.',
     long_description=get_readme(),
     install_requires=get_install_requirements(),
     tests_require=('nose'),
+    cmdclass=cmdclassdict,
     include_package_data=True,
     package_data=find_package_data(PROJECT,
                                    package=PROJECT,

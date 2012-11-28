@@ -4,3 +4,6 @@
 [submodule "engineer/static/engineer/lib/bootstrap"]
 	path = engineer/static/engineer/lib/bootstrap
 	url = git://github.com/twitter/bootstrap.git
+[submodule "propane_distribution"]
+	path = propane_distribution
+	url = https://github.com/tylerbutler/propane-distribution.git

@@ -1,9 +1,10 @@
 # coding=utf-8
 import argparse
 import gzip
+import humanize
 import logging
 import sys
-import humanize
+import time
 import times
 from codecs import open
 from path import path
@@ -64,9 +65,9 @@ def build(args=None):
             'cached_posts': 0,
             'rollups': 0,
             'tag_pages': 0,
-            },
+        },
         'files': {},
-        }
+    }
 
     # Remove the output cache (not the post cache or the Jinja cache)
     # since we're rebuilding the site
@@ -387,11 +388,11 @@ def start_emma(args):
 
 
 def init(args):
-    from engineer import version
+    from engineer import __file__ as package_file, version
 
     logger = logging.getLogger('engineer.engine.init')
 
-    sample_site_path = path(version.__file__).dirname() / 'sample_site'
+    sample_site_path = path(package_file).dirname() / 'sample_site'
     target = path.getcwd()
     if target.listdir() and not args.force:
         logger.warning("Target folder %s is not empty." % target)
@@ -430,7 +431,7 @@ def get_argparser():
                                dest='config_file',
                                help="Specify a configuration file to use.")
 
-    desc = "Engineer static site builder. [v%s, %s]" % (version.__version__, version.__date__)
+    desc = "Engineer static site builder. [v%s, %s %s]" % (version, version.date, time.strftime('%X', version.time))
     main_parser = argparse.ArgumentParser(description=desc)
     subparsers = main_parser.add_subparsers(title="subcommands",
                                             dest='parser_name')

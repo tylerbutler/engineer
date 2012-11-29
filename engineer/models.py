@@ -42,6 +42,7 @@ class Post(object):
     # Make _content_raw only settable once. This is just to help prevent data loss that might be caused by
     # inadvertantly messing with this property.
     _content_raw = setonce()
+    _file_contents_raw = setonce()
 
     @staticmethod
     def convert_to_html(content):
@@ -214,6 +215,7 @@ class Post(object):
             with open(self.source, mode='r', encoding='UTF-8') as file:
                 item = file.read()
 
+        self._file_contents_raw = item
         parsed_content = re.match(self._regex, item)
 
         if parsed_content is None or parsed_content.group('metadata') is None:

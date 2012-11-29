@@ -76,11 +76,28 @@ class FinalizationPlugin(PostProcessor):
     def postprocess(cls, post):
         from engineer.conf import settings
 
+        logger = cls.get_logger()
         if settings.FINALIZE_METADATA:
             output = cls.render_markdown(post)
-            with open(post.source, mode='wb', encoding='UTF-8') as file:
-                file.write(output)
+            if cls.need_update(post, output):
+                logger.debug("Finalizing metadata for post '%s'" % post)
+                with open(post.source, mode='wb', encoding='UTF-8') as file:
+                    file.write(output)
+            else:
+                logger.debug("No metadata finalization needed for post '%s'" % post)
         return post
+
+    @classmethod
+    def need_update(cls, post, new_post_content):
+        from engineer.models import Post
+
+        old_content = Post._regex.match(post._file_contents_raw).group('metadata').strip()
+        new_content = Post._regex.match(new_post_content).group('metadata').strip()
+
+        if new_content == old_content:
+            return False
+        else:
+            return True
 
     @staticmethod
     def render_markdown(post):
@@ -103,7 +120,7 @@ class FinalizationPlugin(PostProcessor):
         # set of metadata that was in the file originally.
         metadata_to_finalize = set([m for m, s in settings.FINALIZE_METADATA.iteritems() if post.status in s])
         metadata_to_finalize.update(post.metadata_original)
-        
+
         if 'title' in metadata_to_finalize:
             # insert at the top of the list
             d.insert(0, ('title', post.title))

@@ -63,7 +63,11 @@ copyright = u'2011, %s' % AUTHOR_NAME
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
-#
+
+# force a version update
+from propane_distribution import update_version_py
+update_version_py(version_path=os.path.join(os.path.dirname(__file__), '..'))
+
 import engineer
 # The short X.Y version.
 version = engineer.version

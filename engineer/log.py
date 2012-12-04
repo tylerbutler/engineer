@@ -1,5 +1,5 @@
 # coding=utf-8
-import sys, platform
+import sys
 import logging
 from brownie.caching import memoize
 from engineer.lib.ansistrm import ColorizingStreamHandler

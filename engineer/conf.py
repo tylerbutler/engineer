@@ -11,9 +11,8 @@ from datetime import datetime
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 from typogrify.templatetags.jinja2_filters import register
 from path import path
-from zope.cachedescriptors import property as zproperty
+from brownie.caching import cached_property
 from engineer.cache import SimpleFileCache
-from engineer.enums import Status
 from engineer.filters import typogrify_no_widont
 from engineer.plugins import get_all_plugin_types
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive
@@ -283,11 +282,11 @@ class EngineerConfiguration(object):
             if config.pop(setting[0], None) is not None:
                 logger.warning("The '%s' setting was deprecated in version %s: %s" % setting)
 
-    @zproperty.CachedProperty
+    @cached_property
     def OUTPUT_STATIC_DIR(self):
         return path(self.OUTPUT_CACHE_DIR / self.ENGINEER.STATIC_DIR.basename()).abspath()
 
-    @zproperty.CachedProperty
+    @cached_property
     def JINJA_ENV(self):
         from engineer.filters import format_datetime, markdown_filter, localtime, naturaltime, compress
         from engineer.processors import preprocess_less
@@ -335,8 +334,14 @@ class EngineerConfiguration(object):
         env.globals['settings'] = self
         return env
 
-    @zproperty.CachedProperty
+    @cached_property
     def CACHE(self):
+        # This check is a hack to ensure sphinx autodoc doesn't choke on this property.
+        # I don't know why it chokes here, but I think the exception handling might be
+        # messing with it.
+        if self is None:
+            return
+
         # Use a shelf as the main cache
         try:
             CACHE = shelve.open(self.CACHE_FILE, writeback=True)
@@ -350,19 +355,19 @@ class EngineerConfiguration(object):
             CACHE['version'] = version
         return CACHE
 
-    @zproperty.CachedProperty
+    @cached_property
     def COMPRESSION_CACHE(self):
         if not self.CACHE.has_key('COMPRESSION_CACHE'):
             self.CACHE['COMPRESSION_CACHE'] = SimpleFileCache(version=version)
         return self.CACHE['COMPRESSION_CACHE']
 
-    @zproperty.CachedProperty
+    @cached_property
     def POST_CACHE(self):
         if not self.CACHE.has_key('POST_CACHE'):
             self.CACHE['POST_CACHE'] = SimpleFileCache(version=version)
         return self.CACHE['POST_CACHE']
 
-    @zproperty.CachedProperty
+    @cached_property
     def LESS_CACHE(self):
         if not self.CACHE.has_key('LESS_CACHE'):
             self.CACHE['LESS_CACHE'] = SimpleFileCache(version=version)

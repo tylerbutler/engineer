@@ -134,11 +134,9 @@ complete set of packages Engineer depends on is as follows:
 * flufl.enum
 * translitcodec
 * jinja2
-* compressinja
 * pygments
 * html5lib
 * python-dateutil
-* zope.cachedescriptors
 * humanize
 * bottle
 * pytz

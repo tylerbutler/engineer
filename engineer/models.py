@@ -7,12 +7,12 @@ import yaml
 from codecs import open
 from copy import copy
 from datetime import datetime
+from brownie.caching import cached_property
 from dateutil import parser
 from path import path
 from propane.datastructures import CaseInsensitiveDict
 from typogrify.templatetags.jinja2_filters import typogrify
 from yaml.scanner import ScannerError
-from zope.cachedescriptors.property import CachedProperty
 from engineer.conf import settings
 from engineer.enums import Status
 from engineer.exceptions import PostMetadataError
@@ -149,7 +149,7 @@ class Post(object):
         # update cache
         settings.POST_CACHE[self.source] = self
 
-    @CachedProperty
+    @cached_property
     def url(self):
         """The site-relative URL to the post."""
         url = u'{home_url}{permalink}'.format(home_url=settings.HOME_URL,
@@ -157,19 +157,19 @@ class Post(object):
         url = re.sub(r'/{2,}', r'/', url)
         return url
 
-    @CachedProperty
+    @cached_property
     def absolute_url(self):
         """The absolute URL to the post."""
         return u'{0}{1}'.format(settings.SITE_URL, self.url)
 
-    @CachedProperty
+    @cached_property
     def output_path(self):
         url = self._permalink
         if url.endswith('/'):
             url += 'index.html'
         return path(settings.OUTPUT_CACHE_DIR / url)
 
-    @CachedProperty
+    @cached_property
     def output_file_name(self):
         r = self.output_path.name
         return r
@@ -283,12 +283,12 @@ class PostCollection(list):
             paginate_by = settings.ROLLUP_PAGE_SIZE
         return chunk(self, paginate_by, PostCollection)
 
-    @CachedProperty
+    @cached_property
     def published(self):
         """Returns a new PostCollection containing the subset of posts that are published."""
         return PostCollection([p for p in self if p.is_published == True])
 
-    @CachedProperty
+    @cached_property
     def drafts(self):
         """Returns a new PostCollection containing the subset of posts that are drafts."""
         return PostCollection([p for p in self if p.is_draft == True])
@@ -298,12 +298,12 @@ class PostCollection(list):
         """Returns a new PostCollection containing the subset of posts that are pending."""
         return PostCollection([p for p in self if p.is_pending == True])
 
-    @CachedProperty
+    @cached_property
     def review(self):
         """Returns a new PostCollection containing the subset of posts whose status is :attr:`~Status.review`."""
         return PostCollection([p for p in self if p.status == Status.review])
 
-    @CachedProperty
+    @cached_property
     def all_tags(self):
         """Returns a list of all the unique tags, as strings, that posts in the collection have."""
         tags = set()

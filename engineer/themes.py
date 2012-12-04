@@ -1,8 +1,8 @@
 # coding=utf-8
 from jinja2.loaders import FileSystemLoader
 import yaml
+from brownie.caching import memoize
 from path import path
-from zope.cachedescriptors import method
 from engineer.conf import settings
 from engineer.exceptions import ThemeNotFoundException
 from engineer.util import get_class
@@ -90,7 +90,7 @@ class Theme(object):
 
 class ThemeManager(object):
     @classmethod
-    @method.cachedIn('_cache')
+    @memoize
     def themes(cls):
         themes = []
         for f in settings.THEME_FINDERS:
@@ -99,7 +99,7 @@ class ThemeManager(object):
         return dict([t.id, t] for t in themes)
 
     @classmethod
-    @method.cachedIn('_cache')
+    @memoize
     def current_theme(cls):
         theme = ThemeManager.themes().get(settings.THEME, None)
         if theme is not None:
@@ -108,12 +108,12 @@ class ThemeManager(object):
             raise ThemeNotFoundException("Theme with id '%s' cannot be found." % settings.THEME)
 
     @staticmethod
-    @method.cachedIn('_cache')
+    @memoize
     def theme_path(template):
         return path(ThemeManager.current_theme().template_root) / template
 
     @staticmethod
-    @method.cachedIn('_cache')
+    @memoize
     def theme(id):
         if id not in ThemeManager.themes():
             raise ThemeNotFoundException("Theme with id '%s' cannot be found." % settings.THEME)

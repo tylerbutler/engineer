@@ -40,7 +40,8 @@ class FinalizationPlugin(PostProcessor):
     _finalize_map_defaults = {
         'timestamp': [Status.published],
         'title': [Status.published, Status.review, Status.draft],
-        'slug': [Status.published, Status.review, Status.draft]
+        'slug': [Status.published, Status.review, Status.draft],
+        'url': [Status.review, Status.published]
     }
 
     @classmethod
@@ -107,9 +108,18 @@ class FinalizationPlugin(PostProcessor):
         from engineer.conf import settings
 
         # A hack to guarantee the YAML output is in a sensible order.
+        # The order, assuming all metadata should be writter, should be:
+        #        title
+        #        status
+        #        timestamp
+        #        link
+        #        via
+        #        via-link
+        #        slug
+        #        tags
+        #        url
         d = [
             ('status', post.status.name),
-            ('url', post.url),
             ('link', post.link),
             ('via', post.via),
             ('via-link', post.via_link),
@@ -131,6 +141,9 @@ class FinalizationPlugin(PostProcessor):
             # insert right after status
             d.insert(d.index(('status', post.status.name)), ('timestamp',
                                                              post.timestamp_local.strftime(settings.TIME_FORMAT)))
+        if 'url' in metadata_to_finalize:
+            # insert at end of list
+            d.append(('url', post.url))
 
         metadata = ''
         for k, v in d:

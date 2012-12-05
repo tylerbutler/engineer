@@ -21,7 +21,6 @@ class MetadataFinalizationTestCase(BaseTestCase):
 
         expected_output = """title: Finalization Draft
 status: draft
-url: /{year:02d}/{month:02d}/{day:02d}/finalization-draft/
 slug: finalization-draft
 tags:
 - tag

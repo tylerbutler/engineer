@@ -292,7 +292,6 @@ def build(args=None):
             output = settings.COMPRESSION_CACHE[file]
         with open(file, mode='wb') as f:
             f.write(output)
-    settings.CACHE.sync()
 
     # Remove LESS files if LESS preprocessing is being done
     if settings.PREPROCESS_LESS:
@@ -326,6 +325,7 @@ def build(args=None):
 
     with open(settings.BUILD_STATS_FILE, mode='wb') as file:
         pickle.dump(build_stats, file)
+    settings.CACHE.close()
     return build_stats
 
 

@@ -3,6 +3,7 @@ import argparse
 import gzip
 import humanize
 import logging
+import os
 import sys
 import time
 import times
@@ -344,8 +345,9 @@ def serve(args):
     debug_server = bottle.Bottle()
     debug_server.mount('/_emma', emma.Emma().app)
 
+    @debug_server.route('/')
     @debug_server.route('/<filepath:path>')
-    def serve_static(filepath):
+    def serve_static(filepath="index.html"):
         if settings.HOME_URL != '/':
             # if HOME_URL is not root, we need to adjust the paths
             if filepath.startswith(settings.HOME_URL[1:]):
@@ -354,7 +356,7 @@ def serve(args):
                 return bottle.HTTPResponse(status=404)
         response = bottle.static_file(filepath, root=settings.OUTPUT_DIR)
         if type(response) is bottle.HTTPError:
-            return bottle.static_file(path(filepath) / 'index.html',
+            return bottle.static_file(os.path.join(path(filepath),'index.html'),
                                       root=settings.OUTPUT_DIR)
         else:
             return response

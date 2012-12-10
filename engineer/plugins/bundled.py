@@ -44,6 +44,9 @@ class FinalizationPlugin(PostProcessor):
         'slug': [Status.published, Status.review, Status.draft],
         'url': [Status.review, Status.published]
     }
+    _fenced_metadata_formats = ('fenced', 'jekyll', 'octopress')
+    _unfenced_metadata_formats = ('unfenced', 'engineer',)
+    _default_metadata_format = 'input'
 
     @classmethod
     def handle_settings(cls, config_dict, settings):
@@ -61,6 +64,12 @@ class FinalizationPlugin(PostProcessor):
             del config_dict['FINALIZE_METADATA_CONFIG']
         settings.FINALIZE_METADATA = cls._finalize_map_defaults
 
+        settings.METADATA_FORMAT = config_dict.pop('METADATA_FORMAT', 'input')
+        if settings.METADATA_FORMAT not in\
+           {cls._default_metadata_format}.union(cls._fenced_metadata_formats).union(cls._unfenced_metadata_formats):
+            logger.warning("'%s' is not a valid METADATA_FORMAT setting. Defaulting to '%s'.",
+                           settings.METADATA_FORMAT, cls._default_metadata_format)
+            settings.METADATA_FORMAT = cls._default_metadata_format
         return config_dict
 
     @classmethod
@@ -80,6 +89,14 @@ class FinalizationPlugin(PostProcessor):
 
         logger = cls.get_logger()
         if settings.FINALIZE_METADATA:
+            if settings.METADATA_FORMAT in cls._fenced_metadata_formats:
+                logger.debug("METADATA_FORMAT is '%s', metadata will always be fenced during normalization.",
+                             settings.METADATA_FORMAT)
+                post._fence = True
+            elif settings.METADATA_FORMAT in cls._unfenced_metadata_formats:
+                logger.debug("METADATA_FORMAT is '%s', metadata will always be unfenced during normalization.",
+                             settings.METADATA_FORMAT)
+                post._fence = False
             output = cls.render_markdown(post)
             if cls.need_update(post, output):
                 logger.debug("Finalizing metadata for post '%s'" % post)
@@ -93,8 +110,15 @@ class FinalizationPlugin(PostProcessor):
     def need_update(cls, post, new_post_content):
         from engineer.models import Post
 
-        old_content = Post._regex.match(post._file_contents_raw).group('metadata').strip()
-        new_content = Post._regex.match(new_post_content).group('metadata').strip()
+        old = Post._regex.match(post._file_contents_raw)
+        new = Post._regex.match(new_post_content)
+
+        old_fenced = (old.group('fence') is not None)
+        if old_fenced != post._fence:
+            return True
+
+        old_content = old.group('metadata').strip()
+        new_content = new.group('metadata').strip()
 
         if new_content == old_content:
             return False
@@ -156,7 +180,8 @@ class FinalizationPlugin(PostProcessor):
             metadata += '\n'
             metadata += yaml.safe_dump(dict(post.custom_properties), default_flow_style=False)
         return settings.JINJA_ENV.get_template(post.markdown_template_path).render(metadata=metadata,
-                                                                                   content=post.content_raw)
+                                                                                   content=post.content_raw,
+                                                                                   post=post)
 
 
 class PostRenamerPlugin(PostProcessor):

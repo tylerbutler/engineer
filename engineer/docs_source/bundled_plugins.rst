@@ -96,9 +96,28 @@ setting.
          :ref:`metadata finalization`, :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA`
 
 
+   .. attribute:: METADATA_FORMAT
+
+      **Default:** ``'input'``
+
+      Specifies which metadata format to output. As of version 0.5.0, this only controls whether or not to force
+      :ref:`fencing`. When set to the default, ``'input'``, the finalized metadata format will match that of the
+      input.
+
+      Other valid values for this setting are:
+
+      ``'fenced'``
+          Always output the metadata as fenced.
+
+      ``'unfenced'``
+          Always output the metadata as unfenced.
+
 .. versionadded:: 0.4.0
    In version 0.4.0, the old post normalization process has been superceded by the
    :ref:`metadata finalization` and :ref:`post renamer plugin` plugins.
+
+.. versionchanged:: 0.5.0
+   Added the :attr:`~engineer.conf.EngineerConfiguration.METADATA_FORMAT` setting.
 
 
 .. _post breaks plugin:

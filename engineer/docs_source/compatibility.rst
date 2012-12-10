@@ -13,6 +13,7 @@ Jekyll/Octopress
 
 .. versionadded:: 0.3.0
 
+.. _fencing:
 
 Post Metadata 'Fencing'
 -----------------------
@@ -32,6 +33,10 @@ separator, like so:
 Engineer, in contrast, does not require the metadata to be preceded by a ``---``. However,
 Engineer will handle Jekyll-style metadata with no trouble, and will maintain your post format during
 :ref:`metadata finalization`.
+
+If you want Engineer to *always* output your metadata with or without fencing, you can use
+the :attr:`~engineer.conf.EngineerConfiguration.METADATA_FORMAT` setting. Simply set it to ``fenced`` or
+``unfenced`` and Engineer will always output the format you specify, regardless of the input format.
 
 .. versionadded:: 0.3.0
 

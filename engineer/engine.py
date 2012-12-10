@@ -344,8 +344,9 @@ def serve(args):
     debug_server = bottle.Bottle()
     debug_server.mount('/_emma', emma.Emma().app)
 
+    @debug_server.route('/')
     @debug_server.route('/<filepath:path>')
-    def serve_static(filepath):
+    def serve_static(filepath='index.html'):
         if settings.HOME_URL != '/':
             # if HOME_URL is not root, we need to adjust the paths
             if filepath.startswith(settings.HOME_URL[1:]):

@@ -194,7 +194,7 @@ class PostRenamerPlugin(PostProcessor):
 
         logger = cls.get_logger()
 
-        if not hasattr(settings, cls.config_setting_name):
+        if not getattr(settings, cls.enabled_setting_name, False) or not hasattr(settings, cls.config_setting_name):
             logger.debug("Post Renamer plugin disabled.")
             return post  # early return - plugin is disabled
 

@@ -5,6 +5,29 @@
 Changelog
 =========
 
+version 0.4.2 - December 10, 2012
+=================================
+
+- The :ref:`post renamer plugin` plugin is no longer on by default.
+
+  .. important:: If you wish Engineer to behave the way it did previously, simply set the ``POST_RENAME_ENABLED``
+     setting to true in you Engineer settings file.
+
+- Fixes `issue #36 <https://github.com/tylerbutler/engineer/issues/36>`_ which caused cache corruption on Mac OS X
+  Lion.
+- Fixes `issue #39 <https://github.com/tylerbutler/engineer/pull/39>`_ which prevented the debug server from working
+  properly on non-Windows operating systems.
+
+
+version 0.4.1 - December 4, 2012
+================================
+
+- :ref:`Finalization plugin<metadata finalization>`: No longer writes files if their metadata has not changed. This
+  should prevent a rather annoying behavior where post files would always be modified during a build regardless if
+  they had changed or not. This broke sorting the post files by 'last modified time', among other things.
+- Fixes issues with automatic version handling.
+
+
 version 0.4.0 - November 28, 2012
 =================================
 
@@ -36,6 +59,7 @@ version 0.4.0 - November 28, 2012
   ``get_logger``.
 - Updated bundled less.js to version 1.3.1.
 - Lots of bug fixes.
+
 
 version 0.3.2 - August 18, 2012
 ===============================

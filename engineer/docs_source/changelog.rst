@@ -5,8 +5,16 @@
 Changelog
 =========
 
+version 0.4.3 - December 10, 2012
+=================================
+
+- Fixes `issue 42 <https://github.com/tylerbutler/engineer/issues/42>`_ which managed to sneak into 0.4.2,
+  causing an exception to be thrown for some configurations.
+
+
 version 0.4.2 - December 10, 2012
 =================================
+
 .. note:: Engineer no longer requires the ``zope.cachedescriptors`` and ``compressinja`` packages. You can uninstall
    these packages if you wish. If you're using pip, simply type::
 

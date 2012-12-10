@@ -4,3 +4,4 @@ HOME_URL: '/'
 POST_DIR:
 - posts
 - published
+POST_RENAME_ENABLED: yes

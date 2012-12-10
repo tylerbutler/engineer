@@ -138,8 +138,8 @@ obviously name post files whatever you like, Engineer can automatically rename y
 help keep things organized. When combined with :ref:`metadata finalization`, Engineer can do a lot of heavy lifting
 to keep your posts organized and easy to manage.
 
-The Post Renamer plugin is enabled by default, and can be disabled by setting the ``POST_RENAME_ENABLED`` setting to
-false. When enabled, the plugin uses the ``POST_RENAME_CONFIG`` setting to determine how to rename files. This
+The Post Renamer plugin is disabled by default, and can be enabled by setting the ``POST_RENAME_ENABLED`` setting to
+true. When enabled, the plugin uses the ``POST_RENAME_CONFIG`` setting to determine how to rename files. This
 configuration setting is similar in form to the :attr:`~engineer.conf.EngineerConfiguration.PERMALINK_STYLE`
 setting, and specifies a mapping of :ref:`post status<post status>` to a rename format string.
 
@@ -200,3 +200,6 @@ and review posts, but will rename published posts according to the default confi
 .. versionadded:: 0.4.0
    In version 0.4.0, the old post normalization process has been superceded by the
    :ref:`metadata finalization` and :ref:`post renamer plugin` plugins.
+
+.. versionchanged:: 0.4.2
+   The plugin is now disabled by default. Renaming post files caused confusion and headaches for new Engineer users.

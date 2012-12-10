@@ -170,7 +170,7 @@ class PostRenamerPlugin(PostProcessor):
     @classmethod
     def handle_settings(cls, config_dict, settings):
         logger = cls.get_logger()
-        if not config_dict.pop(cls.enabled_setting_name, True):
+        if not config_dict.pop(cls.enabled_setting_name, False):
             setattr(settings, cls.enabled_setting_name, False)
             return config_dict
         else:

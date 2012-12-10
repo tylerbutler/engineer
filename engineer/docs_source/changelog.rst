@@ -7,6 +7,10 @@ Changelog
 
 version 0.4.2 - December 10, 2012
 =================================
+.. note:: Engineer no longer requires the ``zope.cachedescriptors`` and ``compressinja`` packages. You can uninstall
+   these packages if you wish. If you're using pip, simply type::
+
+       pip uninstall zope.cachedescriptors compressinja
 
 - The :ref:`post renamer plugin` plugin is no longer on by default.
 

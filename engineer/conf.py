@@ -199,7 +199,7 @@ class EngineerConfiguration(object):
         if not 'LESS_PREPROCESSOR' in config:
             if platform.system() == 'Windows':
                 self.LESS_PREPROCESSOR = str(self.ENGINEER.ROOT_DIR /
-                                             'lib/dotless/dotless.Compiler.exe') + ' {infile} {outfile}'
+                                             'lib/less.js-windows/lessc.cmd') + ' {infile} {outfile}'
             else:
                 self.LESS_PREPROCESSOR = 'lessc {infile} {outfile}'
         else:

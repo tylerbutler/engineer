@@ -1,3 +1,6 @@
 [submodule "propane_distribution"]
 	path = propane_distribution
 	url = https://github.com/tylerbutler/propane-distribution.git
+[submodule "engineer/lib/less.js-windows"]
+	path = engineer/lib/less.js-windows
+	url = git://github.com/duncansmart/less.js-windows.git

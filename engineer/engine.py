@@ -1,7 +1,6 @@
 # coding=utf-8
 import argparse
 import gzip
-import humanize
 import logging
 import sys
 import time
@@ -9,6 +8,7 @@ import times
 from codecs import open
 from path import path
 from engineer.exceptions import ThemeNotFoundException
+from engineer.filters import naturaltime
 from engineer.log import get_console_handler, bootstrap
 from engineer.plugins import CommandPlugin, load_plugins
 from engineer.util import relpath, compress
@@ -165,7 +165,7 @@ def build(args=None):
         logger.warning("This site contains the following pending posts:")
         for post in all_posts.pending:
             logger.warning("\t'%s' - publish time: %s, %s." % (post.title,
-                                                               humanize.naturaltime(post.timestamp),
+                                                               naturaltime(post.timestamp),
                                                                post.timestamp_local))
         logger.warning("These posts won't be published until you build the site again after their publish time.")
 

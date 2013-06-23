@@ -9,7 +9,7 @@
       <excludeFolder url="file://$MODULE_DIR$/engineer.egg-info" />
       <excludeFolder url="file://$MODULE_DIR$/engineer/sample_site/_cache" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 2.7.5 virtualenv at C:\Users\Tyler\.virtualenvs\engineer-dev" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="tylerbutler.com" />
   </component>

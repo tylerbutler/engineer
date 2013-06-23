@@ -56,7 +56,7 @@ version 0.4.0 - November 28, 2012
   and :attr:`~engineer.conf.EngineerConfiguration.NORMALIZE_INPUT_FILE_MASK` have been deprecated. See the
   documentation for the two new plugins for more details.
 - The :ref:`dark rainbow` and :ref:`oleb` themes can now support comments using either
-  `Disqus <http://www.disqus.com/>`_ or `Instense Debate <https//intensedebate.com/>`_.
+  `Disqus <http://www.disqus.com/>`_ or `Intense Debate <https//intensedebate.com/>`_.
 - The :ref:`dark rainbow` and :ref:`oleb` themes now support simple site search using Google.
 - Added the :attr:`~engineer.conf.EngineerConfiguration.ACTIVE_NAV_CLASS` setting to enable users to change the class
   that is applied to active navigation nodes. This should make it easier to integrate with CSS frameworks that use a

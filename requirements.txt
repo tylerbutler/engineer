@@ -5,7 +5,7 @@ flufl.enum>=3.3.1
 translitcodec>=0.2
 jinja2>=2.6
 pygments>=1.4
-html5lib>=0.90
+html5lib==0.90
 python-dateutil>=2.1
 humanize>=0.2
 bottle>=0.10.9

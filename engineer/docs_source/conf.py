@@ -11,7 +11,8 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import sys
+import os
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -58,7 +59,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = APP_NAME
-copyright = u'2011-2012, %s' % AUTHOR_NAME
+copyright = u'2011-2013, %s' % AUTHOR_NAME
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -66,13 +67,14 @@ copyright = u'2011-2012, %s' % AUTHOR_NAME
 
 # force a version update
 from propane_distribution import update_version_py
+
 update_version_py(version_path=os.path.join(os.path.dirname(__file__), '..'))
 
 import engineer
 # The short X.Y version.
-version = engineer.version
+version = engineer.version.minor_string
 # The full version, including alpha/beta/rc tags.
-release = engineer.version
+release = engineer.version.patch_string
 
 print "Got engineer version %s" % version
 

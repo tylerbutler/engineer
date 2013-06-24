@@ -5,6 +5,14 @@
 Changelog
 =========
 
+version 0.4.4 - June 23, 2013
+=================================
+
+- Addresses compatibility issue with more recent versions of html5lib
+  (`issue 63 <https://github.com/tylerbutler/engineer/issues/63>`_). A more comprehensive fix will come in a
+  future version.
+
+
 version 0.4.3 - December 10, 2012
 =================================
 

@@ -3,7 +3,7 @@
 Engineer: A Static Website Generator for Fellow Engineers
 =========================================================
 
-.. sidebar:: What's New in Version |release|?
+.. sidebar:: What's New in Version |version|?
 
    * Custom URL and permalink schemes
    * Comments integration using Disqus or IntenseDebate

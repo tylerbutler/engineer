@@ -302,7 +302,8 @@ def build(args=None):
 
     logger.debug("Synchronizing output directory with output cache.")
     build_stats['files'] = mirror_folder(settings.OUTPUT_CACHE_DIR,
-                                         settings.OUTPUT_DIR)
+                                         settings.OUTPUT_DIR,
+                                         ignore_list=settings.OUTPUT_DIR_IGNORE)
     from pprint import pformat
 
     logger.debug("Folder mirroring report: %s" % pformat(build_stats['files']))

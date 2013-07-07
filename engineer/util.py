@@ -72,7 +72,7 @@ def chunk(seq, chunksize, process=iter):
         yield process(chain([it.next()], islice(it, chunksize - 1)))
 
 
-def mirror_folder(source, target, delete_orphans=True, recurse=True, _level=0):
+def mirror_folder(source, target, delete_orphans=True, recurse=True, ignore_list=None, _level=0):
     """Mirrors a folder *source* into a target folder *target*."""
 
     logger = logging.getLogger('engineer.util.mirror_folder')
@@ -95,10 +95,21 @@ def mirror_folder(source, target, delete_orphans=True, recurse=True, _level=0):
         d2.makedirs()
     compare = filecmp.dircmp(d1, d2)
 
+    # Expand the ignore list to be full paths
+    if ignore_list is None:
+        ignore_list = []
+
+    ignore_list = [path(d2 / i) for i in ignore_list]
+
     # Delete orphan files/folders in the target folder
     if delete_orphans:
         for item in compare.right_only:
             fullpath = path(d2 / item)
+            if fullpath in ignore_list:
+                logger.debug(
+                    "%s ==> Ignored - path is in ignore list" % fullpath)
+                continue
+
             if fullpath.isdir() and recurse:
                 logger.debug(
                     "%s ==> Deleted - doesn't exist in source" % fullpath)

@@ -15,12 +15,13 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 test_data_root = path(__file__).dirname() / 'test_data'
 
+
 class PostTestCase(CopyDataTestCase):
     def setUp(self):
         from engineer.conf import settings
 
-        bootstrap()  #bootstrap logging infrastructure
-        load_plugins()  #load plugins
+        bootstrap()  # bootstrap logging infrastructure
+        load_plugins()  # load plugins
         self.source_path = test_data_root
         os.chdir(self.copied_data_path)
         self.post_tests_dir = self.copied_data_path / 'post_tests'
@@ -29,6 +30,7 @@ class PostTestCase(CopyDataTestCase):
         settings.create_required_directories()
 
 
+# noinspection PyShadowingBuiltins
 class MetadataTests(PostTestCase):
     def default_metadata_test(self):
         """Metadata defaults"""
@@ -94,6 +96,7 @@ class MetadataTests(PostTestCase):
         self.assertEqual(len(post.tags), 2)
 
 
+# noinspection PyShadowingBuiltins
 class StatusTests(PostTestCase):
     def draft_default_test(self):
         """Draft default status"""
@@ -122,6 +125,7 @@ class StatusTests(PostTestCase):
         self.assertFalse(post.is_draft)
 
 
+# noinspection PyShadowingBuiltins
 class ContentTests(PostTestCase):
     def post_breaks_simple_test(self):
         """Post breaks of the form: -- more --"""
@@ -148,6 +152,7 @@ class ContentTests(PostTestCase):
         self.assertIn(u"also a “unicode character” in the metadata!", post.tags)
 
 
+# noinspection PyShadowingBuiltins
 class PermalinkTests(PostTestCase):
     def test_fulldate(self):
         from engineer.conf import settings

@@ -9,6 +9,8 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 logger = logging.getLogger(__name__)
 
+
+# noinspection PyShadowingBuiltins
 # Helper function to preprocess LESS files on demand
 def preprocess_less(file):
     input_file = path(settings.OUTPUT_CACHE_DIR / settings.ENGINEER.STATIC_DIR.basename() / file)
@@ -16,7 +18,7 @@ def preprocess_less(file):
     if not css_file.exists():
         cmd = str.format(str(settings.LESS_PREPROCESSOR), infile=input_file, outfile=css_file).split()
         try:
-            result = subprocess.check_output(cmd)
+            subprocess.check_output(cmd)
         except subprocess.CalledProcessError as e:
             logger.critical("Error pre-processing LESS file %s." % file)
             logger.critical(e.output)

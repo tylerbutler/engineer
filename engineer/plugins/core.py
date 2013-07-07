@@ -5,6 +5,7 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 # Adapted from Marty Alchin: http://martyalchin.com/2008/jan/10/simple-plugin-framework/
 
+
 def find_plugins(entrypoint):
     try:
         import pkg_resources
@@ -17,6 +18,7 @@ def find_plugins(entrypoint):
         yield entrypoint.name, entrypoint.load()
 
 
+# noinspection PyUnresolvedReferences,PyUnusedLocal
 def load_plugins():
     """Load all plugins."""
 
@@ -33,6 +35,7 @@ def get_all_plugin_types():
     return ThemeProvider, PostProcessor, CommandPlugin
 
 
+# noinspection PyMissingConstructor,PyUnusedLocal
 class PluginMount(type):
     """A metaclass used to identify :ref:`plugins`."""
 
@@ -71,7 +74,7 @@ class ThemeProvider(PluginMixin):
     """
     __metaclass__ = PluginMount
 
-    paths = () # empty tuple
+    paths = ()  # empty tuple
     """An iterable of absolute paths containing one or more :ref:`theme manifests <theme manifest>`."""
 
 

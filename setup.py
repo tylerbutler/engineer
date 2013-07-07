@@ -4,7 +4,8 @@ import distribute_setup
 
 distribute_setup.use_setuptools()
 
-import os, sys
+import os
+import sys
 from fnmatch import fnmatchcase
 from distutils.util import convert_path
 from propane_distribution import cmdclassdict
@@ -21,6 +22,7 @@ PROJECT = 'engineer'
 standard_exclude = ('*.py', '*.pyc', '*~', '.*', '*.bak', '*.swp*')
 standard_exclude_directories = ('.*', 'CVS', '_darcs', './build',
                                 './dist', 'EGG-INFO', '*.egg-info')
+
 
 def find_package_data(
         where='.', package='',
@@ -66,8 +68,7 @@ def find_package_data(
             if os.path.isdir(fn):
                 bad_name = False
                 for pattern in exclude_directories:
-                    if (fnmatchcase(name, pattern)
-                        or fn.lower() == pattern.lower()):
+                    if fnmatchcase(name, pattern) or fn.lower() == pattern.lower():
                         bad_name = True
                         if show_ignored:
                             print >> sys.stderr, (
@@ -88,8 +89,7 @@ def find_package_data(
                 # is a file
                 bad_name = False
                 for pattern in exclude:
-                    if (fnmatchcase(name, pattern)
-                        or fn.lower() == pattern.lower()):
+                    if fnmatchcase(name, pattern) or fn.lower() == pattern.lower():
                         bad_name = True
                         if show_ignored:
                             print >> sys.stderr, (
@@ -103,6 +103,8 @@ def find_package_data(
 
 ################################################################################
 
+
+# noinspection PyShadowingBuiltins
 def get_install_requirements():
     requirements = []
     with open('requirements.txt') as file:
@@ -117,9 +119,11 @@ def get_install_requirements():
         return requirements
 
 
+# noinspection PyShadowingBuiltins
 def get_readme():
     with open('README.md') as file:
         return file.read()
+
 
 setup(
     name=PROJECT,
@@ -136,11 +140,12 @@ setup(
     description='A static website generator.',
     long_description=get_readme(),
     install_requires=get_install_requirements(),
-    tests_require=('nose'),
+    tests_require=('nose', 'testfixtures'),
     cmdclass=cmdclassdict,
     include_package_data=True,
     package_data=find_package_data(PROJECT,
                                    package=PROJECT,
                                    only_in_packages=False),
-    zip_safe=True, # Setting to False doesn't create an egg - easier to debug and hack on
+    # Setting to False doesn't create an egg - easier to debug and hack on
+    zip_safe=True,
 )

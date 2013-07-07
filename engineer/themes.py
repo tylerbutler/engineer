@@ -9,6 +9,7 @@ from engineer.util import get_class
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
+
 class Theme(object):
     """
     Creates a new theme object based on the contents of *theme_root_path*.
@@ -76,8 +77,8 @@ class Theme(object):
 
     @staticmethod
     def from_yaml(yaml_file):
-        with open(yaml_file, mode='rb') as file:
-            yaml_doc = yaml.load(file.read())
+        with open(yaml_file, mode='rb') as the_file:
+            yaml_doc = yaml.load(the_file.read())
         theme = Theme(path(yaml_file).dirname(), **yaml_doc)
         return theme
 
@@ -96,6 +97,7 @@ class ThemeManager(object):
         for f in settings.THEME_FINDERS:
             finder = get_class(f)
             themes.extend(finder.get_themes())
+        # noinspection PyTypeChecker
         return dict([t.id, t] for t in themes)
 
     @classmethod
@@ -112,6 +114,7 @@ class ThemeManager(object):
     def theme_path(template):
         return path(ThemeManager.current_theme().template_root) / template
 
+    # noinspection PyShadowingBuiltins
     @staticmethod
     @memoize
     def theme(id):

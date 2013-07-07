@@ -4,15 +4,18 @@ import gzip
 import logging
 import sys
 import time
-import times
 from codecs import open
+
+import times
 from path import path
+
 from engineer.exceptions import ThemeNotFoundException
 from engineer.filters import naturaltime
 from engineer.log import get_console_handler, bootstrap
 from engineer.plugins import CommandPlugin, load_plugins
 from engineer.util import relpath, compress
 from engineer import version
+
 
 try:
     import cPickle as pickle
@@ -21,6 +24,8 @@ except ImportError:
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
+
+# noinspection PyUnusedLocal
 def clean(args=None):
     from engineer.conf import settings
 
@@ -38,6 +43,7 @@ def clean(args=None):
     logger.console('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 
 
+# noinspection PyShadowingBuiltins
 def build(args=None):
     """Builds an Engineer site using the settings specified in *args*."""
     from engineer.conf import settings
@@ -77,7 +83,7 @@ def build(args=None):
     logger.debug("Copying static files to output cache.")
     s = (settings.ENGINEER.STATIC_DIR / 'engineer').abspath()
     t = settings.OUTPUT_STATIC_DIR / 'engineer'
-    mirror_folder(s, t, recurse=False) # Copy only the files in this folder - don't recurse
+    mirror_folder(s, t, recurse=False)  # Copy only the files in this folder - don't recurse
 
     theme = ThemeManager.current_theme()
     # Copy Foundation files if used
@@ -185,9 +191,9 @@ def build(args=None):
             rendered_page = page.render_html(all_posts)
             ensure_exists(page.output_path)
             with open(page.output_path / page.output_file_name, mode='wb',
-                      encoding='UTF-8') as file:
-                file.write(rendered_page)
-                logger.debug("Output template page %s." % relpath(file.name))
+                      encoding='UTF-8') as the_file:
+                the_file.write(rendered_page)
+                logger.debug("Output template page %s." % relpath(the_file.name))
                 build_stats['counts']['template_pages'] += 1
         logger.info("Generated %s template pages." % build_stats['counts']['template_pages'])
 
@@ -196,8 +202,8 @@ def build(args=None):
         rendered_post = post.render_html(all_posts)
         ensure_exists(post.output_path)
         with open(post.output_path, mode='wb',
-                  encoding='UTF-8') as file:
-            file.write(rendered_post)
+                  encoding='UTF-8') as the_file:
+            the_file.write(rendered_post)
             if post in new_posts:
                 logger.console("Output new or modified post '%s'." % post.title)
                 build_stats['counts']['new_posts'] += 1
@@ -207,8 +213,8 @@ def build(args=None):
     # Generate rollup pages
     num_posts = len(all_posts)
     num_slices = (
-        num_posts / settings.ROLLUP_PAGE_SIZE) if num_posts % settings.ROLLUP_PAGE_SIZE == 0\
-    else (num_posts / settings.ROLLUP_PAGE_SIZE) + 1
+        num_posts / settings.ROLLUP_PAGE_SIZE) if num_posts % settings.ROLLUP_PAGE_SIZE == 0 \
+        else (num_posts / settings.ROLLUP_PAGE_SIZE) + 1
 
     slice_num = 0
     for posts in all_posts.paginate():
@@ -219,9 +225,9 @@ def build(args=None):
                                                    has_previous)
         ensure_exists(posts.output_path(slice_num))
         with open(posts.output_path(slice_num), mode='wb',
-                  encoding='UTF-8') as file:
-            file.write(rendered_page)
-            logger.debug("Output rollup page %s." % relpath(file.name))
+                  encoding='UTF-8') as the_file:
+            the_file.write(rendered_page)
+            logger.debug("Output rollup page %s." % relpath(the_file.name))
             build_stats['counts']['rollups'] += 1
 
         # Copy first rollup page to root of site - it's the homepage.
@@ -238,9 +244,9 @@ def build(args=None):
 
         rendered_archive = all_posts.render_archive_html(all_posts)
 
-        with open(archive_output_path, mode='wb', encoding='UTF-8') as file:
-            file.write(rendered_archive)
-            logger.debug("Output %s." % relpath(file.name))
+        with open(archive_output_path, mode='wb', encoding='UTF-8') as the_file:
+            the_file.write(rendered_archive)
+            logger.debug("Output %s." % relpath(the_file.name))
 
     # Generate tag pages
     if num_posts > 0:
@@ -249,30 +255,30 @@ def build(args=None):
             rendered_tag_page = all_posts.render_tag_html(tag, all_posts)
             tag_path = ensure_exists(
                 tags_output_path / slugify(tag) / 'index.html')
-            with open(tag_path, mode='wb', encoding='UTF-8') as file:
-                file.write(rendered_tag_page)
+            with open(tag_path, mode='wb', encoding='UTF-8') as the_file:
+                the_file.write(rendered_tag_page)
                 build_stats['counts']['tag_pages'] += 1
-                logger.debug("Output %s." % relpath(file.name))
+                logger.debug("Output %s." % relpath(the_file.name))
 
     # Generate feeds
     feed_output_path = ensure_exists(settings.OUTPUT_CACHE_DIR / 'feeds/rss.xml')
-    feed_content = settings.JINJA_ENV.get_or_select_template(['rss.xml',
-                                                              'theme/rss.xml',
-                                                              'core/rss.xml']).render(
-        post_list=all_posts[:settings.FEED_ITEM_LIMIT],
-        build_date=all_posts[0].timestamp)
-    with open(feed_output_path, mode='wb', encoding='UTF-8') as file:
-        file.write(feed_content)
-        logger.debug("Output %s." % relpath(file.name))
+    template = settings.JINJA_ENV.get_or_select_template(['rss.xml',
+                                                          'theme/rss.xml',
+                                                          'core/rss.xml'])
+    feed_content = template.render(post_list=all_posts[:settings.FEED_ITEM_LIMIT],
+                                   build_date=all_posts[0].timestamp)
+    with open(feed_output_path, mode='wb', encoding='UTF-8') as the_file:
+        the_file.write(feed_content)
+        logger.debug("Output %s." % relpath(the_file.name))
 
     # Generate sitemap
     sitemap_output_path = ensure_exists(settings.OUTPUT_CACHE_DIR / 'sitemap.xml.gz')
     sitemap_content = settings.JINJA_ENV.get_or_select_template(['sitemap.xml',
                                                                  'theme/sitemap.xml',
                                                                  'core/sitemap.xml']).render(post_list=all_posts)
-    with gzip.open(sitemap_output_path, mode='wb') as file:
-        file.write(sitemap_content)
-        logger.debug("Output %s." % relpath(file.name))
+    with gzip.open(sitemap_output_path, mode='wb') as the_file:
+        the_file.write(sitemap_content)
+        logger.debug("Output %s." % relpath(the_file.name))
 
     # Copy 'raw' content to output cache - second/final pass
     if settings.CONTENT_DIR.exists():
@@ -281,16 +287,16 @@ def build(args=None):
                       delete_orphans=False)
 
     # Compress all files marked for compression
-    for file, compression_type in settings.COMPRESS_FILE_LIST:
-        if file not in settings.COMPRESSION_CACHE:
-            with open(file, mode='rb') as input:
+    for the_file, compression_type in settings.COMPRESS_FILE_LIST:
+        if the_file not in settings.COMPRESSION_CACHE:
+            with open(the_file, mode='rb') as input:
                 output = compress(input.read(), compression_type)
-                logger.debug("Compressed %s." % relpath(file))
-            settings.COMPRESSION_CACHE[file] = output
+                logger.debug("Compressed %s." % relpath(the_file))
+            settings.COMPRESSION_CACHE[the_file] = output
         else:
-            logger.debug("Found pre-compressed file in cache: %s." % relpath(file))
-            output = settings.COMPRESSION_CACHE[file]
-        with open(file, mode='wb') as f:
+            logger.debug("Found pre-compressed file in cache: %s." % relpath(the_file))
+            output = settings.COMPRESSION_CACHE[the_file]
+        with open(the_file, mode='wb') as f:
             f.write(output)
 
     # Remove LESS files if LESS preprocessing is being done
@@ -310,8 +316,7 @@ def build(args=None):
     logger.console('')
     logger.console("Site: '%s' output to %s." % (settings.SITE_TITLE, settings.OUTPUT_DIR))
     logger.console("Posts: %s (%s new or updated)" % (
-        (build_stats['counts']['new_posts'] + build_stats['counts'][
-                                              'cached_posts']),
+        (build_stats['counts']['new_posts'] + build_stats['counts']['cached_posts']),
         build_stats['counts']['new_posts']))
     logger.console("Post rollup pages: %s (%s posts per page)" % (
         build_stats['counts']['rollups'], settings.ROLLUP_PAGE_SIZE))
@@ -324,8 +329,8 @@ def build(args=None):
     logger.console('')
     logger.console("Full build log at %s." % settings.LOG_FILE)
 
-    with open(settings.BUILD_STATS_FILE, mode='wb') as file:
-        pickle.dump(build_stats, file)
+    with open(settings.BUILD_STATS_FILE, mode='wb') as the_file:
+        pickle.dump(build_stats, the_file)
     settings.CACHE.close()
     return build_stats
 
@@ -345,6 +350,7 @@ def serve(args):
     debug_server = bottle.Bottle()
     debug_server.mount('/_emma', emma.Emma().app)
 
+    # noinspection PyUnresolvedReferences,PyUnusedLocal
     @debug_server.route('/')
     @debug_server.route('/<filepath:path>')
     def serve_static(filepath='index.html'):
@@ -390,7 +396,7 @@ def start_emma(args):
 
 
 def init(args):
-    from engineer import __file__ as package_file, version
+    from engineer import __file__ as package_file
 
     logger = logging.getLogger('engineer.engine.init')
 
@@ -501,6 +507,7 @@ def get_argparser():
                              help="Delete target folder contents. Use with caution!")
     parser_init.set_defaults(func=init)
 
+    # noinspection PyUnresolvedReferences
     for cmd_plugin in CommandPlugin.plugins:
         if cmd_plugin.active():
             cmd_plugin.add_command(subparsers, main_parser, common_parser)
@@ -526,11 +533,11 @@ def cmdline(args=sys.argv):
         logger.removeHandler(get_console_handler(logging.WARNING))
         logger.addHandler(get_console_handler(logging.INFO))
     else:
-        pass # WARNING level is added by default in bootstrap method
+        pass  # WARNING level is added by default in bootstrap method
 
     if args.parser_name in skip_settings:
         pass
-    else: # try loading settings
+    else:  # try loading settings
         try:
             from engineer.conf import settings
 

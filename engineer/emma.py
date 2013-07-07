@@ -14,6 +14,7 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 logger = logging.getLogger(__name__)
 
+
 class NoSecretException(Exception):
     pass
 
@@ -26,6 +27,7 @@ class NoSecretException(Exception):
 #        return [path, path + '/']
 
 
+# noinspection PyUnresolvedReferences
 class EmmaStandalone(object):
     app = bottle.Bottle()
 
@@ -95,8 +97,8 @@ class Emma(object):
     def _home(self):
         template = settings.JINJA_ENV.get_template('emma/home.html')
         if settings.BUILD_STATS_FILE.exists():
-            with open(settings.BUILD_STATS_FILE, mode='rb') as file:
-                stats = pickle.load(file)
+            with open(settings.BUILD_STATS_FILE, mode='rb') as the_file:
+                stats = pickle.load(the_file)
         else:
             stats = None
         current_messages = self.messages
@@ -159,8 +161,8 @@ class Emma(object):
     @property
     def secret(self):
         if self.secret_file.exists():
-            with open(self.secret_file, mode='rb') as file:
-                self._secret = pickle.load(file)
+            with open(self.secret_file, mode='rb') as the_file:
+                self._secret = pickle.load(the_file)
             return self._secret
         else:
             return None
@@ -181,7 +183,7 @@ class Emma(object):
         new_secret = uuid4()
         if self.secret is not None:
             logger.warning("A secret already existed but was overwritten.")
-        with open(self.secret_file, mode='wb') as file:
-            pickle.dump(new_secret, file)
+        with open(self.secret_file, mode='wb') as the_file:
+            pickle.dump(new_secret, the_file)
         self._secret = new_secret
         logger.console("Wrote secret file: %s" % self.secret_file)

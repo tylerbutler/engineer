@@ -6,14 +6,19 @@ import posixpath
 import re
 import filecmp
 import hashlib
-import translitcodec
 from itertools import chain, islice
-from path import path
 from urlparse import urljoin, urlparse, urlunparse
+
+# noinspection PyUnresolvedReferences
+import translitcodec
+# noinspection PyPackageRequirements
+from path import path
+
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 _punctuation_regex = re.compile(r'[\t :!"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
+
 
 def slugify(text, length_limit=0, delimiter=u'-'):
     """Generates an ASCII-only slug."""
@@ -28,7 +33,7 @@ def slugify(text, length_limit=0, delimiter=u'-'):
     return slug
 
 
-def get_class( class_string ):
+def get_class(class_string):
     """Given a string representing a path to a class, instantiates that class."""
     parts = class_string.split('.')
     module = ".".join(parts[:-1])
@@ -38,11 +43,8 @@ def get_class( class_string ):
     return m
 
 
-def import_module(module_string):
-    """Given a string representing a path to a module, imports the module."""
-
-
 def count_iterable(i):
+    # noinspection PyUnusedLocal
     return sum(1 for e in i)
 
 
@@ -60,8 +62,8 @@ def urljoin(url1, url2):
     return posixpath.join(url1, url2)
 
 
-def checksum(file):
-    with open(file) as f:
+def checksum(the_file):
+    with open(the_file) as f:
         checksum = hashlib.sha256(f.read()).hexdigest()
     return checksum
 
@@ -168,6 +170,13 @@ def ensure_exists(p):
 
 
 def wrap_list(item):
+    """
+    Returns an object as a list.
+
+    If the object is a list, it is returned directly. If it is a tuple or set, it
+    is returned as a list. If it is another object, it is wrapped in a list and
+    returned.
+    """
     if item is None:
         return []
     elif isinstance(item, list):
@@ -216,12 +225,12 @@ def _min_js(js_string):
     except ImportError:
         from StringIO import StringIO
 
-    input = StringIO(js_string)
+    the_input = StringIO(js_string)
     output = StringIO()
-    lpjsmin.minify_stream(input, output)
+    lpjsmin.minify_stream(the_input, output)
     to_return = output.getvalue()
     output.close()
-    input.close()
+    the_input.close()
     return to_return
 
 
@@ -236,6 +245,7 @@ def compress(item, compression_type):
 
 # setonce class from Ian Bicking: http://blog.ianbicking.org/easy-readonly-attributes.html
 _setonce_count = itertools.count()
+
 
 class setonce(object):
     """
@@ -275,7 +285,8 @@ class setonce(object):
         self._name = '_setonce_attr_%s' % self._count
         self.__doc__ = doc
 
-    def __get__(self, obj, type=None):
+    # noinspection PyUnusedLocal
+    def __get__(self, obj, obj_type=None):
         if obj is None:
             return self
         return getattr(obj, self._name)
@@ -286,7 +297,7 @@ class setonce(object):
         except AttributeError:
             setattr(obj, self._name, value)
         else:
-            raise AttributeError, "Attribute already set"
+            raise AttributeError("Attribute already set")
 
     def set(self, obj, value):
         setattr(obj, self._name, value)
@@ -311,11 +322,10 @@ def update_additive(dict1, dict2):
     for key, value in dict2.items():
         if key not in dict1:
             dict1[key] = value
-        else: # key in dict1
+        else:  # key in dict1
             if isinstance(dict1[key], collections.Mapping):
                 assert isinstance(value, collections.Mapping)
                 update_additive(dict1[key], value)
-            else: # value is not a mapping type
+            else:  # value is not a mapping type
                 assert not isinstance(value, collections.Mapping)
                 dict1[key] = value
-

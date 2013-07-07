@@ -6,6 +6,7 @@ from engineer.log import bootstrap
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
+
 class SettingsTestCase(TestCase):
     settings_file = None
 
@@ -50,6 +51,7 @@ class CopyDataTestCase(TestCase):
         print "Marking temp folder for deletion: %s" % self.copied_data_path.dirname()
         self.tmp_dirs.append(self.copied_data_path.dirname())
 
+    # noinspection PyUnresolvedReferences,PyShadowingBuiltins
     @classmethod
     def tearDownClass(cls):
         print "Teardownclass running... %s" % cls.tmp_dirs

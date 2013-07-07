@@ -12,6 +12,7 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 logger = logging.getLogger(__name__)
 
+
 def format_datetime(value, format_string='%Y-%m-%d'):
     return value.strftime(format_string)
 
@@ -49,8 +50,8 @@ def markdown_filter(value, typogrify=True, extensions=('extra', 'codehilite')):
     # Determine how many leading spaces there are, then remove that number from the beginning of each line.
     match = re.match(r'(\n*)(\s*)', value)
     s, e = match.span(2)
-    pattern = re.compile(r'^ {%s}' % (e - s), # use ^ in the pattern so mid-string matches won't be removed
-                         flags=re.MULTILINE) # use multi-line mode so ^ will match the start of each line
+    pattern = re.compile(r'^ {%s}' % (e - s),  # use ^ in the pattern so mid-string matches won't be removed
+                         flags=re.MULTILINE)  # use multi-line mode so ^ will match the start of each line
     output = pattern.sub(u'', value)
     if typogrify:
         return jinja2_filters.typogrify(markdown(output, extensions=extensions))
@@ -75,14 +76,16 @@ def naturaltime(value):
     return friendly
 
 
+# noinspection PyShadowingBuiltins
 def compress(value):
     from engineer.conf import settings
 
     if not settings.COMPRESSOR_ENABLED:
         return value
-    else: # COMPRESSOR_ENABLED == True
+    else:  # COMPRESSOR_ENABLED == True
         import html5lib
 
+        # noinspection PyUnresolvedReferences,PyUnusedLocal
         def _min_js_slim(js_string):
             # NOTE: The slimit filter seems to break some scripts. I'm not sure why. I'm leaving this code in for
             # posterity, but it's not functional right now and shouldn't be used.
@@ -102,7 +105,7 @@ def compress(value):
                 if 'src' in item.attributes:
                     src = item.attributes['src']
                     compression_type = 'js'
-                else: # inline script
+                else:  # inline script
                     continue
                     # TODO: Inline script minification.
                     #has_inline = True
@@ -127,7 +130,8 @@ def compress(value):
 
                 # TODO: Inline script minification.
                 #    if has_inline: # Handle inline script
-                #        # Since we have inline script, we need to serialize the minified content into a string and return it
+                #        # Since we have inline script, we need to serialize the minified content into a
+                #        # string and return it
                 #        walker = treewalkers.getTreeWalker('simpletree')
                 #        stream = walker(doc)
                 #        s = serializer.htmlserializer.HTMLSerializer(omit_optional_tags=False,

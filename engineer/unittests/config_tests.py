@@ -7,17 +7,18 @@ from testfixtures import LogCapture
 
 from engineer.log import bootstrap
 from engineer.plugins import load_plugins
-from engineer.unittests import CopyDataTestCase, SettingsTestCase
+from engineer.unittests import CopyDataTestCase
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 test_data_root = path(__file__).dirname() / 'test_data'
 simple_site = test_data_root / 'simple_site'
 
+
 class BaseTestCase(CopyDataTestCase):
     def setUp(self):
-        bootstrap() #bootstrap logging infrastructure
-        load_plugins() #load plugins
+        bootstrap()  # bootstrap logging infrastructure
+        load_plugins()  # load plugins
         self.source_path = simple_site
         os.chdir(self.copied_data_path)
 

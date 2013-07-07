@@ -12,6 +12,8 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 logger = getLogger('engineer.finders')
 
+
+# noinspection PyShadowingBuiltins
 class BaseFinder(object):
     @classmethod
     def get_from_directory(cls, directory):
@@ -59,6 +61,7 @@ class SiteFinder(BaseFinder):
             return []
 
 
+# noinspection PyShadowingBuiltins
 class ThemeDirsFinder(BaseFinder):
     """
     Loads themes from the directories specified in :attr:`~engineer.conf.EngineerConfiguration.THEME_DIRS`.

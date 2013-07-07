@@ -4,6 +4,7 @@ from engineer.unittests.config_tests import BaseTestCase
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
+
 class MetadataFinalizationTestCase(BaseTestCase):
     def test_finalization_settings(self):
         from engineer.conf import settings

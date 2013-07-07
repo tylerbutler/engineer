@@ -8,6 +8,7 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 CONSOLE = 1000
 
+
 class Colors(object):
     BLACK = 'black'
     RED = 'red'
@@ -34,7 +35,7 @@ class ColorStreamHandler(ColorizingStreamHandler):
             logging.DEBUG: (None, Colors.BLUE, True),
             logging.INFO: (None, Colors.GREEN, True),
             logging.WARNING: (None, Colors.YELLOW, True),
-            })
+        })
 
 
 def bootstrap():
@@ -57,8 +58,8 @@ def get_console_handler(level=CONSOLE):
 
 
 @memoize
-def get_file_handler(file, mode='w'):
-    handler = logging.FileHandler(file, mode=mode)
+def get_file_handler(the_file, mode='w'):
+    handler = logging.FileHandler(the_file, mode=mode)
     handler.setFormatter(logging.Formatter(fmt="%(asctime)s %(levelname)8s %(name)30s     %(message)s",
                                            datefmt='%H:%M:%S'))
     handler.setLevel(logging.DEBUG)

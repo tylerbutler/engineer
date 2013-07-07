@@ -2,21 +2,26 @@
 from inspect import isfunction
 import logging
 import platform
+import shelve
+from datetime import datetime
+
 from jinja2.loaders import ChoiceLoader
 import pytz
-import shelve
 import times
 import yaml
-from datetime import datetime
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
+# noinspection PyPackageRequirements
 from typogrify.templatetags.jinja2_filters import register
+# noinspection PyPackageRequirements
 from path import path
 from brownie.caching import cached_property
+
 from engineer.cache import SimpleFileCache
 from engineer.filters import typogrify_no_widont
 from engineer.plugins import get_all_plugin_types
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive
 from engineer import version
+
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -29,12 +34,12 @@ permalink_styles = {
 }
 
 deprecated_settings = (
-        # ('SETTING_NAME', version_deprecated, 'Message.')
-        ('NORMALIZE_INPUT_FILES', 0.4, 'This setting is now ignored.'),
-        ('NORMALIZE_INPUT_FILE_MASK', 0.4, 'This setting is now ignored.')
-	)
-	
-	
+    # ('SETTING_NAME', version_deprecated, 'Message.')
+    ('NORMALIZE_INPUT_FILES', 0.4, 'This setting is now ignored.'),
+    ('NORMALIZE_INPUT_FILE_MASK', 0.4, 'This setting is now ignored.')
+)
+
+
 class SettingsFileNotFoundException(Exception):
     pass
 
@@ -101,8 +106,8 @@ class EngineerConfiguration(object):
             config = {}
             try:
                 while True:
-                    with open(settings_file, mode='rb') as file:
-                        temp_config = yaml.load(file)
+                    with open(settings_file, mode='rb') as the_file:
+                        temp_config = yaml.load(the_file)
                         logger.debug("Loaded %s file." % settings_file)
                     all_configs.append((temp_config, settings_file))
                     if 'SUPER' not in temp_config:
@@ -140,8 +145,8 @@ class EngineerConfiguration(object):
 
         # CONTENT DIRECTORIES
         self.SETTINGS_DIR = path(config.pop('SETTINGS_DIR',
-                                            self.SETTINGS_FILE.dirname().abspath() if self.SETTINGS_FILE is not
-                                                                                      None else path.getcwd()))
+                                            self.SETTINGS_FILE.dirname().abspath() if self.SETTINGS_FILE is not None
+                                            else path.getcwd()))
         self.CONTENT_DIR = self.normalize(config.pop('CONTENT_DIR', 'content'))
         self.POST_DIR = self.normalize_list(config.pop('POST_DIR', 'posts'))
         self.OUTPUT_DIR = self.normalize(config.pop('OUTPUT_DIR', 'output'))
@@ -200,7 +205,6 @@ class EngineerConfiguration(object):
                 self.LESS_PREPROCESSOR = 'lessc {infile} {outfile}'
         else:
             self.LESS_PREPROCESSOR = path(config.pop('LESS_PREPROCESSOR'))
-
 
         # SITE SETTINGS
         self.SITE_TITLE = config.pop('SITE_TITLE', 'SITE_TITLE')
@@ -266,7 +270,7 @@ class EngineerConfiguration(object):
         self.POST_TIMEZONE = pytz.timezone(config.pop('POST_TIMEZONE', 'UTC'))
         self.SERVER_TIMEZONE = self.POST_TIMEZONE if config.get('SERVER_TIMEZONE',
                                                                 None) is None else config.pop('SERVER_TIMEZONE')
-        self.TIME_FORMAT = config.pop('TIME_FORMAT', '%I:%M %p %A, %B %d, %Y %Z') # '%Y-%m-%d %H:%M:%S %Z%z'
+        self.TIME_FORMAT = config.pop('TIME_FORMAT', '%I:%M %p %A, %B %d, %Y %Z')  # '%Y-%m-%d %H:%M:%S %Z%z'
 
         # Let plugins deal with their settings in their own way if needed
         for plugin_type in get_all_plugin_types():
@@ -323,7 +327,7 @@ class EngineerConfiguration(object):
         env.filters['naturaltime'] = naturaltime
         env.filters['markdown'] = markdown_filter
         env.filters['typogrify_no_widont'] = typogrify_no_widont
-        register(env) # register typogrify filters
+        register(env)  # register typogrify filters
 
         # Globals
         env.globals['theme'] = ThemeManager.current_theme()
@@ -350,7 +354,7 @@ class EngineerConfiguration(object):
             logger.exception(e)
             CACHE = None
             exit()
-        if CACHE is None or not CACHE.has_key('version') or CACHE['version'] != version:
+        if CACHE is None or 'version' not in CACHE or CACHE['version'] != version:
             # all new caches
             logger.debug("Caches either don't exist or are old, so creating new ones...")
             CACHE['version'] = version
@@ -358,19 +362,19 @@ class EngineerConfiguration(object):
 
     @cached_property
     def COMPRESSION_CACHE(self):
-        if not self.CACHE.has_key('COMPRESSION_CACHE'):
+        if 'COMPRESSION_CACHE' not in self.CACHE:
             self.CACHE['COMPRESSION_CACHE'] = SimpleFileCache(version=version)
         return self.CACHE['COMPRESSION_CACHE']
 
     @cached_property
     def POST_CACHE(self):
-        if not self.CACHE.has_key('POST_CACHE'):
+        if 'POST_CACHE' not in self.CACHE:
             self.CACHE['POST_CACHE'] = SimpleFileCache(version=version)
         return self.CACHE['POST_CACHE']
 
     @cached_property
     def LESS_CACHE(self):
-        if not self.CACHE.has_key('LESS_CACHE'):
+        if 'LESS_CACHE' not in self.CACHE:
             self.CACHE['LESS_CACHE'] = SimpleFileCache(version=version)
         return self.CACHE['LESS_CACHE']
 
@@ -396,5 +400,6 @@ class EngineerConfiguration(object):
 
         for folder in required:
             ensure_exists(folder)
+
 
 settings = EngineerConfiguration()

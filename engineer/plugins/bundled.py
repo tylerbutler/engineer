@@ -9,6 +9,7 @@ from engineer.plugins.core import PostProcessor
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
+
 class PostBreaksProcessor(PostProcessor):
     _regex = re.compile(r'^(?P<teaser_content>.*?)(?P<break>\s*<?!?-{2,}\s*more\s*-{2,}>?)(?P<rest_of_content>.*)',
                         re.DOTALL)
@@ -82,8 +83,8 @@ class FinalizationPlugin(PostProcessor):
             output = cls.render_markdown(post)
             if cls.need_update(post, output):
                 logger.debug("Finalizing metadata for post '%s'" % post)
-                with open(post.source, mode='wb', encoding='UTF-8') as file:
-                    file.write(output)
+                with open(post.source, mode='wb', encoding='UTF-8') as the_file:
+                    the_file.write(output)
             else:
                 logger.debug("No metadata finalization needed for post '%s'" % post)
         return post

@@ -3,7 +3,9 @@ from path import path
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
+
 class SimpleFileCache(object):
+    # noinspection PyUnusedLocal
     def __init__(self, version=None, *args):
         self._cache = {}
         self._meta = {}

@@ -1,11 +1,11 @@
 # coding=utf-8
 
 from path import path
-from testfixtures import LogCapture
 
 from engineer.unittests.config_tests import BaseTestCase
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
+
 
 class PostRenamerTestCase(BaseTestCase):
     def test_settings(self):

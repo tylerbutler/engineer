@@ -20,7 +20,6 @@ _ws_normalize_re = re.compile(r'[ \t\r\n]+')
 
 
 class StreamProcessContext(object):
-
     def __init__(self, stream):
         self.stream = stream
         self.token = None
@@ -40,20 +39,17 @@ def _make_dict_from_listing(listing):
 
 
 class HTMLCompress(Extension):
-    isolated_elements = set(['script', 'style', 'noscript', 'textarea'])
-    void_elements = set(['br', 'img', 'area', 'hr', 'param', 'input',
-                         'embed', 'col'])
-    block_elements = set(['div', 'p', 'form', 'ul', 'ol', 'li', 'table', 'tr',
-                          'tbody', 'thead', 'tfoot', 'tr', 'td', 'th', 'dl',
-                          'dt', 'dd', 'blockquote', 'h1', 'h2', 'h3', 'h4',
-                          'h5', 'h6', 'pre'])
+    isolated_elements = {'script', 'style', 'noscript', 'textarea'}
+    void_elements = {'br', 'img', 'area', 'hr', 'param', 'input', 'embed', 'col'}
+    block_elements = {'div', 'p', 'form', 'ul', 'ol', 'li', 'table', 'tr', 'tbody', 'thead', 'tfoot', 'tr', 'td', 'th',
+                      'dl', 'dt', 'dd', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre'}
     breaking_rules = _make_dict_from_listing([
-        (['p'], set(['#block'])),
-        (['li'], set(['li'])),
-        (['td', 'th'], set(['td', 'th', 'tr', 'tbody', 'thead', 'tfoot'])),
-        (['tr'], set(['tr', 'tbody', 'thead', 'tfoot'])),
-        (['thead', 'tbody', 'tfoot'], set(['thead', 'tbody', 'tfoot'])),
-        (['dd', 'dt'], set(['dl', 'dt', 'dd']))
+        (['p'], {'#block'}),
+        (['li'], {'li'}),
+        (['td', 'th'], {'td', 'th', 'tr', 'tbody', 'thead', 'tfoot'}),
+        (['tr'], {'tr', 'tbody', 'thead', 'tfoot'}),
+        (['thead', 'tbody', 'tfoot'], {'thead', 'tbody', 'tfoot'}),
+        (['dd', 'dt'], {'dl', 'dt', 'dd'})
     ])
 
     def is_isolated(self, stack):
@@ -87,9 +83,11 @@ class HTMLCompress(Extension):
             elif not self.breaking_rules.get(other_tag):
                 break
 
+    # noinspection PyShadowingBuiltins
     def normalize(self, ctx):
         pos = 0
         buffer = []
+
         def write_data(value):
             if not self.is_isolated(ctx.stack):
                 value = _ws_normalize_re.sub(' ', value.strip())
@@ -121,14 +119,13 @@ class HTMLCompress(Extension):
 
 
 class SelectiveHTMLCompress(HTMLCompress):
-
     def filter_stream(self, stream):
         ctx = StreamProcessContext(stream)
         strip_depth = 0
         while 1:
             if stream.current.type == 'block_begin':
-                if stream.look().test('name:strip') or\
-                   stream.look().test('name:endstrip'):
+                if stream.look().test('name:strip') or \
+                        stream.look().test('name:endstrip'):
                     stream.skip()
                     if stream.current.value == 'strip':
                         strip_depth += 1
@@ -152,6 +149,7 @@ class SelectiveHTMLCompress(HTMLCompress):
 
 def test():
     from jinja2 import Environment
+
     env = Environment(extensions=[HTMLCompress])
     tmpl = env.from_string('''
         <html>

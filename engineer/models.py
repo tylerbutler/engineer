@@ -29,6 +29,7 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 logger = logging.getLogger(__name__)
 
+
 class Post(object):
     """
     Represents a post written in Markdown and stored in a file.
@@ -125,7 +126,7 @@ class Post(object):
                                                     day=u'{0:02d}'.format(self.timestamp_local.day),
                                                     i_month=self.timestamp_local.month,
                                                     i_day=self.timestamp_local.day,
-                                                    title=self.slug, # for Jekyll compatibility
+                                                    title=self.slug,  # for Jekyll compatibility
                                                     slug=self.slug,
                                                     timestamp=self.timestamp_local,
                                                     post=self)
@@ -138,7 +139,7 @@ class Post(object):
         self._permalink = permalink
 
         # keep track of any remaining properties in the post metadata
-        metadata.pop('url', None) # remove the url property from the metadata dict before copy
+        metadata.pop('url', None)  # remove the url property from the metadata dict before copy
         self.custom_properties = copy(metadata)
         """A dict of any custom metadata properties specified in the post."""
 
@@ -209,11 +210,11 @@ class Post(object):
 
     def _parse_source(self):
         try:
-            with open(self.source, mode='r') as file:
-                item = unicode(file.read())
+            with open(self.source, mode='r') as the_file:
+                item = unicode(the_file.read())
         except UnicodeDecodeError:
-            with open(self.source, mode='r', encoding='UTF-8') as file:
-                item = file.read()
+            with open(self.source, mode='r', encoding='UTF-8') as the_file:
+                item = the_file.read()
 
         self._file_contents_raw = item
         parsed_content = re.match(self._regex, item)
@@ -249,12 +250,12 @@ class Post(object):
         :return: The rendered HTML as a string.
         """
         index = all_posts.index(self)
-        if index > 0: # has newer posts
+        if index > 0:  # has newer posts
             newer_post = all_posts[index - 1]
         else:
             newer_post = None
 
-        if index < len(all_posts) - 1: # has older posts
+        if index < len(all_posts) - 1:  # has older posts
             older_post = all_posts[index + 1]
         else:
             older_post = None
@@ -286,17 +287,17 @@ class PostCollection(list):
     @cached_property
     def published(self):
         """Returns a new PostCollection containing the subset of posts that are published."""
-        return PostCollection([p for p in self if p.is_published == True])
+        return PostCollection([p for p in self if p.is_published is True])
 
     @cached_property
     def drafts(self):
         """Returns a new PostCollection containing the subset of posts that are drafts."""
-        return PostCollection([p for p in self if p.is_draft == True])
+        return PostCollection([p for p in self if p.is_draft is True])
 
     @property
     def pending(self):
         """Returns a new PostCollection containing the subset of posts that are pending."""
-        return PostCollection([p for p in self if p.is_pending == True])
+        return PostCollection([p for p in self if p.is_pending is True])
 
     @cached_property
     def review(self):

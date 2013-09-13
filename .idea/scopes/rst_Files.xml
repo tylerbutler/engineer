@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="rst Files" pattern="file:*.rst" />
+</component>

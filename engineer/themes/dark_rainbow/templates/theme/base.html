@@ -18,7 +18,8 @@
     <script type="text/javascript">
         try {
             Typekit.load();
-        } catch (e) {
+        }
+        catch (e) {
         }
     </script>
     {{ super() }}
@@ -26,79 +27,81 @@
 
 {%- block body %}
     <div class="container">
-    {%- block header_primary %}
-        <header id="primary" class="row">
-            {%- block header_primary_content %}
-                {% with split_title=settings.SITE_TITLE.split(' ') %}
-                    <h1 class="{%- block header_primary_h1_class %}five columns{% endblock -%}">
-                        <a href="{{ urlname('home') }}">
-                            {%- block header_primary_title %}{{ ' '.join(settings.SITE_TITLE.split(' ')[0:-1])|lower }}
-                                <span class="highlight">{{ settings.SITE_TITLE.split(' ')[-1]|lower }}</span>
-                            {% endblock -%}</a>
-                    </h1>
-                {% endwith %}
-            {% endblock -%}
-            {%- block nav_primary %}
-                <nav class="
-                        {%- block nav_primary_class %}seven columns{% endblock -%}">
-                    {%- block nav_primary_content %}
-                        {% include '_nav_primary.html' %}
-                    {% endblock -%}
-                </nav>
-            {% endblock -%}
-        </header>
-    {% endblock -%}
-    {%- block header_secondary %}
-        <header id="secondary" class="row">
-            {%- block header_secondary_content %}
-                <h1 class="
-                        {%- block header_secondary_h1_class %}six columns{% endblock -%}">
-                    {%- block header_secondary_title %}<span class="replace_me">
-                        section header</span>{% endblock -%}
-                </h1>
-                {%- block nav_secondary %}
+        {%- block header_primary %}
+            <header id="primary" class="row">
+                {%- block header_primary_content %}
+                    {% with split_title=settings.SITE_TITLE.split(' ') %}
+                        <h1 class="{%- block header_primary_h1_class %}five columns{% endblock -%}">
+                            <a href="{{ urlname('home') }}">
+                                {%- block header_primary_title %}
+                                    {{ ' '.join(settings.SITE_TITLE.split(' ')[0:-1])|lower }}
+                                    <span class="highlight">{{ settings.SITE_TITLE.split(' ')[-1]|lower }}</span>
+                                {% endblock -%}</a>
+                        </h1>
+                    {% endwith %}
+                {% endblock -%}
+                {%- block nav_primary %}
                     <nav class="
-                            {%- block nav_secondary_class %}six columns{% endblock -%}">
-                        {%- block nav_secondary_content %}
-                            <ul class="replace_me">
-                                <li>secondary</li>
-                                <li>navigation</li>
-                            </ul>
+                        {%- block nav_primary_class %}seven columns{% endblock -%}">
+                        {%- block nav_primary_content %}
+                            {% include '_nav_primary.html' %}
                         {% endblock -%}
                     </nav>
                 {% endblock -%}
-            {% endblock -%}
-        </header>
-    {% endblock -%}
-    <div class="row">
-        {%- block section_main %}
-            <section id="main" class="
+            </header>
+        {% endblock -%}
+        {%- block header_secondary %}
+            <header id="secondary" class="row">
+                {%- block header_secondary_content %}
+                    <h1 class="
+                        {%- block header_secondary_h1_class %}six columns{% endblock -%}">
+                    {%- block header_secondary_title %}<span class="replace_me">
+                        section header</span>{% endblock -%}
+                    </h1>
+                    {%- block nav_secondary %}
+                        <nav class="
+                            {%- block nav_secondary_class %}six columns{% endblock -%}">
+                            {%- block nav_secondary_content %}
+                                <ul class="replace_me">
+                                    <li>secondary</li>
+                                    <li>navigation</li>
+                                </ul>
+                            {% endblock -%}
+                        </nav>
+                    {% endblock -%}
+                {% endblock -%}
+            </header>
+        {% endblock -%}
+        <div class="row">
+            {%- block section_main %}
+                <section id="main" class="
                     {%- block section_main_class %}nine columns{% endblock -%}"
-                     role="main">
-                {%- block section_main_content %}
-                    <div class="replace_me">Replace this content in the main
-                        section.
-                    </div>
-                {% endblock -%}
-            </section>
-        {% endblock -%}
-        {%- block section_sidebar %}
-            <section id="sidebar" class="{%- block section_sidebar_class %}three columns{% endblock -%}">
-                {%- block section_sidebar_content %}
-                    {% include '_sidebar.html' %}
-                {% endblock -%}
-            </section>
-        {% endblock -%}
-    </div>
-    <div class="row">
-        {%- block footer %}
-            <footer class="
+                         role="main">
+                    {%- block section_main_content %}
+                        <div class="replace_me">Replace this content in the main
+                            section.
+                        </div>
+                    {% endblock -%}
+                </section>
+            {% endblock -%}
+            {%- block section_sidebar %}
+                <section id="sidebar" class="{%- block section_sidebar_class %}three columns{% endblock -%}">
+                    {%- block section_sidebar_content %}
+                        {% include '_sidebar.html' %}
+                    {% endblock -%}
+                </section>
+            {% endblock -%}
+        </div>
+        <div class="row">
+            {%- block footer %}
+                <footer class="
                     {%- block footer_class %}twelve columns centered{% endblock -%}">
-                {%- block footer_content %}
-                    {% include '_footer.html' %}
-                {% endblock -%}
-            </footer>
-        {% endblock -%}
+                    {%- block footer_content %}
+                        {% include '_footer.html' %}
+                    {% endblock -%}
+                </footer>
+            {% endblock -%}
+        </div>
     </div>
 {% endblock body %}
 

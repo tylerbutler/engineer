@@ -59,6 +59,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = APP_NAME
+# noinspection PyShadowingBuiltins
 copyright = u'2011-2013, %s' % AUTHOR_NAME
 
 # The version info for the project you're documenting, acts as replacement for

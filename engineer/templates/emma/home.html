@@ -14,72 +14,72 @@
         {% endfor %}
     {% endif %}
     <div class="row">
-        <section class="four columns">
-            <div class="panel">
-                <h2>Tasks</h2>
-                <a href="{{ get_url('build') }}" class="nice large radius blue button">Build</a>
-                <br/><br/>
-                <a href="{{ get_url('clean') }}" class="nice large radius white button">Clean and Build</a>
-                <br/><br/>
-                <a href="{{ get_url('reload_settings') }}" class="nice large radius green button">Reload Settings</a>
-                <br/><br/>
-                <a href="{{ get_url('disable') }}" class="nice large radius red button">Disable Emma</a>
-                <br/><br/>
-            </div>
-        </section>
-        <section class="four columns">
-            <div class="panel">
-                <h2>Log</h2>
-                {% if stats %}
-                    <div><span class="black radius label">Last Build:</span>
-                        {{ stats['time_run']|naturaltime }}
-                    </div>
-                    <div>
-                        <span class="green radius label">{{ stats['counts']['new_posts'] }}</span> New/Modified Posts
-                    </div>
-                    <hr/>
-                    <h4>File Activity</h4>
-                    <div>
-                        <span class="green radius label">{{ len(stats['files']['new']) }} new</span>
-                    </div>
-                    <div>
-                        <span class="blue radius label">{{ len(stats['files']['overwritten']) }} modified</span>
-                    </div>
-                    <div>
-                        <span class="red radius label">{{ len(stats['files']['deleted']) }} deleted</span>
-                    </div>
-                    </div>
-                {% else %}
-                    <div>
-                        No log information available.
-                    </div>
-                {% endif %}
-        </section>
-        <section class="four columns">
-            <div class="panel">
-                <h2>Site Stats</h2>
-                {% if stats %}
-                    <hr/>
-                    <div>
+    <section class="four columns">
+        <div class="panel">
+            <h2>Tasks</h2>
+            <a href="{{ get_url('build') }}" class="nice large radius blue button">Build</a>
+            <br/><br/>
+            <a href="{{ get_url('clean') }}" class="nice large radius white button">Clean and Build</a>
+            <br/><br/>
+            <a href="{{ get_url('reload_settings') }}" class="nice large radius green button">Reload Settings</a>
+            <br/><br/>
+            <a href="{{ get_url('disable') }}" class="nice large radius red button">Disable Emma</a>
+            <br/><br/>
+        </div>
+    </section>
+    <section class="four columns">
+        <div class="panel">
+            <h2>Log</h2>
+            {% if stats %}
+                <div><span class="black radius label">Last Build:</span>
+                    {{ stats['time_run']|naturaltime }}
+                </div>
+                <div>
+                    <span class="green radius label">{{ stats['counts']['new_posts'] }}</span> New/Modified Posts
+                </div>
+                <hr/>
+                <h4>File Activity</h4>
+                <div>
+                    <span class="green radius label">{{ len(stats['files']['new']) }} new</span>
+                </div>
+                <div>
+                    <span class="blue radius label">{{ len(stats['files']['overwritten']) }} modified</span>
+                </div>
+                <div>
+                    <span class="red radius label">{{ len(stats['files']['deleted']) }} deleted</span>
+                </div>
+                </div>
+            {% else %}
+                <div>
+                    No log information available.
+                </div>
+            {% endif %}
+    </section>
+    <section class="four columns">
+        <div class="panel">
+            <h2>Site Stats</h2>
+            {% if stats %}
+                <hr/>
+                <div>
                     <span class="black radius label">
                         {{ stats['counts']['new_posts'] + stats['counts']['cached_posts'] }}</span> Posts
-                    </div>
-                    <div>
-                        <span class="black radius label">{{ stats['counts']['rollups'] }}</span> Rollup Pages
-                    </div>
-                    <div>
-                        <span class="black radius label">{{ stats['counts']['template_pages'] }}</span> Template Pages
-                    </div>
-                    <div>
-                        <span class="black radius label">{{ stats['counts']['tag_pages'] }}</span> Tags
-                    </div>
-                {% else %}
-                    <div>
-                        No site stats available.
-                    </div>
-                {% endif %}
-        </section>
-    </div>
+                </div>
+                <div>
+                    <span class="black radius label">{{ stats['counts']['rollups'] }}</span> Rollup Pages
+                </div>
+                <div>
+                    <span class="black radius label">{{ stats['counts']['template_pages'] }}</span> Template Pages
+                </div>
+                <div>
+                    <span class="black radius label">{{ stats['counts']['tag_pages'] }}</span> Tags
+                </div>
+            {% else %}
+                <div>
+                    No site stats available.
+                </div>
+            {% endif %}
+        </div>
+    </section>
     <div class="row">
         <section class="twelve columns">
             <div class="panel">

@@ -24,8 +24,6 @@ settings file looks like this:
 
     THEME_SETTINGS:
       typekit_id: vty2qol
-      twitter_id: tylerbutler
-      tweet_count: 4
 
     POST_TIMEZONE: 'America/Los_Angeles'
 

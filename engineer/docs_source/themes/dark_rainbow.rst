@@ -49,9 +49,16 @@ Dark Rainbow supports the following settings which can be configured using the
     The username of the Twitter user whose feed should be shown in the sidebar. *Defaults to tylerbutler if not
     provided.*
 
+    .. deprecated:: 0.5.0
+       This setting is obsolete and ignored. The Tweet library has been removed from Engineer. See the
+       :ref:`changelog` for more information.
+
 ``tweet_count``
     The number of tweets to include in the Twitter sidebar. *Defaults to 4 if not provided.*
 
+    .. deprecated:: 0.5.0
+       This setting is obsolete and ignored. The Tweet library has been removed from Engineer. See the
+       :ref:`changelog` for more information.
 
 Fonts
 =====

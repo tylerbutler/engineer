@@ -12,9 +12,6 @@ PUBLISH_DRAFTS: no
 
 THEME_SETTINGS:
   typekit_id: lvr3vky
-  twitter_id: tylerbutler
-  tweet_count: 4
-  #typekit_id: vty2qol
 
 PREPROCESS_LESS: no
 DEBUG: no

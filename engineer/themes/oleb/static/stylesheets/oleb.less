@@ -422,36 +422,6 @@ div.codehilite, table.codehilitetable {
     hr + h1, hr + h2 {
         margin-top: 1rem;
     }
-
-    &.twitter {
-        .text-left;
-
-        h1 {
-            .text-center;
-            font-size: @font-size-medium;
-        }
-
-        ul {
-            li {
-                text-indent: 0;
-                padding-right: 0;
-                display: block;
-            }
-
-            li:not(:last-child):after {
-                .dotted-border(bottom, @grey);
-                content: "";
-                width: 40%;
-            }
-        }
-
-        .tweet_time {
-            display: block;
-            font-size: @font-size-tiny;
-            .text-right;
-            text-transform: uppercase;
-        }
-    }
 }
 
 ////////////
@@ -477,9 +447,11 @@ input.search {
 input::-webkit-input-placeholder {
     color: @black;
 }
+
 input:-moz-placeholder {
     color: @black;
 }
+
 input:-ms-input-placeholder {
     color: @black;
 }

@@ -101,18 +101,11 @@ def build(args=None):
         logger.debug("Copied LESS CSS files.")
 
     # Copy jQuery files if needed
-    if theme.use_jquery or theme.use_tweet:
+    if theme.use_jquery:
         s = settings.ENGINEER.LIB_DIR / 'jquery-1.7.1.min.js'
         t = ensure_exists(settings.OUTPUT_STATIC_DIR / 'engineer/lib/')
         s.copy(t)
         logger.debug("Copied jQuery files.")
-
-    # Copy Tweet files if needed
-    if theme.use_tweet:
-        s = settings.ENGINEER.LIB_DIR / 'tweet'
-        t = ensure_exists(settings.OUTPUT_STATIC_DIR / 'engineer/lib/tweet')
-        mirror_folder(s, t)
-        logger.debug("Copied Tweet files.")
 
     # Copy modernizr files if needed
     if theme.use_modernizr:

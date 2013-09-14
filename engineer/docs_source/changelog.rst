@@ -5,6 +5,15 @@
 Changelog
 =========
 
+version 0.5.0 -
+===============
+
+- Removed the bundled `Tweet <https://github.com/seaofclouds/tweet>`_ library and deprecated all related settings.
+  Twitter has discontinued its unauthenticated v1.0 API, so Tweet stopped working as of June 11,
+  2013. If you have suggestions for a replacement library or solution for Twitter integration please file an issue on
+  Github.
+
+
 version 0.4.4 - June 23, 2013
 =================================
 

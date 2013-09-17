@@ -1,9 +1,12 @@
 # coding=utf-8
 import logging
+
 from path import path
+
 from engineer.conf import settings
 from engineer.exceptions import PostMetadataError
 from engineer.models import Post, PostCollection
+
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 

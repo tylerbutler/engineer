@@ -1,11 +1,11 @@
 # coding=utf-8
 import collections
-import logging
-import itertools
-import posixpath
-import re
 import filecmp
 import hashlib
+import itertools
+import logging
+import posixpath
+import re
 from itertools import chain, islice
 from urlparse import urljoin, urlparse, urlunparse
 

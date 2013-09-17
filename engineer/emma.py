@@ -1,9 +1,12 @@
 # coding=utf-8
-import bottle
 import logging
-from path import path
 from uuid import uuid4
+
+import bottle
+from path import path
+
 from engineer.conf import settings
+
 
 try:
     import cPickle as pickle

@@ -220,7 +220,7 @@ class EngineerConfiguration(object):
         # starting in version 0.5, the default permalink style will change to 'pretty'
         permalink_setting = config.pop('PERMALINK_STYLE', None)
         if permalink_setting is None:
-            self.PERMALINK_STYLE = permalink_styles['fulldate']
+            self.PERMALINK_STYLE = permalink_styles['pretty']
         else:
             self.PERMALINK_STYLE = permalink_styles.get(permalink_setting, permalink_setting)
         self.ROLLUP_PAGE_SIZE = int(config.pop('ROLLUP_PAGE_SIZE', 5))

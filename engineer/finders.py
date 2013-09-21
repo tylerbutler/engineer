@@ -1,12 +1,15 @@
 # coding=utf-8
 from logging import getLogger
-from path import path
 from tempfile import mkdtemp
 from zipfile import ZipFile
+
+from path import path
+
 from engineer.conf import settings
 from engineer.exceptions import ThemeDirectoryNotFoundException
 from engineer.plugins import ThemeProvider
 from engineer.themes import Theme
+
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 

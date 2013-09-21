@@ -61,6 +61,28 @@ class PluginMixin(object):
 
     @classmethod
     def handle_settings(cls, config_dict, settings):
+        """
+        If a plugin defines its own settings, it may also need to handle those settings in some unique way when the
+        Engineer configuration files are being read. By overriding this method,
+        plugins can ensure such unique handling of their settings is done.
+
+        Note that a plugin does not have to handle its own settings unless there is unique processing that must be
+        done. Any settings that are unknown to Engineer will automatically be added as attributes on the
+        :class:`~engineer.conf.EngineerConfiguration` object. This method should only be implemented if the settings
+        must be processed in some more complicated way prior to being added to the global configuration object.
+
+        Implementations of this method should check for the plugin-specific settings in ``config_dict`` and set
+        appropriate attributes/properties on the ``settings`` object. In addition, settings that
+        have been handled should be removed from ``config_dict``. This ensures they are not handled by
+        other plugins or the default Engineer code.
+
+        :param config_dict: The dict of as-yet unhandled settings in the current settings file.
+
+        :param settings: The global :class:`~engineer.conf.EngineerConfiguration` object that contains all the
+            settings for the current Engineer process. Any custom settings should be added to this object.
+
+        :returns: The modified ``config_dict`` object.
+        """
         return config_dict
 
 

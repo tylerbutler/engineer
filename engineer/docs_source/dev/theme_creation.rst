@@ -122,9 +122,9 @@ Theme Manifest Parameters
 ``use_tweet`` *(optional)*
     Indicates whether the theme makes use of the Tweet library included in Engineer. Defaults to ``False``.
 
-      .. deprecated:: 0.5.0
-         This setting is obsolete and ignored. The Tweet library has been removed from Engineer. See the
-         :ref:`changelog` for more information.
+    .. deprecated:: 0.5.0
+       This setting is obsolete and ignored. The Tweet library has been removed from Engineer. See the
+       :ref:`changelog` for more information.
 
 
 .. _theme settings:

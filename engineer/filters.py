@@ -1,12 +1,14 @@
 # coding=utf-8
-import humanize
 import logging
 import re
+
+import humanize
 import times
 from markdown import markdown
 from path import path
 from typogrify import Typogrify
 from typogrify.templatetags import jinja2_filters
+
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 

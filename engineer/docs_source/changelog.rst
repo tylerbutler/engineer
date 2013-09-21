@@ -12,6 +12,8 @@ version 0.5.0 -
   Twitter has discontinued its unauthenticated v1.0 API, so Tweet stopped working as of June 11,
   2013. If you have suggestions for a replacement library or solution for Twitter integration please file an issue on
   Github.
+- The default setting of :attr:`~engineer.conf.EngineerConfiguration.PERMALINK_STYLE` has changed to ``pretty`` from
+  ``fulldate``.
 
 
 version 0.4.4 - June 23, 2013

@@ -1,9 +1,12 @@
 # coding=utf-8
 import logging
+
 from path import path
+
 from engineer.conf import settings
 from engineer.exceptions import PostMetadataError
 from engineer.models import Post, PostCollection
+
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -17,10 +20,16 @@ class LocalLoader(object):
         new_posts = PostCollection()
         cached_posts = PostCollection()
 
+        # expand user paths in all post paths
+        directories = [path(p).expand().abspath() for p in input]
+
         file_list = []
-        for directory in input:
-            logger.info("Getting posts from %s." % directory)
-            file_list.extend(path(directory).listdir('*.md') + path(directory).listdir('*.markdown'))
+        for directory in directories:
+            if directory.exists():
+                logger.info("Getting posts from %s." % directory)
+                file_list.extend(directory.listdir('*.md') + directory.listdir('*.markdown'))
+            else:
+                logger.warning("Can't find source post directory %s." % directory)
 
         for f in file_list:
             try:

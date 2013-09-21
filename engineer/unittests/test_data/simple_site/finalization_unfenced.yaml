@@ -1,0 +1,4 @@
+SUPER: config.yaml
+
+FINALIZE_METADATA: yes
+METADATA_FORMAT: unfenced

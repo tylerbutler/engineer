@@ -1,8 +1,11 @@
 # coding=utf-8
-import sys
 import logging
+import sys
+
 from brownie.caching import memoize
+
 from engineer.lib.ansistrm import ColorizingStreamHandler
+
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 

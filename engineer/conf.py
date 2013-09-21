@@ -98,8 +98,8 @@ class EngineerConfiguration(object):
                 return
 
         if path(settings_file).exists() and path(settings_file).isfile():
-            self.SETTINGS_FILE = settings_file = path(settings_file).abspath()
-            logger.console("Loading configuration from %s." % path(settings_file).abspath())
+            self.SETTINGS_FILE = settings_file = path(settings_file).expand().abspath()
+            logger.console("Loading configuration from %s." % settings_file)
             # Find the complete set of settings files based on inheritance
             all_configs = []
             config = {}
@@ -107,15 +107,17 @@ class EngineerConfiguration(object):
                 while True:
                     with open(settings_file, mode='rb') as the_file:
                         temp_config = yaml.load(the_file)
-                        logger.debug("Loaded %s file." % settings_file)
+                        logger.info("Loaded %s file." % settings_file)
                     all_configs.append((temp_config, settings_file))
                     if 'SUPER' not in temp_config:
                         break
                     else:
-                        new_settings = path(temp_config['SUPER'])
+                        new_settings = path(temp_config['SUPER']).expand()
                         if not new_settings.isabs():
                             settings_file = (settings_file.dirname() / new_settings).abspath()
-                        logger.debug("Going to next settings file... %s" % path(temp_config['SUPER']).abspath())
+                        else:
+                            settings_file = new_settings.abspath()
+                        logger.debug("Going to next settings file... %s" % settings_file)
             except Exception as e:
                 logger.exception(e.message)
 
@@ -151,17 +153,22 @@ class EngineerConfiguration(object):
         self.OUTPUT_DIR = self.normalize(config.pop('OUTPUT_DIR', 'output'))
         self.OUTPUT_DIR_IGNORE = wrap_list(config.pop('OUTPUT_DIR_IGNORE', ['.git']))
         self.TEMPLATE_DIR = self.normalize(config.pop('TEMPLATE_DIR', 'templates'))
-        self.TEMPLATE_PAGE_DIR = config.pop('TEMPLATE_PAGE_DIR', (self.TEMPLATE_DIR / 'pages').abspath())
+        self.TEMPLATE_PAGE_DIR = self.normalize(
+            config.pop('TEMPLATE_PAGE_DIR', (self.TEMPLATE_DIR / 'pages').abspath())
+        )
         self.LOG_DIR = self.normalize(config.pop('LOG_DIR', 'logs'))
 
         if self.SETTINGS_FILE is None:
-            self.LOG_FILE = config.pop('LOG_FILE', (self.LOG_DIR / 'build.log').abspath())
+            self.LOG_FILE = self.normalize(config.pop('LOG_FILE', (self.LOG_DIR / 'build.log').abspath()))
         else:
-            self.LOG_FILE = config.pop('LOG_FILE',
-                                       (self.LOG_DIR / ('%s-%s.log' % (datetime.now().strftime('%m.%d_%H.%M.%S'),
-                                                                       self.SETTINGS_FILE.name))).abspath())
+            self.LOG_FILE = self.normalize(
+                config.pop(
+                    'LOG_FILE',
+                    (self.LOG_DIR / ('%s-%s.log' % (datetime.now().strftime('%m.%d_%H.%M.%S'),
+                                                    self.SETTINGS_FILE.name))).abspath())
+            )
 
-        self.CACHE_DIR = config.pop('CACHE_DIR', None)
+        self.CACHE_DIR = self.normalize(config.pop('CACHE_DIR', None))
         if self.CACHE_DIR is None:
             if self.SETTINGS_FILE is not None:
                 self.CACHE_DIR = self.normalize('_cache/%s' % self.SETTINGS_FILE.name)
@@ -170,10 +177,18 @@ class EngineerConfiguration(object):
         else:
             self.CACHE_DIR = self.normalize(self.CACHE_DIR)
 
-        self.CACHE_FILE = config.pop('CACHE_FILE', (self.CACHE_DIR / 'engineer.cache').abspath())
-        self.OUTPUT_CACHE_DIR = config.pop('OUTPUT_CACHE_DIR', (self.CACHE_DIR / 'output_cache').abspath())
-        self.JINJA_CACHE_DIR = config.pop('JINJA_CACHE_DIR', (self.CACHE_DIR / 'jinja_cache').abspath())
-        self.BUILD_STATS_FILE = config.pop('BUILD_STATS_FILE', (self.CACHE_DIR / 'build_stats.cache').abspath())
+        self.CACHE_FILE = self.normalize(
+            config.pop('CACHE_FILE', (self.CACHE_DIR / 'engineer.cache').abspath())
+        )
+        self.OUTPUT_CACHE_DIR = self.normalize(
+            config.pop('OUTPUT_CACHE_DIR', (self.CACHE_DIR / 'output_cache').abspath())
+        )
+        self.JINJA_CACHE_DIR = self.normalize(
+            config.pop('JINJA_CACHE_DIR', (self.CACHE_DIR / 'jinja_cache').abspath())
+        )
+        self.BUILD_STATS_FILE = self.normalize(
+            config.pop('BUILD_STATS_FILE', (self.CACHE_DIR / 'build_stats.cache').abspath())
+        )
 
         # PLUGINS
         self.PLUGINS = self.normalize_list(config.pop('PLUGINS', None))
@@ -220,7 +235,7 @@ class EngineerConfiguration(object):
         # starting in version 0.5, the default permalink style will change to 'pretty'
         permalink_setting = config.pop('PERMALINK_STYLE', None)
         if permalink_setting is None:
-            self.PERMALINK_STYLE = permalink_styles['fulldate']
+            self.PERMALINK_STYLE = permalink_styles['pretty']
         else:
             self.PERMALINK_STYLE = permalink_styles.get(permalink_setting, permalink_setting)
         self.ROLLUP_PAGE_SIZE = int(config.pop('ROLLUP_PAGE_SIZE', 5))
@@ -377,16 +392,17 @@ class EngineerConfiguration(object):
         return self.CACHE['LESS_CACHE']
 
     def normalize(self, p):
-        if path(p).isabs():
-            return path(p)
+        if p is None:
+            return None
+        the_path = path(p).expand()
+        if the_path.isabs():
+            return the_path
         else:
-            return (self.SETTINGS_DIR / p).abspath()
+            return (self.SETTINGS_DIR / the_path).abspath()
 
     def normalize_list(self, p):
         l = wrap_list(p)
-        return_list = []
-        for p in l:
-            return_list.append(self.normalize(p))
+        return_list = [self.normalize(p) for p in l]
         return return_list
 
     def create_required_directories(self):

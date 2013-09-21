@@ -1,4 +1,4 @@
-{% if fence %}
+{% if post._fence %}
 ---
 
 {% endif %}

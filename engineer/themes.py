@@ -1,11 +1,13 @@
 # coding=utf-8
-from jinja2.loaders import FileSystemLoader
-import yaml
 from brownie.caching import memoize
+from jinja2.loaders import FileSystemLoader
 from path import path
+import yaml
+
 from engineer.conf import settings
 from engineer.exceptions import ThemeNotFoundException
 from engineer.util import get_class
+
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 

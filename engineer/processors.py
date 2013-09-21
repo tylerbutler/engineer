@@ -2,8 +2,11 @@
 import logging
 import platform
 import subprocess
+
 from path import path
+
 from engineer.conf import settings
+
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 

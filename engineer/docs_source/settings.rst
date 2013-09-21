@@ -1,4 +1,3 @@
-
 .. _settings:
 
 ==============
@@ -209,11 +208,7 @@ Site Settings
 
    .. attribute:: PERMALINK_STYLE
 
-      **Default:** ``fulldate``
-
-      .. note:: While the ``fulldate`` style is the current Engineer default, this will change in an upcoming
-         version. If you wish to continue using that style, you should update your settings files to specify the
-         fulldate style rather than rely on the default.
+      **Default:** ``pretty``
 
       A format string that controls how links to your posts are formatted. You can use one of the built-in permalink
       styles (described below) or provide a custom one. Permalink format strings should use standard
@@ -261,6 +256,10 @@ Site Settings
       +--------------+----------------------------------------------+
       | ``slugdate`` | ``{year}/{month}/{day}/{title}.html``        |
       +--------------+----------------------------------------------+
+
+      .. versionchanged:: 0.5.0
+         The default value for this setting changed to ``pretty`` in version 0.5.0. The previous default value was
+         ``fulldate``, so you can set it manually if you wish to retain the previous behavior.
 
 
    .. attribute:: SITE_AUTHOR

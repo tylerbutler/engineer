@@ -81,3 +81,58 @@ class TestConfig(BaseTestCase):
                 ('engineer.conf', 'WARNING', "The 'NORMALIZE_INPUT_FILE_MASK' setting was deprecated in version 0.4: "
                                              "This setting is now ignored.")
             )
+
+
+class TestVariableExpansion(BaseTestCase):
+    def setUp(self):
+        from engineer.conf import settings
+
+        BaseTestCase.setUp(self)
+        settings.reload('path_variable_expansion.yaml')
+
+    def test_all(self):
+        dirs = [
+            'CONTENT_DIR',
+            'OUTPUT_DIR',
+            'TEMPLATE_DIR',
+            'TEMPLATE_PAGE_DIR',
+            'CACHE_DIR',
+            'CACHE_FILE',
+            'OUTPUT_CACHE_DIR',
+            'JINJA_CACHE_DIR',
+            'BUILD_STATS_FILE',
+            'LOG_DIR',
+            'LOG_FILE',
+        ]
+
+        for k in dirs:
+            self._validate(k)
+
+    def test_all_list(self):
+        dirs = [
+            'POST_DIR',
+            'THEME_DIRS'
+        ]
+
+        for k in dirs:
+            self._validate_list(k)
+
+    def _validate(self, settings_attr):
+        from engineer.conf import settings
+
+        if settings_attr.endswith('_FILE'):
+            template_string = '~/%s.file'
+        else:
+            template_string = '~/%s'
+        value = template_string % settings_attr.lower()
+
+        expected = path(value).expand()
+        self.assertEqual(getattr(settings, settings_attr), expected)
+
+    def _validate_list(self, settings_attr):
+        from engineer.conf import settings
+
+        values = ['~/foo/', '~/bar', '~/baz/']
+        expected = [path(p).expand() for p in values]
+
+        self.assertEqual(getattr(settings, settings_attr), expected)

@@ -17,10 +17,13 @@ class LocalLoader(object):
         new_posts = PostCollection()
         cached_posts = PostCollection()
 
+        # expand user paths in all post paths
+        directories = [path(p).expand().abspath() for p in input]
+
         file_list = []
-        for directory in input:
+        for directory in directories:
             logger.info("Getting posts from %s." % directory)
-            file_list.extend(path(directory).listdir('*.md') + path(directory).listdir('*.markdown'))
+            file_list.extend(directory.listdir('*.md') + directory.listdir('*.markdown'))
 
         for f in file_list:
             try:

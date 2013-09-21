@@ -1,0 +1,25 @@
+SUPER: config.yaml
+
+SITE_TITLE: Path Variable Expansion Test
+
+CONTENT_DIR: ~/content_dir
+OUTPUT_DIR: ~/output_dir
+TEMPLATE_DIR: ~/template_dir
+TEMPLATE_PAGE_DIR: ~/template_page_dir
+CACHE_DIR: ~/cache_dir
+CACHE_FILE: ~/cache_file.file
+OUTPUT_CACHE_DIR: ~/output_cache_dir
+JINJA_CACHE_DIR: ~/jinja_cache_dir
+BUILD_STATS_FILE: ~/build_stats_file.file
+LOG_DIR: ~/log_dir
+LOG_FILE: ~/log_file.file
+
+POST_DIR:
+- ~/foo/
+- '~/bar'
+- '~/baz/'
+
+THEME_DIRS:
+- ~/foo/
+- '~/bar'
+- '~/baz/'

@@ -22,8 +22,11 @@ class LocalLoader(object):
 
         file_list = []
         for directory in directories:
-            logger.info("Getting posts from %s." % directory)
-            file_list.extend(directory.listdir('*.md') + directory.listdir('*.markdown'))
+            if directory.exists():
+                logger.info("Getting posts from %s." % directory)
+                file_list.extend(directory.listdir('*.md') + directory.listdir('*.markdown'))
+            else:
+                logger.warning("Can't find source post directory %s." % directory)
 
         for f in file_list:
             try:

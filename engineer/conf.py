@@ -367,9 +367,11 @@ class EngineerConfiguration(object):
             logger.exception(e)
             CACHE = None
             exit()
-        if CACHE is None or 'version' not in CACHE or CACHE['version'] != version:
+
+        if CACHE is None or len(CACHE) == 0 or 'version' not in CACHE or CACHE['version'] != version:
             # all new caches
-            logger.debug("Caches either don't exist or are old, so creating new ones...")
+            logger.warning("Caches either don't exist or are old, so creating new ones...")
+            CACHE.clear()
             CACHE['version'] = version
         return CACHE
 

@@ -55,9 +55,13 @@ class PluginMount(type):
 
 class PluginMixin(object):
     @classmethod
+    def get_name(cls):
+        return '.'.join([cls.__module__, cls.__name__])
+
+    @classmethod
     def get_logger(cls):
         """Returns a logger for the plugin."""
-        return logging.getLogger('.'.join([cls.__module__, cls.__name__]))
+        return logging.getLogger(cls.get_name())
 
     @classmethod
     def handle_settings(cls, config_dict, settings):

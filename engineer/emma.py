@@ -30,7 +30,7 @@ class NoSecretException(Exception):
 #        return [path, path + '/']
 
 
-# noinspection PyUnresolvedReferences
+#noinspection PyUnresolvedReferences
 class EmmaStandalone(object):
     app = bottle.Bottle()
 
@@ -77,6 +77,7 @@ class Emma(object):
 
         self.stats = None
         self.messages = []
+        self._secret = None
 
         self.app.route('/', callback=self._home, name='home')
         self.app.route('/', method='POST', callback=self._home, name='home')
@@ -137,6 +138,7 @@ class Emma(object):
         self.secret_file.remove_p()
         exit()
 
+    #noinspection PyMethodMayBeStatic
     def _serve_static(self, filepath):
         response = bottle.static_file(filepath,
                                       root=settings.ENGINEER.STATIC_DIR)

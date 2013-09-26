@@ -78,7 +78,7 @@ def naturaltime(value):
     return friendly
 
 
-# noinspection PyShadowingBuiltins
+#noinspection PyShadowingBuiltins
 def compress(value):
     from engineer.conf import settings
 
@@ -87,7 +87,7 @@ def compress(value):
     else:  # COMPRESSOR_ENABLED == True
         import html5lib
 
-        # noinspection PyUnresolvedReferences,PyUnusedLocal
+        #noinspection PyUnresolvedReferences,PyUnusedLocal
         def _min_js_slim(js_string):
             # NOTE: The slimit filter seems to break some scripts. I'm not sure why. I'm leaving this code in for
             # posterity, but it's not functional right now and shouldn't be used.

@@ -10,9 +10,9 @@ import pytz
 import times
 import yaml
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
-# noinspection PyPackageRequirements
+#noinspection PyPackageRequirements
 from typogrify.templatetags.jinja2_filters import register
-# noinspection PyPackageRequirements
+#noinspection PyPackageRequirements
 from path import path
 from brownie.caching import cached_property
 
@@ -295,7 +295,8 @@ class EngineerConfiguration(object):
         for k, v in config.iteritems():
             setattr(self, k, v)
 
-    def _check_deprecated_settings(self, config):
+    @staticmethod
+    def _check_deprecated_settings(config):
         for setting in deprecated_settings:
             if config.pop(setting[0], None) is not None:
                 logger.warning("The '%s' setting was deprecated in version %s: %s" % setting)

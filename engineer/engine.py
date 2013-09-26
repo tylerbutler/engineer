@@ -25,7 +25,7 @@ except ImportError:
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 
-# noinspection PyUnusedLocal
+#noinspection PyUnusedLocal
 def clean(args=None):
     from engineer.conf import settings
 
@@ -43,7 +43,7 @@ def clean(args=None):
     logger.console('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 
 
-# noinspection PyShadowingBuiltins
+#noinspection PyShadowingBuiltins
 def build(args=None):
     """Builds an Engineer site using the settings specified in *args*."""
     from engineer.conf import settings
@@ -169,7 +169,7 @@ def build(args=None):
         logger.warning("These posts won't be published until you build the site again after their publish time.")
 
     all_posts = PostCollection(
-        sorted(to_publish, reverse=True, key=lambda post: post.timestamp))
+        sorted(to_publish, reverse=True, key=lambda p: p.timestamp))
 
     # Generate template pages
     if settings.TEMPLATE_PAGE_DIR.exists():
@@ -343,7 +343,7 @@ def serve(args):
     debug_server = bottle.Bottle()
     debug_server.mount('/_emma', emma.Emma().app)
 
-    # noinspection PyUnresolvedReferences,PyUnusedLocal
+    #noinspection PyUnresolvedReferences,PyUnusedLocal
     @debug_server.route('/')
     @debug_server.route('/<filepath:path>')
     def serve_static(filepath='index.html'):
@@ -500,7 +500,7 @@ def get_argparser():
                              help="Delete target folder contents. Use with caution!")
     parser_init.set_defaults(func=init)
 
-    # noinspection PyUnresolvedReferences
+    #noinspection PyUnresolvedReferences
     for cmd_plugin in CommandPlugin.plugins:
         if cmd_plugin.active():
             cmd_plugin.add_command(subparsers, main_parser, common_parser)

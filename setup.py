@@ -104,7 +104,7 @@ def find_package_data(
 ################################################################################
 
 
-# noinspection PyShadowingBuiltins
+#noinspection PyShadowingBuiltins
 def get_install_requirements():
     requirements = []
     with open('requirements.txt') as file:
@@ -119,7 +119,7 @@ def get_install_requirements():
         return requirements
 
 
-# noinspection PyShadowingBuiltins
+#noinspection PyShadowingBuiltins
 def get_readme():
     with open('README.md') as file:
         return file.read()

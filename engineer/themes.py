@@ -12,6 +12,7 @@ from engineer.util import get_class
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 
+#noinspection PyNoneFunctionAssignment
 class Theme(object):
     """
     Creates a new theme object based on the contents of *theme_root_path*.
@@ -98,13 +99,13 @@ class ThemeManager(object):
         for f in settings.THEME_FINDERS:
             finder = get_class(f)
             themes.extend(finder.get_themes())
-        # noinspection PyTypeChecker
+        #noinspection PyTypeChecker
         return dict([t.id, t] for t in themes)
 
     @classmethod
     @memoize
     def current_theme(cls):
-        theme = ThemeManager.themes().get(settings.THEME, None)
+        theme = ThemeManager.themes().get(settings.THEME)
         if theme is not None:
             return theme
         else:
@@ -115,7 +116,7 @@ class ThemeManager(object):
     def theme_path(template):
         return path(ThemeManager.current_theme().template_root) / template
 
-    # noinspection PyShadowingBuiltins
+    #noinspection PyShadowingBuiltins
     @staticmethod
     @memoize
     def theme(id):

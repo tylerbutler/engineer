@@ -277,6 +277,7 @@ class Post(object):
 class PostCollection(list):
     """A collection of :class:`Posts <engineer.models.Post>`."""
 
+    #noinspection PyTypeChecker
     def __init__(self, seq=()):
         list.__init__(self, seq)
         self.listpage_template = settings.JINJA_ENV.get_template('theme/post_list.html')
@@ -319,7 +320,8 @@ class PostCollection(list):
         """Returns a new PostCollection containing the subset of posts that are tagged with *tag*."""
         return PostCollection([p for p in self if tag in p.tags])
 
-    def output_path(self, slice_num):
+    @staticmethod
+    def output_path(slice_num):
         return path(settings.OUTPUT_CACHE_DIR / ("page/%s/index.html" % slice_num))
 
     def render_listpage_html(self, slice_num, has_next, has_previous, all_posts=None):

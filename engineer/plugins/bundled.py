@@ -107,6 +107,7 @@ class FinalizationPlugin(PostProcessor):
                 logger.debug("No metadata finalization needed for post '%s'" % post)
         return post
 
+    #noinspection PyProtectedMember
     @classmethod
     def need_update(cls, post, new_post_content):
         from engineer.models import Post

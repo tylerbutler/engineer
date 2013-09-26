@@ -13,6 +13,9 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="tylerbutler.com" />
   </component>
+  <component name="PyDocumentationSettings">
+    <option name="myDocStringFormat" value="reStructuredText" />
+  </component>
   <component name="TemplatesService">
     <option name="templateFileTypes">
       <list>
@@ -28,6 +31,10 @@
         <option value="$MODULE_DIR$/engineer/themes/oleb/templates" />
       </list>
     </option>
+  </component>
+  <component name="TestRunnerService">
+    <option name="projectConfiguration" value="Nosetests" />
+    <option name="PROJECT_TEST_RUNNER" value="Nosetests" />
   </component>
 </module>
 

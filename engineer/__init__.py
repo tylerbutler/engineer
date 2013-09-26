@@ -9,7 +9,8 @@ except ImportError:
 
     update_version_py(version_path=os.path.dirname(__file__))
     try:
-        # noinspection PyUnresolvedReferences
+        #noinspection PyUnresolvedReferences
+        #noinspection PyProtectedMember
         from engineer._version import version
     except ImportError:
         raise

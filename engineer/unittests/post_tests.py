@@ -30,7 +30,7 @@ class PostTestCase(CopyDataTestCase):
         settings.create_required_directories()
 
 
-# noinspection PyShadowingBuiltins
+#noinspection PyShadowingBuiltins
 class MetadataTests(PostTestCase):
     def default_metadata_test(self):
         """Metadata defaults"""
@@ -47,6 +47,7 @@ class MetadataTests(PostTestCase):
         with self.assertRaises(PostMetadataError):
             Post(file)
 
+    #noinspection PyProtectedMember
     def fenced_metadata_test(self):
         """Fenced metadata"""
         file = self.post_tests_dir / 'fenced_metadata.md'
@@ -96,7 +97,7 @@ class MetadataTests(PostTestCase):
         self.assertEqual(len(post.tags), 2)
 
 
-# noinspection PyShadowingBuiltins
+#noinspection PyShadowingBuiltins
 class StatusTests(PostTestCase):
     def draft_default_test(self):
         """Draft default status"""
@@ -125,7 +126,7 @@ class StatusTests(PostTestCase):
         self.assertFalse(post.is_draft)
 
 
-# noinspection PyShadowingBuiltins
+#noinspection PyShadowingBuiltins
 class ContentTests(PostTestCase):
     def post_breaks_simple_test(self):
         """Post breaks of the form: -- more --"""
@@ -152,7 +153,7 @@ class ContentTests(PostTestCase):
         self.assertIn(u"also a “unicode character” in the metadata!", post.tags)
 
 
-# noinspection PyShadowingBuiltins
+#noinspection PyShadowingBuiltins
 class PermalinkTests(PostTestCase):
     def test_fulldate(self):
         from engineer.conf import settings
@@ -250,4 +251,3 @@ class GlobalLinksTests(PostTestCase):
 
         actual_content = unicode(post.convert_to_html(post.content_preprocessed))
         self.assertEqual(actual_content.strip(), expected_content.strip())
-

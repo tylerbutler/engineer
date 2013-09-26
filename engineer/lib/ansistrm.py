@@ -9,7 +9,7 @@ import logging
 import os
 
 
-# noinspection PyCallingNonCallable
+#noinspection PyCallingNonCallable
 class ColorizingStreamHandler(logging.StreamHandler):
     # color names to indices
     color_map = {

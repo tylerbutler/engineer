@@ -13,7 +13,7 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 logger = logging.getLogger(__name__)
 
 
-# noinspection PyShadowingBuiltins
+#noinspection PyShadowingBuiltins
 class LocalLoader(object):
     @staticmethod
     def load_all(input):

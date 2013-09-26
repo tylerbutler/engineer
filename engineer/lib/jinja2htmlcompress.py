@@ -83,7 +83,7 @@ class HTMLCompress(Extension):
             elif not self.breaking_rules.get(other_tag):
                 break
 
-    # noinspection PyShadowingBuiltins
+    #noinspection PyShadowingBuiltins
     def normalize(self, ctx):
         pos = 0
         buffer = []

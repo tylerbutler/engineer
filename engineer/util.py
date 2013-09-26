@@ -7,11 +7,11 @@ import logging
 import posixpath
 import re
 from itertools import chain, islice
-from urlparse import urljoin, urlparse, urlunparse
+import urlparse
 
-# noinspection PyUnresolvedReferences
+#noinspection PyUnresolvedReferences
 import translitcodec
-# noinspection PyPackageRequirements
+#noinspection PyPackageRequirements
 from path import path
 
 
@@ -44,28 +44,30 @@ def get_class(class_string):
 
 
 def count_iterable(i):
-    # noinspection PyUnusedLocal
+    #noinspection PyUnusedLocal
     return sum(1 for e in i)
 
 
 def expand_url(home, url):
-    join = urljoin(home, url)
-    url2 = urlparse(join)
-    path = posixpath.normpath(url2[2])
+    join = urlparse.urljoin(home, url)
+    url2 = urlparse.urlparse(join)
+    the_path = posixpath.normpath(url2[2])
 
-    return urlunparse(
-        (url2.scheme, url2.netloc, path, url2.params, url2.query, url2.fragment)
+    return urlparse.urlunparse(
+        (url2.scheme, url2.netloc, the_path, url2.params, url2.query, url2.fragment)
     )
 
 
 def urljoin(url1, url2):
+    # This method is necessary because sometimes urlparse.urljoin simply doesn't work correctly
+    # when joining URL fragments.
     return posixpath.join(url1, url2)
 
 
 def checksum(the_file):
     with open(the_file) as f:
-        checksum = hashlib.sha256(f.read()).hexdigest()
-    return checksum
+        _checksum = hashlib.sha256(f.read()).hexdigest()
+    return _checksum
 
 
 def chunk(seq, chunksize, process=iter):
@@ -81,8 +83,8 @@ def mirror_folder(source, target, delete_orphans=True, recurse=True, ignore_list
 
     def expand_tree(p):
         tree = []
-        for item in path(p).walk():
-            tree.append(item)
+        for node in path(p).walk():
+            tree.append(node)
         return tree
 
     report = {
@@ -118,6 +120,8 @@ def mirror_folder(source, target, delete_orphans=True, recurse=True, ignore_list
                 report['deleted'].add(fullpath)
                 if len(fullpath.listdir()) > 0:
                     report['deleted'].update(expand_tree(fullpath))
+
+                #noinspection PyArgumentList
                 fullpath.rmtree()
             elif fullpath.isfile():
                 logger.debug(
@@ -149,7 +153,7 @@ def mirror_folder(source, target, delete_orphans=True, recurse=True, ignore_list
     # Recurse into subfolders that exist in both the source and target
     if recurse:
         for item in compare.common_dirs:
-            rpt = mirror_folder(d1 / item, d2 / item, delete_orphans, _level + 1)
+            rpt = mirror_folder(d1 / item, d2 / item, delete_orphans, _level=_level + 1)
             report['new'].update(rpt['new'])
             report['overwritten'].update(rpt['overwritten'])
             report['deleted'].update(rpt['deleted'])
@@ -205,10 +209,10 @@ class Borg(object):
         return self
 
 
-def relpath(path):
+def relpath(the_path):
     from engineer.conf import settings
 
-    return '/' + settings.OUTPUT_CACHE_DIR.relpathto(path)
+    return '/' + settings.OUTPUT_CACHE_DIR.relpathto(the_path)
 
 
 def _min_css(css_string):
@@ -285,7 +289,7 @@ class setonce(object):
         self._name = '_setonce_attr_%s' % self._count
         self.__doc__ = doc
 
-    # noinspection PyUnusedLocal
+    #noinspection PyUnusedLocal
     def __get__(self, obj, obj_type=None):
         if obj is None:
             return self

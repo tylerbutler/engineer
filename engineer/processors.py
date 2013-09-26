@@ -13,7 +13,7 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 logger = logging.getLogger(__name__)
 
 
-# noinspection PyShadowingBuiltins
+#noinspection PyShadowingBuiltins
 # Helper function to preprocess LESS files on demand
 def preprocess_less(file):
     input_file = path(settings.OUTPUT_CACHE_DIR / settings.ENGINEER.STATIC_DIR.basename() / file)

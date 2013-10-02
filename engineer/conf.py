@@ -9,7 +9,7 @@ import times
 import yaml
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
-from typogrify.templatetags.jinja2_filters import register
+from typogrify.templatetags.jinja_filters import register
 from path import path
 from brownie.caching import cached_property
 from engineer.cache import SimpleFileCache

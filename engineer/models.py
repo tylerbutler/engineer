@@ -11,7 +11,7 @@ from brownie.caching import cached_property
 from dateutil import parser
 from path import path
 from propane.datastructures import CaseInsensitiveDict
-from typogrify.templatetags.jinja2_filters import typogrify
+from typogrify.filters import typogrify
 from yaml.scanner import ScannerError
 from engineer.conf import settings
 from engineer.enums import Status

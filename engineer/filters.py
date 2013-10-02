@@ -5,8 +5,8 @@ import re
 import times
 from markdown import markdown
 from path import path
-from typogrify import Typogrify
-from typogrify.templatetags import jinja2_filters
+from typogrify import filters as Typogrify
+from typogrify.templatetags import jinja_filters
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -53,7 +53,7 @@ def markdown_filter(value, typogrify=True, extensions=('extra', 'codehilite')):
                          flags=re.MULTILINE) # use multi-line mode so ^ will match the start of each line
     output = pattern.sub(u'', value)
     if typogrify:
-        return jinja2_filters.typogrify(markdown(output, extensions=extensions))
+        return jinja_filters.typogrify(markdown(output, extensions=extensions))
     else:
         return markdown(output, extensions=extensions)
 

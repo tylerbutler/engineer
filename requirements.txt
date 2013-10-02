@@ -17,4 +17,4 @@ brownie>=0.5
 propane>=0.1.2
 
 # engineer-specific fork of typogrify
-typogrify-engineer
+typogrify-engineer>=2.0.0

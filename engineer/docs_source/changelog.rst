@@ -14,6 +14,13 @@ version 0.5.0 -
   Github.
 - The default setting of :attr:`~engineer.conf.EngineerConfiguration.PERMALINK_STYLE` has changed to ``pretty`` from
   ``fulldate``.
+  
+
+version 0.4.5 - October 2, 2013
+===============================
+
+- Update to a new version of typogrify-engineer. Due to changes in the original typogrify package as well as in pip
+  installer behavior, Engineer was failing to install properly from PyPI for new users.
 
 
 version 0.4.4 - June 23, 2013

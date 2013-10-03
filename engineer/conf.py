@@ -11,7 +11,7 @@ import times
 import yaml
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 #noinspection PyPackageRequirements
-from typogrify.templatetags.jinja2_filters import register
+from typogrify.templatetags.jinja_filters import register
 #noinspection PyPackageRequirements
 from path import path
 from brownie.caching import cached_property

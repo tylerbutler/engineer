@@ -19,9 +19,7 @@
 ////////////////////
 // ELEMENT STYLES //
 ////////////////////
-    .link-color(@green, @orange)
-
-;
+.link-color(@green, @orange);
 
 body {
     background-color: @bg;
@@ -545,19 +543,27 @@ ul.tags {
 @media only screen and (max-width: 767px) {
     header#primary {
         padding-bottom: 0;
+        .text-center();
 
         h1 {
+            .font-size-large();
             margin-top: 0;
             margin-bottom: 0;
         }
 
         nav {
             margin-top: 0;
-            text-align: left;
+            .text-center();
 
             ul li {
+                .font-size-large();
                 padding-left: 0;
                 padding-right: 16px;
+                display: inline;
+
+                &:last-child {
+                    padding-right: 0;
+                }
             }
         }
     }
@@ -570,6 +576,10 @@ ul.tags {
 
         .post-date, .post-date div, .attribution {
             display: inline;
+        }
+
+        .attribution {
+            border-bottom: none;
         }
 
         ul.tags {
@@ -590,7 +600,7 @@ ul.tags {
         header {
             border-bottom: 1px dotted @purple;
             h1 {
-                .font-size-xl(.5, .5);
+                .font-size-large(.5, .5);
                 .link-color(@green, @orange);
             }
         }

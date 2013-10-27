@@ -14,6 +14,8 @@ version 0.5.0 -
   Github.
 - The default setting of :attr:`~engineer.conf.EngineerConfiguration.PERMALINK_STYLE` has changed to ``pretty`` from
   ``fulldate``.
+- Atom feeds are now generated in addition to RSS feeds. Atom feeds are now the default. As part of this change,
+  customization of the RSS feed using a template is no longer supported.
   
 
 version 0.4.5 - October 2, 2013

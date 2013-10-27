@@ -292,32 +292,37 @@ RSS Feed Settings
 
       **Default:** ``SITE_TITLE Feed``
 
-      The title of the site's RSS feed.
+      The title of the site's Atom feed.
 
 
    .. attribute:: FEED_ITEM_LIMIT
 
       **Default:** ``ROLLUP_PAGE_SIZE``
 
-      Controls how many posts are listed in the site RSS feed.
+      Controls how many posts are listed in the site Atom feed.
 
 
    .. attribute:: FEED_DESCRIPTION
 
       **Default:** ``The FEED_ITEM_LIMIT most recent posts from SITE_TITLE.``
 
-      The description of the site's RSS feed.
+      The description of the site's Atom feed.
 
 
    .. attribute:: FEED_URL
 
-      **Default:** ``HOME_URL/feeds/rss.xml``
+      **Default:** ``HOME_URL/feeds/atom.xml``
 
-      The URL of the site's RSS feed. This only affects the links to the feed that
+      The URL of the site's Atom feed. This only affects the links to the feed that
       are output in templates using :ref:`urlname('feed') <urlname>`. The feed itself
-      will still be written out to ``HOME_URL/feeds/rss.xml``, so you can
+      will still be written out to ``HOME_URL/feeds/atom.xml``, so you can
       configure a Feedburner URL, for example, as your feed URL, and then point
-      Feedburner to ``HOME_URL/feeds/rss.xml``.
+      Feedburner to ``HOME_URL/feeds/atom.xml``.
+
+      .. versionchanged:: 0.5.0
+         The default feed format changed to Atom in Engineer 0.5.0. A feed in the RSS format is still generated and
+         output to ``HOME_URL/feeds/rss.xml``, but all the default feed-related settings point to the Atom formatted
+         feed.
 
 
 Theme Settings

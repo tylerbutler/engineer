@@ -1,0 +1,8 @@
+{% if post.content_teaser and not settings.FEED_FULL_CONTENT %}
+    {{ post.content_teaser }}
+    <div>
+        <a href="{{ post.absolute_url }}" class="button">Read more →</a>
+    </div>
+{% else %}
+    {{ post.content }}
+{% endif %}

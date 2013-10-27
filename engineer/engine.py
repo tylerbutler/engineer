@@ -7,6 +7,7 @@ import time
 from codecs import open
 
 import times
+from feedgenerator import Rss201rev2Feed, Atom1Feed
 from path import path
 
 from engineer.exceptions import ThemeNotFoundException
@@ -254,14 +255,40 @@ def build(args=None):
                 logger.debug("Output %s." % relpath(the_file.name))
 
     # Generate feeds
-    feed_output_path = ensure_exists(settings.OUTPUT_CACHE_DIR / 'feeds/rss.xml')
-    template = settings.JINJA_ENV.get_or_select_template(['rss.xml',
-                                                          'theme/rss.xml',
-                                                          'core/rss.xml'])
-    feed_content = template.render(post_list=all_posts[:settings.FEED_ITEM_LIMIT],
-                                   build_date=all_posts[0].timestamp)
-    with open(feed_output_path, mode='wb', encoding='UTF-8') as the_file:
-        the_file.write(feed_content)
+    rss_feed_output_path = ensure_exists(settings.OUTPUT_CACHE_DIR / 'feeds/rss.xml')
+    atom_feed_output_path = ensure_exists(settings.OUTPUT_CACHE_DIR / 'feeds/atom.xml')
+    rss_feed = Rss201rev2Feed(
+        title=settings.FEED_TITLE,
+        link=settings.SITE_URL,
+        description=settings.FEED_DESCRIPTION,
+        feed_url=settings.FEED_URL
+    )
+
+    atom_feed = Atom1Feed(
+        title=settings.FEED_TITLE,
+        link=settings.SITE_URL,
+        description=settings.FEED_DESCRIPTION,
+        feed_url=settings.FEED_URL
+    )
+
+    for feed in (rss_feed, atom_feed):
+        for post in all_posts[:settings.FEED_ITEM_LIMIT]:
+            title = settings.JINJA_ENV.get_template('core/feeds/title.jinja2').render(post=post)
+            link = settings.JINJA_ENV.get_template('core/feeds/link.jinja2').render(post=post)
+            content = settings.JINJA_ENV.get_template('core/feeds/content.jinja2').render(post=post)
+            feed.add_item(
+                title=title,
+                link=link,
+                description=content,
+                pubdate=post.timestamp,
+                unique_id=post.absolute_url)
+
+    with open(rss_feed_output_path, mode='wb') as the_file:
+        rss_feed.write(the_file, 'UTF-8')
+        logger.debug("Output %s." % relpath(the_file.name))
+
+    with open(atom_feed_output_path, mode='wb') as the_file:
+        atom_feed.write(the_file, 'UTF-8')
         logger.debug("Output %s." % relpath(the_file.name))
 
     # Generate sitemap

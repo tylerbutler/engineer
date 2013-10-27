@@ -224,13 +224,12 @@ looks like this:
 
 .. _rss template:
 
-RSS and Sitemap Templates
--------------------------
+Sitemap Templates
+-----------------
 
-If you need to customize either the RSS feed or sitemap that Engineer generates for you,
-you can provide your own templates that Engineer will use to generate them. These templates
-should be named :file:`rss.xml` and :file:`sitemap.xml` respectively, and should be in the
-root of your site's :attr:`~engineer.conf.EngineerConfiguration.TEMPLATE_DIR`.
+If you need to customize the sitemap that Engineer generates for you, you can provide your own templates that
+Engineer will use to generate it. This template should be named :file:`sitemap.xml` and should be in the root of your
+site's :attr:`~engineer.conf.EngineerConfiguration.TEMPLATE_DIR`.
 
 .. versionadded:: 0.3.0
 

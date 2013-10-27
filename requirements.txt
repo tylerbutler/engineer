@@ -15,6 +15,7 @@ cssmin>=0.1.4
 lpjsmin>=0.4
 brownie>=0.5
 propane>=0.1.2
+feedgenerator>=1.7
 
 # engineer-specific fork of typogrify
 typogrify-engineer>=2.0.0

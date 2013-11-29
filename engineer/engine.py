@@ -187,7 +187,7 @@ def build(args=None):
             with open(page.output_path / page.output_file_name, mode='wb',
                       encoding='UTF-8') as the_file:
                 the_file.write(rendered_page)
-                logger.debug("Output template page %s." % relpath(the_file.name))
+                logger.info("Output template page %s." % relpath(the_file.name))
                 build_stats['counts']['template_pages'] += 1
         logger.info("Generated %s template pages." % build_stats['counts']['template_pages'])
 

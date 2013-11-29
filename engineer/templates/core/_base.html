@@ -22,8 +22,8 @@
               content="{% block meta_author %}{{ settings.SITE_AUTHOR }}{% endblock %}">
     {% endif %}
 
-    <link rel="alternate" type="application/rss+xml"
-          title="{{ settings.SITE_TITLE }} RSS Feed"
+    <link rel="alternate" type="application/atom+xml"
+          title="{{ settings.SITE_TITLE }} Atom Feed"
           href="{{ urlname('feed') }}"/>
 
     {% block foundationcss %}

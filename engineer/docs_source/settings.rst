@@ -187,7 +187,7 @@ Site Settings
 
       The absolute URL to your site. For example, ``http://tylerbutler.com/``. This is used to generate some links in
       your site, so it should be accurate. In general, Engineer generates relative URLs for use internally,
-      but there are some cases, such as the RSS feed, that require the absolute URL.
+      but there are some cases, such as the Atom and RSS feeds, that require the absolute URL.
 
 
    .. attribute:: HOME_URL
@@ -283,8 +283,8 @@ Site Settings
       TODO
 
 
-RSS Feed Settings
-=================
+Atom/RSS Feed Settings
+======================
 
 .. class:: EngineerConfiguration
 

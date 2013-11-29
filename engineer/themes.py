@@ -28,7 +28,8 @@ class Theme(object):
         self.license = kwargs.get('license', None)
         self.use_foundation = kwargs.get('use_foundation', False)
         self.use_lesscss = kwargs.get('use_lesscss', False)
-        self.use_modernizr = kwargs.get('use_moderinzr', False)
+        self.use_modernizr = kwargs.get('use_moderinzr', True)
+        self.use_normalize_css = kwargs.get('use_normalize_css', True)
         self.use_jquery = kwargs.get('use_jquery', False)
 
         self.self_contained = kwargs.get('self_contained', True)

@@ -87,33 +87,37 @@ def build(args=None):
     mirror_folder(s, t, recurse=False)  # Copy only the files in this folder - don't recurse
 
     theme = ThemeManager.current_theme()
+    engineer_lib = settings.OUTPUT_STATIC_DIR / 'engineer/lib/'
     # Copy Foundation files if used
     if theme.use_foundation:
-        s = settings.ENGINEER.LIB_DIR / 'foundation'
-        t = ensure_exists(settings.OUTPUT_STATIC_DIR / 'engineer/lib/foundation')
+        s = settings.ENGINEER.LIB_DIR / settings.ENGINEER.FOUNDATION_CSS
+        t = ensure_exists(engineer_lib / settings.ENGINEER.FOUNDATION_CSS)
         mirror_folder(s, t)
         logger.debug("Copied Foundation library files.")
 
     # Copy LESS js file if needed
     if theme.use_lesscss and not settings.PREPROCESS_LESS:
-        s = settings.ENGINEER.LIB_DIR / 'less-1.3.1.min.js'
-        t = ensure_exists(settings.OUTPUT_STATIC_DIR / 'engineer/lib/')
-        s.copy(t)
+        s = settings.ENGINEER.LIB_DIR / settings.ENGINEER.LESS_JS
+        s.copy(engineer_lib)
         logger.debug("Copied LESS CSS files.")
 
     # Copy jQuery files if needed
     if theme.use_jquery:
-        s = settings.ENGINEER.LIB_DIR / 'jquery-1.7.1.min.js'
-        t = ensure_exists(settings.OUTPUT_STATIC_DIR / 'engineer/lib/')
-        s.copy(t)
+        s = settings.ENGINEER.LIB_DIR / settings.ENGINEER.JQUERY
+        s.copy(engineer_lib)
         logger.debug("Copied jQuery files.")
 
     # Copy modernizr files if needed
     if theme.use_modernizr:
-        s = settings.ENGINEER.LIB_DIR / 'modernizr-2.5.3.min.js'
-        t = ensure_exists(settings.OUTPUT_STATIC_DIR / 'engineer/lib/')
-        s.copy(t)
+        s = settings.ENGINEER.LIB_DIR / settings.ENGINEER.MODERNIZR
+        s.copy(engineer_lib)
         logger.debug("Copied Modernizr files.")
+
+    # Copy normalize.css if needed
+    if theme.use_normalize_css:
+        s = settings.ENGINEER.LIB_DIR / settings.ENGINEER.NORMALIZE_CSS
+        s.copy(engineer_lib)
+        logger.debug("Copied normalize.css.")
 
     logger.debug("Copied static files to %s." % relpath(t))
 

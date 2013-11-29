@@ -99,6 +99,12 @@ Theme Manifest Parameters
     Indicates whether the theme makes use of the Foundation CSS library included in Engineer. Defaults to ``False``.
 
 
+.. _theme use_jquery:
+
+``use_jquery`` *(optional)*
+    Indicates whether the theme makes use of the jQuery library included in Engineer. Defaults to ``False``.
+
+
 .. _theme use_lesscss:
 
 ``use_lesscss`` *(optional)*
@@ -108,13 +114,19 @@ Theme Manifest Parameters
 .. _theme use_modernizr:
 
 ``use_modernizr`` *(optional)*
-    Indicates whether the theme makes use of the Modernizr library included in Engineer. Defaults to ``False``.
+    Indicates whether the theme makes use of the Modernizr library included in Engineer. Defaults to ``True``.
+
+    .. versionchanged:: 0.5.0
+       This setting now defaults to ``True`` instead of ``False``.
 
 
-.. _theme use_jquery:
+.. _theme use_normalize_css:
 
-``use_jquery`` *(optional)*
-    Indicates whether the theme makes use of the jQuery library included in Engineer. Defaults to ``False``.
+``use_normalize_css`` *(optional)*
+    Indicates whether the theme makes use of the `normalize.css <http://necolas.github.io/normalize.css/>`_ file
+    included in Engineer. Defaults to ``True``.
+
+    .. versionadded:: 0.5.0
 
 
 .. _theme use_tweet:

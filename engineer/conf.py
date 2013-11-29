@@ -75,11 +75,18 @@ class EngineerConfiguration(object):
         THEMES_DIR = (ROOT_DIR / 'themes').abspath()
         LIB_DIR = (STATIC_DIR / 'engineer/lib').abspath()
 
+        FOUNDATION_CSS = 'foundation'
+        JQUERY = 'jquery-1.10.2.min.js'
+        LESS_JS = 'less-1.5.0.min.js'
+        MODERNIZR = 'modernizr-2.6.2.min.js'
+        NORMALIZE_CSS = 'normalize.css'
+
         # URLs to included libraries - will be updated in the EngineerConfiguration.initialize() method.
         FOUNDATION_CSS_URL = None
         JQUERY_URL = None
-        MODERNIZR_URL = None
         LESS_JS_URL = None
+        MODERNIZR_URL = None
+        NORMALIZE_CSS_URL = None
 
     def __init__(self, settings_file=None):
         self.reload(settings_file)
@@ -248,10 +255,12 @@ class EngineerConfiguration(object):
         self.FEED_URL = config.pop('FEED_URL', urljoin(self.HOME_URL, 'feeds/atom.xml'))
 
         # These 'constants' are updated here so they're relative to the STATIC_URL value
-        self.ENGINEER.FOUNDATION_CSS_URL = urljoin(self.STATIC_URL, 'engineer/lib/foundation/')
-        self.ENGINEER.JQUERY_URL = urljoin(self.STATIC_URL, 'engineer/lib/jquery-1.7.1.min.js')
-        self.ENGINEER.MODERNIZR_URL = urljoin(self.STATIC_URL, 'engineer/lib/modernizr-2.5.3.min.js')
-        self.ENGINEER.LESS_JS_URL = urljoin(self.STATIC_URL, 'engineer/lib/less-1.3.1.min.js')
+        lib_path = urljoin(self.STATIC_URL, 'engineer/lib')
+        self.ENGINEER.FOUNDATION_CSS_URL = urljoin(lib_path, 'foundation/')
+        self.ENGINEER.JQUERY_URL = urljoin(lib_path, self.ENGINEER.JQUERY)
+        self.ENGINEER.LESS_JS_URL = urljoin(lib_path, self.ENGINEER.LESS_JS)
+        self.ENGINEER.MODERNIZR_URL = urljoin(lib_path, self.ENGINEER.MODERNIZR)
+        self.ENGINEER.NORMALIZE_CSS_URL = urljoin(lib_path, self.ENGINEER.NORMALIZE_CSS)
 
         # URL helper functions
         def page(num):

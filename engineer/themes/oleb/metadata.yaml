@@ -5,9 +5,10 @@ author: 'Tyler Butler <tyler@tylerbutler.com>'
 website: 'http://tylerbutler.com'
 license: 'N/A'
 use_foundation: yes
+use_jquery: yes
 use_lesscss: yes
 use_modernizr: yes
-use_jquery: yes
+use_normalize_css: no
 
 template_dirs:
   - '../_shared/templates/'

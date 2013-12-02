@@ -70,8 +70,10 @@ sample content for your site's sidebar and navigation.
     Use this fragment to put additional CSS or LESS stylesheets at the top of your pages.
 
 :file:`_nav_primary.html`
-    This fragment contains the primary navigation links for your site. See the documentation on :ref:`navigation` for
-    more details on this fragment and what it should contain.
+
+:file:`_nav_primary_links.html`
+    These two fragments together contain the outer navigation links for your site. See the documentation on
+    :ref:`navigation` for more details on fragment and what they should contain.
 
 :file:`_sidebar.html`
     This fragment contains a sidebar for your site. See the documentation on :ref:`sidebar` for more details on this
@@ -102,9 +104,20 @@ Navigation
    to give it a proper overhaul in an upcoming Engineer release.
 
 Navigation links are critical to any website. In Engineer, the primary navigation links for your site should be put
-in the :file:`_nav_primary.html` template fragment. This file should contain an unordered list (``<ul>`` element) in
-which each item is a navigation link. You can hard-code these links if you'd like, but Engineer includes
+in the :file:`_nav_primary_links.html` template fragment. This file should contain a set of ``<li>`` elements,
+each of which is a navigation link. You can hard-code these links if you'd like, but Engineer includes
 some Jinja macros that make generating more dynamic navigation links possible.
+
+If you need more control over your navigation, you can also override the contents of :file:`_nav_primary.html` by
+providing your own. By default, :file:`_nav_primary.html` merely contains some outer scaffolding for navigation links
+(i.e. a ``<ul>`` tag):
+
+.. literalinclude:: ../templates/_nav_primary.html
+   :language: html+jinja
+
+You can of course replace this with whatever you wish, but keep in mind that some themes may expect certain CSS
+classes to be applied to the navigation.
+
 
 Using ``navigation_link``
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -114,18 +127,11 @@ is a bit challenging. The ``navigation_link`` macro makes this easier. A
 `macro <http://jinja.pocoo.org/docs/templates/#macros>`_ is a Jinja2 construct that is similar to a function in a
 programming language. The ``navigation_link`` macro, when called, outputs a list item (``<li>`` element) with a link.
 
-It's a bit easier to see it in action. Here's what the sample site :file:`_nav_primary.html` template fragment looks
-like:
+It's a bit easier to see it in action. Here's what the sample site :file:`_nav_primary_links.html` template fragment
+looks like:
 
-.. code-block:: html+jinja
-
-   {% from 'core/_macros.html' import navigation_link with context %}
-
-   <ul>
-       {{ navigation_link('articles', urlname('home'), ['post', 'listpage']) }}
-       {{ navigation_link('about', urlname('about'), ['about']) }}
-       {{ navigation_link('themes', urlname('themes'), ['themes']) }}
-   </ul>
+.. literalinclude:: ../templates/_nav_primary_links.html
+   :language: html+jinja
 
 We first import the ``navigation_link`` macro from :file:`core/_macros.html`, then subsequently call the macro to
 create the individual list items in the navigation list. When this fragment is rendered on the homepage of the site,
@@ -133,15 +139,15 @@ the HTML looks like this:
 
 .. code-block:: html
 
-   <ul>
-       <li class="current"><a href="/">articles</a></li>
-       <li><a href="/about">about</a></li>
-       <li><a href="/themes">themes</a></li>
-   </ul>
+   <li class="current"><a href="/">articles</a></li>
+   <li><a href="/about">about</a></li>
+   <li><a href="/themes">themes</a></li>
 
-As you can see, ``navigation_link`` takes three arguments: the text to display for the link,
-the actual URL of the link, and a list of contexts in which the link should be highlighted. A highlighted link
-simply has the ``current`` CSS class applied to it.
+The ``navigation_link`` macro takes four arguments: the text to display for the link,
+the actual URL of the link, a list of contexts in which the link should be highlighted,
+and an optional CSS class name that should be applied to the active navigation nodes. By default, a highlighted link
+simply has the CSS class specified in the :attr:`~engineer.conf.EngineerConfiguration.ACTIVE_NAV_CLASS` setting
+applied to it; this can be overridden with each call to ``navigation_link``.
 
 
 .. _navigation contexts:

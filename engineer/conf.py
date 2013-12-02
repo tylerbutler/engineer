@@ -73,7 +73,7 @@ class EngineerConfiguration(object):
         TEMPLATE_DIR = (ROOT_DIR / 'templates').abspath()
         STATIC_DIR = (ROOT_DIR / 'static').abspath()
         THEMES_DIR = (ROOT_DIR / 'themes').abspath()
-        LIB_DIR = (STATIC_DIR / 'engineer/lib').abspath()
+        LIB_DIR = (STATIC_DIR / 'engineer/lib/').abspath()
 
         FOUNDATION_CSS = 'foundation'
         JQUERY = 'jquery-1.10.2.min.js'

@@ -25,6 +25,14 @@
     {%- endif -%}
 {%- endmacro -%}
 
+{% macro render_script_link(path_input, prepend_static_url=True) -%}
+    {% filter compress %}
+        <script src="{{ _make_relative_path(path_input, prepend_static_url) }}"
+                type="text/javascript">
+        </script>
+    {% endfilter %}
+{%- endmacro -%}
+
 {% macro navigation_link(name, url, section, active_class=None) -%}
     {% if active_class is none %}
         {% set active_class=settings.ACTIVE_NAV_CLASS %}

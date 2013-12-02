@@ -96,5 +96,9 @@ class PluginFinder(BaseFinder):
         themes = []
         for p in ThemeProvider.plugins:
             for t in p.paths:
-                themes.extend(cls.get_from_directory(t))
+                try:
+                    themes.extend(cls.get_from_directory(t))
+                except ThemeDirectoryNotFoundException as e:
+                    logger.warning(e.message)
+                    continue
         return themes

@@ -87,7 +87,8 @@ def build(args=None):
     mirror_folder(s, t, recurse=False)  # Copy only the files in this folder - don't recurse
 
     theme = ThemeManager.current_theme()
-    engineer_lib = settings.OUTPUT_STATIC_DIR / 'engineer/lib/'
+    engineer_lib = (settings.OUTPUT_STATIC_DIR / 'engineer/lib/').abspath()
+    ensure_exists(engineer_lib)
     # Copy Foundation files if used
     if theme.use_foundation:
         s = settings.ENGINEER.LIB_DIR / settings.ENGINEER.FOUNDATION_CSS

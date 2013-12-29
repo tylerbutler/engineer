@@ -466,6 +466,14 @@ Miscellaneous Settings
       the only key value is ``MODIFY_RAW_POST``. If a plugin requires writing back to a post source file,
       you must explicitly list it in this setting. Otherwise the plugin will fail to update post source files.
 
+      Each permission value can optionally contain a ``*`` as a wildcard. This means that all plugins will
+      automatically be granted that permission.
+
+      .. seealso::
+         :ref:`plugin permissions`
+
+      .. versionadded:: 0.5.0
+
 
    .. attribute:: PUBLISH_DRAFTS
 

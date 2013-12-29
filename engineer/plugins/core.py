@@ -119,29 +119,33 @@ class PostProcessor(PluginMixin):
         The ``preprocess`` method is called during the Post import process, before any post metadata defaults
         have been set.
 
-        :param post: The post being currently processed by Engineer. The preprocess method should use the
-            ``content_preprocessed`` attribute to get/modify the content of *post*. This ensures that preprocessors
-            from other plugins can be chained together.
+        The preprocess method should use the ``content_preprocessed`` attribute to get/modify the content of *post*.
+        This ensures that preprocessors from other plugins can be chained together.
 
-            By default, the ``content_preprocessed`` value is used only for generating post HTML. It is not written
-            back to the source post file. However, sometimes you may want to make a permanent change to the post
-            content that is written out. In this case, you should manipulate the ``content_finalized`` attribute as
-            needed. This attribute will be used to write back the post content by the
-            :ref:`metadata finalization` plugin. This means that in order for a plugin to write preprocessed data back
-            to the post file, the :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA` setting must be
-            enabled.
+        By default, the ``content_preprocessed`` value is used only
+        for generating post HTML. It is not written back to the source post file. However, sometimes you may want
+        to make a permanent change to the post content that is written out. In this case, you should call the
+        :meth:`~engineer.models.Post.set_finalized_content` method, passing it the modified content. This
+        method will ensure the data is written back to the source file by the :ref:`metadata finalization` plugin.
+        This means that in order for a plugin to write preprocessed data back to the post file,
+        the :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA` setting must be
+        enabled.
 
-            .. tip::
-               Since the :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA` setting must be enabled for
-               plugins to write back to source post files,
+        Your plugin will also need to be explicitly granted the ``MODIFY_RAW_POST`` permission. See more
+        detail in :ref:`plugin permissions`.
 
+        In addition, the preprocess method can add/remove/update properties on the *post* object itself as needed.
 
+        .. tip::
+           Since the :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA` setting must be enabled for
+           plugins to write back to source post files, you should check this setting in addition to any other
+           settings you may be using.
+
+        :param post: The post being currently processed by Engineer.
         :param metadata: A dict of the post metadata contained in the post source file. It contains no
             default values - only the values contained within the post source file itself. The preprocess method can
             add, update, or otherwise manipulate metadata prior to it being processed by Engineer manipulating this
             parameter.
-
-        In addition, the preprocess method can add/remove/update properties on the *post* object itself as needed.
 
         :return: The *post* and *metadata* values should be returned (as a 2-tuple) by the method.
         """

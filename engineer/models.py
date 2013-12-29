@@ -275,7 +275,18 @@ class Post(object):
                                                                                nav_context='post')
 
     def set_finalized_content(self, content, caller_class):
-        """Plugins can call this method to modify post content that is written back to source post files."""
+        """
+        Plugins can call this method to modify post content that is written back to source post files.
+        This method can be called at any time by anyone, but it has no effect if the caller is not granted the
+        ``MODIFY_RAW_POST`` permission in the Engineer configuration.
+
+        The :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA` setting must also be enabled in order for
+        calls to this method to have any effect.
+
+        :param content: The modified post content that should be written back to the post source file.
+        :param caller_class: The class of the plugin that's calling this method.
+        :return: ``True`` if the content was successfully modified; otherwise ``False``.
+        """
         caller = caller_class.get_name() if hasattr(caller_class, 'get_name') else unicode(caller_class)
         if not settings.FINALIZE_METADATA:
             logger.warning("A plugin is trying to modify the post content but the FINALIZE_METADATA setting is "

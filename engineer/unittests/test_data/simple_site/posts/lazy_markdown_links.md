@@ -1,5 +1,6 @@
 title: Lazy Markdown Links
-status: published
+status: draft
+slug: lazy-markdown-links
 
 ---
 

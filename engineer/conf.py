@@ -44,6 +44,7 @@ class SettingsFileNotFoundException(Exception):
     pass
 
 
+# noinspection PyPep8Naming
 class EngineerConfiguration(object):
     """
     Stores all of the configuration settings for a given Engineer site.
@@ -277,6 +278,13 @@ class EngineerConfiguration(object):
         self.ACTIVE_NAV_CLASS = config.pop('ACTIVE_NAV_CLASS', 'current')
         self.DEBUG = config.pop('DEBUG', False)
         #self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
+
+        self.PLUGIN_PERMISSIONS = {
+            'MODIFY_RAW_POST': []
+        }
+        provided_permissions = config.pop('PLUGIN_PERMISSIONS', {})
+        update_additive(self.PLUGIN_PERMISSIONS, provided_permissions)
+
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
         self.PUBLISH_PENDING = config.pop('PUBLISH_PENDING', False)
         self.PUBLISH_REVIEW = config.pop('PUBLISH_REVIEW', False)

@@ -66,7 +66,8 @@ class PostRenamerTestCase(BaseTestCase):
 
 class LazyMarkdownLinksTestCase(BaseTestCase):
     _expected_metadata = """title: Lazy Markdown Links
-status: published
+status: draft
+slug: lazy-markdown-links
 
 ---
 
@@ -115,6 +116,15 @@ case][4] automatically.
         post = Post('posts/lazy_markdown_links2.md')
         self.assertEqual(post.content_preprocessed, self._expected_output2)
 
-        # with open(post.source, mode='rb') as post_file:
-        #     content = post_file.read()
-        # self.assertEqual(content, self._expected_metadata + self._expected_output)
+    def test_lazy_links_persist(self):
+        from engineer.conf import settings
+        from engineer.models import Post
+
+        settings.reload('lazy_links_persist.yaml')
+
+        post = Post('posts/lazy_markdown_links.md')
+        self.assertEqual(post.content_preprocessed, self._expected_output)
+
+        with open(post.source, mode='rb') as post_file:
+            content = post_file.read()
+        self.assertEqual(content, self._expected_metadata + self._expected_output)

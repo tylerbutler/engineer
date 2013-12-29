@@ -458,6 +458,15 @@ Miscellaneous Settings
          and :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA_CONFIG` instead.
 
 
+   .. attribute:: PLUGIN_PERMISSIONS
+
+      **Default:** ``{ 'MODIFY_RAW_POST': [] }``
+
+      This dictionary setting controls what permissions a plugin has. As of Engineer 0.5.0,
+      the only key value is ``MODIFY_RAW_POST``. If a plugin requires writing back to a post source file,
+      you must explicitly list it in this setting. Otherwise the plugin will fail to update post source files.
+
+
    .. attribute:: PUBLISH_DRAFTS
 
       **Default:** ``False``

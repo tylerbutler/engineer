@@ -119,13 +119,19 @@ class FinalizationPlugin(PostProcessor):
         if old_fenced != post._fence:
             return True
 
-        old_content = old.group('metadata').strip()
-        new_content = new.group('metadata').strip()
+        old_metadata = old.group('metadata').strip()
+        new_metadata = new.group('metadata').strip()
 
-        if new_content == old_content:
-            return False
-        else:
+        if new_metadata != old_metadata:
             return True
+
+        old_content = old.group('content').strip()
+        new_content = new.group('content').strip()
+
+        if new_content != old_content:
+            return True
+        else:
+            return False
 
     @staticmethod
     def render_markdown(post):
@@ -182,7 +188,7 @@ class FinalizationPlugin(PostProcessor):
             metadata += '\n'
             metadata += yaml.safe_dump(dict(post.custom_properties), default_flow_style=False)
         return settings.JINJA_ENV.get_template(post.markdown_template_path).render(metadata=metadata,
-                                                                                   content=post.content_raw,
+                                                                                   content=post.content_finalized,
                                                                                    post=post)
 
 
@@ -326,6 +332,9 @@ class LazyMarkdownLinksPlugin(PostProcessor):
 
     @classmethod
     def preprocess(cls, post, metadata):
+        from engineer.conf import settings
+
+        logger = cls.get_logger()
         content = post.content_preprocessed
         cls._counter = cls.get_max_link_number(content)
 
@@ -333,4 +342,7 @@ class LazyMarkdownLinksPlugin(PostProcessor):
         while cls._link_regex.search(content):
             content = cls._link_regex.sub(cls._replace, content)
         post.content_preprocessed = content
+        if getattr(settings, 'LAZY_LINKS_PERSIST', False):
+            if not post.set_finalized_content(content, cls):
+                logger.warning("Failed to persist lazy links.")
         return post, metadata

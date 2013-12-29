@@ -123,6 +123,19 @@ class PostProcessor(PluginMixin):
             ``content_preprocessed`` attribute to get/modify the content of *post*. This ensures that preprocessors
             from other plugins can be chained together.
 
+            By default, the ``content_preprocessed`` value is used only for generating post HTML. It is not written
+            back to the source post file. However, sometimes you may want to make a permanent change to the post
+            content that is written out. In this case, you should manipulate the ``content_finalized`` attribute as
+            needed. This attribute will be used to write back the post content by the
+            :ref:`metadata finalization` plugin. This means that in order for a plugin to write preprocessed data back
+            to the post file, the :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA` setting must be
+            enabled.
+
+            .. tip::
+               Since the :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA` setting must be enabled for
+               plugins to write back to source post files,
+
+
         :param metadata: A dict of the post metadata contained in the post source file. It contains no
             default values - only the values contained within the post source file itself. The preprocess method can
             add, update, or otherwise manipulate metadata prior to it being processed by Engineer manipulating this

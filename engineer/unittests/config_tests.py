@@ -75,7 +75,7 @@ class TestConfig(BaseTestCase):
             log_output.check(
                 ('engineer.conf',
                  'CONSOLE',
-                 "Loading configuration from %s\deprecated_settings.yaml." % self.copied_data_path),
+                 "Loading configuration from %s." % (self.copied_data_path / 'deprecated_settings.yaml').normpath()),
                 ('engineer.conf', 'WARNING', "The 'NORMALIZE_INPUT_FILES' setting was deprecated in version 0.4: This "
                                              "setting is now ignored."),
                 ('engineer.conf', 'WARNING', "The 'NORMALIZE_INPUT_FILE_MASK' setting was deprecated in version 0.4: "

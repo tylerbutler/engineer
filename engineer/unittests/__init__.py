@@ -42,7 +42,7 @@ class CopyDataTestCase(TestCase):
         if self.copied_data_path is not None:
             self.copied_data_path.rmtree()
         temp = mkdtemp()
-        self.copied_data_path = (path(temp) / '__in_progress_test_data').abspath()
+        self.copied_data_path = (path(temp) / '__in_progress_test_data').realpath()
         self._source_path = value
         self.source_path.copytree(self.copied_data_path)
         print "Copied temp test data to: %s" % self.copied_data_path

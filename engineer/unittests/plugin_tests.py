@@ -72,19 +72,38 @@ status: published
 
 """
 
-    _expected_output = """This is my text and [this is my link][1]. I'll define
+    _expected_output = """This is my text and [this is my link][4]. I'll define
 the url for that link under the paragraph.
 
-[1]: http://brettterpstra.com
+[4]: http://brettterpstra.com
 
-I can use [multiple][2] lazy links in [a paragraph][3],
+I can use [multiple][5] lazy links in [a paragraph][6],
 and then just define them in order below it.
 
-[2]: https://gist.github.com/ttscoff/7059952
-[3]: http://blog.bignerdranch.com/4044-rock-heads/
+[5]: https://gist.github.com/ttscoff/7059952
+[6]: http://blog.bignerdranch.com/4044-rock-heads/
+
+I can also use lazy links when there are already [existing
+numbered links][1] in [the text][3].
+
+[1]: http://www.tylerbutler.com
+[3]: http://www.xkcd2.com
 """
 
-    def test_plugin(self):
+    _expected_output2 = """[Lazy links][1] can come in handy. But sometimes you have links
+already defined and you also want to add [some lazy ones][3].
+
+[1]: http://www.tylerbutler.com/
+[3]: http://www.xkcd2.com/
+
+Luckily the [Engineer][2] Lazy Markdown Link plugin [handles this
+case][4] automatically.
+
+[4]: http://www.tylerbutler.com/
+[2]: https://github.com/tylerbutler/engineer/
+"""
+
+    def test_lazy_links(self):
         from engineer.conf import settings
         from engineer.models import Post
 
@@ -92,6 +111,9 @@ and then just define them in order below it.
 
         post = Post('posts/lazy_markdown_links.md')
         self.assertEqual(post.content_preprocessed, self._expected_output)
+
+        post = Post('posts/lazy_markdown_links2.md')
+        self.assertEqual(post.content_preprocessed, self._expected_output2)
 
         # with open(post.source, mode='rb') as post_file:
         #     content = post_file.read()

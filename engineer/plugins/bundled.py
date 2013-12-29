@@ -310,6 +310,7 @@ class LazyMarkdownLinksPlugin(PostProcessor):
         \*\]:       # Match a literal *]: - the lazy link URL definition follows this
         ''', re.MULTILINE | re.DOTALL | re.UNICODE | re.VERBOSE)
 
+    _counter_regex = re.compile(r'\[(\d+)\]:', re.UNICODE)
     _counter = 0
 
     @classmethod
@@ -318,10 +319,15 @@ class LazyMarkdownLinksPlugin(PostProcessor):
         sub_str = '%s%s%s%s]:' % (match.group(1), cls._counter, match.group(2), cls._counter)
         return sub_str
 
+    @staticmethod
+    def get_max_link_number(post):
+        all_values = set([int(i) for i in LazyMarkdownLinksPlugin._counter_regex.findall(post)])
+        return max(all_values) if all_values else 0
+
     @classmethod
     def preprocess(cls, post, metadata):
-        cls._counter = 0
         content = post.content_preprocessed
+        cls._counter = cls.get_max_link_number(content)
 
         # This while loop ensures we handle overlapping matches
         while cls._link_regex.search(content):

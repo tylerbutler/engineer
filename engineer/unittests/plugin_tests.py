@@ -62,3 +62,37 @@ class PostRenamerTestCase(BaseTestCase):
         self.assertEqual(post.source.name, '(p) 2012-11-02 a-published-post.md')
         self.assertTrue(post.source.exists())
         self.assertFalse(path('posts/published_post_with_timestamp.md').exists())
+
+
+class LazyMarkdownLinksTestCase(BaseTestCase):
+    _expected_metadata = """title: Lazy Markdown Links
+status: published
+
+---
+
+"""
+
+    _expected_output = """This is my text and [this is my link][1]. I'll define
+the url for that link under the paragraph.
+
+[1]: http://brettterpstra.com
+
+I can use [multiple][2] lazy links in [a paragraph][3],
+and then just define them in order below it.
+
+[2]: https://gist.github.com/ttscoff/7059952
+[3]: http://blog.bignerdranch.com/4044-rock-heads/
+"""
+
+    def test_plugin(self):
+        from engineer.conf import settings
+        from engineer.models import Post
+
+        settings.reload('config.yaml')
+
+        post = Post('posts/lazy_markdown_links.md')
+        self.assertEqual(post.content_preprocessed, self._expected_output)
+
+        # with open(post.source, mode='rb') as post_file:
+        #     content = post_file.read()
+        # self.assertEqual(content, self._expected_metadata + self._expected_output)

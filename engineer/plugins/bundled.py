@@ -135,7 +135,7 @@ class FinalizationPlugin(PostProcessor):
         from engineer.conf import settings
 
         # A hack to guarantee the YAML output is in a sensible order.
-        # The order, assuming all metadata should be writter, should be:
+        # The order, assuming all metadata should be written, should be:
         #        title
         #        status
         #        timestamp
@@ -288,4 +288,43 @@ class GlobalLinksPlugin(PostProcessor):
             return
 
         post.content_preprocessed += abbreviations
+        return post, metadata
+
+
+class LazyMarkdownLinksPlugin(PostProcessor):
+    # Inspired by Brett Terpstra: http://brettterpstra.com/2013/10/19/lazy-markdown-reference-links/
+    _link_regex = re.compile(r'''
+        (           # Start group 1, which is the actual link text
+            \[          # Match a literal [
+            [^\]]+      # Match anything except a literal ] - this will be the link text itself
+            \]          # Match a literal ]
+            \s*         # Any whitespace (including newlines)
+            \[          # Match the opening bracket of the lazy link marker
+        )           # End group 1
+        \*          # Literal * - this is the lazy link marker
+        (           # Start group 2, which is everything after the lazy link marker
+            \]          # Literal ]
+            .*?^        # Non-greedy match of anything up to a new line
+            \[          # Literal ]
+        )           # End Group 2
+        \*\]:       # Match a literal *]: - the lazy link URL definition follows this
+        ''', re.MULTILINE | re.DOTALL | re.UNICODE | re.VERBOSE)
+
+    _counter = 0
+
+    @classmethod
+    def _replace(cls, match):
+        cls._counter += 1
+        sub_str = '%s%s%s%s]:' % (match.group(1), cls._counter, match.group(2), cls._counter)
+        return sub_str
+
+    @classmethod
+    def preprocess(cls, post, metadata):
+        cls._counter = 0
+        content = post.content_preprocessed
+
+        # This while loop ensures we handle overlapping matches
+        while cls._link_regex.search(content):
+            content = cls._link_regex.sub(cls._replace, content)
+        post.content_preprocessed = content
         return post, metadata

@@ -6,7 +6,7 @@ import yaml
 from path import path
 
 from engineer.enums import Status
-from engineer.plugins.core import PostProcessor
+from engineer.plugins.core import PostProcessor, FilterPlugin
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -346,3 +346,18 @@ class LazyMarkdownLinksPlugin(PostProcessor):
             if not post.set_finalized_content(content, cls):
                 logger.warning("Failed to persist lazy links.")
         return post, metadata
+
+
+class BundledFilters(FilterPlugin):
+    @classmethod
+    def get_filters(cls):
+        from engineer.filters import format_datetime, markdown_filter, localtime, naturaltime, compress
+        return format_datetime, markdown_filter, localtime, naturaltime, compress
+        
+    @classmethod
+    def add_filters(cls, jinja_env):
+        # noinspection PyPackageRequirements
+        from typogrify.templatetags.jinja_filters import register
+        
+        FilterPlugin.add_filters(cls, jinja_env)
+        register(jinja_env)  # register typogrify filters

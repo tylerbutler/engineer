@@ -32,7 +32,7 @@ def load_plugins():
 
 
 def get_all_plugin_types():
-    return ThemeProvider, PostProcessor, CommandPlugin
+    return ThemeProvider, PostProcessor, CommandPlugin, FilterPlugin
 
 
 #noinspection PyMissingConstructor,PyUnusedLocal
@@ -222,3 +222,28 @@ class CommandPlugin(PluginMixin):
             to ``add_parser()`` via the ``parents`` parameter.
         """
         raise NotImplementedError()
+
+
+class FilterPlugin(PluginMixin):
+    """
+    Base class for filter plugins.
+    """
+    __metaclass__ = PluginMount
+    
+    filters = ()
+    
+    @classmethod
+    def add_filters(cls, jinja_env):
+        logger = cls.get_logger()
+        filter_list = cls.get_filters()
+        for filter in filter_list:
+            filter_name = filter.__name__
+            if filter_name in jinja_env.filters:
+                logger.warning("Filter name conflict. A plugin is trying to add a filter with a name that conflicts with an existing filter. Filter name: %s" % filter_name)
+            else:
+                jinja_env.filters[filter_name] = filter
+                logger.debug("Registered filter: %s" % filter_name)
+    
+    @classmethod
+    def get_filters(cls):
+        return filters

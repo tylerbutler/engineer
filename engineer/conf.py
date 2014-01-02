@@ -10,15 +10,13 @@ import pytz
 import times
 import yaml
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
-#noinspection PyPackageRequirements
-from typogrify.templatetags.jinja_filters import register
-#noinspection PyPackageRequirements
+# noinspection PyPackageRequirements
 from path import path
 from brownie.caching import cached_property
 
 from engineer.cache import SimpleFileCache
 from engineer.filters import typogrify_no_widont
-from engineer.plugins import get_all_plugin_types
+from engineer.plugins import get_all_plugin_types, FilterPlugin
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive
 from engineer import version
 
@@ -315,7 +313,6 @@ class EngineerConfiguration(object):
 
     @cached_property
     def JINJA_ENV(self):
-        from engineer.filters import format_datetime, markdown_filter, localtime, naturaltime, compress
         from engineer.processors import preprocess_less
         from engineer.themes import ThemeManager
 
@@ -343,13 +340,8 @@ class EngineerConfiguration(object):
             trim_blocks=True)
 
         # Filters
-        env.filters['compress'] = compress
-        env.filters['date'] = format_datetime
-        env.filters['localtime'] = localtime
-        env.filters['naturaltime'] = naturaltime
-        env.filters['markdown'] = markdown_filter
-        env.filters['typogrify_no_widont'] = typogrify_no_widont
-        register(env)  # register typogrify filters
+        for plugin in FilterPlugin.plugins:
+            plugin.add_filters(env)
 
         # Globals
         env.globals['theme'] = ThemeManager.current_theme()

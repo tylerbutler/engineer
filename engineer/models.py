@@ -76,8 +76,7 @@ class Post(object):
         self.slug = metadata.pop('slug', slugify(self.title))
         """The slug for the post."""
 
-        self.tags = wrap_list(metadata.pop('tags', []))
-        """A list of strings representing the tags applied to the post."""
+        self._tags = wrap_list(metadata.pop('tags', []))
 
         self.link = metadata.pop('link', None)
         """The post's :ref:`external link <post link>`."""
@@ -172,6 +171,12 @@ class Post(object):
     @cached_property
     def output_file_name(self):
         r = self.output_path.name
+        return r
+
+    @cached_property
+    def tags(self):
+        """A list of strings representing the tags applied to the post."""
+        r = [unicode(t) for t in self._tags]
         return r
 
     @property
@@ -313,7 +318,7 @@ class PostCollection(list):
 
     def tagged(self, tag):
         """Returns a new PostCollection containing the subset of posts that are tagged with *tag*."""
-        return PostCollection([p for p in self if tag in p.tags])
+        return PostCollection([p for p in self if unicode(tag) in p.tags])
 
     def output_path(self, slice_num):
         return path(settings.OUTPUT_CACHE_DIR / ("page/%s/index.html" % slice_num))

@@ -3,6 +3,7 @@ import argparse
 import gzip
 import logging
 import sys
+from tempfile import mkdtemp
 import time
 from codecs import open
 
@@ -14,7 +15,7 @@ from engineer.exceptions import ThemeNotFoundException
 from engineer.filters import naturaltime
 from engineer.log import get_console_handler, bootstrap
 from engineer.plugins import CommandPlugin, load_plugins
-from engineer.util import relpath, compress
+from engineer.util import relpath, compress, mirror_folder, ensure_exists
 from engineer import version
 
 
@@ -31,15 +32,36 @@ def clean(args=None):
     from engineer.conf import settings
 
     logger = logging.getLogger('engineer.engine.clean')
+
+    # Expand the ignore list to be full paths
+    ignore_list = [path(settings.OUTPUT_DIR / i) for i in settings.OUTPUT_DIR_IGNORE]
+    has_ignored_content = False
+    temp_dir = ensure_exists(mkdtemp())
+
     try:
+        # easiest just to stash the ignore folder contents temporarily then move it back
+        for item in ignore_list:
+            if item.exists():
+                has_ignored_content = True
+                if item.isdir():
+                    mirror_folder(item, temp_dir / settings.OUTPUT_DIR.relpathto(item))
+                else:
+                    path.copy2(item, ensure_exists(temp_dir / settings.OUTPUT_DIR.relpathto(item).dirname()))
+
         settings.OUTPUT_DIR.rmtree()
         settings.OUTPUT_CACHE_DIR.rmtree()
-        settings.CACHE_DIR.rmtree()
+        temp_dir.rmtree()
+
     except OSError as we:
         if hasattr(we, 'winerror') and we.winerror not in (2, 3):
             logger.exception(we.message)
         else:
-            logger.warning("Couldn't find output directory: %s" % settings.OUTPUT_DIR)
+            logger.warning("Couldn't find output directory: %s" % we.filename)
+    finally:
+        # move ignored content back if needed
+        if has_ignored_content:
+            mirror_folder(temp_dir, settings.OUTPUT_DIR)
+        settings.CACHE_DIR.rmtree()
 
     logger.console('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 

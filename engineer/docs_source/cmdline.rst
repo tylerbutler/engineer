@@ -34,7 +34,7 @@ All of the Engineer commands accept the following arguments:
 
 .. option:: -s, --settings, --config
 
-   Specify the  to use. Defaults to ``config.yaml`` if not provided.
+   Specify the path to the settings file to use. Defaults to ``config.yaml`` if not provided.
 
    .. note:: While the  :ref:`engineer init` command does accept this argument, it does not use it in any way.
 

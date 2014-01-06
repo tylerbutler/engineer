@@ -158,7 +158,7 @@ class EngineerConfiguration(object):
         self.CONTENT_DIR = self.normalize(config.pop('CONTENT_DIR', 'content'))
         self.POST_DIR = self.normalize_list(config.pop('POST_DIR', 'posts'))
         self.OUTPUT_DIR = self.normalize(config.pop('OUTPUT_DIR', 'output'))
-        self.OUTPUT_DIR_IGNORE = wrap_list(config.pop('OUTPUT_DIR_IGNORE', ['.git']))
+        self.OUTPUT_DIR_IGNORE = wrap_list(config.pop('OUTPUT_DIR_IGNORE', ['.git', '.gitignore']))
         self.TEMPLATE_DIR = self.normalize(config.pop('TEMPLATE_DIR', 'templates'))
         self.TEMPLATE_PAGE_DIR = self.normalize(
             config.pop('TEMPLATE_PAGE_DIR', (self.TEMPLATE_DIR / 'pages').abspath())

@@ -1,5 +1,6 @@
 # coding=utf-8
 import collections
+import errno
 import filecmp
 import hashlib
 import itertools
@@ -102,13 +103,25 @@ def mirror_folder(source, target, delete_orphans=True, recurse=True, ignore_list
     # Expand the ignore list to be full paths
     if ignore_list is None:
         ignore_list = []
+    else:
+        ignore_list = [path(d2 / i).normpath() for i in ignore_list]
+        ignore_files = [f for f in ignore_list if f.isfile()]
+        ignore_dirs = []
 
-    ignore_list = [path(d2 / i) for i in ignore_list]
+        # expand ignore list to include all directories as individual entries
+        for p in ignore_files:
+            head, tail = p.splitpath()
+            while head and tail:
+                if head == d2:
+                    break
+                ignore_dirs.append(head)
+                head, tail = head.splitpath()
+        ignore_list.extend(ignore_dirs)
 
     # Delete orphan files/folders in the target folder
     if delete_orphans:
         for item in compare.right_only:
-            fullpath = path(d2 / item)
+            fullpath = path(d2 / item).normpath()
             if fullpath in ignore_list:
                 logger.debug(
                     "%s ==> Ignored - path is in ignore list" % fullpath)
@@ -333,3 +346,16 @@ def update_additive(dict1, dict2):
             else:  # value is not a mapping type
                 assert not isinstance(value, collections.Mapping)
                 dict1[key] = value
+
+
+def has_files(the_path):
+    """Given a path, returns whether the path has any files in it or any subfolders. Works recursively."""
+    the_path = path(the_path)
+    try:
+        return len([f for f in the_path.walkfiles()]) != 0
+    except OSError as ex:
+        if ex.errno == errno.ENOENT:
+            # ignore
+            return False
+        else:
+            raise

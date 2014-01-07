@@ -2,8 +2,8 @@
 import argparse
 import gzip
 import logging
+import os
 import sys
-from tempfile import mkdtemp
 import time
 from codecs import open
 
@@ -15,9 +15,8 @@ from engineer.exceptions import ThemeNotFoundException
 from engineer.filters import naturaltime
 from engineer.log import get_console_handler, bootstrap
 from engineer.plugins import CommandPlugin, load_plugins
-from engineer.util import relpath, compress, mirror_folder, ensure_exists
+from engineer.util import relpath, compress, has_files
 from engineer import version
-
 
 try:
     import cPickle as pickle
@@ -34,34 +33,42 @@ def clean(args=None):
     logger = logging.getLogger('engineer.engine.clean')
 
     # Expand the ignore list to be full paths
-    ignore_list = [path(settings.OUTPUT_DIR / i) for i in settings.OUTPUT_DIR_IGNORE]
-    has_ignored_content = False
-    temp_dir = ensure_exists(mkdtemp())
+    ignore_list = [path(settings.OUTPUT_DIR / i).normpath() for i in settings.OUTPUT_DIR_IGNORE]
+    ignore_dirs = [p for p in ignore_list if p.isdir()]
+    ignore_files = []
+    for the_dir in ignore_dirs:
+        ignore_files.extend([f.normpath() for f in the_dir.walkfiles()])
+    ignore_files.extend([p.normpath() for p in ignore_list if p.isfile()])
+
+    # Delete all FILES that are not ignored
+    for p in settings.OUTPUT_DIR.walkfiles():
+        if p in ignore_files:
+            continue
+        else:
+            p.remove()
+
+    # Delete all directories with no files. All non-ignored files were already deleted so every directory
+    # except those that were ignored will be empty.
+    for dirpath, dirnames, filenames in os.walk(settings.OUTPUT_DIR.normpath()):
+        dirpath = path(dirpath)
+        if dirpath != settings.OUTPUT_DIR:
+            if not has_files(dirpath):
+                # no files under this entire path, so can call rmtree
+                # noinspection PyArgumentList
+                dirpath.rmtree()
+                del dirnames[:]
+            elif dirpath in ignore_list:
+                # we don't need to descend into the subdirs if this dir is in the ignore list
+                del dirnames[:]
 
     try:
-        # easiest just to stash the ignore folder contents temporarily then move it back
-        for item in ignore_list:
-            if item.exists():
-                has_ignored_content = True
-                if item.isdir():
-                    mirror_folder(item, temp_dir / settings.OUTPUT_DIR.relpathto(item))
-                else:
-                    path.copy2(item, ensure_exists(temp_dir / settings.OUTPUT_DIR.relpathto(item).dirname()))
-
-        settings.OUTPUT_DIR.rmtree()
         settings.OUTPUT_CACHE_DIR.rmtree()
-        temp_dir.rmtree()
-
+        settings.CACHE_DIR.rmtree()
     except OSError as we:
         if hasattr(we, 'winerror') and we.winerror not in (2, 3):
             logger.exception(we.message)
         else:
             logger.warning("Couldn't find output directory: %s" % we.filename)
-    finally:
-        # move ignored content back if needed
-        if has_ignored_content:
-            mirror_folder(temp_dir, settings.OUTPUT_DIR)
-        settings.CACHE_DIR.rmtree()
 
     logger.console('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 

@@ -5,8 +5,12 @@ from codecs import open
 import yaml
 from path import path
 
+# noinspection PyPackageRequirements
+from typogrify.templatetags.jinja_filters import register
+
 from engineer.enums import Status
-from engineer.plugins.core import PostProcessor
+from engineer.filters import *
+from engineer.plugins.core import PostProcessor, JinjaEnvironmentPlugin
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -119,13 +123,19 @@ class FinalizationPlugin(PostProcessor):
         if old_fenced != post._fence:
             return True
 
-        old_content = old.group('metadata').strip()
-        new_content = new.group('metadata').strip()
+        old_metadata = old.group('metadata').strip()
+        new_metadata = new.group('metadata').strip()
 
-        if new_content == old_content:
-            return False
-        else:
+        if new_metadata != old_metadata:
             return True
+
+        old_content = old.group('content').strip()
+        new_content = new.group('content').strip()
+
+        if new_content != old_content:
+            return True
+        else:
+            return False
 
     @staticmethod
     def render_markdown(post):
@@ -135,7 +145,7 @@ class FinalizationPlugin(PostProcessor):
         from engineer.conf import settings
 
         # A hack to guarantee the YAML output is in a sensible order.
-        # The order, assuming all metadata should be writter, should be:
+        # The order, assuming all metadata should be written, should be:
         #        title
         #        status
         #        timestamp
@@ -182,7 +192,7 @@ class FinalizationPlugin(PostProcessor):
             metadata += '\n'
             metadata += yaml.safe_dump(dict(post.custom_properties), default_flow_style=False)
         return settings.JINJA_ENV.get_template(post.markdown_template_path).render(metadata=metadata,
-                                                                                   content=post.content_raw,
+                                                                                   content=post.content_finalized,
                                                                                    post=post)
 
 
@@ -289,3 +299,91 @@ class GlobalLinksPlugin(PostProcessor):
 
         post.content_preprocessed += abbreviations
         return post, metadata
+
+
+class LazyMarkdownLinksPlugin(PostProcessor):
+    # Inspired by Brett Terpstra: http://brettterpstra.com/2013/10/19/lazy-markdown-reference-links/
+    _link_regex = re.compile(r'''
+        (           # Start group 1, which is the actual link text
+            \[          # Match a literal [
+            [^\]]+      # Match anything except a literal ] - this will be the link text itself
+            \]          # Match a literal ]
+            \s*         # Any whitespace (including newlines)
+            \[          # Match the opening bracket of the lazy link marker
+        )           # End group 1
+        \*          # Literal * - this is the lazy link marker
+        (           # Start group 2, which is everything after the lazy link marker
+            \]          # Literal ]
+            .*?^        # Non-greedy match of anything up to a new line
+            \[          # Literal ]
+        )           # End Group 2
+        \*\]:       # Match a literal *]: - the lazy link URL definition follows this
+        ''', re.MULTILINE | re.DOTALL | re.UNICODE | re.VERBOSE)
+
+    _counter_regex = re.compile(r'\[(\d+)\]:', re.UNICODE)
+    _counter = 0
+
+    @classmethod
+    def _replace(cls, match):
+        cls._counter += 1
+        sub_str = '%s%s%s%s]:' % (match.group(1), cls._counter, match.group(2), cls._counter)
+        return sub_str
+
+    @staticmethod
+    def get_max_link_number(post):
+        all_values = set([int(i) for i in LazyMarkdownLinksPlugin._counter_regex.findall(post)])
+        return max(all_values) if all_values else 0
+
+    @classmethod
+    def preprocess(cls, post, metadata):
+        from engineer.conf import settings
+
+        logger = cls.get_logger()
+        content = post.content_preprocessed
+        cls._counter = cls.get_max_link_number(content)
+
+        # This while loop ensures we handle overlapping matches
+        while cls._link_regex.search(content):
+            content = cls._link_regex.sub(cls._replace, content)
+        post.content_preprocessed = content
+        if getattr(settings, 'LAZY_LINKS_PERSIST', False):
+            if not post.set_finalized_content(content, cls):
+                logger.warning("Failed to persist lazy links.")
+        return post, metadata
+
+
+class JinjaPostProcessor(PostProcessor):
+    enabled_setting_name = "JINJA_POSTPROCESSOR_ENABLED"
+    not_enabled_log_message = "JinjaPostProcessor plugin is disabled."
+
+    @classmethod
+    def preprocess(cls, post, metadata):
+        from engineer.conf import settings
+
+        if not getattr(settings, cls.enabled_setting_name, True):
+            logger.info(cls.not_enabled_log_message)
+            return post, metadata  # early return
+
+        template = settings.JINJA_ENV.from_string(post.content_preprocessed)
+        post.content_preprocessed = template.render()
+        return post, metadata
+
+
+class BundledFilters(JinjaEnvironmentPlugin):
+    filters = {
+        'date': format_datetime,
+        'markdown': markdown_filter
+    }
+    filters.update(dict([(f.__name__, f) for f in [localtime, naturaltime, compress, typogrify_no_widont, img]]))
+
+    globals = {
+        'img': img
+    }
+
+    @classmethod
+    def update_environment(cls, jinja_env):
+        super(BundledFilters, cls).update_environment(jinja_env)
+
+        logger = cls.get_logger()
+        register(jinja_env)  # register typogrify filters
+        logger.debug("Registered typogrify filters.")

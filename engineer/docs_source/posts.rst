@@ -211,17 +211,65 @@ Post Content
 ============
 
 Your post content should be written in Markdown, and all the usual Markdown syntax rules apply. Engineer does provide
-some helpful CSS styles that might be useful when writing your posts. In addition to these,
+some helpful CSS styles and template tags that might be useful when writing your posts. In addition to these,
 individual themes might provide their own.
 
 
-Images
-------
+.. _post images:
 
-If you have images in your posts, you should wrap them in an outer ``div`` with the class ``image``. If the image has
-a caption, you can also apply the ``caption`` class to the outer ``div`` and include the caption in a ``p`` tag just
-below the image. Finally, you can apply the ``left``, ``right``, and ``center`` classes to the outer ``div`` to
-align the image. For example:
+Including Images
+----------------
+
+If you have images in your posts, you may find Engineer's built-in ``img`` tag useful. This tag allows
+you to easily output consistent image markup in your posts. You must have the :ref:`jinja post processor plugin`
+enabled in order to use this tag
+
+.. admonition:: Theme Designer Note
+
+   The exact HTML content output by the ``img`` tag is customizable by a theme. See the
+   :ref:`Theme creation documentation <image template>` for more details.
+
+
+Syntax
+~~~~~~
+
+The typical syntax for the ``img`` tag looks like this:
+
+.. code-block:: html+jinja
+
+    {{ img(path_to_image,
+          classes=[list of CSS classes to apply],
+          width,
+          height,
+          title,
+          alt,
+          link) }}
+
+All of the arguments except the path are optional. You can also pass the image source in as a string by treating the
+``img`` function as a Jinja filter. In this case, the syntax would look like this:
+
+.. code-block:: html+jinja
+
+    {{ path_to_image|img(classes=[list of CSS classes to apply],
+                         width,
+                         height,
+                         title,
+                         alt,
+                         link) }}
+
+
+Examples
+~~~~~~~~
+
+Consider an ``img`` tag like this:
+
+.. code-block:: html+jinja
+
+    {{ "http://farm8.staticflickr.com/7241/7206331966_c6419e544e.jpg"|img('center', 500, 375,
+        'An xkcd.com comic in Reeder', 'An xkcd.com comic in Reeder',
+        link='http://www.flickr.com/photos/76037594@N06/7206331966/') }}
+
+Using the Dark Rainbow theme, this would output the following HTML:
 
 .. code-block:: html
 

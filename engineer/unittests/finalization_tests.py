@@ -28,6 +28,7 @@ tags:
 This is a finalization test post.
 """
 
+
 class MetadataFinalizationTestCase(BaseTestCase):
     def test_finalization_settings(self):
         from engineer.conf import settings
@@ -89,4 +90,3 @@ class MetadataFinalizationTestCase(BaseTestCase):
         with open(post.source, mode='rb') as post_file:
             content = post_file.read()
         self.assertEqual(content, expected_output)
-

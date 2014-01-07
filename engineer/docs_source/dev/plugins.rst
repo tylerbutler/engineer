@@ -63,6 +63,42 @@ function.
    the other modules will also be imported, and then your plugins will be magically loaded.
 
 
+.. _plugin permissions:
+
+Plugin Permissions
+==================
+
+Some plugin capabilities are restricted and require explicit permission from the Engineer user via the
+:attr:`~engineer.conf.EngineerConfiguration.PLUGIN_PERMISSIONS` setting. As of Engineer 0.5.0 there is only one
+permission available, ``MODIFY_RAW_POST``.
+
+Prior to Engineer 0.5.0, it was not possible for plugins to modify actual post content. The
+:ref:`metadata finalization` plugin modified post metadata, but post content itself was never changed. This was a
+deliberate design decision to try and prevent data loss from runaway plugins. It was especially helpful during plugin
+testing when bugs weren't yet found and fixed.
+
+In Engineer 0.5.0, plugins can now modify post content using the :meth:`~engineer.models.Post.set_finalized_content`
+method on the Post class. However, this is protected by the ``MODIFY_RAW_POST`` permission. If the plugin is not
+explicitly listed as having that permission in the user's config, then calls to ``set_finalized_content`` will do
+nothing.
+
+.. note::
+   The plugin permissions system is a little clunky and overly protective. The intent of the system is to help
+   prevent plugins from doing potentially damaging things (like editing post source content) without explicit
+   permission from the user. However, it's possible that I'm being paranoid and that this is overkill. Thus,
+   consider this 'experimental' in Engineer 0.5.0. It may go away in the future; I welcome feedback on this.
+
+.. versionadded:: 0.5.0
+
+
+Jinja Environment Plugins
+=========================
+
+.. autoclass:: engineer.plugins.JinjaEnvironmentPlugin
+   :members:
+   :inherited-members:
+
+
 Post Processor Plugins
 ======================
 

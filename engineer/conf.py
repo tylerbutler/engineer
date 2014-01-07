@@ -10,15 +10,12 @@ import pytz
 import times
 import yaml
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
-#noinspection PyPackageRequirements
-from typogrify.templatetags.jinja_filters import register
-#noinspection PyPackageRequirements
+# noinspection PyPackageRequirements
 from path import path
 from brownie.caching import cached_property
 
 from engineer.cache import SimpleFileCache
-from engineer.filters import typogrify_no_widont
-from engineer.plugins import get_all_plugin_types
+from engineer.plugins import get_all_plugin_types, JinjaEnvironmentPlugin
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive
 from engineer import version
 
@@ -44,6 +41,7 @@ class SettingsFileNotFoundException(Exception):
     pass
 
 
+# noinspection PyPep8Naming
 class EngineerConfiguration(object):
     """
     Stores all of the configuration settings for a given Engineer site.
@@ -286,6 +284,13 @@ class EngineerConfiguration(object):
         self.ACTIVE_NAV_CLASS = config.pop('ACTIVE_NAV_CLASS', 'current')
         self.DEBUG = config.pop('DEBUG', False)
         #self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
+
+        self.PLUGIN_PERMISSIONS = {
+            'MODIFY_RAW_POST': []
+        }
+        provided_permissions = config.pop('PLUGIN_PERMISSIONS', {})
+        update_additive(self.PLUGIN_PERMISSIONS, provided_permissions)
+
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
         self.PUBLISH_PENDING = config.pop('PUBLISH_PENDING', False)
         self.PUBLISH_REVIEW = config.pop('PUBLISH_REVIEW', False)
@@ -316,7 +321,6 @@ class EngineerConfiguration(object):
 
     @cached_property
     def JINJA_ENV(self):
-        from engineer.filters import format_datetime, markdown_filter, localtime, naturaltime, compress
         from engineer.processors import preprocess_less
         from engineer.themes import ThemeManager
 
@@ -339,20 +343,14 @@ class EngineerConfiguration(object):
                  FileSystemLoader([self.ENGINEER.TEMPLATE_DIR])]
             ),
             extensions=['jinja2.ext.with_', ],
-            #'compressinja.html.HtmlCompressor'],
             bytecode_cache=FileSystemBytecodeCache(directory=self.JINJA_CACHE_DIR),
             trim_blocks=True)
 
-        # Filters
-        env.filters['compress'] = compress
-        env.filters['date'] = format_datetime
-        env.filters['localtime'] = localtime
-        env.filters['naturaltime'] = naturaltime
-        env.filters['markdown'] = markdown_filter
-        env.filters['typogrify_no_widont'] = typogrify_no_widont
-        register(env)  # register typogrify filters
+        # JinjaEnvironment plugins
+        for plugin in JinjaEnvironmentPlugin.plugins:
+            plugin.update_environment(env)
 
-        # Globals
+        # Built-in globals
         env.globals['theme'] = ThemeManager.current_theme()
         env.globals['urlname'] = urlname
         env.globals['preprocess_less'] = preprocess_less

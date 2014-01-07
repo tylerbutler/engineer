@@ -1,0 +1,26 @@
+{% if title %}
+    <div class="image caption{% if classes %} {{ classes|join(' ') }}{% endif %}">
+{% else %}
+    <div class="image{% if classes %} {{ classes|join(' ') }}{% endif %}">
+{% endif %}
+
+{% if link %}
+    <a href="{{ link }}"><img src="{{ source|trim }}"
+                              {%- if width %} width="{{ width|trim }}"{%- endif %}
+                              {%- if height %} height="{{ height|trim }}"{%- endif %}
+                              {%- if alt %} alt="{{ alt|trim }}"{%- endif %}
+                              {%- if title %} title="{{ title|trim }}"{%- endif %}/>
+    </a>
+{% else %}
+    <img src="{{ source|trim }}"
+         {%- if width %} width="{{ width|trim }}"{%- endif %}
+         {%- if height %} height="{{ height|trim }}"{%- endif %}
+         {%- if alt %} alt="{{ alt|trim }}"{%- endif %}
+         {%- if title %} title="{{ title|trim }}"{%- endif %}/>
+{% endif %}
+
+{% if title %}
+    <p>{{ title }}</p>
+{% endif %}
+
+</div>

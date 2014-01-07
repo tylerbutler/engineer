@@ -32,7 +32,7 @@ def load_plugins():
 
 
 def get_all_plugin_types():
-    return ThemeProvider, PostProcessor, CommandPlugin
+    return ThemeProvider, PostProcessor, CommandPlugin, JinjaEnvironmentPlugin
 
 
 #noinspection PyMissingConstructor,PyUnusedLocal
@@ -119,16 +119,33 @@ class PostProcessor(PluginMixin):
         The ``preprocess`` method is called during the Post import process, before any post metadata defaults
         have been set.
 
-        :param post: The post being currently processed by Engineer. The preprocess method should use the
-            ``content_preprocessed`` attribute to get/modify the content of *post*. This ensures that preprocessors
-            from other plugins can be chained together.
+        The preprocess method should use the ``content_preprocessed`` attribute to get/modify the content of *post*.
+        This ensures that preprocessors from other plugins can be chained together.
 
+        By default, the ``content_preprocessed`` value is used only
+        for generating post HTML. It is not written back to the source post file. However, sometimes you may want
+        to make a permanent change to the post content that is written out. In this case, you should call the
+        :meth:`~engineer.models.Post.set_finalized_content` method, passing it the modified content. This
+        method will ensure the data is written back to the source file by the :ref:`metadata finalization` plugin.
+        This means that in order for a plugin to write preprocessed data back to the post file,
+        the :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA` setting must be
+        enabled.
+
+        Your plugin will also need to be explicitly granted the ``MODIFY_RAW_POST`` permission. See more
+        detail in :ref:`plugin permissions`.
+
+        In addition, the preprocess method can add/remove/update properties on the *post* object itself as needed.
+
+        .. tip::
+           Since the :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA` setting must be enabled for
+           plugins to write back to source post files, you should check this setting in addition to any other
+           settings you may be using.
+
+        :param post: The post being currently processed by Engineer.
         :param metadata: A dict of the post metadata contained in the post source file. It contains no
             default values - only the values contained within the post source file itself. The preprocess method can
             add, update, or otherwise manipulate metadata prior to it being processed by Engineer manipulating this
             parameter.
-
-        In addition, the preprocess method can add/remove/update properties on the *post* object itself as needed.
 
         :return: The *post* and *metadata* values should be returned (as a 2-tuple) by the method.
         """
@@ -205,3 +222,92 @@ class CommandPlugin(PluginMixin):
             to ``add_parser()`` via the ``parents`` parameter.
         """
         raise NotImplementedError()
+
+
+class JinjaEnvironmentPlugin(PluginMixin):
+    """
+    Base class for JinjaEnvironment :ref:`plugins`.
+
+    JinjaEnvironment plugins can supplement the Jinja 2 environment with things like filters and global
+    functions. These additions can then be used in your Jinja templates.
+
+    .. versionadded:: 0.5.0
+    """
+    __metaclass__ = PluginMount
+
+    filters = {}
+    """
+    A dict of filters to add to the Jinja environment. The key of each entry should be the name of the filter (as it
+    will be used inside templates), while the value should be the filter function. If you require more custom logic
+    to build the dict of filters, override the :meth:`~engineer.plugins.JinjaEnvironmentPlugin.get_filters` method.
+    """
+
+    globals = {}
+    """
+    A dict of functions to add to the Jinja environment globally. The key of each entry should be the name of the
+    function (as it will be used inside templates), while the value should be the function itself. If you require more
+    custom logic to build this dict, override the :meth:`~engineer.plugins.JinjaEnvironmentPlugin.get_globals` method.
+    """
+
+    @classmethod
+    def _add_filters(cls, jinja_env):
+        logger = cls.get_logger()
+        filters = cls.get_filters()
+        for filter_name, filter_function in filters.iteritems():
+            if filter_name in jinja_env.filters:
+                logger.warning("Jinja filter name conflict. "
+                               "A plugin is trying to add a filter with a name that conflicts with an existing filter. "
+                               "Filter name: %s" % filter_name)
+            else:
+                jinja_env.filters[filter_name] = filter_function
+                logger.debug("Registered Jinja filter: %s" % filter_name)
+
+    @classmethod
+    def _add_globals(cls, jinja_env):
+        logger = cls.get_logger()
+        global_list = cls.get_globals()
+        for global_name, the_global in global_list.iteritems():
+            if global_name in jinja_env.globals:
+                logger.warning("Jinja global name conflict. "
+                               "A plugin is trying to add a global with a name that conflicts with an existing global. "
+                               "Global name: %s" % global_name)
+            else:
+                jinja_env.globals[global_name] = the_global
+                logger.debug("Registered Jinja global: %s" % global_name)
+
+    @classmethod
+    def update_environment(cls, jinja_env):
+        """
+        For complete customization of the Jinja environment, subclasses can override this method.
+
+        Subclasses should ensure that the base implementation is called first in their overridden implementation. For
+        example:
+
+        .. code-block:: python
+
+            @classmethod
+            def update_environment(cls, jinja_env):
+                super(BundledFilters, cls).update_environment(jinja_env)
+                # some other code here...
+
+        :param jinja_env: The Jinja environment.
+        """
+        cls._add_filters(jinja_env)
+        cls._add_globals(jinja_env)
+
+    @classmethod
+    def get_filters(cls):
+        """
+        If required, subclasses can override this method to return a dict of filters to add to the Jinja environment.
+        The default implementation simply returns :attr:`~engineer.plugins.JinjaEnvironmentPlugin.filters`.
+        """
+        return cls.filters
+
+    @classmethod
+    def get_globals(cls):
+        """
+        If required, subclasses can override this method to return a dict of functions to add to the Jinja
+        environment globally. The default implementation simply
+        returns :attr:`~engineer.plugins.JinjaEnvironmentPlugin.globals`.
+        """
+        return cls.globals

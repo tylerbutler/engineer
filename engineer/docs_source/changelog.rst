@@ -16,6 +16,13 @@ version 0.5.0 -
   ``fulldate``.
 - Atom feeds are now generated in addition to RSS feeds. Atom feeds are now the default. As part of this change,
   customization of the RSS feed using a template is no longer supported.
+- New plugin added to support :ref:`Markdown Lazy Links<lazy links plugin>`. This plugin is enabled by default,
+  so you can start using lazy links immediately.
+- New 'experimental' plugin permissions model. More developer information at: :ref:`plugin permissions`.
+- Jinja environment can now be modified using :class:`~engineer.plugins.JinjaEnvironmentPlugin`.
+- Jinja syntax can now be used in post content thanks to the new :ref:`jinja post processor plugin`.
+- A new tag for :ref:`inserting images into posts<post images>`. The output can
+  be :ref:`customized by themes<image template>`.
   
 
 version 0.4.5 - October 2, 2013

@@ -8,6 +8,11 @@ Included Plugins
 Engineer includes a few optional plugins you can use to further customize its behavior. If you have an idea for your
 own plugin, you might consider :ref:`creating it yourself<plugins>`.
 
+.. note::
+   Some plugin capabilities require you to explicitly give the plugin :ref:`special permissions<plugin permissions>`.
+   Check the plugin's documentation to see if this is the case. The plugin permissions system is new to
+   Engineer 0.5.0.
+
 
 .. _metadata finalization:
 
@@ -280,6 +285,63 @@ Then you can write your posts and reference the links defined in your ``GLOBAL_L
    (though I can't think of any reason why you'd want to use 'global footnotes'), in your ``GLOBAL_LINKS_FILE``,
    and it will be available to your posts.
 
+.. versionadded:: 0.5.0
+
 .. _`reference-style links`: http://daringfireball.net/projects/markdown/syntax#link
 .. _`abbreviations`: http://packages.python.org/Markdown/extensions/abbreviations.html
 .. _`footnotes`: http://packages.python.org/Markdown/extensions/footnotes.html
+
+
+.. _lazy links plugin:
+
+Markdown Lazy Links
+===================
+
+This plugin allows you to use 'lazy links' in your posts. The idea comes from Brett Terpstra,
+and more detail is available at `<http://brettterpstra.com/2013/10/19/lazy-markdown-reference-links/>`_. Unlike
+Brett's sample implementation, the Engineer plugin supports adding lazy links to posts that already have numeric
+reference links.
+
+Usage
+-----
+
+The lazy links plugin is enabled by default, so you can start using them without any configuration changes.
+
+By default, the lazy links are handled each time a build is run. In other words, the lazy links are transformed into
+numeric reference-style links each time; the links stay lazy in the original source post. If you wish to transform
+the lazy links into real numeric reference-style links in the source post files as part of a build,
+you'll need to tweak a few settings:
+
+1. Ensure the :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA` setting is enabled.
+2. Set the ``LAZY_LINKS_PERSIST`` setting to ``True`` in your configuration file.
+3. Give ``engineer.plugins.bundled.LazyMarkdownLinksPlugin`` the ``MODIFY_RAW_POST`` permission.
+
+   .. seealso:: :ref:`plugin permissions`
+
+A sample Engineer configuration file might look like this:
+
+.. code-block:: yaml
+
+   FINALIZE_METADATA: yes
+   LAZY_LINKS_PERSIST: yes
+
+   PLUGIN_PERMISSIONS:
+     MODIFY_RAW_POST:
+     - engineer.plugins.bundled.LazyMarkdownLinksPlugin
+
+
+.. _jinja post processor plugin:
+
+Jinja Post Processor Plugin
+===========================
+
+This plugin runs your post content through the Jinja template engine prior to tranforming it into HTML. This allows
+you to use Jinja filters, variables, and other content in your posts. For example, this plugin lets you use the
+handy :ref:`img<post images>` Jinja filter to insert images into your posts consistently.
+
+Usage
+-----
+
+The Jinja Post Processor plugin is enabled by default. If you wish to disable it,
+you can set the ``JINJA_POSTPROCESSOR_ENABLED`` setting to ``False`` in your configuration file. Keep in mind that
+disabling the plugin will cause some built-in Engineer features such as the :ref:`img filter<post images>` to not work.

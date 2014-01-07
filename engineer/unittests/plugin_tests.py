@@ -111,10 +111,10 @@ case][4] automatically.
         settings.reload('config.yaml')
 
         post = Post('posts/lazy_markdown_links.md')
-        self.assertEqual(post.content_preprocessed, self._expected_output)
+        self.assertEqual(post.content_preprocessed.strip(), self._expected_output.strip())
 
         post = Post('posts/lazy_markdown_links2.md')
-        self.assertEqual(post.content_preprocessed, self._expected_output2)
+        self.assertEqual(post.content_preprocessed.strip(), self._expected_output2.strip())
 
     def test_lazy_links_persist(self):
         from engineer.conf import settings
@@ -123,8 +123,8 @@ case][4] automatically.
         settings.reload('lazy_links_persist.yaml')
 
         post = Post('posts/lazy_markdown_links.md')
-        self.assertEqual(post.content_preprocessed, self._expected_output)
+        self.assertEqual(post.content_preprocessed.strip(), self._expected_output.strip())
 
         with open(post.source, mode='rb') as post_file:
             content = post_file.read()
-        self.assertEqual(content, self._expected_metadata + self._expected_output)
+        self.assertEqual(content.strip(), self._expected_metadata + self._expected_output.strip())

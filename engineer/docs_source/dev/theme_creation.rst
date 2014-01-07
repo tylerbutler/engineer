@@ -208,6 +208,36 @@ users of your theme can take advantage of to further customize their site.
 You should also ensure that your theme templates load the :ref:`built-in fragments` that Engineer users will expect.
 
 
+.. _image template:
+
+Images
+------
+
+The built-in ``img`` tag will output content using a template fragment at :file:`templates/theme/_img.html`.
+Individual themes can override this output by providing their own custom template.
+
+The template is always passed the following keyword variables:
+
+- source
+- classes
+- width
+- height
+- title
+- alt
+- link
+
+All except the ``source`` parameter are optional so the template should handle these cases appropriately. The default
+template looks like this:
+
+.. literalinclude:: ../../templates/theme/_img.html
+   :language: html+jinja
+
+.. seealso::
+   :ref:`post images`
+
+.. versionadded:: 0.5.0
+
+
 RSS and Sitemap Templates
 -------------------------
 
@@ -215,14 +245,6 @@ Themes can provide custom templates for the RSS feed and sitemap, just as :ref:`
 These templates should be in the theme's :file:`templates/theme` folder.
 
 .. versionadded:: 0.3.0
-
-
-Required Styles
-===============
-
-TODO
-
-.image, .left, .right, .caption
 
 
 .. _use theme settings:

@@ -1,7 +1,6 @@
 # coding=utf-8
 import logging
 import re
-
 import humanize
 import times
 from markdown import markdown
@@ -9,6 +8,7 @@ from path import path
 from typogrify import filters as Typogrify
 from typogrify.templatetags import jinja_filters
 
+from engineer.util import wrap_list
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -78,7 +78,7 @@ def naturaltime(value):
     return friendly
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 def compress(value):
     from engineer.conf import settings
 
@@ -153,3 +153,20 @@ def typogrify_no_widont(value):
     value = Typogrify.caps(value)
     value = Typogrify.initial_quotes(value)
     return value
+
+
+def img(img_path, classes=None, width=None, height=None, title=None, alt=None, link=None):
+    from engineer.conf import settings
+
+    template = settings.JINJA_ENV.get_template('theme/_img.html')
+    classes = wrap_list(classes)
+    rendered_content = template.render(source=img_path,
+                                       classes=classes,
+                                       width=width,
+                                       height=height,
+                                       title=title,
+                                       alt=alt,
+                                       link=link)
+    whitespace_remover = re.compile(r"^\s+", re.MULTILINE)
+    rendered_content = whitespace_remover.sub("", rendered_content)
+    return rendered_content

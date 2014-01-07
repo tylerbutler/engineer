@@ -313,7 +313,7 @@ the lazy links into real numeric reference-style links in the source post files 
 you'll need to tweak a few settings:
 
 1. Ensure the :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA` setting is enabled.
-2. Set the ``LAZY_LINKS_PERSIST`` setting to True in your configuration file.
+2. Set the ``LAZY_LINKS_PERSIST`` setting to ``True`` in your configuration file.
 3. Give ``engineer.plugins.bundled.LazyMarkdownLinksPlugin`` the ``MODIFY_RAW_POST`` permission.
 
    .. seealso:: :ref:`plugin permissions`
@@ -328,3 +328,20 @@ A sample Engineer configuration file might look like this:
    PLUGIN_PERMISSIONS:
      MODIFY_RAW_POST:
      - engineer.plugins.bundled.LazyMarkdownLinksPlugin
+
+
+.. _jinja post processor plugin:
+
+Jinja Post Processor Plugin
+===========================
+
+This plugin runs your post content through the Jinja template engine prior to tranforming it into HTML. This allows
+you to use Jinja filters, variables, and other content in your posts. For example, this plugin lets you use the
+handy :ref:`img<post images>` Jinja filter to insert images into your posts consistently.
+
+Usage
+-----
+
+The Jinja Post Processor plugin is enabled by default. If you wish to disable it,
+you can set the ``JINJA_POSTPROCESSOR_ENABLED`` setting to ``False`` in your configuration file. Keep in mind that
+disabling the plugin will cause some built-in Engineer features such as the :ref:`img filter<post images>` to not work.

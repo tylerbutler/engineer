@@ -91,6 +91,14 @@ nothing.
 .. versionadded:: 0.5.0
 
 
+Jinja Environment Plugins
+=========================
+
+.. autoclass:: engineer.plugins.JinjaEnvironmentPlugin
+   :members:
+   :inherited-members:
+
+
 Post Processor Plugins
 ======================
 

@@ -15,8 +15,7 @@ from path import path
 from brownie.caching import cached_property
 
 from engineer.cache import SimpleFileCache
-from engineer.filters import typogrify_no_widont
-from engineer.plugins import get_all_plugin_types, FilterPlugin
+from engineer.plugins import get_all_plugin_types, JinjaEnvironmentPlugin
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive
 from engineer import version
 
@@ -335,15 +334,14 @@ class EngineerConfiguration(object):
                  FileSystemLoader([self.ENGINEER.TEMPLATE_DIR])]
             ),
             extensions=['jinja2.ext.with_', ],
-            #'compressinja.html.HtmlCompressor'],
             bytecode_cache=FileSystemBytecodeCache(directory=self.JINJA_CACHE_DIR),
             trim_blocks=True)
 
-        # Filters
-        for plugin in FilterPlugin.plugins:
-            plugin.add_filters(env)
+        # JinjaEnvironment plugins
+        for plugin in JinjaEnvironmentPlugin.plugins:
+            plugin.update_environment(env)
 
-        # Globals
+        # Built-in globals
         env.globals['theme'] = ThemeManager.current_theme()
         env.globals['urlname'] = urlname
         env.globals['preprocess_less'] = preprocess_less

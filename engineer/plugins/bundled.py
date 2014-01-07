@@ -5,8 +5,12 @@ from codecs import open
 import yaml
 from path import path
 
+# noinspection PyPackageRequirements
+from typogrify.templatetags.jinja_filters import register
+
 from engineer.enums import Status
-from engineer.plugins.core import PostProcessor, FilterPlugin
+from engineer.filters import *
+from engineer.plugins.core import PostProcessor, JinjaEnvironmentPlugin
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -348,16 +352,38 @@ class LazyMarkdownLinksPlugin(PostProcessor):
         return post, metadata
 
 
-class BundledFilters(FilterPlugin):
+class JinjaPostProcessor(PostProcessor):
+    enabled_setting_name = "JINJA_POSTPROCESSOR_ENABLED"
+    not_enabled_log_message = "JinjaPostProcessor plugin is disabled."
+
     @classmethod
-    def get_filters(cls):
-        from engineer.filters import format_datetime, markdown_filter, localtime, naturaltime, compress
-        return format_datetime, markdown_filter, localtime, naturaltime, compress
-        
+    def preprocess(cls, post, metadata):
+        from engineer.conf import settings
+
+        if not getattr(settings, cls.enabled_setting_name, True):
+            logger.info(cls.not_enabled_log_message)
+            return post, metadata  # early return
+
+        template = settings.JINJA_ENV.from_string(post.content_preprocessed)
+        post.content_preprocessed = template.render()
+        return post, metadata
+
+
+class BundledFilters(JinjaEnvironmentPlugin):
+    filters = {
+        'date': format_datetime,
+        'markdown': markdown_filter
+    }
+    filters.update(dict([(f.__name__, f) for f in [localtime, naturaltime, compress, typogrify_no_widont, img]]))
+
+    globals = {
+        'img': img
+    }
+
     @classmethod
-    def add_filters(cls, jinja_env):
-        # noinspection PyPackageRequirements
-        from typogrify.templatetags.jinja_filters import register
-        
-        FilterPlugin.add_filters(cls, jinja_env)
+    def update_environment(cls, jinja_env):
+        super(BundledFilters, cls).update_environment(jinja_env)
+
+        logger = cls.get_logger()
         register(jinja_env)  # register typogrify filters
+        logger.debug("Registered typogrify filters.")

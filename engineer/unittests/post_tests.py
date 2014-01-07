@@ -96,6 +96,13 @@ class MetadataTests(PostTestCase):
         self.assertEqual(post.custom_properties['customproperty'], 'custom')
         self.assertEqual(len(post.tags), 2)
 
+    def numeric_tags_test(self):
+        """Numeric tags"""
+        file = self.post_tests_dir / 'numeric_tags.md'
+        post = Post(file)
+
+        self.assertSequenceEqual(post.tags, ['2013', '2014'])
+
 
 #noinspection PyShadowingBuiltins
 class StatusTests(PostTestCase):

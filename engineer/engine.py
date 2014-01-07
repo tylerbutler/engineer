@@ -1,5 +1,6 @@
 # coding=utf-8
 import argparse
+import filecmp
 import gzip
 import logging
 import os
@@ -326,7 +327,8 @@ def build(args=None):
         logger.debug("Output %s." % relpath(the_file.name))
 
     # Generate sitemap
-    sitemap_output_path = ensure_exists(settings.OUTPUT_CACHE_DIR / 'sitemap.xml.gz')
+    sitemap_file_name = 'sitemap.xml.gz'
+    sitemap_output_path = ensure_exists(settings.OUTPUT_CACHE_DIR / sitemap_file_name)
     sitemap_content = settings.JINJA_ENV.get_or_select_template(['sitemap.xml',
                                                                  'theme/sitemap.xml',
                                                                  'core/sitemap.xml']).render(post_list=all_posts)
@@ -360,28 +362,39 @@ def build(args=None):
             logger.debug("Deleting file: %s." % relpath(f))
             f.remove_p()
 
-    logger.debug("Synchronizing output directory with output cache.")
-    build_stats['files'] = mirror_folder(settings.OUTPUT_CACHE_DIR,
-                                         settings.OUTPUT_DIR,
-                                         ignore_list=settings.OUTPUT_DIR_IGNORE)
-    from pprint import pformat
+    # Check if anything has changed other than the sitemap
+    compare = filecmp.dircmp(settings.OUTPUT_CACHE_DIR,
+                             settings.OUTPUT_DIR,
+                             ignore=settings.OUTPUT_DIR_IGNORE)
 
-    logger.debug("Folder mirroring report: %s" % pformat(build_stats['files']))
-    logger.console('')
-    logger.console("Site: '%s' output to %s." % (settings.SITE_TITLE, settings.OUTPUT_DIR))
-    logger.console("Posts: %s (%s new or updated)" % (
-        (build_stats['counts']['new_posts'] + build_stats['counts']['cached_posts']),
-        build_stats['counts']['new_posts']))
-    logger.console("Post rollup pages: %s (%s posts per page)" % (
-        build_stats['counts']['rollups'], settings.ROLLUP_PAGE_SIZE))
-    logger.console("Template pages: %s" % build_stats['counts']['template_pages'])
-    logger.console("Tag pages: %s" % build_stats['counts']['tag_pages'])
-    logger.console("%s new items, %s modified items, and %s deleted items." % (
-        len(build_stats['files']['new']),
-        len(build_stats['files']['overwritten']),
-        len(build_stats['files']['deleted'])))
+    if len(compare.diff_files) == 1 and sitemap_file_name in compare.diff_files:
+        logger.console('')
+        logger.console("No site changes to publish.")
+    else:
+        logger.debug("Synchronizing output directory with output cache.")
+        build_stats['files'] = mirror_folder(settings.OUTPUT_CACHE_DIR,
+                                             settings.OUTPUT_DIR,
+                                             ignore_list=settings.OUTPUT_DIR_IGNORE)
+        from pprint import pformat
+
+        logger.debug("Folder mirroring report: %s" % pformat(build_stats['files']))
+        logger.console('')
+        logger.console("Site: '%s' output to %s." % (settings.SITE_TITLE, settings.OUTPUT_DIR))
+        logger.console("Posts: %s (%s new or updated)" % (
+            (build_stats['counts']['new_posts'] + build_stats['counts']['cached_posts']),
+            build_stats['counts']['new_posts']))
+        logger.console("Post rollup pages: %s (%s posts per page)" % (
+            build_stats['counts']['rollups'], settings.ROLLUP_PAGE_SIZE))
+        logger.console("Template pages: %s" % build_stats['counts']['template_pages'])
+        logger.console("Tag pages: %s" % build_stats['counts']['tag_pages'])
+        logger.console("%s new items, %s modified items, and %s deleted items." % (
+            len(build_stats['files']['new']),
+            len(build_stats['files']['overwritten']),
+            len(build_stats['files']['deleted'])))
+
     logger.console('')
     logger.console("Full build log at %s." % settings.LOG_FILE)
+    logger.console('')
 
     with open(settings.BUILD_STATS_FILE, mode='wb') as the_file:
         pickle.dump(build_stats, the_file)

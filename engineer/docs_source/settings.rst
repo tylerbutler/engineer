@@ -149,6 +149,9 @@ These settings control the location on the local file system where Engineer shou
 
       The Jinja cache directory. **In general you should not need to modify this.**
 
+      .. deprecated:: 0.5.0
+         This setting is no longer exposed as of version 0.5.0.
+
 
    .. attribute:: BUILD_STATS_FILE
 

@@ -99,7 +99,6 @@ class TestVariableExpansion(BaseTestCase):
             'CACHE_DIR',
             'CACHE_FILE',
             'OUTPUT_CACHE_DIR',
-            'JINJA_CACHE_DIR',
             'BUILD_STATS_FILE',
             'LOG_DIR',
             'LOG_FILE',

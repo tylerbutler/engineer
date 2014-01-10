@@ -173,13 +173,14 @@ def mirror_folder(source, target, delete_orphans=True, recurse=True, ignore_list
     return report
 
 
-def ensure_exists(p):
+def ensure_exists(p, assume_dirs=False):
     """
     Ensures a given path *p* exists.
 
-    If a path to a file is passed in, then the path to the file will be checked.
+    If a path to a file is passed in, then the path to the file will be checked. This can be overridden by passing a
+    value of ``True`` to ``assume_dirs``, in which case the paths will be assumed to be to directories, not files.
     """
-    if path(p).ext:
+    if path(p).ext and not assume_dirs:
         path(p).dirname().makedirs_p()
     else:
         path(p).makedirs_p()

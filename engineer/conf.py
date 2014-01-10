@@ -5,6 +5,7 @@ import platform
 import shelve
 from datetime import datetime
 
+from appdirs import user_cache_dir, user_data_dir
 from jinja2.loaders import ChoiceLoader
 import pytz
 import times
@@ -33,7 +34,8 @@ permalink_styles = {
 deprecated_settings = (
     # ('SETTING_NAME', version_deprecated, 'Message.')
     ('NORMALIZE_INPUT_FILES', 0.4, 'This setting is now ignored.'),
-    ('NORMALIZE_INPUT_FILE_MASK', 0.4, 'This setting is now ignored.')
+    ('NORMALIZE_INPUT_FILE_MASK', 0.4, 'This setting is now ignored.'),
+    ('JINJA_CACHE_DIR', 0.5, 'This setting is now ignored.')
 )
 
 
@@ -67,11 +69,13 @@ class EngineerConfiguration(object):
 
     class _EngineerConstants(object):
         # ENGINEER 'CONSTANTS'
+        ENGINEER_APP_WIDE_SETTINGS_DIR = ensure_exists(user_data_dir('Engineer', 'Engineer'))
         ROOT_DIR = path(__file__).dirname().abspath()
         TEMPLATE_DIR = (ROOT_DIR / 'templates').abspath()
         STATIC_DIR = (ROOT_DIR / 'static').abspath()
         THEMES_DIR = (ROOT_DIR / 'themes').abspath()
         LIB_DIR = (STATIC_DIR / 'engineer/lib/').abspath()
+        JINJA_CACHE_DIR = ensure_exists(path(user_cache_dir('Engineer', 'Engineer')) / '_jinja_cache')
 
         FOUNDATION_CSS = 'foundation'
         JQUERY = 'jquery-1.10.2.min.js'
@@ -343,7 +347,7 @@ class EngineerConfiguration(object):
                  FileSystemLoader([self.ENGINEER.TEMPLATE_DIR])]
             ),
             extensions=['jinja2.ext.with_', ],
-            bytecode_cache=FileSystemBytecodeCache(directory=self.JINJA_CACHE_DIR),
+            bytecode_cache=FileSystemBytecodeCache(directory=self.ENGINEER.JINJA_CACHE_DIR),
             trim_blocks=True)
 
         # JinjaEnvironment plugins
@@ -418,12 +422,12 @@ class EngineerConfiguration(object):
     def create_required_directories(self):
         """Creates any directories required for Engineer to function if they don't already exist."""
         required = (self.CACHE_DIR,
-                    self.JINJA_CACHE_DIR,
                     self.LOG_DIR,
-                    self.OUTPUT_DIR,)
+                    self.OUTPUT_DIR,
+                    self.ENGINEER.JINJA_CACHE_DIR,)
 
         for folder in required:
-            ensure_exists(folder)
+            ensure_exists(folder, assume_dirs=True)
 
 
 settings = EngineerConfiguration()

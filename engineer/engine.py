@@ -65,6 +65,7 @@ def clean(args=None):
     try:
         settings.OUTPUT_CACHE_DIR.rmtree()
         settings.CACHE_DIR.rmtree()
+        settings.ENGINEER.JINJA_CACHE_DIR.rmtree()
     except OSError as we:
         if hasattr(we, 'winerror') and we.winerror not in (2, 3):
             logger.exception(we.message)

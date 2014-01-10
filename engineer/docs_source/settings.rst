@@ -62,8 +62,14 @@ These settings control the location on the local file system where Engineer shou
       A list of paths that contain :doc:`posts` for the site. You can specify a single path here or multiple paths.
       When specifying multiple paths the files will always be processed in their original directory.
 
+      If you wish to include all subdirectories within a path, simply add a ``*`` to the end of the path. By default,
+      however, Engineer will only include posts in the directory specified.
+
       .. seealso::
          :ref:`build pipeline`
+
+      .. versionchanged:: 0.5.0
+         Now supports including subdirectories within a post directory.
 
 
    .. attribute:: OUTPUT_DIR

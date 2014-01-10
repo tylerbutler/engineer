@@ -20,14 +20,24 @@ class LocalLoader(object):
         new_posts = PostCollection()
         cached_posts = PostCollection()
 
-        # expand user paths in all post paths
-        directories = [path(p).expand().abspath() for p in input]
+        # parse input directories into a dict. The key is the path, the value is a bool indicating
+        # whether the path should be walked when looking for posts or not
+        directories = {}
+        for dir in input:
+            if unicode(dir).endswith('*'):
+                directories[path(dir[:-1]).expand().abspath().normpath()] = True
+            else:
+                directories[path(dir).expand().abspath().normpath()] = False
 
         file_list = []
-        for directory in directories:
+        for directory, should_walk in directories.iteritems():
             if directory.exists():
                 logger.info("Getting posts from %s." % directory)
-                file_list.extend(directory.listdir('*.md') + directory.listdir('*.markdown'))
+                if should_walk:
+                    file_list.extend([f for f in directory.walkfiles('*.md')] +
+                                     [f for f in directory.files('*.markdown')])
+                else:
+                    file_list.extend(directory.files('*.md') + directory.files('*.markdown'))
             else:
                 logger.warning("Can't find source post directory %s." % directory)
 

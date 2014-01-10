@@ -1,0 +1,4 @@
+SUPER: settings.yaml
+
+POST_DIR:
+- ../posts/*

@@ -77,6 +77,45 @@ def chunk(seq, chunksize, process=iter):
         yield process(chain([it.next()], islice(it, chunksize - 1)))
 
 
+def expand_path(path_list, root_path=None):
+    """
+    Given a list of paths, returns a list of all parent paths (including the original paths).
+    If provided, ``root_path`` is used as the outermost path when expanding parent paths. If path_list contains
+    paths to files, only the directories where those files exist will be returned. This function only returns paths
+    to directories.
+
+    Example:
+
+        expand_path(['/tmp/foo/bar', '/tmp/foo/baz/file.txt' '/tmp/bar'], root_path='/tmp')
+
+    This call would return the following:
+
+        ['/tmp/foo/bar/',
+         '/tmp/foo',
+         '/tmp/foo/baz/',
+         '/tmp/bar/']
+
+    If the ``root_path`` argument were ommitted in the above example,
+
+
+    """
+    to_return = set()
+    path_list = wrap_list(path_list)
+
+    # expand ignore list to include all directories as individual entries
+    for p in path_list:
+        p = path(p)
+        if p.isdir():
+            to_return.add(p)
+        head, tail = p.splitpath()
+        while head and tail:
+            if root_path is not None and head == root_path:
+                break
+            to_return.add(head)
+            head, tail = head.splitpath()
+    return list(to_return)
+
+
 def mirror_folder(source, target, delete_orphans=True, recurse=True, ignore_list=None, _level=0):
     """Mirrors a folder *source* into a target folder *target*."""
 
@@ -106,17 +145,7 @@ def mirror_folder(source, target, delete_orphans=True, recurse=True, ignore_list
     else:
         ignore_list = [path(d2 / i).normpath() for i in ignore_list]
         ignore_files = [f for f in ignore_list if f.isfile()]
-        ignore_dirs = []
-
-        # expand ignore list to include all directories as individual entries
-        for p in ignore_files:
-            head, tail = p.splitpath()
-            while head and tail:
-                if head == d2:
-                    break
-                ignore_dirs.append(head)
-                head, tail = head.splitpath()
-        ignore_list.extend(ignore_dirs)
+        ignore_list.extend(expand_path(ignore_files, root_path=d2))
 
     # Delete orphan files/folders in the target folder
     if delete_orphans:

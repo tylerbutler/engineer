@@ -1,10 +1,10 @@
 # coding=utf-8
-# Bootstrap installation of Distribute
-import distribute_setup
+# Bootstrap installation of setuptools
+from ez_setup import use_setuptools
+use_setuptools()
 
-distribute_setup.use_setuptools()
-
-import os, sys
+import os
+import sys
 from fnmatch import fnmatchcase
 from distutils.util import convert_path
 from propane_distribution import cmdclassdict

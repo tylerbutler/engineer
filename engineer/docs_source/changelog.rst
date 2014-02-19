@@ -5,6 +5,13 @@
 Changelog
 =========
 
+version 0.4.6 - February 19, 2013
+=================================
+
+- Update to a new version of setuptools' bootstrapper. This should ease installation pains for new users that have
+  more recent versions of setuptools.
+
+
 version 0.4.5 - October 2, 2013
 ===============================
 
@@ -13,7 +20,7 @@ version 0.4.5 - October 2, 2013
 
 
 version 0.4.4 - June 23, 2013
-=================================
+=============================
 
 - Addresses compatibility issue with more recent versions of html5lib
   (`issue 63 <https://github.com/tylerbutler/engineer/issues/63>`_). A more comprehensive fix will come in a

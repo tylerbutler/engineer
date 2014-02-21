@@ -1,8 +1,7 @@
 # coding=utf-8
-# Bootstrap installation of Distribute
-import distribute_setup
-
-distribute_setup.use_setuptools()
+# Bootstrap installation of setuptools
+from ez_setup import use_setuptools
+use_setuptools()
 
 import os
 import sys

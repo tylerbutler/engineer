@@ -55,12 +55,20 @@ looks like this:
         - published
         - review
         - draft
+      url:
+        - published
+        - review
 
 This metadata map tells Engineer to finalize timestamps *only* for published posts and normalizes titles
 and slugs for all posts. You can override this default map by providing your own map in your own
 :ref:`settings file<settings>`. In addition, you can turn metadata normalization on and off
 completely using the :attr:`~engineer.conf.EngineerConfiguration.FINALIZE_METADATA`
 setting.
+
+.. note::
+   Metadata that already exists in post files will always be maintained regardless of this setting. For example,
+   if you are using the default settings but have a draft post that already has a ``url`` value,
+   that metadata will be maintained in the output file, even though URLs will not be set for drafts in general.
 
 .. currentmodule:: engineer.conf
 
@@ -93,6 +101,9 @@ setting.
               - published
               - review
               - draft
+            url:
+              - published
+              - review
 
       A mapping of post metadata values to the post statuses in which they'll be finalized. By default,
       Engineer will finalize timestamps *only* for published posts and normalizes titles and slugs for all posts.

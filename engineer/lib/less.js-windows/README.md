@@ -2,13 +2,11 @@
 
 A standalone version of the [LESS](http://lesscss.org/) command-line compiler that will run on Windows with no other dependencies.
 
-Consists of a standalone version of [Node.js](http://nodejs.org/) (compressed from 5 MB to 1.8 MB using [UPX](http://upx.sourceforge.net)) and the bare minimum less.js files. The whole package weighs in at just over 2 MB.
-
+Consists of a standalone version of [Node.js](http://nodejs.org/) and the required less.js files/dependencies. 
 
 ## Install
 
-Either clone the repository or **[download and extract the release ZIP](https://github.com/duncansmart/less.js-windows/releases)** and invoke `lessc.cmd` as detailed below.
-
+**[Download and extract the release ZIP](https://github.com/duncansmart/less.js-windows/releases)** and invoke `lessc.cmd` as detailed below.
 
 ## Usage
 
@@ -18,7 +16,7 @@ Basic usage:
 
 Compress CSS:
 
-    lessc  --yui-compress  path\source.less  path\output.css
+    lessc  --clean-css  path\source.less  path\output.css
 
 For full usage:
 

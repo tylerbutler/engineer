@@ -389,3 +389,23 @@ def has_files(the_path):
             return False
         else:
             raise
+
+
+def diff_dir(dir_cmp, left_path=True):
+    """
+    A generator that, given a ``filecmp.dircmp`` object, yields the paths to all files that are different. Works
+    recursively.
+
+    :param dir_cmp: A ``filecmp.dircmp`` object representing the comparison.
+    :param left_path: If ``True``, paths will be relative to dircmp.left. Else paths will be relative to dircmp.right.
+    """
+    for name in dir_cmp.diff_files:
+        if left_path:
+            path_root = dir_cmp.left
+        else:
+            path_root = dir_cmp.right
+        yield path.joinpath(path_root, name)
+    for sub in dir_cmp.subdirs.values():
+        # Need to iterate over the recursive call to make sure the individual values are yielded up the stack
+        for the_dir in diff_dir(sub, left_path):
+            yield the_dir

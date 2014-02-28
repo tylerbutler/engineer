@@ -16,7 +16,7 @@ from engineer.exceptions import ThemeNotFoundException
 from engineer.filters import naturaltime
 from engineer.log import get_console_handler, bootstrap
 from engineer.plugins import CommandPlugin, load_plugins
-from engineer.util import relpath, compress, has_files
+from engineer.util import relpath, compress, has_files, diff_dir
 from engineer import version
 
 try:
@@ -364,11 +364,28 @@ def build(args=None):
             f.remove_p()
 
     # Check if anything has changed other than the sitemap
+    have_changes = False
     compare = filecmp.dircmp(settings.OUTPUT_CACHE_DIR,
                              settings.OUTPUT_DIR,
                              ignore=settings.OUTPUT_DIR_IGNORE)
 
-    if len(compare.diff_files) == 1 and sitemap_file_name in compare.diff_files:
+    # The algorithm below takes advantage of the fact that once we've determined that there is more than one file
+    # that's different, or if the first item returned by the generator is not the sitemap, then we can break out of
+    # the generator loop early. This is also advantageous because it doesn't require us to completely exhaust the
+    # generator. In the case of a fresh site build, for example, the generator will return a lot more data. So the
+    # other approach here of expanding the generator into a list with a list comprehension would be inefficient
+    # in many cases. This approach performs equally well in all cases at the cost of some unusual-looking code.
+    diff_file_count = 0
+    for file_path in diff_dir(compare):
+        diff_file_count += 1
+        if file_path != sitemap_output_path:
+            have_changes = True
+            break
+        if diff_file_count > 1:
+            have_changes = True
+            break
+
+    if not have_changes:
         logger.console('')
         logger.console("No site changes to publish.")
     else:

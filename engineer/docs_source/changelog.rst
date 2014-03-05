@@ -8,22 +8,31 @@ Changelog
 version 0.5.0 -
 ===============
 
-- Removed the bundled `Tweet <https://github.com/seaofclouds/tweet>`_ library and deprecated all related settings.
-  Twitter has discontinued its unauthenticated v1.0 API, so Tweet stopped working as of June 11,
-  2013. If you have suggestions for a replacement library or solution for Twitter integration please file an issue on
-  Github.
+- The bundled `Tweet <https://github.com/seaofclouds/tweet>`_ library has been removed and all related
+  settings have been deprecated. Twitter has discontinued its unauthenticated v1.0 API, so Tweet stopped
+  working as of June 11, 2013. If you have suggestions for a replacement library or solution for Twitter integration
+  please file an issue on Github.
 - The default setting of :attr:`~engineer.conf.EngineerConfiguration.PERMALINK_STYLE` has changed to ``pretty`` from
   ``fulldate``.
 - Atom feeds are now generated in addition to RSS feeds. Atom feeds are now the default. As part of this change,
   customization of the RSS feed using a template is no longer supported.
 - New plugin added to support :ref:`Markdown Lazy Links<lazy links plugin>`. This plugin is enabled by default,
   so you can start using lazy links immediately.
-- New 'experimental' plugin permissions model. More developer information at: :ref:`plugin permissions`.
-- Jinja environment can now be modified using :class:`~engineer.plugins.JinjaEnvironmentPlugin`.
+- A new 'experimental' plugin permissions model is in place. More developer information is available at:
+  :ref:`plugin permissions`.
+- Engineer's Jinja2 environment can now be modified using plugins. See the
+  :class:`~engineer.plugins.JinjaEnvironmentPlugin` documentation.
 - Jinja syntax can now be used in post content thanks to the new :ref:`jinja post processor plugin`.
-- A new tag for :ref:`inserting images into posts<post images>`. The output can
+- A new tag is available for :ref:`inserting images into posts<post images>`. The output can
   be :ref:`customized by themes<image template>`.
-
+- You can now have Engineer automatically format your post metadata to be fenced (Jekyll-style) or unfenced using the
+  :attr:`~engineer.conf.EngineerConfiguration.METADATA_FORMAT` setting.
+- User and environment variables are now expanded when they appear in Engineer settings. For example, you can now
+  use ``~/engineer/posts/`` as your :attr:`~EngineerConfiguration.POST_DIR`. Huzzah!
+- The :attr:`~EngineerConfiguration.POST_DIR` setting can now automatically find posts in all subdirectories within
+  a given path. See the docs for more details.
+- As usual, this release contains a number of bug fixes and tweaks.
+  
 
 version 0.4.6 - February 19, 2013
 =================================

@@ -238,7 +238,7 @@ and review posts, but will rename published posts according to the default confi
 
 .. versionchanged:: 0.4.2
    The plugin is now disabled by default. Renaming post files caused confusion and headaches for new Engineer users.
-   
+
 
 .. _global links plugin:
 
@@ -248,6 +248,8 @@ Global/Shared Links
 If you find yourself often inserting the same links in your posts, you might benefit from using the Global Links
 plugin. Using this plugin, you can create a list of common links and store them in a file along with your site
 settings. You can reference these links in any post; they are always available to all posts.
+
+.. versionadded:: 0.5.0
 
 Usage
 -----
@@ -296,8 +298,6 @@ Then you can write your posts and reference the links defined in your ``GLOBAL_L
    (though I can't think of any reason why you'd want to use 'global footnotes'), in your ``GLOBAL_LINKS_FILE``,
    and it will be available to your posts.
 
-.. versionadded:: 0.5.0
-
 .. _`reference-style links`: http://daringfireball.net/projects/markdown/syntax#link
 .. _`abbreviations`: http://packages.python.org/Markdown/extensions/abbreviations.html
 .. _`footnotes`: http://packages.python.org/Markdown/extensions/footnotes.html
@@ -312,6 +312,8 @@ This plugin allows you to use 'lazy links' in your posts. The idea comes from Br
 and more detail is available at `<http://brettterpstra.com/2013/10/19/lazy-markdown-reference-links/>`_. Unlike
 Brett's sample implementation, the Engineer plugin supports adding lazy links to posts that already have numeric
 reference links.
+
+.. versionadded:: 0.5.0
 
 Usage
 -----
@@ -349,6 +351,8 @@ Jinja Post Processor Plugin
 This plugin runs your post content through the Jinja template engine prior to tranforming it into HTML. This allows
 you to use Jinja filters, variables, and other content in your posts. For example, this plugin lets you use the
 handy :ref:`img<post images>` Jinja filter to insert images into your posts consistently.
+
+.. versionadded:: 0.5.0
 
 Usage
 -----

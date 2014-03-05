@@ -377,14 +377,17 @@ def build(args=None):
     # other approach here of expanding the generator into a list with a list comprehension would be inefficient
     # in many cases. This approach performs equally well in all cases at the cost of some unusual-looking code.
     diff_file_count = 0
-    for file_path in diff_dir(compare):
-        diff_file_count += 1
-        if file_path != sitemap_output_path:
-            have_changes = True
-            break
-        if diff_file_count > 1:
-            have_changes = True
-            break
+    if not has_files(settings.OUTPUT_DIR):
+        have_changes = True
+    else:
+        for file_path in diff_dir(compare):
+            diff_file_count += 1
+            if file_path != sitemap_output_path:
+                have_changes = True
+                break
+            if diff_file_count > 1:
+                have_changes = True
+                break
 
     if not have_changes:
         logger.console('')

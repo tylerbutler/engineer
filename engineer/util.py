@@ -59,10 +59,10 @@ def expand_url(home, url):
     )
 
 
-def urljoin(url1, url2):
+def urljoin(url1, *url2):
     # This method is necessary because sometimes urlparse.urljoin simply doesn't work correctly
     # when joining URL fragments.
-    return posixpath.join(url1, url2)
+    return posixpath.join(url1, *url2)
 
 
 def checksum(the_file):
@@ -382,7 +382,9 @@ def has_files(the_path):
     """Given a path, returns whether the path has any files in it or any subfolders. Works recursively."""
     the_path = path(the_path)
     try:
-        return len([f for f in the_path.walkfiles()]) != 0
+        for _ in the_path.walkfiles():
+            return True
+        return False
     except OSError as ex:
         if ex.errno == errno.ENOENT:
             # ignore

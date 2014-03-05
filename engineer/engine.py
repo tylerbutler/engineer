@@ -42,11 +42,12 @@ def clean(args=None):
     ignore_files.extend([p.normpath() for p in ignore_list if p.isfile()])
 
     # Delete all FILES that are not ignored
-    for p in settings.OUTPUT_DIR.walkfiles():
-        if p in ignore_files:
-            continue
-        else:
-            p.remove()
+    if settings.OUTPUT_DIR.exists():
+        for p in settings.OUTPUT_DIR.walkfiles():
+            if p in ignore_files:
+                continue
+            else:
+                p.remove()
 
     # Delete all directories with no files. All non-ignored files were already deleted so every directory
     # except those that were ignored will be empty.

@@ -260,8 +260,9 @@ class PostRenamerPlugin(PostProcessor):
             return post
 
         if new_file.exists():
-            logger.warning("Couldn't rename post '%s' to %s. A file with that name already exists. Skipping it." %
-                           (post.title, new_file.abspath()))
+            logger.warning("Couldn't rename post %s to %s." %
+                           (post.source.abspath(), new_file.abspath()))
+            logger.warning("   A file with that name already exists. Skipping it.")
             return post
 
         post.source.rename(new_file)

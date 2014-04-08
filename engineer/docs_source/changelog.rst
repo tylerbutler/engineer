@@ -34,7 +34,7 @@ version 0.5.0 -
 - As usual, this release contains a number of bug fixes and tweaks.
   
 
-version 0.4.6 - February 19, 2013
+version 0.4.6 - February 19, 2014
 =================================
 
 - Update to a new version of setuptools' bootstrapper. This should ease installation pains for new users that have

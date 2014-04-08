@@ -112,12 +112,6 @@ def build(args=None):
     # since we're rebuilding the site
     settings.OUTPUT_CACHE_DIR.rmtree(ignore_errors=True)
 
-    # Copy static content to output dir
-    logger.debug("Copying static files to output cache.")
-    s = (settings.ENGINEER.STATIC_DIR / 'engineer').abspath()
-    t = settings.OUTPUT_STATIC_DIR / 'engineer'
-    mirror_folder(s, t, recurse=False)  # Copy only the files in this folder - don't recurse
-
     theme = ThemeManager.current_theme()
     engineer_lib = (settings.OUTPUT_STATIC_DIR / 'engineer/lib/').abspath()
     ensure_exists(engineer_lib)

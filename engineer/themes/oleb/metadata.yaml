@@ -15,6 +15,8 @@ template_dirs:
 
 copy_content:
   - ['../_shared/images/rss/04.png', 'images/rss.png']
+  - ['../_shared/less/', 'stylesheets/shared/']
+  - ['../_shared/code_styles/github.css', 'stylesheets/github.css']
 
 settings:
   typekit_id: ~

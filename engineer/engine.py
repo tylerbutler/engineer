@@ -146,8 +146,6 @@ def build(args=None):
         s.copy(engineer_lib)
         logger.debug("Copied normalize.css.")
 
-    logger.debug("Copied static files to %s." % relpath(t))
-
     # Copy 'raw' content to output cache - first pass
     # This first pass ensures that any static content - JS/LESS/CSS - that
     # is needed by site-specific pages (like template pages) is available
@@ -158,26 +156,16 @@ def build(args=None):
                       delete_orphans=False)
 
     # Copy theme static content to output dir
+    theme_output_dir = settings.OUTPUT_STATIC_DIR / 'theme'
     logger.debug("Copying theme static files to output cache.")
-    try:
-        s = theme.static_root.abspath()
-    except ThemeNotFoundException as e:
-        logger.critical(e.message)
-        exit()
-    t = (settings.OUTPUT_STATIC_DIR / 'theme').abspath()
-    mirror_folder(s, t)
-    logger.debug("Copied static files for theme to %s." % relpath(t))
+    theme.copy_content(theme_output_dir)
+    logger.debug("Copied static files for theme to %s." % relpath(theme_output_dir))
 
     # Copy any theme additional content to output dir if needed
     if theme.content_mappings:
         logger.debug("Copying additional theme content to output cache.")
-        for s, t in theme.content_mappings.iteritems():
-            t = settings.OUTPUT_STATIC_DIR / 'theme' / t
-            if s.isdir():
-                mirror_folder(s, t)
-            else:
-                s.copy(ensure_exists(t))
-            logger.debug("Copied additional files for theme to %s." % relpath(t))
+        theme.copy_related_content(theme_output_dir)
+        logger.debug("Copied additional files for theme to %s." % relpath(theme_output_dir))
 
     # Load markdown input posts
     logger.info("Loading posts...")

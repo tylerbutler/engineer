@@ -1,4 +1,6 @@
 # coding=utf-8
+import logging
+
 from brownie.caching import memoize
 from jinja2.loaders import FileSystemLoader
 from path import path
@@ -6,7 +8,7 @@ import yaml
 
 from engineer.conf import settings
 from engineer.exceptions import ThemeNotFoundException
-from engineer.util import get_class
+from engineer.util import get_class, relpath, mirror_folder, ensure_exists
 
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
@@ -19,6 +21,8 @@ class Theme(object):
     """
 
     def __init__(self, theme_root_path, **kwargs):
+        self.logger = logging.getLogger('engineer.themes.Theme')
+
         self.root_path = path(theme_root_path)
         self.name = kwargs.get('name')
         self.id = kwargs.get('id', self.name.lower().replace(' ', '_'))
@@ -78,6 +82,30 @@ class Theme(object):
         else:
             return template
 
+    def copy_content(self, output_path):
+        # Copy theme static content to output dir
+        try:
+            s = self.static_root.abspath()
+        except ThemeNotFoundException as e:
+            self.logger.critical(e.message)
+            exit()
+        t = path(output_path).abspath()
+        # noinspection PyUnboundLocalVariable
+        mirror_folder(s, t)
+
+    def copy_related_content(self, output_path):
+        if self.content_mappings:
+            for s, t in self.content_mappings.iteritems():
+                t = path(output_path / t).abspath()
+                if s.isdir():
+                    mirror_folder(s, t)
+                else:
+                    s.copy(ensure_exists(t))
+
+    def copy_all_content(self, output_dir):
+        self.copy_content(output_dir)
+        self.copy_related_content(output_dir)
+
     @staticmethod
     def from_yaml(yaml_file):
         with open(yaml_file, mode='rb') as the_file:
@@ -122,6 +150,6 @@ class ThemeManager(object):
     @memoize
     def theme(id):
         if id not in ThemeManager.themes():
-            raise ThemeNotFoundException("Theme with id '%s' cannot be found." % settings.THEME)
+            raise ThemeNotFoundException("Theme with id '%s' cannot be found." % id)
         else:
             return ThemeManager.themes()[id]

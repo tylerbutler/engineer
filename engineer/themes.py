@@ -124,4 +124,4 @@ class ThemeManager(object):
         if id not in ThemeManager.themes():
             raise ThemeNotFoundException("Theme with id '%s' cannot be found." % settings.THEME)
         else:
-            return ThemeManager.themes[id]
+            return ThemeManager.themes()[id]

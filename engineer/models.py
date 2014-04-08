@@ -3,7 +3,7 @@ import logging
 import re
 from codecs import open
 from copy import copy
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import markdown
 import times
@@ -107,6 +107,9 @@ class Post(object):
         if self.timestamp is None:
             self.timestamp = times.now()
             utctime = True
+            # Reduce resolution of timestamp
+            delta = timedelta(seconds=self.timestamp.second)
+            self.timestamp = self.timestamp - delta
         else:
             utctime = False
 

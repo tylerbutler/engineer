@@ -9,7 +9,8 @@ from path import path
 from typogrify.templatetags.jinja_filters import register
 
 from engineer.enums import Status
-from engineer.filters import *
+from engineer.filters import compress, format_datetime, img, localtime, markdown_filter, \
+    naturaltime, typogrify_no_widont
 from engineer.plugins.core import PostProcessor, JinjaEnvironmentPlugin
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
@@ -359,6 +360,8 @@ class JinjaPostProcessor(PostProcessor):
     @classmethod
     def preprocess(cls, post, metadata):
         from engineer.conf import settings
+
+        logger = cls.get_logger()
 
         if not getattr(settings, cls.enabled_setting_name, True):
             logger.info(cls.not_enabled_log_message)

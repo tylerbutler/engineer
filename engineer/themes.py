@@ -40,6 +40,7 @@ class Theme(object):
         self.static_root = path(kwargs.get('static_root', self.root_path / 'static/')).abspath()
         self.template_root = path(kwargs.get('template_root', self.root_path / 'templates')).abspath()
         self.template_dirs = [self.template_root]
+        self.use_precompiled_styles = True
 
         # set up mappings for any additional content
         self.content_mappings = {}

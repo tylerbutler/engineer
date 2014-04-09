@@ -93,6 +93,12 @@ Theme Manifest Parameters
     The license under which the theme is made available.
 
 
+.. _theme use_precompiled_styles:
+
+``use_precompiled_styles`` *(optional)*
+    Indicates whether to use precompiled stylesheets. Defaults to ``True``.
+
+
 .. _theme use_foundation:
 
 ``use_foundation`` *(optional)*

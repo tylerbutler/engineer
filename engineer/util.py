@@ -411,3 +411,10 @@ def diff_dir(dir_cmp, left_path=True):
         # Need to iterate over the recursive call to make sure the individual values are yielded up the stack
         for the_dir in diff_dir(sub, left_path):
             yield the_dir
+
+
+def make_precompiled_reference(a_path):
+    if a_path.endswith('_precompiled.css'):
+        return a_path
+    else:
+        return '.'.join(a_path.split('.')[0:-1]) + '_precompiled.css'

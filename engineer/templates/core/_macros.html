@@ -10,8 +10,13 @@
     {%- endif -%}
 {%- endmacro -%}
 
-{% macro render_less_link(path_input, prepend_static_url=True) -%}
-    {%- if not settings.PREPROCESS_LESS -%}
+{%- macro render_less_link(path_input, prepend_static_url=True) -%}
+    {%- if theme.use_precompiled_styles %}
+        {% filter compress %}
+            <link rel="stylesheet" href="{{ _make_relative_path(make_precompiled_reference(path_input), prepend_static_url) }}"
+                  type="text/css"/>
+        {% endfilter %}
+    {%- elif not settings.PREPROCESS_LESS -%}
         <link rel="stylesheet/less" href="{{ _make_relative_path(path_input, prepend_static_url) }}" type="text/css"/>
     {%- else -%}
         {% if path_input.endswith('.less') %}

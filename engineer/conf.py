@@ -17,7 +17,7 @@ from brownie.caching import cached_property
 
 from engineer.cache import SimpleFileCache
 from engineer.plugins import get_all_plugin_types, JinjaEnvironmentPlugin
-from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive
+from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive, make_precompiled_reference
 from engineer import version
 
 
@@ -358,6 +358,7 @@ class EngineerConfiguration(object):
         env.globals['theme'] = ThemeManager.current_theme()
         env.globals['urlname'] = urlname
         env.globals['preprocess_less'] = preprocess_less
+        env.globals['make_precompiled_reference'] = make_precompiled_reference
         #        env.globals['url'] = url
         env.globals['STATIC_URL'] = self.STATIC_URL
         env.globals['DEBUG'] = self.DEBUG

@@ -1,6 +1,7 @@
 # coding=utf-8
 # Bootstrap installation of setuptools
 from ez_setup import use_setuptools
+
 use_setuptools()
 
 import os
@@ -100,6 +101,7 @@ def find_package_data(
                 out.setdefault(package, []).append(prefix + name)
     return out
 
+
 ################################################################################
 
 
@@ -132,7 +134,10 @@ setup(
     platforms='any',
     packages=find_packages(),
     entry_points={
-        'console_scripts': ['engineer=engineer.engine:cmdline'],
+        'console_scripts': [
+            'engineer=engineer.engine:cmdline',
+            'engineer_dev=engineer.devtools:main [dev]'
+        ],
     },
     url='http://github.com/tylerbutler/engineer',
     license='MIT',
@@ -140,6 +145,9 @@ setup(
     long_description=get_readme(),
     install_requires=get_install_requirements(),
     tests_require=('nose', 'testfixtures'),
+    extras_require={
+        'dev': ['argh']
+    },
     cmdclass=cmdclassdict,
     include_package_data=True,
     package_data=find_package_data(PROJECT,

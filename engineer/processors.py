@@ -13,8 +13,13 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 logger = logging.getLogger(__name__)
 
 
-def convert_less(infile, outfile):
-    cmd = str.format(str(settings.LESS_PREPROCESSOR), infile=infile, outfile=outfile).split()
+def convert_less(infile, outfile, minify=True):
+    if minify:
+        preprocessor = str(settings.LESS_PREPROCESSOR) + ' -x'
+    else:
+        preprocessor = str(settings.LESS_PREPROCESSOR)
+
+    cmd = str.format(preprocessor, infile=infile, outfile=outfile).split()
     try:
         subprocess.check_output(cmd)
     except subprocess.CalledProcessError as e:
@@ -44,7 +49,7 @@ def preprocess_less(less_file):
             the_file.write(settings.LESS_CACHE[input_file])
         logger.info('Found cached output for LESS file %s. Skipping recompilation.' % less_file)
     elif not is_cached or not css_file.exists():
-        convert_less(input_file, css_file)
+        convert_less(input_file, css_file, settings.COMPRESSOR_ENABLED)
         with open(css_file, mode='rb') as the_file:
             contents = the_file.read()
         settings.LESS_CACHE[input_file] = contents

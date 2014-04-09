@@ -7,6 +7,11 @@ http://engineer.readthedocs.org/ or grab the code at http://github.com/tylerbutl
 
 Licensed under the MIT license.
 
+Installation
+------------
+
+A full installation guide is available at http://engineer.readthedocs.org/en/latest/installation.html
+
 Features
 --------
 

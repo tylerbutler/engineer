@@ -8,7 +8,7 @@ import yaml
 
 from engineer.conf import settings
 from engineer.exceptions import ThemeNotFoundException
-from engineer.util import get_class, relpath, mirror_folder, ensure_exists
+from engineer.util import get_class, mirror_folder, ensure_exists
 
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
@@ -131,6 +131,15 @@ class ThemeManager(object):
             themes.extend(finder.get_themes())
         #noinspection PyTypeChecker
         return dict([t.id, t] for t in themes)
+
+    @classmethod
+    @memoize
+    def themes_by_finder(cls):
+        themes = {}
+        for f in settings.THEME_FINDERS:
+            finder = get_class(f)
+            themes[f] = finder.get_themes()
+        return themes
 
     @classmethod
     @memoize

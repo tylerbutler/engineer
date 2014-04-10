@@ -146,7 +146,7 @@ setup(
     install_requires=get_install_requirements(),
     tests_require=('nose', 'testfixtures'),
     extras_require={
-        'dev': ['argh']
+        'dev': ['argh', 'clint']
     },
     cmdclass=cmdclassdict,
     include_package_data=True,

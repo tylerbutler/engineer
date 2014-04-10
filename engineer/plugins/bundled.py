@@ -17,7 +17,7 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 
 class PostBreaksProcessor(PostProcessor):
-    _regex = re.compile(r'^(?P<teaser_content>.*?)(?P<break>\s*<?!?-{2,}\s*more\s*-{2,}>?)(?P<rest_of_content>.*)',
+    _regex = re.compile(r'^(?P<teaser_content>.*?)(?P<break>\s*<?!?-{2,}\s*more\s*-{2,}>?)\s*(?P<rest_of_content>.*)',
                         re.DOTALL)
 
     @classmethod

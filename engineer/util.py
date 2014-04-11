@@ -414,7 +414,7 @@ def diff_dir(dir_cmp, left_path=True):
 
 
 def make_precompiled_reference(a_path):
-    if a_path.endswith('_precompiled.css'):
+    if not a_path.endswith('.less'):
         return a_path
     else:
         return '.'.join(a_path.split('.')[0:-1]) + '_precompiled.css'

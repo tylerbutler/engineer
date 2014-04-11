@@ -5,8 +5,8 @@
 Changelog
 =========
 
-version 0.5.0 -
-===============
+version 0.5.0 - April 10, 2014
+==============================
 
 - The bundled `Tweet <https://github.com/seaofclouds/tweet>`_ library has been removed and all related
   settings have been deprecated. Twitter has discontinued its unauthenticated v1.0 API, so Tweet stopped
@@ -24,13 +24,15 @@ version 0.5.0 -
   :class:`~engineer.plugins.JinjaEnvironmentPlugin` documentation.
 - Jinja syntax can now be used in post content thanks to the new :ref:`jinja post processor plugin`.
 - A new tag is available for :ref:`inserting images into posts<post images>`. The output can
-  be :ref:`customized by themes<image template>`.
+  be :ref:`customized by themes <image template>`.
 - You can now have Engineer automatically format your post metadata to be fenced (Jekyll-style) or unfenced using the
   :attr:`~engineer.conf.EngineerConfiguration.METADATA_FORMAT` setting.
 - User and environment variables are now expanded when they appear in Engineer settings. For example, you can now
   use ``~/engineer/posts/`` as your :attr:`~EngineerConfiguration.POST_DIR`. Huzzah!
 - The :attr:`~EngineerConfiguration.POST_DIR` setting can now automatically find posts in all subdirectories within
   a given path. See the docs for more details.
+- Themes can now include precompiled versions of LESS stylesheets which will be used by default. See
+  :ref:`theme styles` for more details.
 - As usual, this release contains a number of bug fixes and tweaks.
   
 

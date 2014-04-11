@@ -47,6 +47,7 @@ Narrative Documentation
 
    intro
    installation
+   upgrade
    tutorial
    settings
    posts

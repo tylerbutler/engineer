@@ -224,7 +224,7 @@ The :file:`_sidebar.html` should contain HTML markup you wish to display in a si
 should be wrapped in a ``<section>`` container as appropriate. For example, the sample site :file:`_sidebar.html`
 looks like this:
 
-.. literalinclude:: ../sample_site/templates/_sidebar.html
+.. literalinclude:: ../sample_site/default/templates/_sidebar.html
    :language: html+jinja
 
 
@@ -249,7 +249,7 @@ snippets for a search bar and RSS feed links to include in your sidebar. Also, t
 snippet. By convention, snippets are placed in the 'snippets' folder. Because some themes might not provide snippets,
 you should use the ``ignore missing`` command when including them in your site. For example:
 
-.. literalinclude:: ../sample_site/templates/_sidebar.html
+.. literalinclude:: ../sample_site/default/templates/_sidebar.html
    :language: html+jinja
 
 .. versionadded:: 0.4.0

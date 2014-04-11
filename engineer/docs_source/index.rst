@@ -54,6 +54,7 @@ Narrative Documentation
    templates
    bundled_plugins
    cmdline
+   deployment
    emma
    compatibility
    faq

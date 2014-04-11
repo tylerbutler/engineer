@@ -1,0 +1,8 @@
+SITE_TITLE: Engineer Site
+HOME_URL: '/'
+SITE_URL: http://localhost:8000
+
+POST_DIR:
+  - posts
+  - archives
+POST_TIMEZONE: 'America/Los_Angeles'

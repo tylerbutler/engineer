@@ -10,7 +10,7 @@ Posts
 Posts are the bread and butter of an Engineer site. Posts are Markdown files with either a ``.md`` or ``.markdown``
 file extension and are structured like this:
 
-.. literalinclude:: ../sample_site/posts/(p)2012-03-09-what-s-next.md
+.. literalinclude:: ../sample_site/default/posts/(p)2012-03-09-what-s-next.md
    :language: yaml
 
 Posts are typically stored in a folder called :file:`posts` within your site's source directory,

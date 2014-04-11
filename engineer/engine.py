@@ -471,7 +471,7 @@ def init(args):
 
     logger = logging.getLogger('engineer.engine.init')
 
-    sample_site_path = path(package_file).dirname() / 'sample_site'
+    sample_site_path = path(package_file).dirname() / ('sample_site/%s' % args.mode)
     target = path.getcwd()
     if target.listdir() and not args.force:
         logger.warning("Target folder %s is not empty." % target)
@@ -490,11 +490,13 @@ def init(args):
 
     from engineer.util import mirror_folder, ensure_exists
 
-    if args.no_sample:
-        ensure_exists(target / 'posts')
-        (sample_site_path / 'config.yaml').copyfile(target / 'config.yaml')
-    else:
+    if args.sample:
         mirror_folder(sample_site_path, target)
+    else:
+        ensure_exists(target / 'posts')
+        ensure_exists(target / 'content')
+        ensure_exists(target / 'templates')
+        mirror_folder(sample_site_path, target, recurse=False)
     logger.console("Initialization complete.")
     exit()
 
@@ -568,10 +570,16 @@ def get_argparser():
     parser_init = subparsers.add_parser('init',
                                         help="Initialize the current directory as an engineer site.",
                                         parents=[common_parser])
-    parser_init.add_argument('--no-sample',
-                             dest='no_sample',
+    parser_init.add_argument('-m', '--mode',
+                             dest='mode',
+                             default='default',
+                             choices=['azure'],
+                             help="Initialize site with folder structures designed for deployment to a service such "
+                                  "as Azure.")
+    parser_init.add_argument('--sample',
+                             dest='sample',
                              action='store_true',
-                             help="Do not include sample content.")
+                             help="Include sample content.")
     parser_init.add_argument('--force', '-f',
                              dest='force',
                              action='store_true',

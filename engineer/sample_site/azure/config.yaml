@@ -1,16 +1,9 @@
-SITE_TITLE: Engineer Site
+SITE_TITLE: Engineer Site for Azure
 HOME_URL: '/'
 SITE_URL: http://localhost:8000
 
+OUTPUT_DIR: output/azure
 POST_DIR:
   - posts
   - archives
-
 POST_TIMEZONE: 'America/Los_Angeles'
-
-PUBLISH_DRAFTS: no
-
-PREPROCESS_LESS: yes
-DEBUG: no
-
-THEME: oleb

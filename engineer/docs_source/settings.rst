@@ -414,17 +414,18 @@ Preprocessor/Compressor Settings
 
       **Default:** ``True``
 
-      If ``True``, LESS files will be processed into CSS files (which will then be minified if needed) as part of the
-      site generation process.
+      If ``True``, LESS files referenced in templates will be processed into CSS files (which will then be minified
+      if needed) as part of the site generation process.
 
 
    .. attribute:: LESS_PREPROCESSOR
 
-      **Default:** bundled dotLESS compiler on Windows, :program:`lessc` elsewhere
+      **Default:** bundled *less.js-windows* compiler on Windows, :program:`lessc` elsewhere
 
       If you want to use another LESS processor, or you need to specify a path to :program:`lessc`,
-      you can use this setting. On Windows the dotLESS compiler is bundled, but on other platforms you'll need to
-      download and install LESS and lessc yourself.
+      you can use this setting. On Windows a less compiler is bundled, but on other platforms you'll need to
+      download and install less and lessc yourself. There is information about how to do that
+      at `lesscss.org <http://lesscss.org/#using-less>`_.
 
 
 Miscellaneous Settings

@@ -109,7 +109,7 @@ you should specify ``ignore missing`` on the ``include`` directive.
 
 For example, the Engineer sample site includes these widgets like so:
 
-.. literalinclude:: ../../sample_site/templates/_sidebar.html
+.. literalinclude:: ../../sample_site/default/templates/_sidebar.html
    :language: html+jinja
 
 The following snippets are available:

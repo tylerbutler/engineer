@@ -256,10 +256,10 @@ template looks like this:
 .. versionadded:: 0.5.0
 
 
-RSS and Sitemap Templates
--------------------------
+Sitemap Templates
+-----------------
 
-Themes can provide custom templates for the RSS feed and sitemap, just as :ref:`individual sites can <rss template>`.
+Themes can provide custom templates for sitemap, just as :ref:`individual sites can <sitemap template>`.
 These templates should be in the theme's :file:`templates/theme` folder.
 
 .. versionadded:: 0.3.0

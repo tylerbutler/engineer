@@ -228,7 +228,7 @@ looks like this:
    :language: html+jinja
 
 
-.. _rss template:
+.. _sitemap template:
 
 Sitemap Templates
 -----------------

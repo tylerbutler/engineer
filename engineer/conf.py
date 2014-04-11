@@ -78,9 +78,9 @@ class EngineerConfiguration(object):
         JINJA_CACHE_DIR = ensure_exists(path(user_cache_dir('Engineer', 'Engineer')) / '_jinja_cache')
 
         FOUNDATION_CSS = 'foundation'
-        JQUERY = 'jquery-1.10.2.min.js'
-        LESS_JS = 'less-1.5.0.min.js'
-        MODERNIZR = 'modernizr-2.6.2.min.js'
+        JQUERY = 'jquery-1.11.0.min.js'
+        LESS_JS = 'less-1.7.0.min.js'
+        MODERNIZR = 'modernizr-2.7.1.min.js'
         NORMALIZE_CSS = 'normalize.css'
 
         # URLs to included libraries - will be updated in the EngineerConfiguration.initialize() method.

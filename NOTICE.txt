@@ -1,6 +1,7 @@
 Included MIT licensed software:
 jQuery Copyright (c) 2011 John Resig, http://jquery.com/
 jquery.tweet.js Copyright (c) 2008-2011 Todd Matthews & Steve Purcell
+less.js-windows Copyright (c) 2013 Duncan Smart
 Modernizr Copyright (c) 2009-2011, http://www.modernizr.com/
 Foundation Copyright (c) 2011 ZURB, http://www.zurb.com/
 
@@ -10,4 +11,3 @@ ansistrm.py Copyright (c) 2010-2012 Vinay Sajip
 
 Included Apache 2.0 licensed software:
 LESS Copyright (c) 2009-2011 Alexis Sellier
-dotless Copyright (c) 2009-2010 dotless project, http://www.dotlesscss.com

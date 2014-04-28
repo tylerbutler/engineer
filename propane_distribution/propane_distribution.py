@@ -13,7 +13,9 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 # Inspired by https://github.com/warner/python-ecdsa/blob/0ed702a9d4057ecf33eea969b8cf280eaccd89a1/setup.py#L34
 
-VersionTuple = namedtuple('VersionTuple', ['major', 'minor', 'patch'])
+VersionTuple = namedtuple('VersionTuple', ['major', 'minor', 'patch', 'prerelease', 'build'])
+git_describe_regex = re.compile(
+    r'v?(?P<major>\d*)\.(?P<minor>\d*)\.(?P<patch>\d*)(?P<prerelease>-(?P<commit>\d*-[a-z0-9]*)?(-(?P<dirty>\w*))?)(\+(?P<build>[\.0-9A-Za-z-]*))?')
 
 
 class version_class(object):
@@ -45,7 +47,7 @@ class version_class(object):
 
     @property
     def patch_string(self):
-        return self.string
+        return '.'.join(self.tuple[0:3])
 
     def __lt__(self, other):
         return self.string.__lt__(other.string)
@@ -67,8 +69,10 @@ class version_class(object):
 
     @staticmethod
     def _parse_tuple(ver_string):
-        split_string = ver_string.split('.')
-        return VersionTuple(split_string[0], split_string[1], '.'.join(split_string[2:]))
+        ver = git_describe_regex.search(ver_string).groupdict()
+        prerelease = '' if ver['prerelease'] is None else ver['prerelease']
+        build = '' if ver['build'] is None else ver['build']
+        return VersionTuple(ver['major'], ver['minor'], ver['patch'], prerelease, build)
 
     def __unicode__(self):
         return self.string

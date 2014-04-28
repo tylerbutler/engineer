@@ -73,9 +73,9 @@ update_version_py(version_path=os.path.join(os.path.dirname(__file__), '..'))
 
 import engineer
 # The short X.Y version.
-version = engineer.version.minor_string
+version = engineer.version.patch_string
 # The full version, including alpha/beta/rc tags.
-release = engineer.version.patch_string
+release = engineer.version.string
 
 print "Got engineer version %s" % version
 

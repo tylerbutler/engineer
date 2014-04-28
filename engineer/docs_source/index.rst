@@ -3,6 +3,14 @@
 Engineer: A Static Website Generator for Fellow Engineers
 =========================================================
 
+.. note::
+   Are you looking for documentation on the pre-release version of Engineer? If so,
+   you can find them here: `<http://engineer.readthedocs.org/en/latest/>`_.
+
+   * The current release version of Engineer is |version|.
+   * This documentation is for version |release|.
+
+
 .. sidebar:: What's New in Version |version|?
 
    * Custom URL and permalink schemes

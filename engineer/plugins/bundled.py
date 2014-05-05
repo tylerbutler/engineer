@@ -317,7 +317,7 @@ class LazyMarkdownLinksPlugin(PostProcessor):
         (           # Start group 2, which is everything after the lazy link marker
             \]          # Literal ]
             .*?^        # Non-greedy match of anything up to a new line
-            \[          # Literal ]
+            \[          # Literal [
         )           # End Group 2
         \*\]:       # Match a literal *]: - the lazy link URL definition follows this
         ''', re.MULTILINE | re.DOTALL | re.UNICODE | re.VERBOSE)

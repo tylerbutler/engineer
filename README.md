@@ -10,7 +10,10 @@ Licensed under the MIT license.
 Installation
 ------------
 
-A full installation guide is available at http://engineer.readthedocs.org/en/latest/installation.html
+A full installation guide is available at https://engineer.readthedocs.org/en/master/installation.html. If you're in a
+hurry, though, you can install the most recent version of Engineer using pip. Simply run the following command:
+
+    pip install engineer
 
 Features
 --------

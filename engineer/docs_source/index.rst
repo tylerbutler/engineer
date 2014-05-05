@@ -13,9 +13,11 @@ Engineer: A Static Website Generator for Fellow Engineers
 
 .. sidebar:: What's New in Version |version|?
 
-   * Custom URL and permalink schemes
-   * Comments integration using Disqus or IntenseDebate
-   * Big changes to metadata normalization and automated file renaming
+   * Atom feeds
+   * Jinja2 syntax support in post content
+   * Simpler way to include images in posts
+   * Support for :ref:`Markdown Lazy Links<lazy links plugin>`
+   * Lots and lots of bug fixes
 
    There's more! See the full :ref:`changelog` for details.
 

@@ -55,13 +55,22 @@ folder structure, a :doc:`settings file <settings>`, and optionally some sample 
 
 **Usage**::
 
-    engineer init [-h] [-v] [-s CONFIG_FILE] [--no-sample] [-f]
+    engineer init [-h] [-v] [-s CONFIG_FILE] [-m {azure}] [--sample] [--force]
 
-.. option:: --no-sample
+.. option:: -m, --mode
 
-   By default, the ``init`` command includes some sample content to provide a starting point for a new site. By
-   passing this option, however, no sample content will be created.
+   Initializes a site structure designed for deployment to a specific hosting service such as Azure.
+   See :ref:`deployment` for more details. Valid options:
 
+   - ``azure``: Initializes a site for deployment to Azure.
+
+.. option:: --sample
+
+   By default, the ``init`` command does not create sample content to provide a starting point for a new site. By
+   passing this option, however, sample content will be created.
+
+   .. versionchanged:: 0.5.0
+      Replaced the ``--no-sample`` option with this, effectively reversing the default.
 
 .. option:: -f, --force
 
@@ -137,7 +146,7 @@ implemented.
 .. _engineer emma:
 
 ``engineer emma``
-------------------
+-----------------
 
 .. program:: emma
 

@@ -15,7 +15,7 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 VersionTuple = namedtuple('VersionTuple', ['major', 'minor', 'patch', 'prerelease', 'build'])
 git_describe_regex = re.compile(
-    r'v?(?P<major>\d*)\.(?P<minor>\d*)\.(?P<patch>\d*)(?P<prerelease>-(?P<commit>\d*-[a-z0-9]*)?(-(?P<dirty>\w*))?)(\+(?P<build>[\.0-9A-Za-z-]*))?')
+    r'v?(?P<major>\d*)\.(?P<minor>\d*)\.(?P<patch>\d*)(?P<prerelease>-(?P<commit>\d*-[a-z0-9]*)?(-(?P<dirty>\w*))?)?(\+(?P<build>[\.0-9A-Za-z-]*))?')
 
 
 class version_class(object):

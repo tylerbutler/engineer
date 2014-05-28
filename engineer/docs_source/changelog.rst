@@ -5,6 +5,13 @@
 Release Notes
 =============
 
+version 0.5.1 - May 28, 2014
+============================
+
+- Fixed issue with precompiled LESS files.
+- Updated documentation.
+
+
 version 0.5.0 - April 10, 2014
 ==============================
 

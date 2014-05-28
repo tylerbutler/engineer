@@ -228,8 +228,8 @@ LESS
 
 In addition to CSS, Engineer can automatically compile LESS stylesheets during a site build,
 so you are free to use LESS rather than CSS for your styles. When linking to your LESS stylesheet in your templates,
-you should use the ``render_less_link`` `macro <macros>`_. This will ensure that the stylesheet is compiled as part
-of the site build process if needed.
+you should use the ``render_less_link`` :ref:`macro <macros>`. This will ensure that the stylesheet is compiled as
+part of the site build process if needed.
 
 Starting with Engineer 0.5.0, themes can include a 'precompiled' version of the LESS stylesheets they need. This is
 useful since in most cases users of your theme will not be making modifications to your LESS files. Thus,
@@ -238,7 +238,7 @@ referencing a pre-built version of the stylesheet makes for faster builds.
 In order to include a precompiled version of your stylesheets, simply add it alongside your regular stylesheet and
 append ``_precompiled`` to the name. For example, if your stylesheet is called ``dark_rainbow.less``,
 then your precompiled version should be called ``dark_rainbow_precompiled.css``. As long as you are referencing your
-stylesheet from your templates using the ``render_less_link`` `macro <macros>`_,
+stylesheet from your templates using the ``render_less_link`` :ref:`macro <macros>`,
 the precompiled version will automatically be picked up during a site build. No other changes are needed.
 
 

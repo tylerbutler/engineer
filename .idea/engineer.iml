@@ -14,7 +14,7 @@
     <orderEntry type="module" module-name="tylerbutler.com" />
   </component>
   <component name="PyDocumentationSettings">
-    <option name="myDocStringFormat" value="reStructuredText" />
+    <option name="analyzeDoctest" value="false" />
   </component>
   <component name="TemplatesService">
     <option name="templateFileTypes">

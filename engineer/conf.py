@@ -79,19 +79,6 @@ class EngineerConfiguration(object):
         LIB_DIR = (STATIC_DIR / 'engineer/lib/').abspath()
         JINJA_CACHE_DIR = ensure_exists(path(user_cache_dir('Engineer', 'Engineer')) / '_jinja_cache')
 
-        FOUNDATION_CSS = 'foundation'
-        JQUERY = 'jquery-1.11.0.min.js'
-        LESS_JS = 'less-1.7.0.min.js'
-        MODERNIZR = 'modernizr-2.7.1.min.js'
-        NORMALIZE_CSS = 'normalize/normalize.css'
-
-        # URLs to included libraries - will be updated in the EngineerConfiguration.initialize() method.
-        FOUNDATION_CSS_URL = None
-        JQUERY_URL = None
-        LESS_JS_URL = None
-        MODERNIZR_URL = None
-        NORMALIZE_CSS_URL = None
-
     def __init__(self, settings_file=None, override=None):
         self.reload(settings_file)
         self.COMPRESS_FILE_LIST = set()
@@ -262,14 +249,6 @@ class EngineerConfiguration(object):
         self.FEED_DESCRIPTION = config.pop('FEED_DESCRIPTION',
                                            'The %s most recent posts from %s.' % (self.FEED_ITEM_LIMIT, self.SITE_URL))
         self.FEED_URL = config.pop('FEED_URL', urljoin(self.HOME_URL, 'feeds/atom.xml'))
-
-        # These 'constants' are updated here so they're relative to the STATIC_URL value
-        lib_path = urljoin(self.STATIC_URL, 'engineer/lib')
-        self.ENGINEER.FOUNDATION_CSS_URL = urljoin(lib_path, 'foundation/')
-        self.ENGINEER.JQUERY_URL = urljoin(lib_path, self.ENGINEER.JQUERY)
-        self.ENGINEER.LESS_JS_URL = urljoin(lib_path, self.ENGINEER.LESS_JS)
-        self.ENGINEER.MODERNIZR_URL = urljoin(lib_path, self.ENGINEER.MODERNIZR)
-        self.ENGINEER.NORMALIZE_CSS_URL = urljoin(lib_path, self.ENGINEER.NORMALIZE_CSS)
 
         # URL helper functions
         def page(num):

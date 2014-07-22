@@ -6,9 +6,15 @@
 {% endblock %}
 
 {%- block stylesheets %}
-    {% assets "oleb" %}
-        <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css"/>
-    {% endassets %}
+    {% if theme.enable_bigfoot %}
+        {% assets "oleb_css_bigfoot" %}
+            <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css"/>
+        {% endassets %}
+    {% else %}
+        {% assets "oleb_css" %}
+            <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css"/>
+        {% endassets %}
+    {% endif %}
 
     <!--[if lt IE 9]>
         {% assets "foundation_css_ie" %}
@@ -40,6 +46,38 @@
         catch (e) {
         }
     </script>
+
+    {% if theme.enable_bigfoot %}
+        {% assets "bigfoot_js" %}
+            <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+        {% endassets %}
+        <script type="text/javascript">
+            $.bigfoot({
+                          deleteOnUnhover: false,
+                          preventPageScroll: false,
+                          hoverDelay: 250,
+                          //appendPopoversTo: "body",
+                          numberResetSelector: "article.post-content"
+                      });
+            {#            {% raw %}#}
+            {#            $.bigfoot({#}
+            {#                          actionOriginalFN: "ignore",#}
+            {#                          numberResetSelector: "article.post-content",#}
+            {#                          buttonMarkup: (#}
+            {#                                  "<a href=\"#\" class=\"footnote-button\" rel=\"footnote\" " +#}
+            {#                                  "id=\"{{SUP:data-footnote-backlink-ref}}\" " +#}
+            {#                                  "data-footnote-number=\"{{FOOTNOTENUM}}\" " +#}
+            {#                                  "data-footnote-identifier=\"{{FOOTNOTEID}}\" " +#}
+            {#                                  "alt=\"See Footnote {{FOOTNOTENUM}}\" " +#}
+            {#                                  "data-footnote-content=\"{{FOOTNOTECONTENT}}\">" +#}
+            {#                                  "{{FOOTNOTENUM}}" +#}
+            {#                                  "</a>"#}
+            {#                                  )#}
+            {#                      });#}
+            {#            {% endraw %}#}
+        </script>
+    {% endif %}
+
     {%- block additional_scripts_top %}{% endblock -%}
 {% endblock -%}
 

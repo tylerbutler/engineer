@@ -1,9 +1,16 @@
-dark_rainbow:
+dark_rainbow_css:
   filters: less, cssmin
   contents:
     - './static/stylesheets/dark_rainbow.less'
     - foundation_css
   output: dark_rainbow.%(version)s.css
+
+dark_rainbow_css_bigfoot:
+  filters: cssmin
+  contents:
+    - bigfoot_css
+    - dark_rainbow_css
+  output: dark_rainbow_bigfoot.%(version)s.css
 
 #dark_rainbow_js:
 #  filters: jsmin

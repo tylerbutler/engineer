@@ -17,3 +17,4 @@ settings:
   comments: ~
   comments_account: ~
   simple_search: yes
+  enable_bigfoot: no

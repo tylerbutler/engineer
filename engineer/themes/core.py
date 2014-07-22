@@ -225,7 +225,13 @@ class ThemeManager(object):
                                     output='foundation_ie.%(version)s.css'),
         'normalize': Bundle('normalize/normalize.css',
                             filters='cssmin',
-                            output='normalize.%(version)s.css')
+                            output='normalize.%(version)s.css'),
+        'bigfoot_js': Bundle('bigfoot/scripts/bigfoot.js',
+                             filters='jsmin',
+                             output='bigfoot.%(version)s.js'),
+        'bigfoot_css': Bundle('bigfoot/styles/bigfoot-default.css',
+                              filters='cssmin',
+                              output='bigfoot.%(version)s.css'),
     }
 
     _codestyle_list = (settings.ENGINEER.THEMES_DIR / '_shared/code_styles/').files('*.css')

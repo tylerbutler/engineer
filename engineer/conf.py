@@ -200,7 +200,7 @@ class EngineerConfiguration(object):
         )
 
         # PLUGINS
-        self.PLUGINS = self.normalize_list(config.pop('PLUGINS', None))
+        self.PLUGINS = wrap_list(config.pop('PLUGINS', None))
         if self.PLUGINS is not None:
             for plugin in self.PLUGINS:
                 __import__(plugin)

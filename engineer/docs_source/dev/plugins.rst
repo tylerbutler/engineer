@@ -127,15 +127,10 @@ each site they want to use it in.
 Command Plugins
 ===============
 
-.. autoclass:: engineer.plugins.CommandPlugin
-   :members:
-   :inherited-members:
+The Engineer command line can be customized to include your own commands. See :ref:`command plugins`_ for more
+information.
 
-
-.. _command plugin examples:
-
-Examples
---------
-
+.. versionchanged:: 0.6.0
+Command plugins changed dramatically in version 0.6.0 and are now :ref:`documented separately<command plugins>`_.
 
 .. _entry point: http://peak.telecommunity.com/DevCenter/setuptools#extensible-applications-and-frameworks

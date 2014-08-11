@@ -16,6 +16,7 @@ from path import path
 from brownie.caching import cached_property
 
 from engineer.cache import SimpleFileCache
+from engineer.log import CustomLogger
 from engineer.plugins import get_all_plugin_types, JinjaEnvironmentPlugin
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive, make_precompiled_reference
 from engineer import version
@@ -101,6 +102,7 @@ class EngineerConfiguration(object):
                 settings_file = self.SETTINGS_FILE
             else:
                 # Looks like we're just loading the 'empty' config.
+                assert isinstance(logger, CustomLogger)
                 logger.info("Initializing empty configuration.")
                 self.SETTINGS_FILE = None
                 self._initialize({})

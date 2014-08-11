@@ -11,6 +11,7 @@ import pytz
 import times
 import yaml
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
+
 # noinspection PyPackageRequirements
 from path import path
 from brownie.caching import cached_property
@@ -289,7 +290,7 @@ class EngineerConfiguration(object):
         # MISCELLANEOUS SETTINGS
         self.ACTIVE_NAV_CLASS = config.pop('ACTIVE_NAV_CLASS', 'current')
         self.DEBUG = config.pop('DEBUG', False)
-        #self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
+        # self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
 
         self.PLUGIN_PERMISSIONS = {
             'MODIFY_RAW_POST': []
@@ -346,7 +347,7 @@ class EngineerConfiguration(object):
             loader=ChoiceLoader(
                 [FileSystemLoader([self.TEMPLATE_DIR]),
                  ThemeManager.current_theme().template_loader,
-                 #self.ENGINEER.THEMES_DIR / 'base_templates',
+                 # self.ENGINEER.THEMES_DIR / 'base_templates',
                  FileSystemLoader([self.ENGINEER.TEMPLATE_DIR])]
             ),
             extensions=['jinja2.ext.with_', ],
@@ -362,7 +363,7 @@ class EngineerConfiguration(object):
         env.globals['urlname'] = urlname
         env.globals['preprocess_less'] = preprocess_less
         env.globals['make_precompiled_reference'] = make_precompiled_reference
-        #        env.globals['url'] = url
+        # env.globals['url'] = url
         env.globals['STATIC_URL'] = self.STATIC_URL
         env.globals['DEBUG'] = self.DEBUG
         env.globals['settings'] = self

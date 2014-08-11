@@ -32,7 +32,7 @@ def load_plugins():
 
 
 def get_all_plugin_types():
-    return ThemeProvider, PostProcessor, CommandPlugin, JinjaEnvironmentPlugin
+    return ThemeProvider, PostProcessor, JinjaEnvironmentPlugin
 
 
 #noinspection PyMissingConstructor,PyUnusedLocal
@@ -163,65 +163,65 @@ class PostProcessor(PluginMixin):
         return post
 
 
-class CommandPlugin(PluginMixin):
-    """
-    Base class for Command :ref:`plugins`.
-
-    Command plugins add new commands to the :ref:`cmdline`. CommandPlugin subclasses must provide an implementation
-    for :meth:`~engineer.plugins.CommandPlugin.add_command`, and can optionally override
-    the :meth:`~engineer.plugins.CommandPlugin.active` classmethod to determine whether or not the plugin should
-    actually be loaded.
-
-    .. note::
-        Because Engineer uses :mod:`argparse` for parsing out its commands, you should be somewhat familiar with
-        it in order to implement a Command plugin.
-
-    .. seealso:: :ref:`command plugin examples`
-    """
-    __metaclass__ = PluginMount
-
-    @classmethod
-    def active(cls):
-        """
-        If this method returns ``False``, the plugin will not run and any commands added by the plugin will not
-        be available.
-
-        This method can be overridden to make commands available only if certain criteria are met (for example,
-        a custom :ref:`setting<settings>`).
-
-        :return: A boolean value indicating whether or not the plugin is active and should run. Default
-            implementation always returns ``True``.
-        """
-        return True
-
-    @classmethod
-    def add_command(cls, subparser, main_parser, common_parser):
-        """
-        This method is called by Engineer while it is building its :class:`~argparse.ArgumentParser`,
-        allowing one to add addition parsers and subparsers to supplement the core :ref:`Engineer commands<cmdline>`.
-
-        :param subparser:
-            Since Engineer's built-in commands are subparsers, :meth:`~argparse.ArgumentParser.add_subparsers` is
-            called to generate a subparser. :mod:`argparse` only supports
-            calling :meth:`~argparse.ArgumentParser.add_subparsers` once, so the subparser object itself (the result
-            of the initial :meth:`~argparse.ArgumentParser.add_subparsers` call Engineer made when building its
-            parser) is passed in this parameter. This allows you to add either another top-level command by calling
-            ``add_parser()`` then adding arguments directly, or to create further nested commands by adding a parser
-            with additional subparsers within it.
-
-        :param main_parser:
-            The top level :class:`~argparse.ArgumentParser` used by Engineer. This is generally only useful if you're
-            using an :mod:`argparse` wrapper library such as `argh <http://packages.python.org/argh/index.html>`_ in
-            your plugin. Most wrapper libraries require the root :class:`~argparse.ArgumentParser` object to add their
-            subparsers to. If you're using :mod:`argparse` directly, you can ignore this parameter and work with
-            the ``subparser`` parameter exclusively.
-
-        :param common_parser:
-            Engineer provides several :ref:`common arguments<engineer>` for its commands. If you wish to makes these
-            arguments available for your custom commands, you should pass ``common_parser`` in
-            to ``add_parser()`` via the ``parents`` parameter.
-        """
-        raise NotImplementedError()
+# class CommandPlugin(PluginMixin):
+#     """
+#     Base class for Command :ref:`plugins`.
+#
+#     Command plugins add new commands to the :ref:`cmdline`. CommandPlugin subclasses must provide an implementation
+#     for :meth:`~engineer.plugins.CommandPlugin.add_command`, and can optionally override
+#     the :meth:`~engineer.plugins.CommandPlugin.active` classmethod to determine whether or not the plugin should
+#     actually be loaded.
+#
+#     .. note::
+#         Because Engineer uses :mod:`argparse` for parsing out its commands, you should be somewhat familiar with
+#         it in order to implement a Command plugin.
+#
+#     .. seealso:: :ref:`command plugin examples`
+#     """
+#     __metaclass__ = PluginMount
+#
+#     @classmethod
+#     def active(cls):
+#         """
+#         If this method returns ``False``, the plugin will not run and any commands added by the plugin will not
+#         be available.
+#
+#         This method can be overridden to make commands available only if certain criteria are met (for example,
+#         a custom :ref:`setting<settings>`).
+#
+#         :return: A boolean value indicating whether or not the plugin is active and should run. Default
+#             implementation always returns ``True``.
+#         """
+#         return True
+#
+#     @classmethod
+#     def add_command(cls, subparser, main_parser, common_parser):
+#         """
+#         This method is called by Engineer while it is building its :class:`~argparse.ArgumentParser`,
+#         allowing one to add addition parsers and subparsers to supplement the core :ref:`Engineer commands<cmdline>`.
+#
+#         :param subparser:
+#             Since Engineer's built-in commands are subparsers, :meth:`~argparse.ArgumentParser.add_subparsers` is
+#             called to generate a subparser. :mod:`argparse` only supports
+#             calling :meth:`~argparse.ArgumentParser.add_subparsers` once, so the subparser object itself (the result
+#             of the initial :meth:`~argparse.ArgumentParser.add_subparsers` call Engineer made when building its
+#             parser) is passed in this parameter. This allows you to add either another top-level command by calling
+#             ``add_parser()`` then adding arguments directly, or to create further nested commands by adding a parser
+#             with additional subparsers within it.
+#
+#         :param main_parser:
+#             The top level :class:`~argparse.ArgumentParser` used by Engineer. This is generally only useful if you're
+#             using an :mod:`argparse` wrapper library such as `argh <http://packages.python.org/argh/index.html>`_ in
+#             your plugin. Most wrapper libraries require the root :class:`~argparse.ArgumentParser` object to add their
+#             subparsers to. If you're using :mod:`argparse` directly, you can ignore this parameter and work with
+#             the ``subparser`` parameter exclusively.
+#
+#         :param common_parser:
+#             Engineer provides several :ref:`common arguments<engineer>` for its commands. If you wish to makes these
+#             arguments available for your custom commands, you should pass ``common_parser`` in
+#             to ``add_parser()`` via the ``parents`` parameter.
+#         """
+#         raise NotImplementedError()
 
 
 class JinjaEnvironmentPlugin(PluginMixin):

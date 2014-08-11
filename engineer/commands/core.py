@@ -1,8 +1,10 @@
 # coding=utf-8
+from __future__ import absolute_import
 import argparse
 
 from brownie.caching import cached_property
 
+from engineer.commands.argh_helpers import argh_installed
 from engineer.plugins import PluginMixin
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
@@ -35,7 +37,8 @@ def all_commands():
     commands = []
     for klass in classes:
         commands.extend(klass.commands)
-    return sorted(commands)
+    commands.sort(key=lambda cmd: cmd.name_checked())
+    return commands
 
 
 class _CommandMixin(PluginMixin):
@@ -47,21 +50,36 @@ class _CommandMixin(PluginMixin):
     def setup_command(self):
         raise NotImplementedError()
 
-    def handle(self, args=None):
+    def handler_function(self, args=None):
         raise NotImplementedError()
+
+    @classmethod
+    def name_checked(cls):
+        if hasattr(cls, 'argh_name'):
+            return cls.argh_name
+
+        if hasattr(cls, 'name'):
+            return cls.name
+
+        if hasattr(cls, 'namespace'):
+            return cls.namespace
+
+        return 'NO_COMMAND_NAME'
 
 
 # noinspection PyShadowingBuiltins
 class _ArgParseMixin(_CommandMixin):
     name = None
     help = None
-    need_settings = False
     need_settings = True
+    need_verbose = True
 
     @cached_property
     def parser(self):
         if self._command_parser is None:
-            parents = [verbose_parser]
+            parents = []
+            if self.need_verbose:
+                parents.append(verbose_parser)
             if self.need_settings:
                 parents.append(settings_parser)
 
@@ -80,7 +98,7 @@ class _ArgParseMixin(_CommandMixin):
 
     def _finalize(self):
         if not self.parser.get_default('handle'):
-            self.parser.set_defaults(handle=self.handle)
+            self.parser.set_defaults(handler_function=self.handler_function)
         self.parser.set_defaults(need_settings=self.need_settings)
 
 
@@ -113,3 +131,21 @@ class ArgParseCommand(_ArgParseMixin):
 
 class Command(_CommandMixin):
     __metaclass__ = CommandMount
+
+
+if argh_installed:
+    class SimpleArghCommand(_ArgParseMixin):
+        """
+        The ``@verbose`` and ``@settings`` decorators should not be used in subclasses. Use the
+        :attr:`~engineer.commands.core._ArgParseMixin.need_verbose` and
+        :attr:`~engineer.commands.core._ArgParseMixin.need_settings` attributes in subclasses instead.
+        """
+        __metaclass__ = CommandMount
+
+        handler_function = None
+
+        def add_arguments(self):
+            from argh.helpers import set_default_command
+
+            if self.handler_function is not None:
+                set_default_command(self.parser, self.handler_function)

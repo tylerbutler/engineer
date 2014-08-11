@@ -12,14 +12,16 @@ import times
 from feedgenerator import Rss201rev2Feed, Atom1Feed
 from path import path
 
+from engineer.commands import all_commands, common_parser
 from engineer.filters import naturaltime
 from engineer.log import get_console_handler, bootstrap
-from engineer.plugins import CommandPlugin, load_plugins
+from engineer.plugins import load_plugins
 from engineer.util import relpath, compress, has_files, diff_dir
 from engineer import version
 
 
 try:
+    # noinspection PyPep8Naming
     import cPickle as pickle
 except ImportError:
     import pickle
@@ -82,7 +84,7 @@ def clean(args=None):
     logger.console('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 def build(args=None):
     """Builds an Engineer site using the settings specified in *args*."""
     from engineer.conf import settings
@@ -508,96 +510,19 @@ def init(args):
 
 
 def get_argparser():
-    # Common parameters
-    common_parser = argparse.ArgumentParser(add_help=False)
-    common_parser.add_argument('-v', '--verbose',
-                               dest='verbose',
-                               action='count',
-                               help="Display verbose output.")
-    common_parser.add_argument('-s', '--config', '--settings',
-                               dest='config_file',
-                               help="Specify a configuration file to use.")
-
+    #from engineer.commands.argh import PrintArghCommand
     desc = "Engineer static site builder. [v%s, %s %s]" % (version, version.date, time.strftime('%X', version.time))
-    main_parser = argparse.ArgumentParser(description=desc)
-    subparsers = main_parser.add_subparsers(title="subcommands",
-                                            dest='parser_name')
+    top_level_parser = argparse.ArgumentParser(prog='engineer',
+                                               description=desc,
+                                               formatter_class=argparse.RawDescriptionHelpFormatter)
+    subparsers = top_level_parser.add_subparsers(title="subcommands",
+                                                 dest='parser_name')
 
-    parser_build = subparsers.add_parser('build',
-                                         help="Build the site.",
-                                         parents=[common_parser])
-    parser_build.add_argument('-c', '--clean',
-                              dest='clean',
-                              action='store_true',
-                              help="Clean the output directory and clear all the caches before building.")
-    parser_build.set_defaults(func=build)
+    for command_class in all_commands():
+        instance = command_class(subparsers, top_level_parser)
+        instance.setup_command()
 
-    parser_clean = subparsers.add_parser('clean',
-                                         help="Clean the output directory and clear all caches.",
-                                         parents=[common_parser])
-    parser_clean.set_defaults(func=clean)
-
-    parser_serve = subparsers.add_parser('serve',
-                                         help="Start the development server.",
-                                         parents=[common_parser])
-    parser_serve.add_argument('-p', '--port',
-                              type=int,
-                              default=8000,
-                              dest='port',
-                              help="The port the development server should listen on.")
-    parser_serve.set_defaults(func=serve)
-
-    parser_emma = subparsers.add_parser('emma',
-                                        help="Start Emma, the built-in management server.",
-                                        parents=[common_parser])
-    parser_emma.add_argument('-p', '--port',
-                             type=int,
-                             default=8080,
-                             dest='port',
-                             help="The port Emma should listen on.")
-    parser_emma.add_argument('--prefix',
-                             type=str,
-                             dest='prefix',
-                             help="The prefix path the Emma site will be rooted at.")
-    emma_options = parser_emma.add_mutually_exclusive_group(required=True)
-    emma_options.add_argument('-r', '--run',
-                              dest='run',
-                              action='store_true',
-                              help="Run Emma.")
-    emma_options.add_argument('-g', '--generate',
-                              dest='generate',
-                              action='store_true',
-                              help="Generate a new secret location for Emma.")
-    emma_options.add_argument('-u', '--url',
-                              dest='url',
-                              action='store_true',
-                              help="Get Emma's current URL.")
-    parser_emma.set_defaults(func=start_emma)
-    parser_init = subparsers.add_parser('init',
-                                        help="Initialize the current directory as an engineer site.",
-                                        parents=[common_parser])
-    parser_init.add_argument('-m', '--mode',
-                             dest='mode',
-                             default='default',
-                             choices=['azure'],
-                             help="Initialize site with folder structures designed for deployment to a service such "
-                                  "as Azure.")
-    parser_init.add_argument('--sample',
-                             dest='sample',
-                             action='store_true',
-                             help="Include sample content.")
-    parser_init.add_argument('--force', '-f',
-                             dest='force',
-                             action='store_true',
-                             help="Delete target folder contents. Use with caution!")
-    parser_init.set_defaults(func=init)
-
-    #noinspection PyUnresolvedReferences
-    for cmd_plugin in CommandPlugin.plugins:
-        if cmd_plugin.active():
-            cmd_plugin.add_command(subparsers, main_parser, common_parser)
-
-    return main_parser
+    return top_level_parser
 
 
 def cmdline(args=sys.argv):
@@ -607,34 +532,52 @@ def cmdline(args=sys.argv):
     # Load all plugins
     load_plugins()
 
-    args = get_argparser().parse_args(args[1:])
-    skip_settings = ('init',)
+    skip_settings = []
+    args, extra_args = get_argparser().parse_known_args(args[1:])
+
+    # Handle common parameters if they're present
+    common_args, extra_args = common_parser.parse_known_args(extra_args)
+
+    verbose = getattr(args, 'verbose', common_args.verbose)
+    config_file = getattr(args, 'config_file', common_args.config_file)
 
     logger = logging.getLogger('engineer')
-    if args.verbose >= 2:
+    if verbose >= 2:
         logger.removeHandler(get_console_handler(logging.WARNING))
         logger.addHandler(get_console_handler(logging.DEBUG))
-    elif args.verbose == 1:
+    elif verbose == 1:
         logger.removeHandler(get_console_handler(logging.WARNING))
         logger.addHandler(get_console_handler(logging.INFO))
     else:
         pass  # WARNING level is added by default in bootstrap method
 
-    if args.parser_name in skip_settings:
+    if args.parser_name in skip_settings or (hasattr(args, 'need_settings') and not args.need_settings):
         pass
     else:  # try loading settings
         try:
             from engineer.conf import settings
 
-            if args.config_file is None:
+            if config_file is None:
                 default_settings_file = path.getcwd() / 'config.yaml'
                 logger.info("No '--settings' parameter specified, defaulting to %s." % default_settings_file)
                 settings.reload(default_settings_file)
             else:
-                settings.reload(settings_file=args.config_file)
+                settings.reload(settings_file=config_file)
         except Exception as e:
             logger.error(e.message)
             exit()
 
-    args.func(args)
+    # noinspection PyBroadException
+    try:
+        if hasattr(args, 'function'):
+            args.function(args)
+        elif hasattr(args, 'func'):
+            args.func(args)
+        elif hasattr(args, 'handler_function'):
+            args.handler_function(args)
+        else:
+            args.handle(args)
+    except Exception as e:
+        logger.exception("Unexpected error: %s" % e.message)
+
     exit()

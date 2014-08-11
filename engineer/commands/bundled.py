@@ -23,6 +23,7 @@ class BuildCommand(ArgParseCommand):
 
     def build(self, args=None):
         # Build command implementation goes here.
+        print "BUILD"
         pass
 
 
@@ -30,12 +31,13 @@ class BuildCommand(ArgParseCommand):
 class CleanCommand(ArgParseCommand):
     name = 'clean'
     help = "Clean the output directory and clear all caches."
+    need_settings = False
 
     def clean(self, args=None):
         # Clean command implementation goes here.
         pass
 
-    handle = clean
+    handler_function = clean
 
 
 # noinspection PyShadowingBuiltins
@@ -50,7 +52,7 @@ class ServeCommand(ArgParseCommand):
                                  dest='port',
                                  help="The port the development server should listen on.")
 
-    def handle(self, args=None):
+    def handler_function(self, args=None):
         # Serve command implementation goes here.
         pass
 
@@ -71,7 +73,7 @@ class InitCommand(ArgParseCommand):
                                  action='store_true',
                                  help="Delete target folder contents. Use with caution!")
 
-    def handle(self, args=None):
+    def handler_function(self, args=None):
         # Init command implementation goes here.
         pass
 
@@ -105,6 +107,6 @@ class EmmaCommand(ArgParseCommand):
                                   action='store_true',
                                   help="Get Emma's current URL.")
 
-    def handle(self, args=None):
+    def handler_function(self, args=None):
         # Emma command implementation goes here.
         pass

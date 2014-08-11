@@ -12,12 +12,12 @@ import times
 from feedgenerator import Rss201rev2Feed, Atom1Feed
 from path import path
 
-from engineer.exceptions import ThemeNotFoundException
 from engineer.filters import naturaltime
 from engineer.log import get_console_handler, bootstrap
 from engineer.plugins import CommandPlugin, load_plugins
 from engineer.util import relpath, compress, has_files, diff_dir
 from engineer import version
+
 
 try:
     import cPickle as pickle
@@ -27,7 +27,7 @@ except ImportError:
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 
-#noinspection PyUnusedLocal
+# noinspection PyUnusedLocal
 def clean(args=None):
     from engineer.conf import settings
 
@@ -63,15 +63,21 @@ def clean(args=None):
                 # we don't need to descend into the subdirs if this dir is in the ignore list
                 del dirnames[:]
 
-    try:
-        settings.OUTPUT_CACHE_DIR.rmtree()
-        settings.CACHE_DIR.rmtree()
-        settings.ENGINEER.JINJA_CACHE_DIR.rmtree()
-    except OSError as we:
-        if hasattr(we, 'winerror') and we.winerror not in (2, 3):
-            logger.exception(we.message)
-        else:
-            logger.warning("Couldn't find output directory: %s" % we.filename)
+    delete_paths = (
+        settings.OUTPUT_DIR,
+        settings.OUTPUT_CACHE_DIR,
+        settings.CACHE_DIR,
+    )
+
+    for the_path in delete_paths:
+        try:
+            the_path.rmtree()
+            logger.info("Deleted %s." % the_path)
+        except OSError as we:
+            if hasattr(we, 'winerror') and we.winerror not in (2, 3):
+                logger.exception(we.message)
+            else:
+                logger.warning("Couldn't find output directory to delete: %s" % we.filename)
 
     logger.console('Cleaned output directory: %s' % settings.OUTPUT_DIR)
 

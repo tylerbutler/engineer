@@ -12,6 +12,7 @@
     <orderEntry type="jdk" jdkName="Python 2.7.5 virtualenv at C:\Users\Tyler\.virtualenvs\engineer-dev" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="tylerbutler.com" />
+    <orderEntry type="library" name="sass-stdlib" level="application" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="analyzeDoctest" value="false" />

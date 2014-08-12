@@ -1,15 +1,16 @@
 # coding=utf-8
 import logging
 
-from brownie.caching import memoize
+from brownie.caching import memoize, cached_property
 from jinja2.loaders import FileSystemLoader
 from path import path
-from webassets import Bundle
+from webassets import Bundle, Environment as AssetsEnvironment
+from webassets.loaders import YAMLLoader
 import yaml
 
 from engineer.conf import settings
 from engineer.exceptions import ThemeNotFoundException
-from engineer.util import get_class, mirror_folder, ensure_exists, update_additive
+from engineer.util import flatten, get_class, mirror_folder, ensure_exists, update_additive, urljoin
 
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
@@ -37,25 +38,14 @@ class Theme(object):
         self.static_root = path(kwargs.get('static_root', self.root_path / 'static/')).abspath()
         self.template_root = path(kwargs.get('template_root', self.root_path / 'templates')).abspath()
         self.template_dirs = [self.template_root]
-        self.use_precompiled_styles = True
+        self.use_precompiled_styles = kwargs.get('use_precompiled_styles', True)
 
-        bundle_dict = {}
-        bundle_config = {
+        # get the raw bundle config from the parameters
+        self._bundle_config = {
             'global': [],
             'local': []
         }
-        update_additive(bundle_config, kwargs.get('bundles', {}))
-
-        self.bundle_config = {}
-        for k, v in bundle_config.iteritems():
-            self.bundle_config[k] = dict([(name, True) for name in v])
-        for bundle in bundle_config['global']:
-            if bundle not in ThemeManager.global_bundles:
-                self.logger.warning("Invalid bundle setting in theme: %s (%s)" % (bundle, self.name))
-                continue
-
-            update_additive(bundle_dict, unwrap_bundles(bundle, ThemeManager.global_bundles[bundle]))
-        self.bundles = bundle_dict
+        update_additive(self._bundle_config, kwargs.get('bundles', {}))
 
         # set up mappings for any additional content
         self.content_mappings = {}
@@ -91,6 +81,42 @@ class Theme(object):
     @property
     def template_loader(self):
         return FileSystemLoader(self.template_dirs)
+
+    @cached_property
+    def bundles(self):
+        names = set()
+        for v in flatten(self._bundle_config).itervalues():
+            names.update(v)
+        return dict([(name, True) for name in names])
+
+    @cached_property
+    def assets_environment(self):
+        # because we're using the append_path function to add paths for the source files, the
+        # directory argument will be used as the output path
+        assets_env = AssetsEnvironment(directory=(settings.OUTPUT_STATIC_DIR / 'bundled'),
+                                       url=urljoin(settings.STATIC_URL, 'bundled'),
+                                       # cache=self.ENGINEER.WEBASSETS_CACHE_DIR,  # this seems broken in webassets
+                                       debug='merge' if settings.DEBUG else False)
+        l = len(' {infile} {outfile}')
+        assets_env.config['less_bin'] = settings.LESS_PREPROCESSOR[:-l]
+        print assets_env.config['less_bin']
+
+        # register the global bundles
+        assets_env.append_path(settings.ENGINEER.LIB_DIR, url=urljoin(settings.STATIC_URL, 'lib'))
+
+        for name, bundle in ThemeManager.global_bundles.iteritems():
+            assets_env.register(name, bundle)
+
+        # register the local bundles
+        bundle_yaml = self.root_path / 'bundles.yaml'
+        if bundle_yaml.exists():
+            assets_env.append_path(self.root_path, url=urljoin(settings.STATIC_URL, 'theme_bundled'))
+            loader = YAMLLoader(bundle_yaml.abspath())
+            local_bundles = loader.load_bundles(assets_env)
+            for name, bundle in local_bundles.iteritems():
+                assets_env.register(name, bundle)
+
+        return assets_env
 
     def theme_path(self, template):
         if (self.template_root / template).abspath().exists():
@@ -186,41 +212,17 @@ class ThemeManager(object):
                        output='less.%(version)s.js'),
         'modernizr': Bundle('modernizr-2.7.1.min.js',
                             output='modernizr.%(version)s.js'),
-        'foundation': {
-            'js': Bundle('foundation/javascripts/foundation.js',
-                         filters='jsmin',
-                         output='foundation.%(version)s.js'),
-            'css': Bundle('foundation/stylesheets/grid.css',
-                          'foundation/stylesheets/mobile.css',
-                          filters='cssmin',
-                          output='foundation.%(version)s.css'),
-            'css_ie': Bundle('foundation/stylesheets/ie.css',
-                             filters='cssmin',
-                             output='foundation_ie.%(version)s.css'),
-        },
+        'foundation_js': Bundle('foundation/javascripts/foundation.js',
+                                filters='jsmin',
+                                output='foundation.%(version)s.js'),
+        'foundation_css': Bundle('foundation/stylesheets/grid.css',
+                                 'foundation/stylesheets/mobile.css',
+                                 filters='cssmin',
+                                 output='foundation.%(version)s.css'),
+        'foundation_css_ie': Bundle('foundation/stylesheets/ie.css',
+                                    filters='cssmin',
+                                    output='foundation_ie.%(version)s.css'),
         'normalize': Bundle('normalize/normalize.css',
                             filters='cssmin',
                             output='normalize.%(version)s.css')
     }
-
-
-# def unwrap_bundles(bundle_dict):
-# return_list = []
-# if isinstance(bundle_dict, Bundle):
-#         return_list.append(bundle_dict)
-#     else:
-#         for k, v in bundle_dict.iteritems():
-#             if isinstance(v, Bundle):
-#                 return_list.append(v)
-#             else:
-#                 return_list.extend(unwrap_bundles(v))
-#     return return_list
-
-def unwrap_bundles(key, value):
-    return_dict = {}
-    if isinstance(value, Bundle):
-        return_dict[key] = value
-    else:
-        for k, v in value.iteritems():
-            update_additive(return_dict, unwrap_bundles('%s_%s' % (key, k), v))
-    return return_dict

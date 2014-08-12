@@ -28,7 +28,7 @@
 
     {% block normalizecss %}
         {% if theme.bundles.normalize %}
-            {% assets %}
+            {% assets "normalize" %}
                 <link rel="stylesheet" href="{{ ASSET_URL }}">
             {% endassets %}
         {% endif %}

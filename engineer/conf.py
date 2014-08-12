@@ -329,7 +329,6 @@ class EngineerConfiguration(object):
 
     @cached_property
     def JINJA_ENV(self):
-        from webassets import Environment as AssetsEnvironment
         from webassets.ext.jinja2 import AssetsExtension
         from engineer.processors import preprocess_less
         from engineer.themes import ThemeManager
@@ -346,22 +345,11 @@ class EngineerConfiguration(object):
             else:
                 return url
 
-        # because we're using the append_path function to add paths for the source files, the
-        # directory argument will be used as the output path
-        assets_env = AssetsEnvironment(directory=(self.OUTPUT_STATIC_DIR / 'bundled'),
-                                       url=urljoin(self.STATIC_URL, 'bundled'),
-                                       #cache=self.ENGINEER.WEBASSETS_CACHE_DIR,  # this seems broken in webassets
-                                       debug='merge' if self.DEBUG else False)
-
-        assets_env.append_path(self.ENGINEER.LIB_DIR, url=urljoin(self.STATIC_URL, 'lib'))
-
-        for name, bundle in ThemeManager.current_theme().bundles.iteritems():
-            assets_env.register(name, bundle)
-
+        theme = ThemeManager.current_theme()
         env = Environment(
             loader=ChoiceLoader(
                 [FileSystemLoader([self.TEMPLATE_DIR]),
-                 ThemeManager.current_theme().template_loader,
+                 theme.template_loader,
                  # self.ENGINEER.THEMES_DIR / 'base_templates',
                  FileSystemLoader([self.ENGINEER.TEMPLATE_DIR])]
             ),
@@ -369,7 +357,7 @@ class EngineerConfiguration(object):
             bytecode_cache=FileSystemBytecodeCache(directory=self.ENGINEER.JINJA_CACHE_DIR),
             trim_blocks=True)
 
-        env.assets_environment = assets_env
+        env.assets_environment = theme.assets_environment
 
         # JinjaEnvironment plugins
         # noinspection PyUnresolvedReferences
@@ -377,7 +365,7 @@ class EngineerConfiguration(object):
             plugin.update_environment(env)
 
         # Built-in globals
-        env.globals['theme'] = ThemeManager.current_theme()
+        env.globals['theme'] = theme
         env.globals['urlname'] = urlname
         env.globals['preprocess_less'] = preprocess_less
         env.globals['make_precompiled_reference'] = make_precompiled_reference

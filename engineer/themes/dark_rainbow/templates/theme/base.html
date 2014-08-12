@@ -1,14 +1,14 @@
 {% extends 'core/_base.html' %}
 
-{%- from 'core/_macros.html' import render_less_link -%}
-
 {% block site_title %}
     {% block page_title %}{% endblock %}
     {% if self.page_title() %}: {% endif %}{{ super() }}
 {% endblock %}
 
 {%- block stylesheets %}
-    {{ render_less_link('theme/stylesheets/dark_rainbow.less') }}
+    {% assets "dark_rainbow" %}
+        <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css"/>
+    {% endassets %}
 {% endblock -%}
 
 {%- block scripts_top %}
@@ -17,6 +17,7 @@
             src="http://use.typekit.net/{{ theme.typekit_id }}.js"></script>
     <script type="text/javascript">
         try {
+            // noinspection JSUnresolvedVariable
             Typekit.load();
         }
         catch (e) {

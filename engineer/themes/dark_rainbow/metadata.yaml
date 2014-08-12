@@ -4,20 +4,24 @@ description: 'A dark theme with just a hint of color.'
 author: 'Tyler Butler <tyler@tylerbutler.com>'
 website: 'http://tylerbutler.com'
 license: 'Creative Commons BY-SA 3.0'
+use_precompiled_styles: no
 
 bundles:
   global:
     - jquery
-    - foundation
+    - foundation_js
+    - foundation_css
+    - foundation_css_ie
     - less
+  local:
+    - dark_rainbow
+
 
 template_dirs:
   - '../_shared/templates/'
 
 copy_content:
   - ['../_shared/images/rss/37.png', 'images/rss.png']
-  - ['../_shared/less/', 'stylesheets/shared/']
-  - ['../_shared/code_styles/_solarized.less', 'stylesheets/shared/_solarized.less']
 
 settings:
   typekit_id: ~

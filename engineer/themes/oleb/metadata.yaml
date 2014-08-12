@@ -4,21 +4,24 @@ description: "A bright design based on Ole Begemann's oleb.net. Used with permis
 author: 'Tyler Butler <tyler@tylerbutler.com>'
 website: 'http://tylerbutler.com'
 license: 'N/A'
+use_precompiled_styles: no
 
 bundles:
   global:
     - jquery
-    - foundation
+    - foundation_js
+    - foundation_css
+    - foundation_css_ie
     - less
     - modernizr
+  local:
+    - oleb
 
 template_dirs:
   - '../_shared/templates/'
 
 copy_content:
   - ['../_shared/images/rss/04.png', 'images/rss.png']
-  - ['../_shared/less/', 'stylesheets/shared/']
-  - ['../_shared/code_styles/github.css', 'stylesheets/github.css']
 
 settings:
   typekit_id: ~

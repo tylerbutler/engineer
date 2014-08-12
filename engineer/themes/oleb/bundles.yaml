@@ -1,0 +1,5 @@
+oleb:
+  filters: less, cssmin
+  contents:
+    - './static/stylesheets/oleb.less'
+  output: oleb.%(version)s.css

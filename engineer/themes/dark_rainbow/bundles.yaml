@@ -1,0 +1,5 @@
+dark_rainbow:
+  filters: less, cssmin
+  contents:
+    - './static/stylesheets/dark_rainbow.less'
+  output: dark_rainbow.%(version)s.css

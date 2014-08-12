@@ -27,26 +27,26 @@
           href="{{ urlname('feed') }}"/>
 
     {% block normalizecss %}
-        {% if theme.use_normalize_css %}
-            {% filter compress %}
-                <link rel="stylesheet" href="{{ settings.ENGINEER.NORMALIZE_CSS_URL }}">
-            {% endfilter %}
+        {% if theme.bundles.normalize %}
+            {% assets %}
+                <link rel="stylesheet" href="{{ ASSET_URL }}">
+            {% endassets %}
         {% endif %}
     {% endblock %}
 
     {% block foundationcss %}
-        {% if theme.use_foundation %}
-            {% filter compress %}
-                {# FOUNDATION CSS #}
+        {% if theme.bundles.foundation_css %}
+            {# FOUNDATION CSS #}
+            {% assets "foundation_css" %}
                 <link rel="stylesheet"
-                      href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/grid.css">
-                <link rel="stylesheet"
-                      href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/mobile.css">
+                      href="{{ ASSET_URL }}">
+            {% endassets %}
 
-                <!--[if lt IE 9]>
-                    <link rel="stylesheet" href="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}stylesheets/ie.css">
+            <!--[if lt IE 9]>
+                    {% assets "foundation_css_ie" %}
+                        <link rel="stylesheet" href="{{ ASSET_URL }}">
+                    {% endassets %}
                 <![endif]-->
-            {% endfilter %}
         {% endif %}
     {% endblock %}
 
@@ -55,12 +55,14 @@
         {% include ['_stylesheets.html', 'theme/_stylesheets.html'] ignore missing %}
     {% endblock %}
 
-    {% block lesscss %}
-        {% if theme.use_lesscss %}
+    {% block less %}
+        {% if theme.bundles.less %}
             {% if not settings.PREPROCESS_LESS %}
-                <script src="{{ settings.ENGINEER.LESS_JS_URL }}"
-                        type="text/javascript">
-                </script>
+                {% assets "less" %}
+                    <script src="{{ ASSET_URL }}"
+                            type="text/javascript">
+                    </script>
+                {% endassets %}
                 {% if DEBUG %}
                     <script type="text/javascript">
                         //less = { env:'development' };
@@ -77,19 +79,23 @@
     {% endblock %}
 
     {% block modernizr %}
-        {% if theme.use_modernizr %}
-            <script src="{{ settings.ENGINEER.MODERNIZR_URL }}"
-                    type="text/javascript"></script>
+        {% if theme.bundles.modernizr %}
+            {% assets "modernizr" %}
+                <script src="{{ ASSET_URL }}"
+                        type="text/javascript"></script>
+            {% endassets %}
         {% endif %}
     {% endblock %}
 
     {% block jquery %}
-        {% if theme.use_jquery -%}
+        {% if theme.bundles.jquery -%}
             <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
-            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-            <script>
-                window.jQuery || document.write('<script src="{{ settings.ENGINEER.JQUERY_URL }}"><\/script>')
-            </script>
+            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+            {% assets "jquery" %}
+                <script>
+                    window.jQuery || document.write('<script src="{{ ASSET_URL }}"><\/script>')
+                </script>
+            {% endassets %}
         {%- endif %}
     {% endblock %}
 
@@ -109,10 +115,10 @@
 {%- block body %}{% endblock -%}
 
 {% block foundation_js %}
-    {% if theme.use_foundation -%}
-        {% filter compress %}
-            <script src="{{ settings.ENGINEER.FOUNDATION_CSS_URL }}javascripts/foundation.js"></script>
-        {% endfilter %}
+    {% if theme.bundles.foundation_js -%}
+        {% assets %}
+            <script src="{{ ASSET_URL }}"></script>
+        {% endassets %}
     {%- endif %}
 {% endblock %}
 

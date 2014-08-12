@@ -4,11 +4,12 @@ description: 'A dark theme with just a hint of color.'
 author: 'Tyler Butler <tyler@tylerbutler.com>'
 website: 'http://tylerbutler.com'
 license: 'Creative Commons BY-SA 3.0'
-use_foundation: yes
-use_jquery: yes
-use_lesscss: yes
-use_modernizr: no
-use_normalize_css: no
+
+bundles:
+  global:
+    - jquery
+    - foundation
+    - less
 
 template_dirs:
   - '../_shared/templates/'

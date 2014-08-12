@@ -17,6 +17,11 @@ pytz>=2011k
 pyYAML>=3.10
 times>=0.6
 translitcodec>=0.2
+webassets
 
 # engineer-specific fork of typogrify
 typogrify-engineer>=2.0.0
+
+#--allow-external webassets
+#--allow-unverified webassets
+#webassets==dev

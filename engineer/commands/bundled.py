@@ -73,40 +73,6 @@ class BuildCommand(ArgParseCommand):
         # since we're rebuilding the site
         settings.OUTPUT_CACHE_DIR.rmtree(ignore_errors=True)
 
-        theme = ThemeManager.current_theme()
-        engineer_lib = (settings.OUTPUT_STATIC_DIR / 'engineer/lib/').abspath()
-        ensure_exists(engineer_lib)
-        # Copy Foundation files if used
-        if theme.use_foundation:
-            s = settings.ENGINEER.LIB_DIR / settings.ENGINEER.FOUNDATION_CSS
-            t = ensure_exists(engineer_lib / settings.ENGINEER.FOUNDATION_CSS)
-            mirror_folder(s, t)
-            logger.debug("Copied Foundation library files.")
-
-        # Copy LESS js file if needed
-        if theme.use_lesscss and not settings.PREPROCESS_LESS:
-            s = settings.ENGINEER.LIB_DIR / settings.ENGINEER.LESS_JS
-            s.copy(engineer_lib)
-            logger.debug("Copied LESS CSS files.")
-
-        # Copy jQuery files if needed
-        if theme.use_jquery:
-            s = settings.ENGINEER.LIB_DIR / settings.ENGINEER.JQUERY
-            s.copy(engineer_lib)
-            logger.debug("Copied jQuery files.")
-
-        # Copy modernizr files if needed
-        if theme.use_modernizr:
-            s = settings.ENGINEER.LIB_DIR / settings.ENGINEER.MODERNIZR
-            s.copy(engineer_lib)
-            logger.debug("Copied Modernizr files.")
-
-        # Copy normalize.css if needed
-        if theme.use_normalize_css:
-            s = settings.ENGINEER.LIB_DIR / settings.ENGINEER.NORMALIZE_CSS
-            s.copy(engineer_lib)
-            logger.debug("Copied normalize.css.")
-
         # Copy 'raw' content to output cache - first pass
         # This first pass ensures that any static content - JS/LESS/CSS - that
         # is needed by site-specific pages (like template pages) is available
@@ -115,6 +81,8 @@ class BuildCommand(ArgParseCommand):
             mirror_folder(settings.CONTENT_DIR,
                           settings.OUTPUT_CACHE_DIR,
                           delete_orphans=False)
+
+        theme = ThemeManager.current_theme()
 
         # Copy theme static content to output dir
         theme_output_dir = settings.OUTPUT_STATIC_DIR / 'theme'
@@ -475,7 +443,6 @@ class ServeCommand(ArgParseCommand):
 
         bottle.debug(True)
         bottle.run(app=debug_server, host='0.0.0.0', port=args.port, reloader=True)
-
 
 
 # noinspection PyShadowingBuiltins

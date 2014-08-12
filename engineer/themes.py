@@ -4,17 +4,19 @@ import logging
 from brownie.caching import memoize
 from jinja2.loaders import FileSystemLoader
 from path import path
+from webassets import Bundle
 import yaml
 
 from engineer.conf import settings
 from engineer.exceptions import ThemeNotFoundException
-from engineer.util import get_class, mirror_folder, ensure_exists
+from engineer.util import get_class, mirror_folder, ensure_exists, update_additive
 
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 
-#noinspection PyNoneFunctionAssignment
+# noinspection PyNoneFunctionAssignment
+# noinspection PyPep8Naming
 class Theme(object):
     """
     Creates a new theme object based on the contents of *theme_root_path*.
@@ -30,17 +32,30 @@ class Theme(object):
         self.author = kwargs.get('author', None)
         self.website = kwargs.get('website', None)
         self.license = kwargs.get('license', None)
-        self.use_foundation = kwargs.get('use_foundation', False)
-        self.use_lesscss = kwargs.get('use_lesscss', False)
-        self.use_modernizr = kwargs.get('use_moderinzr', True)
-        self.use_normalize_css = kwargs.get('use_normalize_css', True)
-        self.use_jquery = kwargs.get('use_jquery', False)
 
         self.self_contained = kwargs.get('self_contained', True)
         self.static_root = path(kwargs.get('static_root', self.root_path / 'static/')).abspath()
         self.template_root = path(kwargs.get('template_root', self.root_path / 'templates')).abspath()
         self.template_dirs = [self.template_root]
         self.use_precompiled_styles = True
+
+        bundle_dict = {}
+        bundle_config = {
+            'global': [],
+            'local': []
+        }
+        update_additive(bundle_config, kwargs.get('bundles', {}))
+
+        self.bundle_config = {}
+        for k, v in bundle_config.iteritems():
+            self.bundle_config[k] = dict([(name, True) for name in v])
+        for bundle in bundle_config['global']:
+            if bundle not in ThemeManager.global_bundles:
+                self.logger.warning("Invalid bundle setting in theme: %s (%s)" % (bundle, self.name))
+                continue
+
+            update_additive(bundle_dict, unwrap_bundles(bundle, ThemeManager.global_bundles[bundle]))
+        self.bundles = bundle_dict
 
         # set up mappings for any additional content
         self.content_mappings = {}
@@ -129,7 +144,7 @@ class ThemeManager(object):
         for f in settings.THEME_FINDERS:
             finder = get_class(f)
             themes.extend(finder.get_themes())
-        #noinspection PyTypeChecker
+        # noinspection PyTypeChecker
         return dict([t.id, t] for t in themes)
 
     @classmethod
@@ -155,7 +170,7 @@ class ThemeManager(object):
     def theme_path(template):
         return path(ThemeManager.current_theme().template_root) / template
 
-    #noinspection PyShadowingBuiltins
+    # noinspection PyShadowingBuiltins
     @staticmethod
     @memoize
     def theme(id):
@@ -163,3 +178,49 @@ class ThemeManager(object):
             raise ThemeNotFoundException("Theme with id '%s' cannot be found." % id)
         else:
             return ThemeManager.themes()[id]
+
+    global_bundles = {
+        'jquery': Bundle('jquery-1.11.0.min.js',
+                         output='jquery.%(version)s.js'),
+        'less': Bundle('less-1.7.0.min.js',
+                       output='less.%(version)s.js'),
+        'modernizr': Bundle('modernizr-2.7.1.min.js',
+                            output='modernizr.%(version)s.js'),
+        'foundation': {
+            'js': Bundle('foundation/javascripts/foundation.js',
+                         filters='jsmin',
+                         output='foundation.%(version)s.js'),
+            'css': Bundle('foundation/stylesheets/grid.css',
+                          'foundation/stylesheets/mobile.css',
+                          filters='cssmin',
+                          output='foundation.%(version)s.css'),
+            'css_ie': Bundle('foundation/stylesheets/ie.css',
+                             filters='cssmin',
+                             output='foundation_ie.%(version)s.css'),
+        },
+        'normalize': Bundle('normalize/normalize.css',
+                            filters='cssmin',
+                            output='normalize.%(version)s.css')
+    }
+
+
+# def unwrap_bundles(bundle_dict):
+# return_list = []
+# if isinstance(bundle_dict, Bundle):
+#         return_list.append(bundle_dict)
+#     else:
+#         for k, v in bundle_dict.iteritems():
+#             if isinstance(v, Bundle):
+#                 return_list.append(v)
+#             else:
+#                 return_list.extend(unwrap_bundles(v))
+#     return return_list
+
+def unwrap_bundles(key, value):
+    return_dict = {}
+    if isinstance(value, Bundle):
+        return_dict[key] = value
+    else:
+        for k, v in value.iteritems():
+            update_additive(return_dict, unwrap_bundles('%s_%s' % (key, k), v))
+    return return_dict

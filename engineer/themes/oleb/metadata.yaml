@@ -4,11 +4,13 @@ description: "A bright design based on Ole Begemann's oleb.net. Used with permis
 author: 'Tyler Butler <tyler@tylerbutler.com>'
 website: 'http://tylerbutler.com'
 license: 'N/A'
-use_foundation: yes
-use_jquery: yes
-use_lesscss: yes
-use_modernizr: yes
-use_normalize_css: no
+
+bundles:
+  global:
+    - jquery
+    - foundation
+    - less
+    - modernizr
 
 template_dirs:
   - '../_shared/templates/'

@@ -329,6 +329,8 @@ class EngineerConfiguration(object):
 
     @cached_property
     def JINJA_ENV(self):
+        from webassets import Environment as AssetsEnvironment
+        from webassets.ext.jinja2 import AssetsExtension
         from engineer.processors import preprocess_less
         from engineer.themes import ThemeManager
 
@@ -336,12 +338,25 @@ class EngineerConfiguration(object):
         logger.debug("Configuring the Jinja environment.")
 
         # Helper function to look up a URL by name
+        # noinspection PyShadowingNames
         def urlname(name, *args):
             url = settings.URLS.get(name, settings.HOME_URL)
             if isfunction(url):
                 return url(*args)
             else:
                 return url
+
+        # because we're using the append_path function to add paths for the source files, the
+        # directory argument will be used as the output path
+        assets_env = AssetsEnvironment(directory=(self.OUTPUT_STATIC_DIR / 'bundled'),
+                                       url=urljoin(self.STATIC_URL, 'bundled'),
+                                       #cache=self.ENGINEER.WEBASSETS_CACHE_DIR,  # this seems broken in webassets
+                                       debug='merge' if self.DEBUG else False)
+
+        assets_env.append_path(self.ENGINEER.LIB_DIR, url=urljoin(self.STATIC_URL, 'lib'))
+
+        for name, bundle in ThemeManager.current_theme().bundles.iteritems():
+            assets_env.register(name, bundle)
 
         env = Environment(
             loader=ChoiceLoader(
@@ -350,11 +365,14 @@ class EngineerConfiguration(object):
                  # self.ENGINEER.THEMES_DIR / 'base_templates',
                  FileSystemLoader([self.ENGINEER.TEMPLATE_DIR])]
             ),
-            extensions=['jinja2.ext.with_', ],
+            extensions=['jinja2.ext.with_', AssetsExtension],
             bytecode_cache=FileSystemBytecodeCache(directory=self.ENGINEER.JINJA_CACHE_DIR),
             trim_blocks=True)
 
+        env.assets_environment = assets_env
+
         # JinjaEnvironment plugins
+        # noinspection PyUnresolvedReferences
         for plugin in JinjaEnvironmentPlugin.plugins:
             plugin.update_environment(env)
 

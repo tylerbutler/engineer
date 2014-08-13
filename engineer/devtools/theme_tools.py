@@ -9,8 +9,6 @@ from clint.textui import colored, indent, puts
 from clint.textui import columns
 from path import path
 
-from engineer.processors import convert_less
-from engineer.themes import ThemeManager
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -19,6 +17,9 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 @named('compile')
 def compile_theme(theme_id=None):
     """Compiles a theme."""
+    from engineer.processors import convert_less
+    from engineer.themes import ThemeManager
+
     output_dir = path(mkdtemp())
     if theme_id is None:
         themes = ThemeManager.themes().values()
@@ -49,6 +50,8 @@ def compile_theme(theme_id=None):
 @named('list')
 def list_theme():
     """List all available Engineer themes."""
+    from engineer.themes import ThemeManager
+
     themes = ThemeManager.themes()
     col1, col2 = map(max, zip(*[(len(t.id) + 2, len(t.root_path) + 2) for t in themes.itervalues()]))
 

@@ -40,7 +40,10 @@ class Theme(object):
         self.template_dirs = [self.template_root]
         self.use_precompiled_styles = kwargs.get('use_precompiled_styles', True)
 
-        self.bundle_files = {'bundles.yaml'}
+        if (self.root_path / 'bundles.yaml').exists():
+            self.bundle_files = {'bundles.yaml'}
+        else:
+            self.bundle_files = set()
         self.bundle_files.update(wrap_list(kwargs.get('bundles', [])))
 
         # set up mappings for any additional content
@@ -104,7 +107,7 @@ class Theme(object):
         for bundle_file in self.bundle_files:
             bundle_yaml = self.root_path / bundle_file
             if bundle_yaml.exists():
-                assets_env.append_path(self.root_path, url=urljoin(settings.STATIC_URL, 'theme_bundled'))
+                assets_env.append_path(bundle_yaml.dirname().abspath())
                 loader = YAMLLoader(bundle_yaml.abspath())
                 local_bundles = loader.load_bundles(assets_env)
                 for name, bundle in local_bundles.iteritems():
@@ -124,12 +127,14 @@ class Theme(object):
         # Copy theme static content to output dir
         try:
             s = self.static_root.abspath()
+            if s.exists():
+                t = path(output_path).abspath()
+                ensure_exists(t)
+                # noinspection PyUnboundLocalVariable
+                mirror_folder(s, t)
         except ThemeNotFoundException as e:
             self.logger.critical(e.message)
             exit()
-        t = path(output_path).abspath()
-        # noinspection PyUnboundLocalVariable
-        mirror_folder(s, t)
 
     def copy_related_content(self, output_path):
         if self.content_mappings:

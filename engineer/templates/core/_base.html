@@ -47,14 +47,6 @@
 {%- endblock -%}
 {%- block body %}{% endblock -%}
 
-{% block foundation_js %}
-    {% if theme.bundles.foundation_js -%}
-        {% assets %}
-            <script src="{{ ASSET_URL }}"></script>
-        {% endassets %}
-    {%- endif %}
-{% endblock %}
-
 {% block scripts_bottom %}{% endblock %}
 {% block scripts_bottom_include %}
     {% include ['_scripts_bottom.html', 'theme/_scripts_bottom.html'] ignore missing %}

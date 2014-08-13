@@ -124,5 +124,7 @@
 {% endblock body %}
 
 {%- block scripts_bottom %}
-    {{ super() }}
+    {% assets "foundation_js" %}
+        <script src="{{ ASSET_URL }}"></script>
+    {% endassets %}
 {% endblock -%}

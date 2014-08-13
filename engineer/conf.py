@@ -226,9 +226,9 @@ class EngineerConfiguration(object):
         if not 'LESS_PREPROCESSOR' in config:
             if platform.system() == 'Windows':
                 self.LESS_PREPROCESSOR = str(self.ENGINEER.ROOT_DIR /
-                                             'lib/less.js-windows/lessc.cmd') + ' {infile} {outfile}'
+                                             'lib/less.js-windows/lessc.cmd')
             else:
-                self.LESS_PREPROCESSOR = 'lessc {infile} {outfile}'
+                self.LESS_PREPROCESSOR = 'lessc'
         else:
             self.LESS_PREPROCESSOR = path(config.pop('LESS_PREPROCESSOR'))
 

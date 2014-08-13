@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 def convert_less(infile, outfile, minify=True):
     if minify:
-        preprocessor = str(settings.LESS_PREPROCESSOR) + ' -x'
+        preprocessor = str(settings.LESS_PREPROCESSOR) + ' {infile} {outfile} -x'
     else:
-        preprocessor = str(settings.LESS_PREPROCESSOR)
+        preprocessor = str(settings.LESS_PREPROCESSOR) + ' {infile} {outfile}'
 
     cmd = str.format(preprocessor, infile=infile, outfile=outfile).split()
     try:

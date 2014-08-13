@@ -10,7 +10,7 @@ import yaml
 
 from engineer.conf import settings
 from engineer.exceptions import ThemeNotFoundException
-from engineer.util import get_class, mirror_folder, ensure_exists, urljoin
+from engineer.util import get_class, mirror_folder, ensure_exists, urljoin, wrap_list
 
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
@@ -39,6 +39,9 @@ class Theme(object):
         self.template_root = path(kwargs.get('template_root', self.root_path / 'templates')).abspath()
         self.template_dirs = [self.template_root]
         self.use_precompiled_styles = kwargs.get('use_precompiled_styles', True)
+
+        self.bundle_files = {'bundles.yaml'}
+        self.bundle_files.update(wrap_list(kwargs.get('bundles', [])))
 
         # set up mappings for any additional content
         self.content_mappings = {}
@@ -98,13 +101,16 @@ class Theme(object):
             assets_env.register(name, bundle)
 
         # register the local bundles
-        bundle_yaml = self.root_path / 'bundles.yaml'
-        if bundle_yaml.exists():
-            assets_env.append_path(self.root_path, url=urljoin(settings.STATIC_URL, 'theme_bundled'))
-            loader = YAMLLoader(bundle_yaml.abspath())
-            local_bundles = loader.load_bundles(assets_env)
-            for name, bundle in local_bundles.iteritems():
-                assets_env.register(name, bundle)
+        for bundle_file in self.bundle_files:
+            bundle_yaml = self.root_path / bundle_file
+            if bundle_yaml.exists():
+                assets_env.append_path(self.root_path, url=urljoin(settings.STATIC_URL, 'theme_bundled'))
+                loader = YAMLLoader(bundle_yaml.abspath())
+                local_bundles = loader.load_bundles(assets_env)
+                for name, bundle in local_bundles.iteritems():
+                    assets_env.register(name, bundle)
+            else:
+                self.logger.warning("Cannot find bundle file %s for theme %s." % (bundle_file, self.id))
 
         return assets_env
 

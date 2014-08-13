@@ -9,7 +9,7 @@ Engineer provides a plugin model that allows further customization of Engineer b
 rudimentary plugin system for themes in version 0.2.3, version 0.3.0 introduced a much richer system and exposed ways
 to modify the post rendering pipeline somewhat in addition to Theme plugins.
 
-Engineer's plugin model is based on Marty Allchin's
+Engineer's plugin model is based on Marty Alchin's
 `simple plugin framework <http://martyalchin.com/2008/jan/10/simple-plugin-framework/>`_. As such,
 creating your own plugin is relatively straightforward:
 

@@ -13,10 +13,6 @@
 
     <title>{% block site_title %}{{ settings.SITE_TITLE }}{% endblock %}</title>
 
-    {#    {% if meta_description %}#}
-    {#        <meta name="description" content="{{ engineer.meta_description }}">#}
-    {#    {% endif %}#}
-    {##}
     {% if meta_author %}
         <meta name="author"
               content="{% block meta_author %}{{ settings.SITE_AUTHOR }}{% endblock %}">
@@ -26,77 +22,14 @@
           title="{{ settings.SITE_TITLE }} Atom Feed"
           href="{{ urlname('feed') }}"/>
 
-    {% block normalizecss %}
-        {% if theme.bundles.normalize %}
-            {% assets "normalize" %}
-                <link rel="stylesheet" href="{{ ASSET_URL }}">
-            {% endassets %}
-        {% endif %}
-    {% endblock %}
-
-    {% block foundationcss %}
-        {% if theme.bundles.foundation_css %}
-            {# FOUNDATION CSS #}
-            {% assets "foundation_css" %}
-                <link rel="stylesheet"
-                      href="{{ ASSET_URL }}">
-            {% endassets %}
-
-            <!--[if lt IE 9]>
-                    {% assets "foundation_css_ie" %}
-                        <link rel="stylesheet" href="{{ ASSET_URL }}">
-                    {% endassets %}
-                <![endif]-->
-        {% endif %}
-    {% endblock %}
-
     {% block stylesheets %}{% endblock %}
     {% block stylesheets_include %}
         {% include ['_stylesheets.html', 'theme/_stylesheets.html'] ignore missing %}
     {% endblock %}
 
-    {% block less %}
-        {% if theme.bundles.less %}
-            {% if not settings.PREPROCESS_LESS %}
-                {% assets "less" %}
-                    <script src="{{ ASSET_URL }}"
-                            type="text/javascript">
-                    </script>
-                {% endassets %}
-                {% if DEBUG %}
-                    <script type="text/javascript">
-                        //less = { env:'development' };
-                        less.watch();
-                    </script>
-                {% endif %}
-            {% endif %}
-        {% endif %}
-    {% endblock %}
-
     {% block scripts_top %}{% endblock %}
     {% block scripts_top_include %}
         {% include ['_scripts_top.html', 'theme/_scripts_top.html'] ignore missing %}
-    {% endblock %}
-
-    {% block modernizr %}
-        {% if theme.bundles.modernizr %}
-            {% assets "modernizr" %}
-                <script src="{{ ASSET_URL }}"
-                        type="text/javascript"></script>
-            {% endassets %}
-        {% endif %}
-    {% endblock %}
-
-    {% block jquery %}
-        {% if theme.bundles.jquery -%}
-            <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
-            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-            {% assets "jquery" %}
-                <script>
-                    window.jQuery || document.write('<script src="{{ ASSET_URL }}"><\/script>')
-                </script>
-            {% endassets %}
-        {%- endif %}
     {% endblock %}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -108,7 +41,7 @@
 </head>
 <body class="{%- block body_class %}{% endblock -%}">
 {%- block browsehappy -%}
-    <!--[if lt IE 7]>
+<!--[if lt IE 7]>
     <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 <![endif]-->
 {%- endblock -%}

@@ -6,17 +6,6 @@ website: 'http://tylerbutler.com'
 license: 'N/A'
 use_precompiled_styles: no
 
-bundles:
-  global:
-    - jquery
-    - foundation_js
-    - foundation_css
-    - foundation_css_ie
-    - less
-    - modernizr
-  local:
-    - oleb
-
 template_dirs:
   - '../_shared/templates/'
 

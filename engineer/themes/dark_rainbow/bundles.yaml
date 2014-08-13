@@ -2,4 +2,18 @@ dark_rainbow:
   filters: less, cssmin
   contents:
     - './static/stylesheets/dark_rainbow.less'
+    - foundation_css
   output: dark_rainbow.%(version)s.css
+
+#dark_rainbow_js:
+#  filters: jsmin
+#  contents:
+#    - jquery
+#    - dark_rainbow_js_no_jquery
+#  output: dark_rainbow.%(version)s.js
+
+#dark_rainbow_js_no_jquery:
+#  filters: jsmin
+#  contents:
+#    - foundation_js
+#  output: dark_rainbow.no_jquery.%(version)s.js

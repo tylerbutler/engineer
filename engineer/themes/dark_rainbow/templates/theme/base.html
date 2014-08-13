@@ -9,9 +9,26 @@
     {% assets "dark_rainbow" %}
         <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css"/>
     {% endassets %}
+
+    <!--[if lt IE 9]>
+        {% assets "foundation_css_ie" %}
+            <link rel="stylesheet" href="{{ ASSET_URL }}">
+        {% endassets %}
+    <![endif]-->
 {% endblock -%}
 
 {%- block scripts_top %}
+    {# JQUERY #}
+    <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>
+        if (window.jQuery == undefined) {
+            {% assets "jquery" %}
+                document.write('<script src="{{ ASSET_URL }}"><\/script>');
+            {% endassets %}
+        }
+    </script>
+
     {# TYPEKIT #}
     <script type="text/javascript"
             src="http://use.typekit.net/{{ theme.typekit_id }}.js"></script>

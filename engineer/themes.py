@@ -10,7 +10,7 @@ import yaml
 
 from engineer.conf import settings
 from engineer.exceptions import ThemeNotFoundException
-from engineer.util import flatten, get_class, mirror_folder, ensure_exists, update_additive, urljoin
+from engineer.util import get_class, mirror_folder, ensure_exists, urljoin
 
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
@@ -39,13 +39,6 @@ class Theme(object):
         self.template_root = path(kwargs.get('template_root', self.root_path / 'templates')).abspath()
         self.template_dirs = [self.template_root]
         self.use_precompiled_styles = kwargs.get('use_precompiled_styles', True)
-
-        # get the raw bundle config from the parameters
-        self._bundle_config = {
-            'global': [],
-            'local': []
-        }
-        update_additive(self._bundle_config, kwargs.get('bundles', {}))
 
         # set up mappings for any additional content
         self.content_mappings = {}
@@ -83,13 +76,6 @@ class Theme(object):
         return FileSystemLoader(self.template_dirs)
 
     @cached_property
-    def bundles(self):
-        names = set()
-        for v in flatten(self._bundle_config).itervalues():
-            names.update(v)
-        return dict([(name, True) for name in names])
-
-    @cached_property
     def assets_environment(self):
         # because we're using the append_path function to add paths for the source files, the
         # directory argument will be used as the output path
@@ -97,9 +83,7 @@ class Theme(object):
                                        url=urljoin(settings.STATIC_URL, 'bundled'),
                                        # cache=self.ENGINEER.WEBASSETS_CACHE_DIR,  # this seems broken in webassets
                                        debug='merge' if settings.DEBUG else False)
-        l = len(' {infile} {outfile}')
-        assets_env.config['less_bin'] = settings.LESS_PREPROCESSOR[:-l]
-        print assets_env.config['less_bin']
+        assets_env.config['less_bin'] = settings.LESS_PREPROCESSOR
 
         # register the global bundles
         assets_env.append_path(settings.ENGINEER.LIB_DIR, url=urljoin(settings.STATIC_URL, 'lib'))

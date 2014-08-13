@@ -91,6 +91,12 @@ class Theme(object):
         for name, bundle in ThemeManager.global_bundles.iteritems():
             assets_env.register(name, bundle)
 
+        # register code style bundles
+        assets_env.append_path(settings.ENGINEER.THEMES_DIR / '_shared/code_styles',
+                               url=urljoin(settings.STATIC_URL, 'code'))
+        for name, bundle in ThemeManager.code_style_bundles.iteritems():
+            assets_env.register(name, bundle)
+
         # register the local bundles
         bundle_yaml = self.root_path / 'bundles.yaml'
         if bundle_yaml.exists():
@@ -210,3 +216,8 @@ class ThemeManager(object):
                             filters='cssmin',
                             output='normalize.%(version)s.css')
     }
+
+    _codestyle_list = (settings.ENGINEER.THEMES_DIR / '_shared/code_styles/').files('*.css')
+    code_style_bundles = dict([('codestyle_%s' % name.namebase,
+                                Bundle(name, output=('codestyle_%s' % name.namebase) + '.%(version)s.css'))
+                               for name in _codestyle_list])

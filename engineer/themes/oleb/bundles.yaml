@@ -3,4 +3,5 @@ oleb:
   contents:
     - './static/stylesheets/oleb.less'
     - foundation_css
+    - codestyle_github
   output: oleb.%(version)s.css

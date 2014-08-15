@@ -125,7 +125,7 @@ version 0.4.0 - November 28, 2012
   :ref:`copy_content<theme copy_content>` and :ref:`template dirs<theme template_dirs>` theme manifest settings.
 - The :ref:`post breaks plugin<post breaks plugin>` now outputs only the teaser content into the site RSS feed by
   default. This behavior can be changed using the ``FEED_FULL_CONTENT`` setting.
-- Added a new :class:`~engineer.plugins.CommandPlugin` class. This enables other developers to write plugins that add
+- Added a new ``CommandPlugin`` class. This enables other developers to write plugins that add
   new command line commands to Engineer.
 - Standardized a set of common classmethods that are available to all plugins - ``handle_settings`` and
   ``get_logger``.

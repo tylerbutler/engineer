@@ -25,6 +25,8 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 # noinspection PyShadowingBuiltins
 class BuildCommand(ArgParseCommand):
+    """Builds an Engineer site."""
+    
     name = 'build'
     help = 'Build the site.'
 
@@ -37,8 +39,6 @@ class BuildCommand(ArgParseCommand):
 
     # noinspection PyShadowingBuiltins
     def build(self, args=None):
-        """Builds an Engineer site using the settings specified in *args*."""
-
         from engineer.conf import settings
         from engineer.filters import naturaltime
         from engineer.loaders import LocalLoader
@@ -337,6 +337,8 @@ class BuildCommand(ArgParseCommand):
 
 # noinspection PyShadowingBuiltins
 class CleanCommand(ArgParseCommand):
+    """Cleans an Engineer site's output directory and clears all caches."""
+
     name = 'clean'
     help = "Clean the output directory and clear all caches."
 
@@ -399,6 +401,8 @@ class CleanCommand(ArgParseCommand):
 
 # noinspection PyShadowingBuiltins
 class ServeCommand(ArgParseCommand):
+    """Serves an Engineer site using a built-in development server."""
+
     name = 'serve'
     help = "Start the development server."
 
@@ -447,6 +451,8 @@ class ServeCommand(ArgParseCommand):
 
 # noinspection PyShadowingBuiltins
 class InitCommand(ArgParseCommand):
+    """Initializes a new engineer site in the current directory."""
+
     name = 'init'
     help = "Initialize the current directory as an engineer site."
     need_settings = False

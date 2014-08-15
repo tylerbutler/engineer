@@ -26,9 +26,17 @@ In order for plugins to be found, the module containing them must be imported by
 to achieve this. First, you can use the :attr:`~engineer.conf.EngineerConfiguration.PLUGINS` setting. Each module
 passed in via that setting will be imported, and the plugins they contain will be available to Engineer.
 
+.. tip::
+
+   Command plugins are the exception; they cannot be loaded using the
+   :attr:`~engineer.conf.EngineerConfiguration.PLUGINS` setting. They must be installed as a Python package using the
+   method below.
+
 Alternatively, you can deliver your plugin as an installable Python package. This allows users to download and install
 your theme via ``pip`` or any other tool. You can do this by adding an ``engineer.plugins`` setuptools `entry point`_
 to your :file:`setup.py` file.
+
+.. _entry point: http://peak.telecommunity.com/DevCenter/setuptools#extensible-applications-and-frameworks
 
 In particular, within the `setup` function call in your :file:`setup.py` file, add something like the following:
 
@@ -91,12 +99,23 @@ nothing.
 .. versionadded:: 0.5.0
 
 
+Common Plugin Methods
+=====================
+
+All plugins inherit the some methods from :class:`~engineer.plugins.core.PluginMixin`. Note that you should not
+subclass the mixin yourself; rather, you should subclass one of the relevant plugin base classes below. The
+PluginMixin class is documented only for completeness.
+
+.. autoclass:: engineer.plugins.core.PluginMixin
+   :members:
+
+
 Jinja Environment Plugins
 =========================
 
 .. autoclass:: engineer.plugins.JinjaEnvironmentPlugin
    :members:
-   :inherited-members:
+   :show-inheritance:
 
 
 Post Processor Plugins
@@ -104,7 +123,7 @@ Post Processor Plugins
 
 .. autoclass:: engineer.plugins.PostProcessor
    :members:
-   :inherited-members:
+   :show-inheritance:
 
 
 .. _theme plugins:
@@ -114,7 +133,7 @@ Theme Plugins
 
 .. autoclass:: engineer.plugins.ThemeProvider
    :members:
-   :inherited-members:
+   :show-inheritance:
 
 The actual Python code needed to register your theme as a plugin is very minimal, but it is overhead compared
 to simply downloading a theme directly. The benefit, of course, is that users can manage the installation of the
@@ -122,15 +141,11 @@ theme alongside Engineer itself, and since the theme is globally available, user
 each site they want to use it in.
 
 
-.. _command plugins:
-
 Command Plugins
 ===============
 
-The Engineer command line can be customized to include your own commands. See :ref:`command plugins`_ for more
+The Engineer command line can be customized to include your own commands. See :ref:`command plugins` for more
 information.
 
 .. versionchanged:: 0.6.0
-Command plugins changed dramatically in version 0.6.0 and are now :ref:`documented separately<command plugins>`_.
-
-.. _entry point: http://peak.telecommunity.com/DevCenter/setuptools#extensible-applications-and-frameworks
+   Command plugins changed dramatically in version 0.6.0 and are now :ref:`documented separately<command plugins>`.

@@ -42,15 +42,48 @@ def all_commands():
 
 
 class _CommandMixin(PluginMixin):
+    """
+    Engineer's command processing is built using argparse. One of Argparse's 'quirks,' or design
+    decisions/constraints, is that it is not easy to access subparsers arbitrarily. Essentially, you can only
+    parsers very early on in the process of building the argparse objects. Thus, all command plugins are passed
+    a ``main_parser``, which is the main ArgumentParser object, when they are instantiated. In addition,
+    they are passed the top-most ``subparser`` object, created by initially calling ``add_subparsers`` on the main
+    ArgumentParser object. With these two components, it is possible to manipulate the commands in diverse ways.
+
+    Fortunately, for the most part, plugin implementers needn't be concerned with this detail, since it is abstracted
+    away by the :class:`~engineer.commands.core._CommandMixin` class and other subclasses.
+    """
     def __init__(self, main_parser, top_level_parser=None):
         self._main_parser = main_parser
         self._top_level_parser = top_level_parser
         self._command_parser = None
 
     def setup_command(self):
+        """
+        Called by Engineer immediately after instantiating the command class.
+
+        Override this method to run any unique logic that needs to be run prior to using the command. You should do
+        this instead of overriding the constructor.
+
+        Note that this method is overridden already in
+        """
         raise NotImplementedError()
 
     def handler_function(self, args=None):
+        """
+        This function contains your actual command logic. Note that if you prefer, you can implement your command
+        function with a different name and simply set ``handler_function`` to be the function you defined. In other
+        words:
+
+        .. code-block:: python
+
+            def my_function(*args, **kwargs):
+                # my implementation
+                pass
+
+            handler_function = my_function
+
+        """
         raise NotImplementedError()
 
     @classmethod
@@ -70,12 +103,20 @@ class _CommandMixin(PluginMixin):
 # noinspection PyShadowingBuiltins
 class _ArgParseMixin(_CommandMixin):
     name = None
+    """The name of the command."""
+
     help = None
+    """The help string for the command."""
+
     need_settings = True
+    """Set to True if the command requires an Engineer config file."""
+
     need_verbose = True
+    """Set to True if the command supports the standard Engineer ``verbose`` option."""
 
     @cached_property
     def parser(self):
+        """Returns the appropriate parser to use for adding arguments to your command."""
         if self._command_parser is None:
             parents = []
             if self.need_verbose:
@@ -94,7 +135,8 @@ class _ArgParseMixin(_CommandMixin):
         self._finalize()
 
     def add_arguments(self):
-        return False
+        """Override this method in subclasses to add arguments to parsers as needed."""
+        raise NotImplementedError()
 
     def _finalize(self):
         if not self.parser.get_default('handle'):
@@ -129,10 +171,6 @@ class ArgParseCommand(_ArgParseMixin):
     __metaclass__ = CommandMount
 
 
-class Command(_CommandMixin):
-    __metaclass__ = CommandMount
-
-
 if argh_installed:
     class SimpleArghCommand(_ArgParseMixin):
         """
@@ -149,3 +187,11 @@ if argh_installed:
 
             if self.handler_function is not None:
                 set_default_command(self.parser, self.handler_function)
+
+
+class Command(_CommandMixin):
+    """
+    The most barebones command plugin base class. You should use :class:`~engineer.commands.core.ArgParseCommand`
+    or :class:`~engineer.commands.core.SimpleArghCommand` wherever possible.
+    """
+    __metaclass__ = CommandMount

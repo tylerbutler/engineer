@@ -19,7 +19,7 @@ with Engineer.
 Command Plugin Forms
 --------------------
 
-Engineer provides two forms of command extensibility: argparse and ``argh``. The argparse style will be
+Engineer provides two forms of command extensibility: argparse and argh. The argparse style will be
 familiar to anyone who has used argparse, the
 `command-line processing module <https://docs.python.org/2.7/howto/argparse.html#id1>`_ in the Python standard library.
 
@@ -36,7 +36,7 @@ upcoming version of Engineer may include it so this would no longer be necessary
 
 The core Engineer commands were originally written before the command plugin model existed,
 and were written to use argparse directly. Depending on what you're doing you might find it more powerful.
-Certainly if you already have experience with argparse, there's no reason to go out and learn how to use argh.
+Certainly if you already have experience with argparse, there's no reason to go out and learn how to use argh
 unless you want to.
 
 

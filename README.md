@@ -1,3 +1,10 @@
+Engineer
+========
+Build Status: 
+[![Build Status](https://travis-ci.org/tylerbutler/engineer.svg?branch=dev)][build_latest]
+
+[build_latest]: https://travis-ci.org/tylerbutler/engineer
+
 At its core, Engineer is a static website generator. In other words, Engineer let's you build a website from a bunch
 of files - articles written in Markdown, templates, and other stuff - and outputs *another* bunch of files - HTML,
 mostly - that you can then copy wherever you want.
@@ -6,6 +13,18 @@ But Engineer has some pretty nifty features that you might find enticing. You ca
 http://engineer.readthedocs.org/ or grab the code at http://github.com/tylerbutler/engineer.
 
 Licensed under the MIT license.
+
+Documentation
+-------------
+
+Release: 
+[![Documentation Status](https://readthedocs.org/projects/engineer/badge/?version=master)][docs_master]
+
+Dev branch: 
+[![Documentation Status](https://readthedocs.org/projects/engineer/badge/?version=latest)][docs_latest]
+
+[docs_master]: https://readthedocs.org/projects/engineer/?badge=master
+[docs_latest]: https://readthedocs.org/projects/engineer/?badge=latest
 
 Installation
 ------------

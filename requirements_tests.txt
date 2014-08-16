@@ -1,0 +1,5 @@
+-r requirements_docs.txt
+
+nose
+testfixtures
+clint

@@ -37,7 +37,7 @@ def all_commands():
     commands = []
     for klass in classes:
         commands.extend(klass.commands)
-    commands.sort(key=lambda cmd: cmd.name_checked())
+    commands.sort(key=lambda cmd: cmd._name_checked())
     return commands
 
 
@@ -87,7 +87,7 @@ class _CommandMixin(PluginMixin):
         raise NotImplementedError()
 
     @classmethod
-    def name_checked(cls):
+    def _name_checked(cls):
         if hasattr(cls, 'argh_name'):
             return cls.argh_name
 

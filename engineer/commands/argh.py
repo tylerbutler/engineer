@@ -11,7 +11,7 @@ _no_need_settings_registry = []
 
 if argh_installed:
     from argh.decorators import arg, named
-    from engineer.commands.core import Command, SimpleArghCommand
+    from engineer.commands.core import Command, ArghCommand
 
     def need_settings(needed=True):
         def wrapper(func):
@@ -20,11 +20,11 @@ if argh_installed:
             return func
         return wrapper
 
-    class PrintArghCommand(SimpleArghCommand):
+    class EchoArghCommand(ArghCommand):
         """
         A simple example command using Argh.
 
-        This example inherits from :class:`~engineer.commands.SimpleArghCommand` and exposes a single function
+        This example inherits from :class:`~engineer.commands.core.ArghCommand` and exposes a single function
         as an Engineer command.
         """
 
@@ -39,11 +39,11 @@ if argh_installed:
 
         handler_function = print_argh
 
-    class SimplePrintSettings(SimpleArghCommand):
-        @named('sps')
+    class PrintSettings(ArghCommand):
+        @named('ps')
         @arg('-t', '--test', default=False)
         def print_settings(self, args):
-            """[SIMPLE] Prints the currently loaded Engineer settings."""
+            """Prints the currently loaded Engineer settings."""
             from engineer.conf import settings
             print "test: %s" % args.test
             print "verbose: %s" % args.verbose

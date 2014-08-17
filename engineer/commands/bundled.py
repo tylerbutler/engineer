@@ -10,7 +10,7 @@ from path import path
 from feedgenerator import Rss201rev2Feed, Atom1Feed
 import times
 
-from engineer.commands.core import ArgParseCommand
+from engineer.commands.core import ArgparseCommand
 from engineer.util import mirror_folder, ensure_exists, slugify, relpath, compress, has_files, diff_dir
 
 
@@ -24,7 +24,7 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 
 # noinspection PyShadowingBuiltins
-class BuildCommand(ArgParseCommand):
+class BuildCommand(ArgparseCommand):
     """Builds an Engineer site."""
     
     name = 'build'
@@ -336,7 +336,7 @@ class BuildCommand(ArgParseCommand):
 
 
 # noinspection PyShadowingBuiltins
-class CleanCommand(ArgParseCommand):
+class CleanCommand(ArgparseCommand):
     """Cleans an Engineer site's output directory and clears all caches."""
 
     name = 'clean'
@@ -400,7 +400,7 @@ class CleanCommand(ArgParseCommand):
 
 
 # noinspection PyShadowingBuiltins
-class ServeCommand(ArgParseCommand):
+class ServeCommand(ArgparseCommand):
     """Serves an Engineer site using a built-in development server."""
 
     name = 'serve'
@@ -450,7 +450,7 @@ class ServeCommand(ArgParseCommand):
 
 
 # noinspection PyShadowingBuiltins
-class InitCommand(ArgParseCommand):
+class InitCommand(ArgparseCommand):
     """Initializes a new engineer site in the current directory."""
 
     name = 'init'
@@ -507,7 +507,7 @@ class InitCommand(ArgParseCommand):
 
 
 # noinspection PyShadowingBuiltins
-class EmmaCommand(ArgParseCommand):
+class EmmaCommand(ArgparseCommand):
     name = 'emma'
     help = "Start Emma, the built-in management server."
 

@@ -101,7 +101,7 @@ class _CommandMixin(PluginMixin):
 
 
 # noinspection PyShadowingBuiltins
-class _ArgParseMixin(_CommandMixin):
+class _ArgparseMixin(_CommandMixin):
     name = None
     """The name of the command."""
 
@@ -167,16 +167,16 @@ common_parser = argparse.ArgumentParser(add_help=False,
                                         parents=[verbose_parser, settings_parser])
 
 
-class ArgParseCommand(_ArgParseMixin):
+class ArgparseCommand(_ArgparseMixin):
     __metaclass__ = CommandMount
 
 
 if argh_installed:
-    class SimpleArghCommand(_ArgParseMixin):
+    class ArghCommand(_ArgparseMixin):
         """
         The ``@verbose`` and ``@settings`` decorators should not be used in subclasses. Use the
-        :attr:`~engineer.commands.core._ArgParseMixin.need_verbose` and
-        :attr:`~engineer.commands.core._ArgParseMixin.need_settings` attributes in subclasses instead.
+        :attr:`~engineer.commands.core._ArgparseMixin.need_verbose` and
+        :attr:`~engineer.commands.core._ArgparseMixin.need_settings` attributes in subclasses instead.
         """
         __metaclass__ = CommandMount
 
@@ -191,7 +191,7 @@ if argh_installed:
 
 class Command(_CommandMixin):
     """
-    The most barebones command plugin base class. You should use :class:`~engineer.commands.core.ArgParseCommand`
-    or :class:`~engineer.commands.core.SimpleArghCommand` wherever possible.
+    The most barebones command plugin base class. You should use :class:`~engineer.commands.core.ArgparseCommand`
+    or :class:`~engineer.commands.core.ArghCommand` wherever possible.
     """
     __metaclass__ = CommandMount

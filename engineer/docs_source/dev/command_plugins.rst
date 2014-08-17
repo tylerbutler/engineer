@@ -60,11 +60,11 @@ options that are available in most Engineer commands easily without implementing
 Argparse-based Plugins
 ----------------------
 
-.. autoclass:: engineer.commands.core._ArgParseMixin
+.. autoclass:: engineer.commands.core._ArgparseMixin
    :members:
    :show-inheritance:
 
-.. autoclass:: engineer.commands.core.ArgParseCommand
+.. autoclass:: engineer.commands.core.ArgparseCommand
    :members:
    :show-inheritance:
 
@@ -72,7 +72,7 @@ Argparse-based Plugins
 Argh-based Plugins
 ------------------
 
-.. autoclass:: engineer.commands.core.SimpleArghCommand
+.. autoclass:: engineer.commands.core.ArghCommand
    :members:
    :show-inheritance:
 

@@ -1,0 +1,7 @@
+[run]
+source = engineer
+
+[report]
+omit =
+    */python?.?/*
+    */site-packages/nose/*

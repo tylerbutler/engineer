@@ -5,5 +5,9 @@ python:
 install:
   - "pip install ."
   - "pip install -r requirements_tests.txt"
+  - "pip install coveralls"
 # command to run tests
-script: nosetests
+script:
+  nosetests --with-coverage --cover-package=engineer
+after_success:
+  coveralls

@@ -20,7 +20,7 @@ Installing from Source
 Installing the Release Version from Source
 ------------------------------------------
 
-If you'd prefer to install the current release version of Engineer (v|version|) directly from the source,
+If you'd prefer to install the current release version of Engineer (v |version|) directly from the source,
 you have a couple of options. First, you can install directly from the GitHub repository using the following command::
 
     pip install -e git+https://github.com/tylerbutler/engineer.git#egg=engineer

@@ -104,7 +104,7 @@ Common Plugin Methods
 
 All plugins inherit the some methods from :class:`~engineer.plugins.core.PluginMixin`. Note that you should not
 subclass the mixin yourself; rather, you should subclass one of the relevant plugin base classes below. The
-PluginMixin class is documented only for completeness.
+:class:`~engineer.plugins.core.PluginMixin` class is documented only for completeness.
 
 .. autoclass:: engineer.plugins.core.PluginMixin
    :members:

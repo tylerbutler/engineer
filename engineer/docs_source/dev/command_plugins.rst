@@ -16,7 +16,7 @@ with Engineer.
    are therefore available to all sites using a given Engineer installation.
 
 
-Command Plugin Forms
+Command Plugin Types
 --------------------
 
 Engineer provides two forms of command extensibility: argparse and argh. The argparse style will be
@@ -43,29 +43,40 @@ unless you want to.
 Basic Plugin Model
 ------------------
 
-As with :ref:`other plugins<plugins>`, command plugins are implemented by subclassing a plugin base class. Unlike
+As with :ref:`other plugin types<plugins>`, command plugins are implemented by subclassing a plugin base class. Unlike
 other plugins, however, there are multiple base classes to use. In addition,
 there is a more complex class hierarchy including some private mixin classes that are documented here for
 completeness, but that you shouldn't need to subclass directly in your plugins.
 
 The mixins and base classes abstract away most of the complexity of dealing with the guts of the parsers,
-and provide simple ways to plug in your own functions. In addition, you can also add the ``verbose`` and ``settings``
-options that are available in most Engineer commands easily without implementing them yourself.
+and provide simple ways to plug in your own functions. In addition, you can also add the
+:option:`verbose<engineer -v>` and :option:`settings<engineer -s>` options that are available in most Engineer commands
+easily without implementing them yourself.
 
-.. autoclass:: engineer.commands.core._CommandMixin
-   :members:
-   :show-inheritance:
+Engineer's command processing is built using argparse. One of argparse's 'quirks,' or design
+decisions/constraints, is that it is not easy to access subparsers arbitrarily. Essentially, you can only
+parsers very early on in the process of building the argparse objects. Thus, all command plugins are passed
+a ``main_parser``, which is the main ArgumentParser object, when they are instantiated. In addition,
+they are passed the top-most ``subparser`` object, created by initially calling ``add_subparsers`` on the main
+ArgumentParser object. With these two components, it is possible to manipulate commands in diverse ways.
+
+Fortunately, for the most part, plugin implementers needn't be concerned with this detail, since it is abstracted
+away by various subclasses.
+
+.. tip::
+   It is easiest to model each of your commands as a single independent class wherever possible. In many cases,
+   this will be straightforward. If, however, you want to add a more complicated
 
 
 Argparse-based Plugins
 ----------------------
 
-.. autoclass:: engineer.commands.core._ArgparseMixin
-   :members:
-   :show-inheritance:
+In order to implement an argparse-based plugin, you should subclass :class:`~engineer.commands.core.ArgparseCommand`.
 
 .. autoclass:: engineer.commands.core.ArgparseCommand
    :members:
+   :inherited-members:
+   :member-order: bysource
    :show-inheritance:
 
 
@@ -74,7 +85,6 @@ Argh-based Plugins
 
 .. autoclass:: engineer.commands.core.ArghCommand
    :members:
-   :show-inheritance:
 
 
 More Advanced Plugin Styles
@@ -82,4 +92,3 @@ More Advanced Plugin Styles
 
 .. autoclass:: engineer.commands.core.Command
    :members:
-   :show-inheritance:

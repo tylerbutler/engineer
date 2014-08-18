@@ -1,9 +1,4 @@
-Engineer
-========
-Build Status: 
-[![Build Status](https://travis-ci.org/tylerbutler/engineer.svg?branch=dev)][build_latest]
-
-[build_latest]: https://travis-ci.org/tylerbutler/engineer
+# Engineer [![Latest Version](https://pypip.in/version/engineer/badge.svg?text=version&style=flat)][release] [![Downloads](https://pypip.in/download/engineer/badge.svg?style=flat)][dl] [![License](https://pypip.in/license/engineer/badge.svg?style=flat)][license]
 
 At its core, Engineer is a static website generator. In other words, Engineer let's you build a website from a bunch
 of files - articles written in Markdown, templates, and other stuff - and outputs *another* bunch of files - HTML,
@@ -14,25 +9,34 @@ http://engineer.readthedocs.org/ or grab the code at http://github.com/tylerbutl
 
 Licensed under the MIT license.
 
+**Current build status**: 
+[![Build Status](https://api.travis-ci.org/tylerbutler/engineer.svg?branch=dev&style=flat)][build_latest]
+
+[release]: https://pypi.python.org/pypi/engineer/
+[dl]: https://crate.io/packages/engineer
+[build_latest]: https://travis-ci.org/tylerbutler/engineer
+[license]: https://github.com/tylerbutler/engineer/blob/master/LICENSE.txt
+
 Documentation
 -------------
 
 Release: 
 [![Documentation Status](https://readthedocs.org/projects/engineer/badge/?version=master)][docs_master]
-
-Dev branch: 
+Development branch: 
 [![Documentation Status](https://readthedocs.org/projects/engineer/badge/?version=latest)][docs_latest]
 
-[docs_master]: https://readthedocs.org/projects/engineer/?badge=master
-[docs_latest]: https://readthedocs.org/projects/engineer/?badge=latest
+[docs_master]: http://engineer.readthedocs.org/en/master/
+[docs_latest]: http://engineer.readthedocs.org/en/latest/
 
 Installation
 ------------
 
-A full installation guide is available at https://engineer.readthedocs.org/en/master/installation.html. If you're in a
-hurry, though, you can install the most recent version of Engineer using pip. Simply run the following command:
+A [full installation guide][install] is available at Read the Docs. If you're in a hurry, though, 
+you can install the most recent version of Engineer using pip. Simply run the following command:
 
     pip install engineer
+
+[install]: https://engineer.readthedocs.org/en/master/installation.html
 
 Features
 --------

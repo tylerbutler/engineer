@@ -7,18 +7,10 @@ from engineer.commands.argh_helpers import argh_installed
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
-_no_need_settings_registry = []
-
 if argh_installed:
     from argh.decorators import arg, named
+    from engineer.commands.argh_helpers import does_not_require_config_file, no_config_file, config_file, verbose
     from engineer.commands.core import Command, ArghCommand
-
-    def need_settings(needed=True):
-        def wrapper(func):
-            if not needed:
-                _no_need_settings_registry.append(func)
-            return func
-        return wrapper
 
     class EchoArghCommand(ArghCommand):
         """
@@ -45,6 +37,7 @@ if argh_installed:
         def print_settings(self, args):
             """Prints the currently loaded Engineer settings."""
             from engineer.conf import settings
+
             print "test: %s" % args.test
             print "verbose: %s" % args.verbose
 
@@ -55,7 +48,7 @@ if argh_installed:
         handler_function = print_settings
 
     # class ArghSamplePlugin2(Command):
-    #     """
+    # """
     #     A more complex example command plugin using Argh.
     #
     #     This example inherits from :class:`~engineer.commands.Command` and exposes two separate functions
@@ -112,24 +105,15 @@ if argh_installed:
     #         second_parser.set_defaults(need_settings=True)
     #         set_default_command(second_parser, self.print_settings)
 
-    settings = arg('-s', '--config', '--settings',
-                   dest='config_file',
-                   default=None,
-                   help="Specify a configuration file to use.")
-    verbose = arg('-v', '--verbose',
-                  dest='verbose',
-                  action='count',
-                  default=0,
-                  help="Display verbose output.")
-
     class PrintSettingsArghCommand(Command):
         @named('ps')
         @arg('-t', '--test', default=False)
-        @settings
+        @config_file
         @verbose
         def print_settings(self, args):
             """Prints the currently loaded Engineer settings."""
             from engineer.conf import settings
+
             print "test: %s" % args.test
             print "verbose: %s" % args.verbose
 
@@ -142,7 +126,7 @@ if argh_installed:
             parser.set_defaults(need_settings=True)
             set_default_command(parser, self.print_settings)
 
-    # noinspection PyShadowingBuiltins,PyUnusedLocal
+    # noinspection PyShadowingBuiltins,PyUnusedLocal,PyUnresolvedReferences
     class ArghSamplePlugin3(Command):
         from argh.decorators import arg, expects_obj, named
 
@@ -151,7 +135,7 @@ if argh_installed:
         @staticmethod
         @named('f1')
         @verbose
-        @settings
+        @config_file
         def requires_settings(format='json', input_path=path.getcwd(),
                               output_path=path.getcwd() / 'imported_posts', **kwargs):
             args = format
@@ -163,13 +147,14 @@ if argh_installed:
         @staticmethod
         @named('ns')
         @expects_obj
-        #@verbose
-        @need_settings(False)
+        @verbose
+        @no_config_file
         @arg('--format', choices=['json'], default='json', help='The format of the posts to import.')
         def no_settings_required(args):
             print 'format: %s' % args.format
             print 'verbose: %s' % args.verbose
 
+        # noinspection PyProtectedMember
         def setup_command(self):
             from argh.assembling import add_commands, get_subparsers
 
@@ -181,5 +166,5 @@ if argh_installed:
             r = get_subparsers(self._top_level_parser).choices[self.namespace]
             r = get_subparsers(r)
             for k, parser in r.choices.iteritems():
-                if parser._defaults['function'] in _no_need_settings_registry:
+                if does_not_require_config_file(parser._defaults['function']):
                     parser.set_defaults(need_settings=False)

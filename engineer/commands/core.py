@@ -1,7 +1,6 @@
 # coding=utf-8
 from __future__ import absolute_import
 import argparse
-
 from brownie.caching import cached_property
 
 from engineer.commands.argh_helpers import argh_installed
@@ -28,6 +27,7 @@ class CommandMount(type):
             cls.commands.append(cls)
 
 
+# noinspection PyProtectedMember
 def all_commands():
     import sys
     import inspect
@@ -43,16 +43,9 @@ def all_commands():
 
 class _CommandMixin(PluginMixin):
     """
-    Engineer's command processing is built using argparse. One of Argparse's 'quirks,' or design
-    decisions/constraints, is that it is not easy to access subparsers arbitrarily. Essentially, you can only
-    parsers very early on in the process of building the argparse objects. Thus, all command plugins are passed
-    a ``main_parser``, which is the main ArgumentParser object, when they are instantiated. In addition,
-    they are passed the top-most ``subparser`` object, created by initially calling ``add_subparsers`` on the main
-    ArgumentParser object. With these two components, it is possible to manipulate the commands in diverse ways.
-
-    Fortunately, for the most part, plugin implementers needn't be concerned with this detail, since it is abstracted
-    away by the :class:`~engineer.commands.core._CommandMixin` class and other subclasses.
+    Mixin class that provides the basic implementation shared by all command plugins.
     """
+
     def __init__(self, main_parser, top_level_parser=None):
         self._main_parser = main_parser
         self._top_level_parser = top_level_parser
@@ -64,8 +57,6 @@ class _CommandMixin(PluginMixin):
 
         Override this method to run any unique logic that needs to be run prior to using the command. You should do
         this instead of overriding the constructor.
-
-        Note that this method is overridden already in
         """
         raise NotImplementedError()
 
@@ -100,29 +91,81 @@ class _CommandMixin(PluginMixin):
         return 'NO_COMMAND_NAME'
 
 
+_settings_parser = argparse.ArgumentParser(add_help=False,
+                                           description=argparse.SUPPRESS,
+                                           usage=argparse.SUPPRESS)
+_settings_parser.add_argument('-s', '--config', '--settings',
+                              dest='config_file',
+                              default=None,
+                              help="Specify a configuration file to use.")
+
+_verbose_parser = argparse.ArgumentParser(add_help=False,
+                                          description=argparse.SUPPRESS,
+                                          usage=argparse.SUPPRESS)
+_verbose_parser.add_argument('-v', '--verbose',
+                             dest='verbose',
+                             action='count',
+                             default=0,
+                             help="Display verbose output.")
+
+common_parser = argparse.ArgumentParser(add_help=False,
+                                        description=argparse.SUPPRESS,
+                                        usage=argparse.SUPPRESS,
+                                        parents=[_verbose_parser, _settings_parser])
+
+
 # noinspection PyShadowingBuiltins
 class _ArgparseMixin(_CommandMixin):
-    name = None
-    """The name of the command."""
+    _name = None
+    _help = None
+    _need_settings = True
+    _need_verbose = True
 
-    help = None
-    """The help string for the command."""
+    @property
+    def name(self):
+        """The name of the command."""
+        return self._name
 
-    need_settings = True
-    """Set to True if the command requires an Engineer config file."""
+    @name.setter
+    def name(self, value):
+        self._name = value
 
-    need_verbose = True
-    """Set to True if the command supports the standard Engineer ``verbose`` option."""
+    @property
+    def help(self):
+        """The help string for the command."""
+        return self._help
 
-    @cached_property
+    @help.setter
+    def help(self, value):
+        self._help = value
+
+    @property
+    def need_settings(self):
+        """Set to False if the command does not require an Engineer config file."""
+        return self._need_settings
+
+    @need_settings.setter
+    def need_settings(self, value):
+        self._need_settings = value
+
+    @property
+    def need_verbose(self):
+        """Set to False if the command does not support the standard Engineer :option:`verbose<engineer -v>` option."""
+        return self._need_verbose
+
+    @need_verbose.setter
+    def need_verbose(self, value):
+        self._need_verbose = value
+
+    @property
     def parser(self):
         """Returns the appropriate parser to use for adding arguments to your command."""
         if self._command_parser is None:
             parents = []
             if self.need_verbose:
-                parents.append(verbose_parser)
+                parents.append(_verbose_parser)
             if self.need_settings:
-                parents.append(settings_parser)
+                parents.append(_settings_parser)
 
             self._command_parser = self._main_parser.add_parser(self.name,
                                                                 help=self.help,
@@ -144,29 +187,6 @@ class _ArgparseMixin(_CommandMixin):
         self.parser.set_defaults(need_settings=self.need_settings)
 
 
-settings_parser = argparse.ArgumentParser(add_help=False,
-                                          description=argparse.SUPPRESS,
-                                          usage=argparse.SUPPRESS)
-settings_parser.add_argument('-s', '--config', '--settings',
-                             dest='config_file',
-                             default=None,
-                             help="Specify a configuration file to use.")
-
-verbose_parser = argparse.ArgumentParser(add_help=False,
-                                         description=argparse.SUPPRESS,
-                                         usage=argparse.SUPPRESS)
-verbose_parser.add_argument('-v', '--verbose',
-                            dest='verbose',
-                            action='count',
-                            default=0,
-                            help="Display verbose output.")
-
-common_parser = argparse.ArgumentParser(add_help=False,
-                                        description=argparse.SUPPRESS,
-                                        usage=argparse.SUPPRESS,
-                                        parents=[verbose_parser, settings_parser])
-
-
 class ArgparseCommand(_ArgparseMixin):
     __metaclass__ = CommandMount
 
@@ -178,8 +198,8 @@ if argh_installed:
     class ArghCommand(_ArgparseMixin):
         """
         The ``@verbose`` and ``@settings`` decorators should not be used in subclasses. Use the
-        :attr:`~engineer.commands.core._ArgparseMixin.need_verbose` and
-        :attr:`~engineer.commands.core._ArgparseMixin.need_settings` attributes in subclasses instead.
+        :attr:`~engineer.commands.core.ArgparseCommand.need_verbose` and
+        :attr:`~engineer.commands.core.ArgparseCommand.need_settings` attributes in subclasses instead.
         """
         __metaclass__ = CommandMount
 

@@ -106,14 +106,14 @@ def find_package_data(
 
 
 #noinspection PyShadowingBuiltins
-def get_install_requirements():
+def get_install_requirements(requirements_file='requirements.txt'):
     requirements = []
-    with open('requirements.txt') as file:
+    with open(requirements_file) as file:
         temp = file.readlines()
         temp = [i[:-1] for i in temp]
 
         for line in temp:
-            if line is None or line == '' or line.startswith(('#', '-e')):
+            if line is None or line == '' or line.startswith(('#', '-e', '-r')):
                 continue
             else:
                 requirements.append(line)
@@ -144,7 +144,7 @@ setup(
     description='A static website generator.',
     long_description=get_readme(),
     install_requires=get_install_requirements(),
-    tests_require=('nose', 'testfixtures'),
+    tests_require=get_install_requirements('requirements_tests.txt'),
     extras_require={
         'dev': ['argh', 'clint']
     },

@@ -73,9 +73,9 @@ class EngineerConfiguration(object):
         # ENGINEER 'CONSTANTS'
         ENGINEER_APP_WIDE_SETTINGS_DIR = ensure_exists(user_data_dir('Engineer', 'Engineer'))
         ROOT_DIR = path(__file__).dirname().abspath()
-        TEMPLATE_DIR = (ROOT_DIR / 'templates').abspath()
+        TEMPLATE_DIR = (ROOT_DIR / '_templates').abspath()
         STATIC_DIR = (ROOT_DIR / 'static').abspath()
-        THEMES_DIR = (ROOT_DIR / 'themes').abspath()
+        THEMES_DIR = (ROOT_DIR / '_themes').abspath()
         LIB_DIR = (STATIC_DIR / 'engineer/lib/').abspath()
         JINJA_CACHE_DIR = ensure_exists(path(user_cache_dir('Engineer', 'Engineer')) / '_jinja_cache')
 
@@ -215,10 +215,10 @@ class EngineerConfiguration(object):
         # THEMES
         self.THEME_DIRS = self.normalize_list(config.pop('THEME_DIRS', None))
         self.THEME_FINDERS = [
-            'engineer.finders.ThemeDirsFinder',
-            'engineer.finders.SiteFinder',
-            'engineer.finders.PluginFinder',
-            'engineer.finders.DefaultFinder'
+            'engineer.themes.finders.ThemeDirsFinder',
+            'engineer.themes.finders.SiteFinder',
+            'engineer.themes.finders.PluginFinder',
+            'engineer.themes.finders.DefaultFinder'
         ]
         self.THEME_SETTINGS = config.pop('THEME_SETTINGS', {})
         self.THEME = config.pop('THEME', 'dark_rainbow')

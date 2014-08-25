@@ -124,5 +124,5 @@ The following snippets are available:
 Manifest
 ========
 
-.. literalinclude:: ../../themes/oleb/metadata.yaml
+.. literalinclude:: ../../_themes/oleb/metadata.yaml
    :language: yaml

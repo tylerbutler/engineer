@@ -138,5 +138,5 @@ The following snippets are available:
 Manifest
 ========
 
-.. literalinclude:: ../../themes/dark_rainbow/metadata.yaml
+.. literalinclude:: ../../_themes/dark_rainbow/metadata.yaml
    :language: yaml

@@ -26,10 +26,10 @@
     <option name="TEMPLATE_CONFIGURATION" value="Jinja2" />
     <option name="TEMPLATE_FOLDERS">
       <list>
-        <option value="$MODULE_DIR$/engineer/themes" />
-        <option value="$MODULE_DIR$/engineer/themes/dark_rainbow/templates" />
-        <option value="$MODULE_DIR$/engineer/templates" />
-        <option value="$MODULE_DIR$/engineer/themes/oleb/templates" />
+        <option value="$MODULE_DIR$/engineer/_templates" />
+        <option value="$MODULE_DIR$/engineer/_themes" />
+        <option value="$MODULE_DIR$/engineer/_themes/oleb/templates" />
+        <option value="$MODULE_DIR$/engineer/_themes/dark_rainbow/templates" />
       </list>
     </option>
   </component>

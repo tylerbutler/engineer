@@ -7,5 +7,5 @@ Macros
 
 TODO
 
-.. literalinclude:: ../../templates/core/_macros.html
+.. literalinclude:: ../../_templates/core/_macros.html
    :language: html+jinja

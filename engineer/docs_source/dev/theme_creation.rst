@@ -41,7 +41,7 @@ Theme Manifest
 Each theme must contain a file called ``metadata.yaml`` that contains metadata about the theme. The theme manifest
 is a simple text file in YAML format. The Dark Rainbow theme manifest looks like this, for example:
 
-.. literalinclude:: ../../themes/dark_rainbow/metadata.yaml
+.. literalinclude:: ../../_themes/dark_rainbow/metadata.yaml
    :language: yaml
 
 
@@ -281,7 +281,7 @@ The template is always passed the following keyword variables:
 All except the ``source`` parameter are optional so the template should handle these cases appropriately. The default
 template looks like this:
 
-.. literalinclude:: ../../templates/theme/_img.html
+.. literalinclude:: ../../_templates/theme/_img.html
    :language: html+jinja
 
 .. seealso::

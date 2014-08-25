@@ -82,6 +82,16 @@ class TestConfig(BaseTestCase):
                                              "This setting is now ignored.")
             )
 
+    def test_cmdline_override(self):
+        from engineer.engine import parse_override_args
+        from engineer.conf import settings
+
+        self.assertFalse(settings.PUBLISH_DRAFTS)
+        override = parse_override_args("--PUBLISH_DRAFTS true --theme_dirs C:\\foo C:\\bar".split())
+        settings.reload('inheritance.yaml', override)
+        self.assertTrue(settings.PUBLISH_DRAFTS)
+        self.assertEqual(settings.THEME_DIRS, ['C:\\foo', 'C:\\bar'])
+
 
 class TestVariableExpansion(BaseTestCase):
     def setUp(self):

@@ -92,11 +92,11 @@ class EngineerConfiguration(object):
         MODERNIZR_URL = None
         NORMALIZE_CSS_URL = None
 
-    def __init__(self, settings_file=None):
+    def __init__(self, settings_file=None, override=None):
         self.reload(settings_file)
         self.COMPRESS_FILE_LIST = set()
 
-    def reload(self, settings_file=None):
+    def reload(self, settings_file=None, override=None):
         if settings_file is None:
             if hasattr(self, 'SETTINGS_FILE') and self.SETTINGS_FILE is not None:
                 # First check if SETTINGS_FILE has been defined. If so, we'll reload from that file.
@@ -142,6 +142,10 @@ class EngineerConfiguration(object):
             # load main config
             logger.debug("Finalizing configuration from %s." % path(all_configs[-1][1]).abspath())
             update_additive(config, all_configs[-1][0])
+
+            if override:
+                logger.debug("Override dict was passed into setting initializer. Applying overrides: %s" % override)
+                update_additive(config, override)
 
             for param in self._required_params:
                 if param not in config:

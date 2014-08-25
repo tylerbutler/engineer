@@ -24,7 +24,7 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 
 def get_argparser():
-    #from engineer.commands.argh import PrintArghCommand
+    # from engineer.commands.argh import PrintArghCommand
     desc = "Engineer static site builder. [v%s, %s %s]" % (version, version.date, time.strftime('%X', version.time))
     top_level_parser = argparse.ArgumentParser(prog='engineer',
                                                description=desc,
@@ -39,6 +39,20 @@ def get_argparser():
     return top_level_parser
 
 
+def parse_override_args(extra_args):
+    override = {}
+    override_settings_indexes = [i for i, j in enumerate(extra_args) if j.startswith('--')]
+    for index, item in enumerate(override_settings_indexes):
+        v2 = override_settings_indexes[index + 1] if (index + 1) < len(override_settings_indexes) else len(extra_args)
+        r = range(item + 1, v2)
+        for _ in r:
+            values = [extra_args[v] for v in r]
+            if len(values) == 1:
+                values = values[0]
+            override[extra_args[item][2:].upper()] = values
+    return override
+
+
 def cmdline(args=sys.argv):
     # bootstrap logging
     bootstrap()
@@ -51,6 +65,8 @@ def cmdline(args=sys.argv):
 
     # Handle common parameters if they're present
     common_args, extra_args = common_parser.parse_known_args(extra_args)
+
+    override = parse_override_args(extra_args)
 
     verbose = getattr(args, 'verbose', common_args.verbose)
     config_file = getattr(args, 'config_file', common_args.config_file)
@@ -74,9 +90,9 @@ def cmdline(args=sys.argv):
             if config_file is None:
                 default_settings_file = path.getcwd() / 'config.yaml'
                 logger.info("No '--settings' parameter specified, defaulting to %s." % default_settings_file)
-                settings.reload(default_settings_file)
+                settings.reload(default_settings_file, override)
             else:
-                settings.reload(settings_file=config_file)
+                settings.reload(config_file, override)
         except Exception as e:
             logger.error(e.message)
             exit()

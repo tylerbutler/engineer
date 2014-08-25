@@ -1,8 +1,9 @@
 # coding=utf-8
 import logging
 import re
+
 import humanize
-import times
+from dateutil import tz
 from markdown import markdown
 from path import path
 from typogrify import filters as Typogrify
@@ -61,13 +62,16 @@ def markdown_filter(value, typogrify=True, extensions=('extra', 'codehilite')):
         return markdown(output, extensions=extensions)
 
 
-def localtime(value, tz=None):
+def localtime(value, timezone=None):
     from engineer.conf import settings
 
-    if tz is None:
-        tz = settings.POST_TIMEZONE
+    if timezone is None:
+        timezone = settings.POST_TIMEZONE
 
-    return times.to_local(value, tz)
+    if isinstance(timezone, basestring):
+        timezone = tz.gettz(timezone)
+
+    return value.to(timezone)
 
 
 def naturaltime(value):
@@ -87,7 +91,7 @@ def compress(value):
     else:  # COMPRESSOR_ENABLED == True
         import html5lib
 
-        #noinspection PyUnresolvedReferences,PyUnusedLocal
+        # noinspection PyUnresolvedReferences,PyUnusedLocal
         def _min_js_slim(js_string):
             # NOTE: The slimit filter seems to break some scripts. I'm not sure why. I'm leaving this code in for
             # posterity, but it's not functional right now and shouldn't be used.
@@ -110,7 +114,7 @@ def compress(value):
                 else:  # inline script
                     continue
                     # TODO: Inline script minification.
-                    #has_inline = True
+                    # has_inline = True
                     #if len(item.childNodes) > 1:
                     #    raise Exception("For some reason the inline script node has more than one child node.")
                     #else:
@@ -131,7 +135,7 @@ def compress(value):
                 settings.COMPRESS_FILE_LIST.add((file, compression_type))
 
                 # TODO: Inline script minification.
-                #    if has_inline: # Handle inline script
+                # if has_inline: # Handle inline script
                 #        # Since we have inline script, we need to serialize the minified content into a
                 #        # string and return it
                 #        walker = treewalkers.getTreeWalker('simpletree')

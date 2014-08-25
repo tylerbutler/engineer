@@ -5,11 +5,12 @@ from codecs import open
 from copy import copy
 from datetime import datetime, timedelta
 
+import arrow
+from arrow.parser import ParserError
 import markdown
-import times
 import yaml
 from brownie.caching import cached_property
-from dateutil import parser
+from dateutil import parser, tz
 from path import path
 from propane.datastructures import CaseInsensitiveDict
 from typogrify.filters import typogrify
@@ -104,25 +105,21 @@ class Post(object):
         self.timestamp = metadata.pop('timestamp', None)
         """The date/time the post was published or written."""
 
-        if self.timestamp is None:
-            self.timestamp = times.now()
-            utctime = True
+        temp_timestamp = self.timestamp
+        if temp_timestamp is None:
+            temp_timestamp = arrow.now(settings.POST_TIMEZONE)
             # Reduce resolution of timestamp
-            delta = timedelta(seconds=self.timestamp.second)
-            self.timestamp = self.timestamp - delta
+            temp_timestamp = temp_timestamp.replace(second=0, microsecond=0)
         else:
-            utctime = False
-
-        if not isinstance(self.timestamp, datetime):
             # looks like the timestamp from YAML wasn't directly convertible to a datetime, so we need to parse it
-            self.timestamp = parser.parse(str(self.timestamp))
+            timestamp_dt = parser.parse(str(temp_timestamp))
+            if timestamp_dt.tzinfo is None:
+                # convert to UTC assuming input time is in the POST_TIMEZONE
+                temp_timestamp = arrow.get(timestamp_dt, settings.POST_TIMEZONE)
+            else:
+                temp_timestamp = arrow.get(timestamp_dt)
 
-        if self.timestamp.tzinfo is not None:
-            # parsed timestamp has an associated timezone, so convert it to UTC
-            self.timestamp = times.to_universal(self.timestamp)
-        elif not utctime:
-            # convert to UTC assuming input time is in the DEFAULT_TIMEZONE
-            self.timestamp = times.to_universal(self.timestamp, settings.POST_TIMEZONE)
+        self.timestamp = temp_timestamp.to('utc')
 
         self.content = Post.convert_to_html(self.content_preprocessed)
         """The post's content in HTML format."""
@@ -135,7 +132,7 @@ class Post(object):
                                                     i_day=self.timestamp_local.day,
                                                     title=self.slug,  # for Jekyll compatibility
                                                     slug=self.slug,
-                                                    timestamp=self.timestamp_local,
+                                                    timestamp=self.timestamp_local.datetime,
                                                     post=self)
         if permalink.endswith('index.html'):
             permalink = permalink[:-10]
@@ -204,12 +201,12 @@ class Post(object):
     @property
     def is_published(self):
         """``True`` if the post is published, ``False`` otherwise."""
-        return self.status == Status.published and self.timestamp <= times.now()
+        return self.status == Status.published and self.timestamp <= arrow.now()
 
     @property
     def is_pending(self):
         """``True`` if the post is marked as published but has a timestamp set in the future."""
-        return self.status == Status.published and self.timestamp >= times.now()
+        return self.status == Status.published and self.timestamp >= arrow.now()
 
     @property
     def is_external_link(self):

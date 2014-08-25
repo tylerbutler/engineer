@@ -6,9 +6,9 @@ import shelve
 from datetime import datetime
 
 from appdirs import user_cache_dir, user_data_dir
+from dateutil import zoneinfo
 from jinja2.loaders import ChoiceLoader
-import pytz
-import times
+import arrow
 import yaml
 from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
 
@@ -148,7 +148,7 @@ class EngineerConfiguration(object):
                     raise Exception("Required setting '%s' is missing from config file %s." % (param,
                                                                                                self.SETTINGS_FILE))
             self._initialize(config)
-            self.SETTINGS_FILE_LOAD_TIME = times.now()
+            self.SETTINGS_FILE_LOAD_TIME = arrow.now()
         else:
             raise SettingsFileNotFoundException("Settings file %s not found!" % settings_file)
 
@@ -301,7 +301,7 @@ class EngineerConfiguration(object):
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
         self.PUBLISH_PENDING = config.pop('PUBLISH_PENDING', False)
         self.PUBLISH_REVIEW = config.pop('PUBLISH_REVIEW', False)
-        self.POST_TIMEZONE = pytz.timezone(config.pop('POST_TIMEZONE', 'UTC'))
+        self.POST_TIMEZONE = zoneinfo.gettz(config.pop('POST_TIMEZONE', 'UTC'))
         self.SERVER_TIMEZONE = self.POST_TIMEZONE if config.get('SERVER_TIMEZONE',
                                                                 None) is None else config.pop('SERVER_TIMEZONE')
         self.TIME_FORMAT = config.pop('TIME_FORMAT', '%I:%M %p %A, %B %d, %Y %Z')  # '%Y-%m-%d %H:%M:%S %Z%z'

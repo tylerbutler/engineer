@@ -6,9 +6,9 @@ import gzip
 import os
 from codecs import open
 
+import arrow
 from path import path
 from feedgenerator import Rss201rev2Feed, Atom1Feed
-import times
 
 from engineer.commands.core import ArgparseCommand
 from engineer.util import mirror_folder, ensure_exists, slugify, relpath, compress, has_files, diff_dir
@@ -58,7 +58,7 @@ class BuildCommand(ArgparseCommand):
         logger.debug("Starting build using configuration file %s." % settings.SETTINGS_FILE)
 
         build_stats = {
-            'time_run': times.now(),
+            'time_run': arrow.now(),
             'counts': {
                 'template_pages': 0,
                 'new_posts': 0,

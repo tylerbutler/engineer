@@ -2,11 +2,12 @@
 import os
 from datetime import timedelta
 
-import times
+import arrow
 from path import path
 
 from engineer.exceptions import PostMetadataError
 from engineer.log import bootstrap
+bootstrap()
 from engineer.models import Post
 from engineer.plugins import load_plugins
 from engineer.unittests import CopyDataTestCase
@@ -128,7 +129,7 @@ class StatusTests(PostTestCase):
         """Pending status"""
         file = self.post_dir / 'published.md'
         post = Post(file)
-        post.timestamp = times.now() + timedelta(days=1)
+        post.timestamp = arrow.now().replace(days=+1)
 
         self.assertTrue(post.is_pending)
         self.assertFalse(post.is_published)

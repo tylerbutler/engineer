@@ -170,6 +170,9 @@ common_parser = argparse.ArgumentParser(add_help=False,
 class ArgparseCommand(_ArgparseMixin):
     __metaclass__ = CommandMount
 
+    def add_arguments(self):
+        pass
+
 
 if argh_installed:
     class ArghCommand(_ArgparseMixin):

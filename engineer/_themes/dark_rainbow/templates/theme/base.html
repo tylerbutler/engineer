@@ -129,21 +129,21 @@
             </header>
         {% endblock -%}
         <div class="row">
+            {%- block section_sidebar %}
+                <section id="sidebar" class="{%- block section_sidebar_class %}three columns push-nine{% endblock -%}">
+                    {%- block section_sidebar_content %}
+                        {% include '_sidebar.html' %}
+                    {% endblock -%}
+                </section>
+            {% endblock -%}
             {%- block section_main %}
                 <section id="main" class="
-                    {%- block section_main_class %}nine columns{% endblock -%}"
+                    {%- block section_main_class %}nine columns pull-three{% endblock -%}"
                          role="main">
                     {%- block section_main_content %}
                         <div class="replace_me">Replace this content in the main
                             section.
                         </div>
-                    {% endblock -%}
-                </section>
-            {% endblock -%}
-            {%- block section_sidebar %}
-                <section id="sidebar" class="{%- block section_sidebar_class %}three columns{% endblock -%}">
-                    {%- block section_sidebar_content %}
-                        {% include '_sidebar.html' %}
                     {% endblock -%}
                 </section>
             {% endblock -%}

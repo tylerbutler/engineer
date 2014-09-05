@@ -23,10 +23,10 @@
             <div class="ten columns">
                 {% for post in posts %}
                     <article class="row">
-                        <div class="two columns post-date">
+                        <div class="two phone-one columns post-date">
                             {{ post.timestamp_local|date('%d %b') }}
                         </div>
-                        <div class="ten columns">
+                        <div class="ten phone-three columns">
                             <h1><a href="{{ post.url }}">{{ post.title }}</a></h1>
                         </div>
                     </article>

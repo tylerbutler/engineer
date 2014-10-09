@@ -15,12 +15,6 @@
             <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css"/>
         {% endassets %}
     {% endif %}
-
-    <!--[if lt IE 9]>
-        {% assets "foundation_css_ie" %}
-            <link rel="stylesheet" href="{{ ASSET_URL }}">
-        {% endassets %}
-    <![endif]-->
 {% endblock -%}
 
 {%- block scripts_top %}
@@ -87,7 +81,7 @@
             <header id="primary" class="row">
                 {%- block header_primary_content %}
                     {% with split_title=settings.SITE_TITLE.split(' ') %}
-                        <h1 class="{%- block header_primary_h1_class %}five columns{% endblock -%}">
+                        <h1 class="{%- block header_primary_h1_class %}small-12 medium-5 columns{% endblock -%}">
                             <a href="{{ urlname('home') }}">
                                 {%- block header_primary_title %}
                                     {{ ' '.join(settings.SITE_TITLE.split(' ')[0:-1])|lower }}
@@ -98,7 +92,7 @@
                 {% endblock -%}
                 {%- block nav_primary %}
                     <nav class="
-                        {%- block nav_primary_class %}seven columns{% endblock -%}">
+                        {%- block nav_primary_class %}small-12 medium-7 columns{% endblock -%}">
                         {%- block nav_primary_content %}
                             {% include '_nav_primary.html' %}
                         {% endblock -%}
@@ -110,13 +104,13 @@
             <header id="secondary" class="row">
                 {%- block header_secondary_content %}
                     <h1 class="
-                        {%- block header_secondary_h1_class %}six columns{% endblock -%}">
+                        {%- block header_secondary_h1_class %}small-12 medium-6 columns{% endblock -%}">
                     {%- block header_secondary_title %}<span class="replace_me">
                         section header</span>{% endblock -%}
                     </h1>
                     {%- block nav_secondary %}
                         <nav class="
-                            {%- block nav_secondary_class %}six columns{% endblock -%}">
+                            {%- block nav_secondary_class %}small-12 medium-6 columns{% endblock -%}">
                             {%- block nav_secondary_content %}
                                 <ul class="replace_me">
                                     <li>secondary</li>
@@ -130,15 +124,20 @@
         {% endblock -%}
         <div class="row">
             {%- block section_sidebar %}
-                <section id="sidebar" class="{%- block section_sidebar_class %}three columns push-nine{% endblock -%}">
+                <section id="sidebar"
+                         class="{%- block section_sidebar_class -%}
+                         medium-4 medium-push-8 large-3 large-push-9 columns
+                         {%- endblock -%}">
                     {%- block section_sidebar_content %}
                         {% include '_sidebar.html' %}
                     {% endblock -%}
                 </section>
             {% endblock -%}
             {%- block section_main %}
-                <section id="main" class="
-                    {%- block section_main_class %}nine columns pull-three{% endblock -%}"
+                <section id="main"
+                         class="{%- block section_main_class -%}
+                         medium-8 medium-pull-4 large-9 large-pull-3 columns
+                         {%- endblock -%}"
                          role="main">
                     {%- block section_main_content %}
                         <div class="replace_me">Replace this content in the main
@@ -151,7 +150,7 @@
         <div class="row">
             {%- block footer %}
                 <footer class="
-                    {%- block footer_class %}twelve columns centered{% endblock -%}">
+                    {%- block footer_class %}small-12 small-centered columns{% endblock -%}">
                     {%- block footer_content %}
                         {% include '_footer.html' %}
                     {% endblock -%}

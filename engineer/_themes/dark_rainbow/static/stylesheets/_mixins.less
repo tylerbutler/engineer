@@ -14,3 +14,20 @@
         .horizontal-list();
     }
 }
+
+// MEDIA QUERY VARIABLES
+@small: ~"only screen";
+@small-only: ~"only screen and (max-width: 640px)";
+@medium: ~"only screen and (min-width: 641px)";
+@medium-only: "only screen and (min-width: 641px) and (max-width: 1024px)";
+@large: ~"only screen and (min-width: 1025px)";
+@large-only: ~"only screen and (min-width: 1025px) and (max-width: 1440)";
+@xlarge: ~"only screen and (min-width: 1441px)";
+@xlarge-only: ~"only screen and (min-width: 1441px) and (max-width: 1920px)";
+@xxlarge: ~"only screen and (min-width: 1921px)";
+
+.hide-on-phones {
+    @media @small-only {
+        display: none;
+    }
+}

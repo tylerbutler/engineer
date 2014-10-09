@@ -21,14 +21,24 @@
 ////////////////////
 .link-color(@green, @orange);
 
+blockquote, blockquote p,
+code, pre,
+h1, h2, h3, h4, h5, h6 {
+    // Reset some styles that Foundation 5 seems to set
+    color: @blue;
+}
+
 body {
     background-color: @bg;
-    border-top: @border;
-    border-bottom: @border;
     color: @blue;
     font-family: @font-main;
     .font-size-default();
     margin: 0;
+    border-top: @border;
+}
+
+.container {
+    border-bottom: @border;
 }
 
 header,
@@ -60,6 +70,8 @@ hr {
     border-bottom: 3px dotted @purple;
     border-left: none;
     border-right: none;
+    margin-left: auto;
+    margin-right: auto;
     clear: both;
     width: 20%;
 }
@@ -144,6 +156,13 @@ dl {
 }
 
 article {
+    blockquote, blockquote p,
+    code, pre,
+    h1, h2, h3, h4, h5, h6 {
+        // Reset some styles that Foundation 5 seems to set
+        background-color: @bg;
+    }
+
     .bulleted-list();
 
     h1, h2, h3, h4, h5, h6 {
@@ -171,17 +190,25 @@ article {
     }
 }
 
-.post-links ul.block-grid {
-    &.two-up, &.three-up {
-        li:first-child {
-            text-align: left;
-            a {
-                margin-left: -4%;
-            }
-        }
+.post-links {
+    ul {
+        &.small-block-grid,
+        &.medium-block-grid,
+        &.large-block-grid {
+            &-1, &-2, &-3, &-4, &-5, &-6,
+            &-7, &-8, &-9, &-10, &-11, &-12 {
+                li {
+                    text-indent: 0;
 
-        li:last-child {
-            text-align: right;
+                    &:first-child {
+                        text-align: left;
+                    }
+
+                    &:last-child {
+                        text-align: right;
+                    }
+                }
+            }
         }
     }
 }
@@ -301,6 +328,9 @@ header#primary {
     }
 
     nav {
+        @media @small-only {
+            .font-size-large(1, 0);
+        }
         .font-size-xl(1, 0);
         .margin-calc(@line-height-double, .9, .1, -1px, -5px);
         .link-color(@strong-blue, @orange);
@@ -371,7 +401,7 @@ input:-ms-input-placeholder {
 }
 
 // POSTS
-@media only screen and (min-width: 767px) {
+@media @medium {
     .post-info {
         font-family: museo-slab;
         text-align: center;
@@ -382,6 +412,10 @@ input:-ms-input-placeholder {
             @calendar-border: 1px dotted @purple;
             border-bottom: @calendar-border;
 
+            .month {
+                margin-bottom: -15px;
+            }
+
             .day {
                 font-family: kulturista-web, museo-sans, deva-ideal, obliqua;
                 font-style: normal;
@@ -390,6 +424,10 @@ input:-ms-input-placeholder {
                 line-height: 75px;
             }
         }
+    }
+
+    .post-content {
+        padding-left: 30px;
     }
 }
 
@@ -435,7 +473,9 @@ footer {
         .font-size-large(.2, 0);
     }
     article {
-        border-bottom: 1px dotted @purple;
+        @media @medium {
+            border-bottom: 1px dotted @purple;
+        }
         .post-date {
             .font-size-default(.7, .3);
         }
@@ -549,23 +589,20 @@ ul.tags {
 // PHONE LAYOUT ADJUSTMENTS //
 //////////////////////////////
 
-@media only screen and (max-width: 767px) {
+@media @medium-only, @small-only {
     header#primary {
         padding-bottom: 0;
         .text-center();
 
         h1 {
-            .font-size-large();
-            margin-top: 0;
-            margin-bottom: 0;
+            .font-size-medium(.5, 0);
         }
 
         nav {
-            margin-top: 0;
+            .font-size-medium(0, .5);
             .text-center();
 
             ul li {
-                .font-size-large();
                 padding-left: 0;
                 padding-right: 16px;
                 display: inline;
@@ -574,6 +611,12 @@ ul.tags {
                     padding-right: 0;
                 }
             }
+        }
+    }
+
+    header#secondary {
+        h1 {
+            .font-size-medium(.5, .5);
         }
     }
 
@@ -603,14 +646,37 @@ ul.tags {
                 line-height: @line-height-default;
             }
         }
+
+        .permalink a {
+            display: inline-block;
+            vertical-align: bottom;
+            margin-bottom: 3px;
+        }
     }
 
     article {
         header {
             border-bottom: 1px dotted @purple;
+            margin-bottom: @line-height-default * .5;
             h1 {
                 .font-size-large(.5, .5);
                 .link-color(@green, @orange);
+            }
+        }
+    }
+
+    .archives {
+        h2 {
+            .font-size-medium(.2, 0);
+        }
+
+        article:last-of-type {
+            border-bottom: 1px dotted @purple;
+        }
+
+        div.row:last-child {
+            article {
+                border: none;
             }
         }
     }
@@ -619,9 +685,9 @@ ul.tags {
 ///////////////////////////////
 // TABLET LAYOUT ADJUSTMENTS //
 ///////////////////////////////
-@media only screen and (max-width: 950px) and (min-width: 767px) {
-    .post-info .post-date .day {
-        font-size: 50px;
-        line-height: 50px;
-    }
-}
+//@media @medium-only {
+//    .post-info .post-date .day {
+//        font-size: 50px;
+//        line-height: 50px;
+//    }
+//}

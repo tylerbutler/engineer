@@ -125,10 +125,9 @@ module.exports = function (grunt) {
 
         jasmine: {
             options: {
-                // version: '2.0.0-rc2',
                 keepRunner: true,
                 host: 'http://localhost:8081/',
-                vendor: ['test/browser/common.js', 'test/browser/less.js'],
+                vendor: ['test/browser/jasmine-jsreporter.js', 'test/browser/common.js', 'test/browser/less.js'],
                 template: 'test/browser/test-runner-template.tmpl'
             },
             main: {
@@ -146,6 +145,14 @@ module.exports = function (grunt) {
                     helpers: 'test/browser/runner-legacy-options.js',
                     specs: 'test/browser/runner-legacy-spec.js',
                     outfile: 'tmp/browser/test-runner-legacy.html'
+                }
+            },
+            strictUnits: {
+                src: ['test/less/strict-units/*.less'],
+                options: {
+                    helpers: 'test/browser/runner-strict-units-options.js',
+                    specs: 'test/browser/runner-strict-units-spec.js',
+                    outfile: 'tmp/browser/test-runner-strict-units.html'
                 }
             },
             errors: {
@@ -226,7 +233,64 @@ module.exports = function (grunt) {
                 options: {
                     helpers: 'test/browser/runner-postProcessor-options.js',
                     specs: 'test/browser/runner-postProcessor.js',
-                    outfile: 'tmp/browser/test-postProcessor.html'
+                    outfile: 'tmp/browser/test-runner-post-processor.html'
+                }
+            }
+        },
+
+        'saucelabs-jasmine': {
+            all: {
+                options: {
+                    urls: ["post-processor", "global-vars", "modify-vars", "production", "rootpath-relative",
+                           "rootpath", "relative-urls", "browser", "no-js-errors", "legacy", "strict-units"
+                    ].map(function(testName) {
+                        return "http://localhost:8081/tmp/browser/test-runner-" + testName + ".html";
+                    }),
+                    testname: 'Sauce Unit Test for less.js',
+                    browsers: [{
+                        browserName: "chrome",
+                        version: '',
+                        platform: 'Windows 8'
+                    },
+                    {
+                        browserName: "firefox",
+                        version: '33',
+                        platform: 'Linux'
+                    },
+                    {
+                        browserName: "iPad",
+                        version: '8.0',
+                        platform: 'OS X 10.9',
+                        'device-orientation': 'portrait'
+                    },
+                    {
+                        browserName: "internet explorer",
+                        version: '8',
+                        platform: 'Windows XP'
+                    },
+                    {
+                        browserName: "internet explorer",
+                        version: '9',
+                        platform: 'Windows 7'
+                    },
+                    {
+                        browserName: "internet explorer",
+                        version: '10',
+                        platform: 'Windows 7'
+                    },
+                    {
+                        browserName: "internet explorer",
+                        version: '11',
+                        platform: 'Windows 8.1'
+                    }],
+                    sauceConfig: {
+                        'record-video': process.env.TRAVIS_BRANCH !== "master",
+                        'record-screenshots': process.env.TRAVIS_BRANCH !== "master",
+                        'idle-timeout': 100, 'max-duration': 120,
+                        build: process.env.TRAVIS_BRANCH === "master" ? process.env.TRAVIS_JOB_ID : undefined,
+                        tags: [process.env.TRAVIS_BUILD_NUMBER, process.env.TRAVIS_PULL_REQUEST, process.env.TRAVIS_BRANCH]
+                    },
+                    throttled: 3
                 }
             }
         },
@@ -234,7 +298,8 @@ module.exports = function (grunt) {
         // Clean the version of less built for the tests
         clean: {
             test: ['test/browser/less.js', 'tmp'],
-            "sourcemap-test": ['test/sourcemaps/*.css', 'test/sourcemaps/*.map']
+            "sourcemap-test": ['test/sourcemaps/*.css', 'test/sourcemaps/*.map'],
+            sauce_log: ["sc_*.log"]
         }
     });
 
@@ -290,13 +355,34 @@ module.exports = function (grunt) {
         'connect::keepalive'
     ]);
 
-    // Run all tests
-    grunt.registerTask('test', [
+    grunt.registerTask('sauce', [
+        'browsertest-lessjs',
+        'jasmine::build',
+        'connect',
+        'sauce-after-setup'
+    ]);
+
+    // setup a web server to run the browser tests in a browser rather than phantom
+    grunt.registerTask('sauce-after-setup', [
+        'saucelabs-jasmine',
+        'clean:sauce_log'
+    ]);
+
+    var testTasks = [
         'clean',
         'jshint',
         'shell:test',
         'browsertest'
-    ]);
+    ];
+
+    if (isNaN(Number(process.env.TRAVIS_PULL_REQUEST, 10)) &&
+        Number(process.env.TRAVIS_NODE_VERSION) === 0.11 &&
+        (process.env.TRAVIS_BRANCH === "master" || process.env.TRAVIS_BRANCH === "sauce")) {
+        testTasks.push("sauce-after-setup");
+    }
+
+    // Run all tests
+    grunt.registerTask('test', testTasks);
 
     // generate a good test environment for testing sourcemaps
     grunt.registerTask('sourcemap-test', [

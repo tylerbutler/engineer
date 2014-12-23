@@ -8,7 +8,7 @@ from engineer.commands.argh_helpers import argh_installed
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 if argh_installed:
-    from argh.decorators import arg, named
+    from argh.decorators import arg, expects_obj, named
     from engineer.commands.argh_helpers import does_not_require_config_file, no_config_file, config_file, verbose
     from engineer.commands.core import Command, ArghCommand
 
@@ -26,6 +26,7 @@ if argh_installed:
 
         @arg('name')
         @arg('-t', '--test', default=False)
+        @expects_obj
         def print_argh(self, args):
             print "Argh is installed! %s! %s" % (args.name, '(test)' if args.test else '')
 
@@ -33,13 +34,13 @@ if argh_installed:
 
     class PrintSettings(ArghCommand):
         @named('ps')
-        @arg('-t', '--test', default=False)
-        def print_settings(self, args):
+        @arg('-t', '--test')
+        def print_settings(self, test=False):
             """Prints the currently loaded Engineer settings."""
             from engineer.conf import settings
 
-            print "test: %s" % args.test
-            print "verbose: %s" % args.verbose
+            print "test: %s" % test
+            print "verbose: %s" % verbose
 
             print settings
 
@@ -106,8 +107,9 @@ if argh_installed:
     #         set_default_command(second_parser, self.print_settings)
 
     class PrintSettingsArghCommand(Command):
-        @named('ps')
+        @named('print_settings')
         @arg('-t', '--test', default=False)
+        @expects_obj
         @config_file
         @verbose
         def print_settings(self, args):
@@ -126,7 +128,7 @@ if argh_installed:
             parser.set_defaults(need_settings=True)
             set_default_command(parser, self.print_settings)
 
-    # noinspection PyShadowingBuiltins,PyUnusedLocal,PyUnresolvedReferences
+    # noinspection PyShadowingBuiltins,PyUnusedLocal,PyUnresolvedReferences,PyAbstractClass
     class ArghSamplePlugin3(Command):
         from argh.decorators import arg, expects_obj, named
 

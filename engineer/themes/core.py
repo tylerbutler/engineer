@@ -209,7 +209,7 @@ class ThemeManager(object):
     global_bundles = {
         'jquery': Bundle('jquery-1.11.0.min.js',
                          output='jquery.%(version)s.js'),
-        'less': Bundle('less-1.7.0.min.js',
+        'less': Bundle('less-2.1.0.min.js',
                        output='less.%(version)s.js'),
         'modernizr': Bundle('modernizr-2.7.1.min.js',
                             output='modernizr.%(version)s.js'),

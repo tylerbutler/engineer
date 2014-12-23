@@ -74,6 +74,8 @@ class _CommandMixin(PluginMixin):
 
             handler_function = my_function
 
+        The built-in Engineer commands all use this approach. You can see the source for those classes in the
+        :mod:`engineer.commands.bundled` module.
         """
         raise NotImplementedError()
 
@@ -114,7 +116,7 @@ common_parser = argparse.ArgumentParser(add_help=False,
                                         parents=[_verbose_parser, _settings_parser])
 
 
-# noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins,PyAbstractClass
 class _ArgparseMixin(_CommandMixin):
     _name = None
     _help = None
@@ -141,7 +143,7 @@ class _ArgparseMixin(_CommandMixin):
 
     @property
     def need_settings(self):
-        """Set to False if the command does not require an Engineer config file."""
+        """Defaults to True. Set to False if the command does not require an Engineer config file."""
         return self._need_settings
 
     @need_settings.setter
@@ -150,7 +152,10 @@ class _ArgparseMixin(_CommandMixin):
 
     @property
     def need_verbose(self):
-        """Set to False if the command does not support the standard Engineer :option:`verbose<engineer -v>` option."""
+        """
+        Defaults to True. Set to False if the command does not support the standard Engineer
+        :option:`verbose<engineer -v>` option.
+        """
         return self._need_verbose
 
     @need_verbose.setter
@@ -187,7 +192,13 @@ class _ArgparseMixin(_CommandMixin):
         self.parser.set_defaults(need_settings=self.need_settings)
 
 
+# noinspection PyAbstractClass
 class ArgparseCommand(_ArgparseMixin):
+    """
+    Serves as a base class for simple argparse-based commands. All built-in Engineer commands, such as
+    :ref:`engineer clean`, are examples of this type of command. See the source for the classes in the
+    :mod:`engineer.commands.bundled` module for a specific example.
+    """
     __metaclass__ = CommandMount
 
     def add_arguments(self):
@@ -197,9 +208,10 @@ class ArgparseCommand(_ArgparseMixin):
 if argh_installed:
     class ArghCommand(_ArgparseMixin):
         """
-        The ``@verbose`` and ``@settings`` decorators should not be used in subclasses. Use the
-        :attr:`~engineer.commands.core.ArgparseCommand.need_verbose` and
-        :attr:`~engineer.commands.core.ArgparseCommand.need_settings` attributes in subclasses instead.
+        ..  warning::
+            The ``@verbose`` and ``@settings`` decorators should not be used in subclasses. Use the
+            :attr:`~engineer.commands.core.ArgparseCommand.need_verbose` and
+            :attr:`~engineer.commands.core.ArgparseCommand.need_settings` attributes in subclasses instead.
         """
         __metaclass__ = CommandMount
 
@@ -212,6 +224,7 @@ if argh_installed:
                 set_default_command(self.parser, self.handler_function)
 
 
+# noinspection PyAbstractClass
 class Command(_CommandMixin):
     """
     The most barebones command plugin base class. You should use :class:`~engineer.commands.core.ArgparseCommand`

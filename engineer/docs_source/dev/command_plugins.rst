@@ -65,7 +65,8 @@ away by various subclasses.
 
 .. tip::
    It is easiest to model each of your commands as a single independent class wherever possible. In many cases,
-   this will be straightforward. If, however, you want to add a more complicated
+   this will be straightforward. If, however, you want to add a more complicated command, or a command with
+   subcommands and argh, you can do this. See the examples below.
 
 
 Argparse-based Plugins

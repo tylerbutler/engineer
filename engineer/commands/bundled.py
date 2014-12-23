@@ -25,7 +25,12 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 # noinspection PyShadowingBuiltins
 class BuildCommand(ArgparseCommand):
-    """Builds an Engineer site."""
+    """
+    Builds an Engineer site.
+
+    ..  seealso::
+        :ref:`engineer build`
+    """
     
     name = 'build'
     help = 'Build the site.'
@@ -35,7 +40,8 @@ class BuildCommand(ArgparseCommand):
                                  dest='clean',
                                  action='store_true',
                                  help="Clean the output directory and clear all the caches before building.")
-        self.parser.set_defaults(handle=self.build)
+        # An alternative to setting handler_function = build
+        # self.parser.set_defaults(handle=self.build)
 
     # noinspection PyShadowingBuiltins
     def build(self, args=None):
@@ -334,10 +340,17 @@ class BuildCommand(ArgparseCommand):
         settings.CACHE.close()
         return build_stats
 
+    handler_function = build
+
 
 # noinspection PyShadowingBuiltins
 class CleanCommand(ArgparseCommand):
-    """Cleans an Engineer site's output directory and clears all caches."""
+    """
+    Cleans an Engineer site's output directory and clears all caches.
+
+    ..  seealso::
+        :ref:`engineer clean`
+    """
 
     name = 'clean'
     help = "Clean the output directory and clear all caches."
@@ -401,7 +414,12 @@ class CleanCommand(ArgparseCommand):
 
 # noinspection PyShadowingBuiltins
 class ServeCommand(ArgparseCommand):
-    """Serves an Engineer site using a built-in development server."""
+    """
+    Serves an Engineer site using a built-in development server.
+
+    ..  seealso::
+        :ref:`engineer serve`
+    """
 
     name = 'serve'
     help = "Start the development server."
@@ -428,7 +446,7 @@ class ServeCommand(ArgparseCommand):
         debug_server = bottle.Bottle()
         debug_server.mount('/_emma', emma.Emma().app)
 
-        #noinspection PyUnresolvedReferences,PyUnusedLocal
+        # noinspection PyUnresolvedReferences,PyUnusedLocal
         @debug_server.route('/')
         @debug_server.route('/<filepath:path>')
         def serve_static(filepath='index.html'):
@@ -451,7 +469,12 @@ class ServeCommand(ArgparseCommand):
 
 # noinspection PyShadowingBuiltins
 class InitCommand(ArgparseCommand):
-    """Initializes a new engineer site in the current directory."""
+    """
+    Initializes a new engineer site in the current directory.
+
+    ..  seealso::
+        :ref:`engineer init`
+    """
 
     name = 'init'
     help = "Initialize the current directory as an engineer site."

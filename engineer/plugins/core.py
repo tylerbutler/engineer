@@ -18,7 +18,7 @@ def find_plugins(entrypoint):
         yield entrypoint.name, entrypoint.load()
 
 
-#noinspection PyUnresolvedReferences,PyUnusedLocal
+# noinspection PyUnresolvedReferences,PyUnusedLocal
 def load_plugins():
     """Load all plugins."""
 
@@ -35,7 +35,7 @@ def get_all_plugin_types():
     return ThemeProvider, PostProcessor, JinjaEnvironmentPlugin
 
 
-#noinspection PyMissingConstructor,PyUnusedLocal
+# noinspection PyMissingConstructor,PyUnusedLocal
 class PluginMount(type):
     """A metaclass used to identify :ref:`plugins`."""
 

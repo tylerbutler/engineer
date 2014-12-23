@@ -1,5 +1,6 @@
 -r requirements_docs.txt
 
+tox
 nose
 testfixtures
 clint

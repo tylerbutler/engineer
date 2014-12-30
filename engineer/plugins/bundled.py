@@ -11,6 +11,7 @@ from typogrify.templatetags.jinja_filters import register
 from engineer.enums import Status
 from engineer.filters import compress, format_datetime, img, localtime, markdown_filter, \
     naturaltime, typogrify_no_widont
+from engineer.log import log_object
 from engineer.plugins.core import PostProcessor, JinjaEnvironmentPlugin
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
@@ -112,7 +113,7 @@ class FinalizationPlugin(PostProcessor):
                 logger.debug("No metadata finalization needed for post '%s'" % post)
         return post
 
-    #noinspection PyProtectedMember
+    # noinspection PyProtectedMember
     @classmethod
     def need_update(cls, post, new_post_content):
         from engineer.models import Post
@@ -223,7 +224,7 @@ class PostRenamerPlugin(PostProcessor):
             plugin_config = cls.default_config.copy()
             plugin_config.update(custom_config)
 
-        logger.debug("Setting the %s setting to %s." % (cls.config_setting_name, plugin_config))
+        logger.debug("Setting the %s setting to %s." % (cls.config_setting_name, log_object(plugin_config)))
         setattr(settings, cls.config_setting_name, plugin_config)
         return config_dict
 

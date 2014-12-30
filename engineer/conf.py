@@ -1,9 +1,9 @@
 # coding=utf-8
+from datetime import datetime
 from inspect import isfunction
 import logging
 import platform
 import shelve
-from datetime import datetime
 
 from appdirs import user_cache_dir, user_data_dir
 from dateutil import zoneinfo
@@ -17,7 +17,7 @@ from path import path
 from brownie.caching import cached_property
 
 from engineer.cache import SimpleFileCache
-from engineer.log import CustomLogger
+from engineer.log import CustomLogger, log_object
 from engineer.plugins import get_all_plugin_types, JinjaEnvironmentPlugin
 from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive, make_precompiled_reference
 from engineer import version
@@ -214,7 +214,7 @@ class EngineerConfiguration(object):
         self.COMPRESSOR_ENABLED = config.pop('COMPRESSOR_ENABLED', True)
         self.COMPRESSOR_FILE_EXTENSIONS = config.pop('COMPRESSOR_FILE_EXTENSIONS', ['js', 'css'])
         self.PREPROCESS_LESS = config.pop('PREPROCESS_LESS', True)
-        if not 'LESS_PREPROCESSOR' in config:
+        if 'LESS_PREPROCESSOR' not in config:
             if platform.system() == 'Windows':
                 self.LESS_PREPROCESSOR = str(self.ENGINEER.ROOT_DIR /
                                              'lib/less.js-windows/lessc.cmd')
@@ -293,7 +293,8 @@ class EngineerConfiguration(object):
         for plugin_type in get_all_plugin_types():
             for plugin in plugin_type.plugins:
                 if hasattr(plugin, 'handle_settings'):
-                    logger.debug("Calling handle_settings on plugin: %s. config dict is: %s" % (plugin, config))
+                    logger.debug("Calling handle_settings on plugin: %s.\nconfig dict is: %s\n" % (plugin.__name__,
+                                                                                                   log_object(config)))
                     config = plugin.handle_settings(config, self)
 
         # Pull any remaining settings in the config and set them as attributes on the settings object

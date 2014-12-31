@@ -19,7 +19,7 @@ if argh_installed:
 
     config_file = arg('-s', '--config', '--settings',
                       dest='config_file',
-                      default=None,
+                      default='config.yaml',
                       help="Specify a configuration file to use.")
 
     verbose = arg('-v', '--verbose',
@@ -35,5 +35,5 @@ if argh_installed:
         return wrapper
 
     def does_not_require_config_file(func):
-        return func not in _no_config_file_registry
+        return func in _no_config_file_registry
 

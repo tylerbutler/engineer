@@ -44,7 +44,8 @@ class BuildCommand(ArgparseCommand):
         # self.parser.set_defaults(handle=self.build)
 
     # noinspection PyShadowingBuiltins
-    def build(self, args=None):
+    @classmethod
+    def build(cls, args=None):
         from engineer.conf import settings
         from engineer.filters import naturaltime
         from engineer.loaders import LocalLoader
@@ -58,7 +59,7 @@ class BuildCommand(ArgparseCommand):
 
         settings.create_required_directories()
 
-        logger = self.get_logger()
+        logger = cls.get_logger()
         logger.parent.addHandler(get_file_handler(settings.LOG_FILE))
 
         logger.debug("Starting build using configuration file %s." % settings.SETTINGS_FILE)
@@ -338,7 +339,7 @@ class BuildCommand(ArgparseCommand):
         with open(settings.BUILD_STATS_FILE, mode='wb') as the_file:
             pickle.dump(build_stats, the_file)
         settings.CACHE.close()
-        return build_stats
+        return have_changes, build_stats
 
     handler_function = build
 

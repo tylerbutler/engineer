@@ -192,6 +192,12 @@ class Post(object):
         return self._content_raw
 
     @property
+    def description(self):
+        regex = re.compile(r'^.*?<p>(?P<para>.*?)</p>.*?', re.DOTALL)
+        matches = re.match(regex, self.content)
+        return matches.group('para')
+
+    @property
     def is_draft(self):
         """``True`` if the post is a draft, ``False`` otherwise."""
         return self.status == Status.draft

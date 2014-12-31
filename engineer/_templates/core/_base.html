@@ -11,6 +11,17 @@
     <!-- Set the viewport width to device width for mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    {% block meta_tags %}
+        <!-- Facebook meta tags -->
+        <meta property="og:site_name" content="{{ settings.SITE_TITLE }}" />
+        {% if nav_context == 'post' %}
+            <meta property="og:type" content="article" />
+            <meta property="og:url" content="{{ post.absolute_url }}" />
+            <meta property="og:title" content="{{ post.title }}" />
+            <meta property="og:description" content="{{ post.description }}" />
+        {% endif %}
+    {% endblock %}
+
     <title>{% block site_title %}{{ settings.SITE_TITLE }}{% endblock %}</title>
 
     {% if meta_author %}

@@ -29,13 +29,13 @@
                     {% endfor %}
                 </ul>
             {% endif %}
-            {% if not listpage %}
-                <div class="sharing">
-                    {% if theme.sharing.twitter_enabled %}
+            {% if not listpage and theme.sharing.enabled %}
+                <div class="sharing hide-for-small-only">
+                    {% if theme.sharing.twitter.enabled %}
                         {% include ['_twitter_share.html', 'theme/_twitter_share.html'] ignore missing with context %}
                     {% endif %}
 
-                    {% if theme.sharing.facebook_enabled and theme.sharing.facebook_app_id %}
+                    {% if theme.sharing.facebook.enabled and theme.sharing.facebook.app_id %}
                         {% include ['_facebook_share.html', 'theme/_facebook_share.html'] ignore missing with context %}
                     {% endif %}
                 </div>

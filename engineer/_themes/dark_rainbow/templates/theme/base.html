@@ -78,18 +78,20 @@
 {% endblock -%}
 
 {%- block body %}
-    {% if theme.sharing.facebook_enabled and theme.sharing.facebook_app_id %}
-        <div id="fb-root"></div>
-        <script>(function(d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) {
-                return;
-            }
-            js = d.createElement(s);
-            js.id = id;
-            js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId={{ theme.sharing.facebook_app_id }}&version=v2.0";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));</script>
+    {% if theme.sharing.enabled %}
+        {% if theme.sharing.facebook.enabled and theme.sharing.facebook.app_id %}
+            <div id="fb-root"></div>
+            <script>(function(d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) {
+                    return;
+                }
+                js = d.createElement(s);
+                js.id = id;
+                js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId={{ theme.sharing.facebook.app_id }}&version=v2.0";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));</script>
+        {% endif %}
     {% endif %}
     <div class="container">
         {%- block header_primary %}

@@ -19,7 +19,10 @@ settings:
   simple_search: yes
   enable_bigfoot: no
   sharing:
-    facebook_app_id: ~
-    facebook_enabled: yes
-    twitter_enabled: no
-    twitter_username: ~
+    enabled: no
+    facebook:
+      enabled: no
+      app_id: ~
+    twitter:
+      enabled: no
+      username: ~

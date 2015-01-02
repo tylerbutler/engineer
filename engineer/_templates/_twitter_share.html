@@ -1,8 +1,9 @@
 <div>
     <a href="https://twitter.com/share" class="twitter-share-button"
-            {% if theme.sharing.twitter_username %}
-       data-via="{{ theme.sharing.twitter_username }}"
-       data-related="{{ theme.sharing.twitter_username }}"
+       data-text="{{ post.title }}"
+            {% if theme.sharing.twitter.username %}
+       data-via="{{ theme.sharing.twitter.username }}"
+       data-related="{{ theme.sharing.twitter.username }}"
             {% endif %}
        data-url="{{ post.absolute_url }}"
        data-count="none"

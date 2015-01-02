@@ -69,7 +69,7 @@ class FinalizationPlugin(PostProcessor):
                 for metadata_attribute, statuses in config_dict['FINALIZE_METADATA_CONFIG'].iteritems():
                     cls._finalize_map_defaults[metadata_attribute] = [Status(s) for s in statuses]
             del config_dict['FINALIZE_METADATA_CONFIG']
-        settings.FINALIZE_METADATA = cls._finalize_map_defaults
+        settings.FINALIZE_METADATA_CONFIG = cls._finalize_map_defaults
 
         settings.METADATA_FORMAT = config_dict.pop('METADATA_FORMAT', 'input')
         if settings.METADATA_FORMAT not in\
@@ -165,9 +165,9 @@ class FinalizationPlugin(PostProcessor):
             ('tags', post.tags),
         ]
 
-        # The complete set of metadata that should be written is the union of the FINALIZE_METADATA setting and the
-        # set of metadata that was in the file originally.
-        metadata_to_finalize = set([m for m, s in settings.FINALIZE_METADATA.iteritems() if post.status in s])
+        # The complete set of metadata that should be written is the union of the FINALIZE_METADATA_CONFIG setting and
+        # the set of metadata that was in the file originally.
+        metadata_to_finalize = set([m for m, s in settings.FINALIZE_METADATA_CONFIG.iteritems() if post.status in s])
         metadata_to_finalize.update(post.metadata_original)
 
         if 'title' in metadata_to_finalize:

@@ -18,3 +18,8 @@ settings:
   comments_account: ~
   simple_search: yes
   enable_bigfoot: no
+  sharing:
+    facebook_app_id: ~
+    facebook_enabled: yes
+    twitter_enabled: no
+    twitter_username: ~

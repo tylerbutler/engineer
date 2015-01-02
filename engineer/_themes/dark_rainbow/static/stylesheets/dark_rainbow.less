@@ -3,6 +3,7 @@
 @import (reference) "_colors.less";
 @import (reference) "_typography.less";
 @import "../../../_shared/code_styles/_solarized.less";
+@import "../../../_shared/less/_twitter.less";
 
 .replace_me {
     background-color: yellow;
@@ -403,11 +404,11 @@ input:-ms-input-placeholder {
 // POSTS
 @media @medium {
     .post-info {
-        font-family: museo-slab;
-        text-align: center;
+        font-family: museo-slab, sans-serif;
 
         .post-date {
             .font-size-default(1, 0);
+            text-align: center;
             text-transform: uppercase;
             @calendar-border: 1px dotted @purple;
             border-bottom: @calendar-border;
@@ -417,12 +418,30 @@ input:-ms-input-placeholder {
             }
 
             .day {
-                font-family: kulturista-web, museo-sans, deva-ideal, obliqua;
+                font-family: kulturista-web, museo-sans, deva-ideal, obliqua, sans-serif;
                 font-style: normal;
                 font-weight: 700;
                 font-size: 72px;
                 line-height: 75px;
             }
+        }
+    }
+
+    .sharing {
+        padding-top: 15px;
+        border-top: 1px dotted @purple;
+
+        div {
+            display: inline;
+
+            &:not(:last-child) {
+                margin-right: 7px;
+            }
+        }
+
+        .fb-share-button {
+            position: relative;
+            top: -7px;
         }
     }
 
@@ -534,7 +553,7 @@ div.row.archives {
 
 ul.tags {
     margin: 0;
-    padding: 0;
+    padding: 2px 0 5px;
     list-style: none;
     text-align: left;
     overflow: hidden;

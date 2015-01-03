@@ -257,7 +257,7 @@ class GlobalLinksTests(PostTestCase):
         expected_content = """
 <p><a href="http://tylerbutler.com">Tyler Butler</a> is the author of&nbsp;Engineer.</p>
 <p>He does not like to be called <a href="http://tylerbutler.com">Ty</a>.</p>
-        """
+        """.replace('\r\n', '\n')
 
-        actual_content = unicode(post.convert_to_html(post.content_preprocessed))
+        actual_content = unicode(Post.convert_post_to_html(post)).replace('\r\n', '\n')
         self.assertEqual(actual_content.strip(), expected_content.strip())

@@ -12,7 +12,7 @@ from engineer.enums import Status
 from engineer.filters import compress, format_datetime, img, localtime, markdown_filter, \
     naturaltime, typogrify_no_widont
 from engineer.log import log_object
-from engineer.plugins.core import PostProcessor, JinjaEnvironmentPlugin
+from engineer.plugins.core import PostProcessor, JinjaEnvironmentPlugin, PostRenderer
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -39,7 +39,7 @@ class PostBreaksProcessor(PostProcessor):
         # Convert the full post to HTML, then use the regex again to split the resulting HTML post. This is needed
         # since Markdown might have links in the first half of the post that are listed at the bottom. By converting
         # the whole post to HTML first then splitting we get a correctly processed HTML teaser.
-        parsed_content = re.match(cls._regex, Post.convert_to_html(post.content_preprocessed))
+        parsed_content = re.match(cls._regex, Post.convert_post_to_html(post))
         post.content_teaser = parsed_content.group('teaser_content')
         return post
 
@@ -72,8 +72,9 @@ class FinalizationPlugin(PostProcessor):
         settings.FINALIZE_METADATA_CONFIG = cls._finalize_map_defaults
 
         settings.METADATA_FORMAT = config_dict.pop('METADATA_FORMAT', 'input')
-        if settings.METADATA_FORMAT not in\
-           {cls._default_metadata_format}.union(cls._fenced_metadata_formats).union(cls._unfenced_metadata_formats):
+        if settings.METADATA_FORMAT not in \
+                {cls._default_metadata_format}.union(cls._fenced_metadata_formats).union(
+                        cls._unfenced_metadata_formats):
             logger.warning("'%s' is not a valid METADATA_FORMAT setting. Defaulting to '%s'.",
                            settings.METADATA_FORMAT, cls._default_metadata_format)
             settings.METADATA_FORMAT = cls._default_metadata_format
@@ -148,7 +149,7 @@ class FinalizationPlugin(PostProcessor):
 
         # A hack to guarantee the YAML output is in a sensible order.
         # The order, assuming all metadata should be written, should be:
-        #        title
+        # title
         #        status
         #        timestamp
         #        link
@@ -300,7 +301,7 @@ class GlobalLinksPlugin(PostProcessor):
                 cls.error_displayed = True
             return
 
-        post.content_preprocessed += abbreviations
+        post.content_preprocessed += ("\n" + abbreviations)
         return post, metadata
 
 
@@ -392,3 +393,16 @@ class BundledFilters(JinjaEnvironmentPlugin):
         logger = cls.get_logger()
         register(jinja_env)  # register typogrify filters
         logger.debug("Registered typogrify filters.")
+
+
+class PythonMarkdownRenderer(PostRenderer):
+    supported_input_formats = ('.markdown', '.md', '.mdown')
+    supported_output_formats = ('.html',)
+
+    def render(self, content, input_format, output_format='.html'):
+        import markdown
+
+        self.validate(input_format, output_format)
+
+        return markdown.markdown(content, extensions=['extra', 'codehilite'])
+

@@ -5,7 +5,6 @@ from codecs import open
 from copy import copy
 
 import arrow
-import markdown
 import yaml
 from brownie.caching import cached_property
 from dateutil import parser
@@ -18,11 +17,12 @@ from engineer.conf import settings
 from engineer.enums import Status
 from engineer.exceptions import PostMetadataError
 from engineer.filters import localtime
-from engineer.plugins import PostProcessor
+from engineer.plugins import PostProcessor, PostRenderer
 from engineer.util import setonce, slugify, chunk, urljoin, wrap_list
 
 
 try:
+    # noinspection PyPep8Naming
     import cPickle as pickle
 except ImportError:
     import pickle
@@ -47,9 +47,13 @@ class Post(object):
     _content_raw = setonce()
     _file_contents_raw = setonce()
 
+    # @staticmethod
+    # def convert_to_html(content, renderer):
+    #     return typogrify(renderer.render(content))
+
     @staticmethod
-    def convert_to_html(content):
-        return typogrify(markdown.markdown(content, extensions=['extra', 'codehilite']))
+    def convert_post_to_html(post):
+        return typogrify(post.content_renderer.render(post.content_preprocessed, post.format))
 
     def __init__(self, source):
         self.source = path(source).abspath()
@@ -71,6 +75,7 @@ class Post(object):
 
         self._content_finalized = self.content_raw
 
+        # noinspection PyUnresolvedReferences
         # Handle any preprocessor plugins
         for plugin in PostProcessor.plugins:
             plugin.preprocess(self, metadata)
@@ -119,7 +124,7 @@ class Post(object):
 
         self.timestamp = temp_timestamp.to('utc')
 
-        self.content = Post.convert_to_html(self.content_preprocessed)
+        self.content = Post.convert_post_to_html(self)
         """The post's content in HTML format."""
 
         # determine the URL based on the HOME_URL and the PERMALINK_STYLE settings
@@ -145,6 +150,7 @@ class Post(object):
         self.custom_properties = copy(metadata)
         """A dict of any custom metadata properties specified in the post."""
 
+        # noinspection PyUnresolvedReferences
         # handle any postprocessor plugins
         for plugin in PostProcessor.plugins:
             plugin.postprocess(self)
@@ -191,11 +197,19 @@ class Post(object):
     def content_raw(self):
         return self._content_raw
 
+    @cached_property
+    def content_renderer(self):
+        return PostRenderer.get_all_post_extensions()[self.format]()
+
     @property
     def description(self):
         regex = re.compile(r'^.*?<p>(?P<para>.*?)</p>.*?', re.DOTALL)
         matches = re.match(regex, self.content)
         return matches.group('para')
+
+    @property
+    def format(self):
+        return self.source.ext
 
     @property
     def is_draft(self):
@@ -321,7 +335,7 @@ class Post(object):
 class PostCollection(list):
     """A collection of :class:`Posts <engineer.models.Post>`."""
 
-    #noinspection PyTypeChecker
+    # noinspection PyTypeChecker
     def __init__(self, seq=()):
         list.__init__(self, seq)
         self.listpage_template = settings.JINJA_ENV.get_template('theme/post_list.html')

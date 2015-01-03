@@ -6,14 +6,14 @@ from path import path
 from engineer.conf import settings
 from engineer.exceptions import PostMetadataError
 from engineer.models import Post, PostCollection
-
+from engineer.plugins import PostRenderer
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 logger = logging.getLogger(__name__)
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 class LocalLoader(object):
     @staticmethod
     def load_all(input):
@@ -33,11 +33,10 @@ class LocalLoader(object):
         for directory, should_walk in directories.iteritems():
             if directory.exists():
                 logger.info("Getting posts from %s." % directory)
-                if should_walk:
-                    file_list.extend([f for f in directory.walkfiles('*.md')] +
-                                     [f for f in directory.files('*.markdown')])
-                else:
-                    file_list.extend(directory.files('*.md') + directory.files('*.markdown'))
+                walk = directory.walkfiles if should_walk else directory.files
+
+                for ext in PostRenderer.get_all_post_extensions():
+                    file_list.extend([f for f in walk('*%s' % ext)])
             else:
                 logger.warning("Can't find source post directory %s." % directory)
 

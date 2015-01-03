@@ -10,9 +10,9 @@ import re
 from itertools import chain, islice
 import urlparse
 
-#noinspection PyUnresolvedReferences
+# noinspection PyUnresolvedReferences
 import translitcodec
-#noinspection PyPackageRequirements
+# noinspection PyPackageRequirements
 from path import path
 
 
@@ -44,8 +44,14 @@ def get_class(class_string):
     return m
 
 
+def get_class_string(obj):
+    mod = obj.__module__
+    cls = obj.__name__
+    return '.'.join((mod, cls))
+
+
 def count_iterable(i):
-    #noinspection PyUnusedLocal
+    # noinspection PyUnusedLocal
     return sum(1 for e in i)
 
 
@@ -163,7 +169,7 @@ def mirror_folder(source, target, delete_orphans=True, recurse=True, ignore_list
                 if len(fullpath.listdir()) > 0:
                     report['deleted'].update(expand_tree(fullpath))
 
-                #noinspection PyArgumentList
+                # noinspection PyArgumentList
                 fullpath.rmtree()
             elif fullpath.isfile():
                 logger.debug(
@@ -332,7 +338,7 @@ class setonce(object):
         self._name = '_setonce_attr_%s' % self._count
         self.__doc__ = doc
 
-    #noinspection PyUnusedLocal
+    # noinspection PyUnusedLocal
     def __get__(self, obj, obj_type=None):
         if obj is None:
             return self

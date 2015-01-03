@@ -1,6 +1,10 @@
 # coding=utf-8
 import logging
 
+from brownie.caching import memoize
+from engineer.exceptions import UnsupportedPostFormat
+from engineer.util import get_class_string
+
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 # Adapted from Marty Alchin: http://martyalchin.com/2008/jan/10/simple-plugin-framework/
@@ -32,7 +36,7 @@ def load_plugins():
 
 
 def get_all_plugin_types():
-    return ThemeProvider, PostProcessor, JinjaEnvironmentPlugin
+    return ThemeProvider, PostProcessor, JinjaEnvironmentPlugin, PostRenderer
 
 
 # noinspection PyMissingConstructor,PyUnusedLocal
@@ -312,3 +316,45 @@ class JinjaEnvironmentPlugin(PluginMixin):
         returns :attr:`~engineer.plugins.JinjaEnvironmentPlugin.globals`.
         """
         return cls.globals
+
+
+class PostRenderer(PluginMixin):
+    """
+    Base class for PostRenderer :ref:`plugins`.
+
+    .. versionadded:: 0.6.0
+    """
+    __metaclass__ = PluginMount
+
+    supported_input_formats = ()
+    supported_output_formats = ()
+
+    def render(self, content, input_format, output_format):
+        raise NotImplementedError
+
+    def render_post(self, post):
+        return self.render(post.content_preprocessed, input_format=post.format, output_format='.html')
+
+    def validate(self, input_format, output_format):
+        if input_format not in self.supported_input_formats:
+            raise UnsupportedPostFormat(input_format, self.supported_input_formats, self.__class__)
+
+        if output_format not in self.supported_output_formats:
+            raise UnsupportedPostFormat(output_format, self.supported_output_formats, self.__class__)
+
+    # noinspection PyUnresolvedReferences
+    @staticmethod
+    @memoize
+    def get_all_post_extensions():
+        logger = PostRenderer.get_logger()
+        extensions = dict()
+        for plugin in PostRenderer.plugins:
+            for ext in plugin.supported_input_formats:
+                if ext in extensions:
+                    logger.warning("Multiple renderers for input format '%s'. Picked: %s" % (ext,
+                                                                                             get_class_string(
+                                                                                                 extensions[ext])))
+                    pass
+                else:
+                    extensions[ext] = plugin
+        return extensions

@@ -16,7 +16,7 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 logger = getLogger('engineer.finders')
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 class BaseFinder(object):
     @classmethod
     def get_from_directory(cls, directory):
@@ -64,7 +64,7 @@ class SiteFinder(BaseFinder):
             return []
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 class ThemeDirsFinder(BaseFinder):
     """
     Loads themes from the directories specified in :attr:`~engineer.conf.EngineerConfiguration.THEME_DIRS`.
@@ -91,6 +91,7 @@ class PluginFinder(BaseFinder):
     .. versionadded:: 0.2.4
     """
 
+    # noinspection PyUnresolvedReferences
     @classmethod
     def get_themes(cls):
         themes = []

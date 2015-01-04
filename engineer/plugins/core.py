@@ -1,8 +1,9 @@
 # coding=utf-8
 import logging
 
-from brownie.caching import memoize
+from brownie.caching import memoize, cached_property
 from engineer.exceptions import UnsupportedPostFormat
+from engineer.log import log_object
 from engineer.util import get_class_string
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
@@ -329,6 +330,10 @@ class PostRenderer(PluginMixin):
     supported_input_formats = ()
     supported_output_formats = ()
 
+    @cached_property
+    def supported_extensions_dict(self):
+        return dict([(ext, self.__class__) for ext in self.supported_input_formats])
+
     def render(self, content, input_format, output_format):
         raise NotImplementedError
 
@@ -345,16 +350,26 @@ class PostRenderer(PluginMixin):
     # noinspection PyUnresolvedReferences
     @staticmethod
     @memoize
-    def get_all_post_extensions():
+    def get_all_supported_post_formats():
+        from engineer.conf import settings
+
         logger = PostRenderer.get_logger()
-        extensions = dict()
+        extensions = []
         for plugin in PostRenderer.plugins:
             for ext in plugin.supported_input_formats:
-                if ext in extensions:
-                    logger.warning("Multiple renderers for input format '%s'. Picked: %s" % (ext,
-                                                                                             get_class_string(
-                                                                                                 extensions[ext])))
-                    pass
-                else:
-                    extensions[ext] = plugin
-        return extensions
+                extensions.append((ext, get_class_string(plugin)))
+
+        d = dict()
+        for ext, cls in extensions:
+            if ext not in d:
+                d[ext] = [cls]
+            else:
+                d[ext].append(cls)
+
+        for ext in d:
+            logger.warn("Multiple PostRenderers available for '%s': %s"
+                        "\n(Configured to use %s)" % (ext,
+                                                      log_object(d[ext]),
+                                                      get_class_string(settings.POST_RENDERER_CONFIG[ext])))
+
+        return d.keys()

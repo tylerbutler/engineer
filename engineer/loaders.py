@@ -35,7 +35,7 @@ class LocalLoader(object):
                 logger.info("Getting posts from %s." % directory)
                 walk = directory.walkfiles if should_walk else directory.files
 
-                for ext in PostRenderer.get_all_post_extensions():
+                for ext in PostRenderer.get_all_supported_post_formats():
                     file_list.extend([f for f in walk('*%s' % ext)])
             else:
                 logger.warning("Can't find source post directory %s." % directory)

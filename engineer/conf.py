@@ -18,8 +18,9 @@ from brownie.caching import cached_property
 
 from engineer.cache import SimpleFileCache
 from engineer.log import CustomLogger, log_object
-from engineer.plugins import get_all_plugin_types, JinjaEnvironmentPlugin
-from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive, make_precompiled_reference
+from engineer.plugins import get_all_plugin_types, JinjaEnvironmentPlugin, PythonMarkdownRenderer
+from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive, make_precompiled_reference, \
+    get_class
 from engineer import version
 
 
@@ -198,6 +199,13 @@ class EngineerConfiguration(object):
         if self.PLUGINS is not None:
             for plugin in self.PLUGINS:
                 __import__(plugin)
+
+        default_renderer = PythonMarkdownRenderer()
+        final_config = default_renderer.supported_extensions_dict
+        settings_renderer_config = config.pop('POST_RENDERER_CONFIG', {})
+        settings_renderer_config = dict([(k, get_class(v)) for k, v in settings_renderer_config.iteritems()])
+        final_config.update(settings_renderer_config)
+        self.POST_RENDERER_CONFIG = final_config
 
         # THEMES
         self.THEME_DIRS = self.normalize_list(config.pop('THEME_DIRS', None))

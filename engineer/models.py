@@ -199,7 +199,7 @@ class Post(object):
 
     @cached_property
     def content_renderer(self):
-        return PostRenderer.get_all_post_extensions()[self.format]()
+        return settings.POST_RENDERER_CONFIG[self.format]()
 
     @property
     def description(self):

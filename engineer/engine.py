@@ -5,6 +5,7 @@ import os
 import sys
 import time
 
+import arrow
 from path import path
 
 from engineer.commands import all_commands, common_parser
@@ -25,7 +26,11 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 def get_argparser():
     # from engineer.commands.argh import PrintArghCommand
-    desc = "Engineer static site builder. [v%s, %s %s]" % (version, version.date, time.strftime('%X', version.time))
+    desc = "Engineer static site builder. [v%s, %s %s]" % (version,
+                                                           version.date,
+                                                           time.strftime('%X',
+                                                                         arrow.get(version.datetime).to(
+                                                                             'local').timetuple()))
     top_level_parser = argparse.ArgumentParser(prog='engineer',
                                                description=desc,
                                                formatter_class=argparse.RawDescriptionHelpFormatter)

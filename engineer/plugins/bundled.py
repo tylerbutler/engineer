@@ -150,20 +150,27 @@ class FinalizationPlugin(PostProcessor):
         # A hack to guarantee the YAML output is in a sensible order.
         # The order, assuming all metadata should be written, should be:
         # title
-        #        status
-        #        timestamp
-        #        link
-        #        via
-        #        via-link
-        #        slug
-        #        tags
-        #        url
+        # status
+        # timestamp
+        # link
+        # via
+        # via-link
+        # slug
+        # tags
+        # updated
+        # template
+        # content-template
+        # url
         d = [
             ('status', post.status.name),
             ('link', post.link),
             ('via', post.via),
             ('via-link', post.via_link),
             ('tags', post.tags),
+            ('updated', post.updated_local.strftime(settings.TIME_FORMAT) if post.updated is not None else None),
+            ('template', post.template if post.template != 'theme/post_detail.html' else None),
+            ('content-template',
+             post.content_template if post.content_template != 'theme/_content_default.html' else None),
         ]
 
         # The complete set of metadata that should be written is the union of the FINALIZE_METADATA_CONFIG setting and
@@ -176,7 +183,7 @@ class FinalizationPlugin(PostProcessor):
             d.insert(0, ('title', post.title))
         if 'slug' in metadata_to_finalize:
             # insert right before tags
-            d.insert(-1, ('slug', post.slug))
+            d.insert(d.index(('tags', post.tags)), ('slug', post.slug))
         if 'timestamp' in metadata_to_finalize:
             # insert right after status
             d.insert(d.index(('status', post.status.name)), ('timestamp',
@@ -372,6 +379,22 @@ class JinjaPostProcessor(PostProcessor):
 
         template = settings.JINJA_ENV.from_string(post.content_preprocessed)
         post.content_preprocessed = template.render()
+        return post, metadata
+
+
+class ContentTemplateProcessor(PostProcessor):
+    @classmethod
+    def preprocess(cls, post, metadata):
+        from engineer.conf import settings
+        from engineer.models import Post
+
+        logger = cls.get_logger()
+
+        if post.content_template != Post.DEFAULT_CONTENT_TEMPLATE:
+            logger.debug("Using non-default content template '%s' for post '%s'." % (post.content_template, post))
+
+        template = settings.JINJA_ENV.get_template(post.content_template)
+        post.content_preprocessed = template.render(post=post, content=post.content_preprocessed)
         return post, metadata
 
 

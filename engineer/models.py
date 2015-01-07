@@ -38,6 +38,9 @@ class Post(object):
 
     :param source: path to the source file for the post.
     """
+    DEFAULT_CONTENT_TEMPLATE = 'theme/_content_default.html'
+    DEFAULT_TEMPLATE = 'theme/post_detail.html'
+
     _regex = re.compile(
         r'^[\n|\r\n]*(?P<fence>---)?[\n|\r\n]*(?P<metadata>.+?)[\n|\r\n]*---[\n|\r\n]*(?P<content>.*)[\n|\r\n]*',
         re.DOTALL)
@@ -47,10 +50,6 @@ class Post(object):
     _content_raw = setonce()
     _file_contents_raw = setonce()
 
-    # @staticmethod
-    # def convert_to_html(content, renderer):
-    #     return typogrify(renderer.render(content))
-
     @staticmethod
     def convert_post_to_html(post):
         return typogrify(post.content_renderer.render(post.content_preprocessed, post.format))
@@ -58,9 +57,6 @@ class Post(object):
     def __init__(self, source):
         self.source = path(source).abspath()
         """The absolute path to the source file for the post."""
-
-        self.html_template_path = 'theme/post_detail.html'
-        """The path to the template to use to transform the post into HTML."""
 
         self.markdown_template_path = 'core/post.md'
         """The path to the template to use to transform the post back into a :ref:`post source file <posts>`."""
@@ -75,10 +71,20 @@ class Post(object):
 
         self._content_finalized = self.content_raw
 
-        # noinspection PyUnresolvedReferences
-        # Handle any preprocessor plugins
-        for plugin in PostProcessor.plugins:
-            plugin.preprocess(self, metadata)
+        content_template = metadata.pop('content-template', metadata.pop('content_template',
+                                                                         self.DEFAULT_CONTENT_TEMPLATE))
+        if not content_template.endswith('.html'):
+            content_template += '.html'
+
+        self.content_template = content_template
+        """The path to the template to use to transform the post *content* into HTML."""
+
+        template = metadata.pop('template', self.DEFAULT_TEMPLATE)
+        if not template.endswith('.html'):
+            template += '.html'
+
+        self.template = template
+        """The path to the template to use to transform the post into HTML."""
 
         self.title = metadata.pop('title', self.source.namebase.replace('-', ' ').replace('_', ' ').title())
         """The title of the post."""
@@ -105,27 +111,13 @@ class Post(object):
             logger.warning("'%s': Invalid status value in metadata. Defaulting to 'draft'." % self.title)
             self.status = Status.draft
 
-        self.timestamp = metadata.pop('timestamp', None)
+        timestamp = metadata.pop('timestamp', None)
+        self.timestamp = self._clean_datetime(timestamp)
         """The date/time the post was published or written."""
 
-        temp_timestamp = self.timestamp
-        if temp_timestamp is None:
-            temp_timestamp = arrow.now(settings.POST_TIMEZONE)
-            # Reduce resolution of timestamp
-            temp_timestamp = temp_timestamp.replace(second=0, microsecond=0)
-        else:
-            # looks like the timestamp from YAML wasn't directly convertible to a datetime, so we need to parse it
-            timestamp_dt = parser.parse(str(temp_timestamp))
-            if timestamp_dt.tzinfo is None:
-                # convert to UTC assuming input time is in the POST_TIMEZONE
-                temp_timestamp = arrow.get(timestamp_dt, settings.POST_TIMEZONE)
-            else:
-                temp_timestamp = arrow.get(timestamp_dt)
-
-        self.timestamp = temp_timestamp.to('utc')
-
-        self.content = Post.convert_post_to_html(self)
-        """The post's content in HTML format."""
+        updated = metadata.pop('updated', None)
+        self.updated = self._clean_datetime(updated) if updated is not None else None
+        """The date/time the post was updated."""
 
         # determine the URL based on the HOME_URL and the PERMALINK_STYLE settings
         permalink = settings.PERMALINK_STYLE.format(year=unicode(self.timestamp_local.year),
@@ -144,6 +136,11 @@ class Post(object):
         else:
             permalink += '.html'
         self._permalink = permalink
+
+        # noinspection PyUnresolvedReferences
+        # Handle any preprocessor plugins
+        for plugin in PostProcessor.plugins:
+            plugin.preprocess(self, metadata)
 
         # keep track of any remaining properties in the post metadata
         metadata.pop('url', None)  # remove the url property from the metadata dict before copy
@@ -188,6 +185,11 @@ class Post(object):
         """A list of strings representing the tags applied to the post."""
         r = [unicode(t) for t in self._tags]
         return r
+
+    @property
+    def content(self):
+        """The post's content in HTML format."""
+        return Post.convert_post_to_html(self)
 
     @property
     def content_finalized(self):
@@ -240,6 +242,25 @@ class Post(object):
         """
         return localtime(self.timestamp)
 
+    @property
+    def updated_local(self):
+        return localtime(self.updated)
+
+    @staticmethod
+    def _clean_datetime(datetime):
+        if datetime is None:
+            datetime = arrow.now(settings.POST_TIMEZONE)
+            # Reduce resolution of timestamp
+            datetime = datetime.replace(second=0, microsecond=0)
+        else:
+            timestamp_dt = parser.parse(str(datetime))
+            if timestamp_dt.tzinfo is None:
+                # convert to UTC assuming input time is in the POST_TIMEZONE
+                datetime = arrow.get(timestamp_dt, settings.POST_TIMEZONE)
+            else:
+                datetime = arrow.get(timestamp_dt)
+        return datetime.to('utc')
+
     def _parse_source(self):
         try:
             with open(self.source, mode='r') as the_file:
@@ -291,11 +312,13 @@ class Post(object):
             older_post = all_posts[index + 1]
         else:
             older_post = None
-        return settings.JINJA_ENV.get_template(self.html_template_path).render(post=self,
-                                                                               newer_post=newer_post,
-                                                                               older_post=older_post,
-                                                                               all_posts=all_posts,
-                                                                               nav_context='post')
+        return settings.JINJA_ENV.get_template(self.template).render(
+            post=self,
+            newer_post=newer_post,
+            older_post=older_post,
+            all_posts=all_posts,
+            nav_context='post'
+        )
 
     def set_finalized_content(self, content, caller_class):
         """

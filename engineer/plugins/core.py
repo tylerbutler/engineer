@@ -61,7 +61,7 @@ class PluginMount(type):
 class PluginMixin(object):
     @classmethod
     def get_name(cls):
-        return '.'.join([cls.__module__, cls.__name__])
+        return get_class_string(cls)
 
     @classmethod
     def get_logger(cls, custom_name=None):

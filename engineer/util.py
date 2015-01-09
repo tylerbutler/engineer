@@ -45,6 +45,9 @@ def get_class(class_string):
 
 
 def get_class_string(obj):
+    if isinstance(obj, basestring):
+        return obj
+
     mod = obj.__module__
     cls = getattr(obj, '__name__', obj.__class__.__name__)
     return '.'.join((mod, cls))

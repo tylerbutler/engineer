@@ -120,31 +120,27 @@ class PluginMixin(object):
 
         :returns: The modified ``config_dict`` object.
         """
-        cls.initialize_settings(config_dict, settings)
+        cls.initialize_settings(config_dict)
         return config_dict
 
     @classmethod
-    def initialize_settings(cls, config_dict, engineer_settings):
+    def initialize_settings(cls, config_dict):
         # Combine the required, default, and user-supplied settings
         plugin_settings = cls._required_settings.copy()
         user_supplied_settings = config_dict.pop(cls.get_setting_name(), {})
         update_additive(plugin_settings, cls.get_default_settings())
         update_additive(plugin_settings, user_supplied_settings)
 
-        cls.store_settings(plugin_settings, engineer_settings)
+        cls.store_settings(plugin_settings)
 
         return EasyDict(plugin_settings), EasyDict(user_supplied_settings)
 
     @classmethod
-    def store_settings(cls, plugin_settings, engineer_settings):
-        # engineer_settings.PLUGIN_SETTINGS[cls.get_setting_name()] = plugin_settings
+    def store_settings(cls, plugin_settings):
         cls._settings = plugin_settings
 
     @classmethod
     def get_settings(cls):
-        # from engineer.conf import settings as engineer_settings
-
-        # return engineer_settings.PLUGIN_SETTINGS[cls.get_setting_name()]
         return cls._settings
 
     @classmethod

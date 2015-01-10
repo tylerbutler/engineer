@@ -36,7 +36,9 @@ deprecated_settings = (
     # ('SETTING_NAME', version_deprecated, 'Message.')
     ('NORMALIZE_INPUT_FILES', 0.4, 'This setting is now ignored.'),
     ('NORMALIZE_INPUT_FILE_MASK', 0.4, 'This setting is now ignored.'),
-    ('JINJA_CACHE_DIR', 0.5, 'This setting is now ignored.')
+    ('JINJA_CACHE_DIR', 0.5, 'This setting is now ignored.'),
+    ('FINALIZE_METADATA_CONFIG', 0.6, 'This setting is now ignored. See documentation.'),
+    ('METADATA_FORMAT', 0.6, 'This setting is now ignored. See documentation.'),
 )
 
 

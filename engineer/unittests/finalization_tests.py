@@ -31,9 +31,9 @@ This is a finalization test post.
 
 class MetadataFinalizationTestCase(BaseTestCase):
     def test_finalization_settings(self):
-        from engineer.conf import settings
+        from engineer.plugins.bundled import FinalizationPlugin
 
-        self.assertTrue(hasattr(settings, 'FINALIZE_METADATA'))
+        self.assertTrue('config' in FinalizationPlugin.get_settings())
 
     def test_finalization_draft(self):
         from engineer.conf import settings

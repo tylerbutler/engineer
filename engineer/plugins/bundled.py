@@ -1,9 +1,10 @@
 # coding=utf-8
+import logging
 import re
-from codecs import open
 
-import yaml
+from codecs import open
 from path import path
+import yaml
 
 # noinspection PyPackageRequirements
 from typogrify.templatetags.jinja_filters import register
@@ -13,6 +14,7 @@ from engineer.filters import compress, format_datetime, img, localtime, markdown
     naturaltime, typogrify_no_widont
 from engineer.log import log_object
 from engineer.plugins.core import PostProcessor, JinjaEnvironmentPlugin, PostRenderer
+from engineer.util import flatten_list
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -55,36 +57,43 @@ class FinalizationPlugin(PostProcessor):
     _unfenced_metadata_formats = ('unfenced', 'engineer',)
     _default_metadata_format = 'input'
 
+    setting_name = 'FINALIZE_METADATA'
+    default_settings = {
+        'config': _finalize_map_defaults,
+        'format': _default_metadata_format
+    }
+
+    disabled_msg = "A metadata finalization config is specified but the plugin is disabled."
+
     @classmethod
     def handle_settings(cls, config_dict, settings):
         logger = cls.get_logger()
+        plugin_settings, user_supplied_settings = cls.initialize_settings(config_dict)
 
         # POST METADATA FINALIZATION SETTINGS
-        settings.FINALIZE_METADATA = config_dict.pop('FINALIZE_METADATA', True)
+        if not cls.is_enabled and 'config' in user_supplied_settings:
+            cls.log_once(cls.disabled_msg, 'disabled_msg', logging.WARNING)
+        elif 'config' in user_supplied_settings:
+            for metadata_attribute, statuses in user_supplied_settings.config.iteritems():
+                plugin_settings.config[metadata_attribute] = [Status(s) for s in statuses]
 
-        if 'FINALIZE_METADATA_CONFIG' in config_dict.keys():
-            if not settings.FINALIZE_METADATA:
-                logger.warning('FINALIZE_METADATA_CONFIG is defined but FINALIZE_METADATA is set to False.')
-            else:
-                for metadata_attribute, statuses in config_dict['FINALIZE_METADATA_CONFIG'].iteritems():
-                    cls._finalize_map_defaults[metadata_attribute] = [Status(s) for s in statuses]
-            del config_dict['FINALIZE_METADATA_CONFIG']
-        settings.FINALIZE_METADATA_CONFIG = cls._finalize_map_defaults
+        valid_metadata_formats = set(flatten_list((
+            cls._default_metadata_format,
+            cls._fenced_metadata_formats,
+            cls._unfenced_metadata_formats,
+        )))
 
-        settings.METADATA_FORMAT = config_dict.pop('METADATA_FORMAT', 'input')
-        if settings.METADATA_FORMAT not in \
-                {cls._default_metadata_format}.union(cls._fenced_metadata_formats).union(
-                        cls._unfenced_metadata_formats):
+        if plugin_settings.format not in valid_metadata_formats:
             logger.warning("'%s' is not a valid METADATA_FORMAT setting. Defaulting to '%s'.",
-                           settings.METADATA_FORMAT, cls._default_metadata_format)
-            settings.METADATA_FORMAT = cls._default_metadata_format
+                           plugin_settings.format, cls._default_metadata_format)
+            plugin_settings.format = cls._default_metadata_format
+
+        cls.store_settings(plugin_settings)
         return config_dict
 
     @classmethod
     def preprocess(cls, post, metadata):
-        from engineer.conf import settings
-
-        if settings.FINALIZE_METADATA:
+        if cls.is_enabled():
             # Get the list of metadata that's specified directly in the source file -- this metadata we *always* want
             # to ensure gets output during finalization. Store it on the post object,
             # then we'll use it later in the postprocess method.
@@ -93,17 +102,16 @@ class FinalizationPlugin(PostProcessor):
 
     @classmethod
     def postprocess(cls, post):
-        from engineer.conf import settings
-
         logger = cls.get_logger()
-        if settings.FINALIZE_METADATA:
-            if settings.METADATA_FORMAT in cls._fenced_metadata_formats:
+        if cls.is_enabled():
+            metadata_format = cls.get_settings().format
+            if metadata_format in cls._fenced_metadata_formats:
                 logger.debug("METADATA_FORMAT is '%s', metadata will always be fenced during normalization.",
-                             settings.METADATA_FORMAT)
+                             metadata_format)
                 post._fence = True
-            elif settings.METADATA_FORMAT in cls._unfenced_metadata_formats:
+            elif metadata_format in cls._unfenced_metadata_formats:
                 logger.debug("METADATA_FORMAT is '%s', metadata will always be unfenced during normalization.",
-                             settings.METADATA_FORMAT)
+                             metadata_format)
                 post._fence = False
             output = cls.render_markdown(post)
             if cls.need_update(post, output):
@@ -173,9 +181,10 @@ class FinalizationPlugin(PostProcessor):
              post.content_template if post.content_template != 'theme/_content_default.html' else None),
         ]
 
-        # The complete set of metadata that should be written is the union of the FINALIZE_METADATA_CONFIG setting and
+        # The complete set of metadata that should be written is the union of the FINALIZE_METADATA.config setting and
         # the set of metadata that was in the file originally.
-        metadata_to_finalize = set([m for m, s in settings.FINALIZE_METADATA_CONFIG.iteritems() if post.status in s])
+        metadata_to_finalize = set([m for m, s in FinalizationPlugin.get_settings().config.iteritems() if
+                                    post.status in s])
         metadata_to_finalize.update(post.metadata_original)
 
         if 'title' in metadata_to_finalize:

@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from path import path
+from engineer.plugins import PostRenamerPlugin
 
 from engineer.unittests.config_tests import BaseTestCase
 
@@ -12,15 +13,15 @@ class PostRenamerTestCase(BaseTestCase):
         from engineer.conf import settings
 
         settings.reload('config.yaml')
-        self.assertTrue(hasattr(settings, 'POST_RENAME_ENABLED'))
-        self.assertTrue(hasattr(settings, 'POST_RENAME_CONFIG'))
-        self.assertTrue(settings.POST_RENAME_ENABLED)
+        self.assertTrue('config' in PostRenamerPlugin.get_settings())
+        self.assertTrue(PostRenamerPlugin.is_enabled())
 
     def test_disabled(self):
         from engineer.conf import settings
 
         settings.reload('renamer_off.yaml')
-        self.assertFalse(settings.POST_RENAME_ENABLED)
+        plugin_enabled = PostRenamerPlugin.is_enabled()
+        self.assertFalse(plugin_enabled)
 
     def test_post_renamer_default_config(self):
         from engineer.conf import settings
@@ -29,13 +30,13 @@ class PostRenamerTestCase(BaseTestCase):
         settings.reload('config.yaml')
 
         post = Post('posts/draft_post.md')
-        self.assertEqual(post.source.name, '(draft) a-draft-post.md')
         self.assertTrue(post.source.exists())
+        self.assertEqual(post.source.name, '(draft) a-draft-post.md')
         self.assertFalse(path('posts/draft_post.md').exists())
 
         post = Post('posts/review_post.md')
-        self.assertEqual(post.source.name, '(review) 2012-11-02 a-post-in-review.md')
         self.assertTrue(post.source.exists())
+        self.assertEqual(post.source.name, '(review) 2012-11-02 a-post-in-review.md')
         self.assertFalse(path('posts/review_post.md').exists())
 
         post = Post('posts/published_post_with_timestamp.md')

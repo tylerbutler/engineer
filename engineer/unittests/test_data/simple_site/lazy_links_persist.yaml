@@ -1,7 +1,10 @@
 SUPER: config.yaml
 
-FINALIZE_METADATA: yes
-LAZY_LINKS_PERSIST: yes
+FINALIZE_METADATA:
+  enabled: yes
+
+LAZY_LINKS:
+  persist: yes
 
 PLUGIN_PERMISSIONS:
   MODIFY_RAW_POST:

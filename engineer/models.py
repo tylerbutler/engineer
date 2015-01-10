@@ -17,7 +17,7 @@ from engineer.conf import settings
 from engineer.enums import Status
 from engineer.exceptions import PostMetadataError
 from engineer.filters import localtime
-from engineer.plugins import PostProcessor, PostRenderer
+from engineer.plugins import PostProcessor, PostRenderer, FinalizationPlugin
 from engineer.util import setonce, slugify, chunk, urljoin, wrap_list
 
 
@@ -140,7 +140,8 @@ class Post(object):
         # noinspection PyUnresolvedReferences
         # Handle any preprocessor plugins
         for plugin in PostProcessor.plugins:
-            plugin.preprocess(self, metadata)
+            if plugin.is_enabled():
+                plugin.preprocess(self, metadata)
 
         # keep track of any remaining properties in the post metadata
         metadata.pop('url', None)  # remove the url property from the metadata dict before copy
@@ -334,7 +335,7 @@ class Post(object):
         :return: ``True`` if the content was successfully modified; otherwise ``False``.
         """
         caller = caller_class.get_name() if hasattr(caller_class, 'get_name') else unicode(caller_class)
-        if not settings.FINALIZE_METADATA:
+        if not FinalizationPlugin.is_enabled():
             logger.warning("A plugin is trying to modify the post content but the FINALIZE_METADATA setting is "
                            "disabled. This setting must be enabled for plugins to modify post content. "
                            "Plugin: %s" % caller)

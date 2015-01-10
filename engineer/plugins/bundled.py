@@ -23,9 +23,16 @@ class PostBreaksProcessor(PostProcessor):
     _regex = re.compile(r'^(?P<teaser_content>.*?)(?P<break>\s*<?!?-{2,}\s*more\s*-{2,}>?)\s*(?P<rest_of_content>.*)',
                         re.DOTALL)
 
+    default_settings = {
+        'enabled': True
+    }
+
     @classmethod
     def preprocess(cls, post, metadata):
         from engineer.models import Post
+
+        if not cls.is_enabled():
+            return post
 
         # First check if either form of the break marker is present using the regex
         parsed_content = re.match(cls._regex, post.content_preprocessed)
@@ -83,7 +90,7 @@ class FinalizationPlugin(PostProcessor):
             cls._unfenced_metadata_formats,
         )))
 
-        if plugin_settings.format not in valid_metadata_formats:
+        if plugin_settings['format'] not in valid_metadata_formats:
             logger.warning("'%s' is not a valid METADATA_FORMAT setting. Defaulting to '%s'.",
                            plugin_settings.format, cls._default_metadata_format)
             plugin_settings.format = cls._default_metadata_format
@@ -104,7 +111,7 @@ class FinalizationPlugin(PostProcessor):
     def postprocess(cls, post):
         logger = cls.get_logger()
         if cls.is_enabled():
-            metadata_format = cls.get_settings().format
+            metadata_format = cls.get_settings()['format']
             if metadata_format in cls._fenced_metadata_formats:
                 logger.debug("METADATA_FORMAT is '%s', metadata will always be fenced during normalization.",
                              metadata_format)
@@ -183,8 +190,8 @@ class FinalizationPlugin(PostProcessor):
 
         # The complete set of metadata that should be written is the union of the FINALIZE_METADATA.config setting and
         # the set of metadata that was in the file originally.
-        metadata_to_finalize = set([m for m, s in FinalizationPlugin.get_settings().config.iteritems() if
-                                    post.status in s])
+        finalization_config = FinalizationPlugin.get_settings()['config']
+        metadata_to_finalize = set([m for m, s in finalization_config.iteritems() if post.status in s])
         metadata_to_finalize.update(post.metadata_original)
 
         if 'title' in metadata_to_finalize:
@@ -216,47 +223,43 @@ class FinalizationPlugin(PostProcessor):
 
 
 class PostRenamerPlugin(PostProcessor):
-    enabled_setting_name = 'POST_RENAME_ENABLED'
-    config_setting_name = 'POST_RENAME_CONFIG'
-    default_config = {
+    _default_config = {
         Status.published: u'({status_short}) {year}-{month}-{day} {slug}.md',
         Status.draft: u'({status}) {slug}.md',
         Status.review: u'({status}) {year}-{month}-{day} {slug}.md'
     }
 
+    setting_name = 'POST_RENAME'
+    default_settings = {
+        'config': _default_config
+    }
+
     @classmethod
     def handle_settings(cls, config_dict, settings):
         logger = cls.get_logger()
-        if not config_dict.pop(cls.enabled_setting_name, False):
-            setattr(settings, cls.enabled_setting_name, False)
-            return config_dict
-        else:
-            setattr(settings, cls.enabled_setting_name, True)
+        plugin_settings, user_supplied_settings = cls.initialize_settings(config_dict)
 
-        plugin_config = config_dict.pop(cls.config_setting_name, None)
-        if plugin_config is None:
-            plugin_config = cls.default_config
-        else:
-            custom_config = dict([(Status(k), v) for k, v in plugin_config.iteritems()])
-            plugin_config = cls.default_config.copy()
-            plugin_config.update(custom_config)
+        if 'config' in user_supplied_settings:
+            config = cls.default_settings['config'].copy()
+            custom_config = dict([(Status(k), v) for k, v in user_supplied_settings['config'].iteritems()])
+            config.update(custom_config)
+            plugin_settings['config'] = config
 
-        logger.debug("Setting the %s setting to %s." % (cls.config_setting_name, log_object(plugin_config)))
-        setattr(settings, cls.config_setting_name, plugin_config)
+        logger.debug("Setting the %s setting to %s." % (cls.get_setting_name(), log_object(plugin_settings)))
+        cls.store_settings(plugin_settings)
         return config_dict
 
     @classmethod
     def postprocess(cls, post):
-        from engineer.conf import settings
-
         logger = cls.get_logger()
 
-        if not getattr(settings, cls.enabled_setting_name, False) or not hasattr(settings, cls.config_setting_name):
+        if not cls.is_enabled():
             logger.debug("Post Renamer plugin disabled.")
             return post  # early return - plugin is disabled
 
-        config = getattr(settings, cls.config_setting_name)
+        config = cls.get_settings()['config']
         mask = config[post.status]
+        logger.debug("In postprocess, config is: %s" % log_object(config))
         if mask is None:
             logger.debug("Not renaming post '%s' since its status is configured to be ignored." % post)
             return post
@@ -290,7 +293,10 @@ class PostRenamerPlugin(PostProcessor):
 
 
 class GlobalLinksPlugin(PostProcessor):
-    setting_name = 'GLOBAL_LINKS_FILE'
+    setting_name = 'GLOBAL_LINKS'
+    default_settings = {
+        'file': 'global_links.md'
+    }
     not_enabled_log_message = "Settings don't include a %s setting, " \
                               "so Global Links plugin will not run." % setting_name
     file_not_found_message = "%s %s not found. Global Links plugin will not run."
@@ -300,21 +306,18 @@ class GlobalLinksPlugin(PostProcessor):
     def preprocess(cls, post, metadata):
         from engineer.conf import settings
 
-        logger = cls.get_logger()
-        if not hasattr(settings, cls.setting_name):
-            logger.info(cls.not_enabled_log_message)
+        if not cls.is_enabled():
+            cls.log_once(cls.not_enabled_log_message, 'disabled', logging.INFO)
             return post, metadata  # early return
 
-        file_path = path(getattr(settings, cls.setting_name)).expand()
+        file_path = path(cls.get_settings()['file']).expand()
         if not file_path.isabs():
             file_path = (settings.SETTINGS_DIR / file_path).abspath()
         try:
             with open(file_path, 'rb') as f:
                 abbreviations = f.read()
         except IOError:
-            if not cls.error_displayed:
-                logger.error(cls.file_not_found_message % (cls.setting_name, file_path))
-                cls.error_displayed = True
+            cls.log_once(cls.file_not_found_message % (cls.setting_name, file_path), 'fnf', logging.ERROR)
             return
 
         post.content_preprocessed += ("\n" + abbreviations)
@@ -323,6 +326,12 @@ class GlobalLinksPlugin(PostProcessor):
 
 class LazyMarkdownLinksPlugin(PostProcessor):
     # Inspired by Brett Terpstra: http://brettterpstra.com/2013/10/19/lazy-markdown-reference-links/
+    setting_name = 'LAZY_LINKS'
+    default_settings = {
+        'enabled': True,
+        'persist': False
+    }
+
     _link_regex = re.compile(r'''
         (           # Start group 1, which is the actual link text
             \[          # Match a literal [
@@ -356,8 +365,6 @@ class LazyMarkdownLinksPlugin(PostProcessor):
 
     @classmethod
     def preprocess(cls, post, metadata):
-        from engineer.conf import settings
-
         logger = cls.get_logger()
         content = post.content_preprocessed
         cls._counter = cls.get_max_link_number(content)
@@ -366,24 +373,25 @@ class LazyMarkdownLinksPlugin(PostProcessor):
         while cls._link_regex.search(content):
             content = cls._link_regex.sub(cls._replace, content)
         post.content_preprocessed = content
-        if getattr(settings, 'LAZY_LINKS_PERSIST', False):
+        if cls.get_settings()['persist']:
             if not post.set_finalized_content(content, cls):
                 logger.warning("Failed to persist lazy links.")
         return post, metadata
 
 
 class JinjaPostProcessor(PostProcessor):
-    enabled_setting_name = "JINJA_POSTPROCESSOR_ENABLED"
+    setting_name = 'JINJA_POSTPROCESSOR'
+    default_settings = {
+        'enabled': True,
+    }
     not_enabled_log_message = "JinjaPostProcessor plugin is disabled."
 
     @classmethod
     def preprocess(cls, post, metadata):
         from engineer.conf import settings
 
-        logger = cls.get_logger()
-
-        if not getattr(settings, cls.enabled_setting_name, True):
-            logger.info(cls.not_enabled_log_message)
+        if not cls.is_enabled():
+            cls.log_once(cls.not_enabled_log_message, 'disabled', logging.INFO)
             return post, metadata  # early return
 
         template = settings.JINJA_ENV.from_string(post.content_preprocessed)
@@ -392,6 +400,10 @@ class JinjaPostProcessor(PostProcessor):
 
 
 class ContentTemplateProcessor(PostProcessor):
+    default_settings = {
+        'enabled': True,
+    }
+
     @classmethod
     def preprocess(cls, post, metadata):
         from engineer.conf import settings

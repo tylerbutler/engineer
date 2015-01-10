@@ -39,6 +39,11 @@ deprecated_settings = (
     ('JINJA_CACHE_DIR', 0.5, 'This setting is now ignored.'),
     ('FINALIZE_METADATA_CONFIG', 0.6, 'This setting is now ignored. See documentation.'),
     ('METADATA_FORMAT', 0.6, 'This setting is now ignored. See documentation.'),
+    ('POST_RENAME_ENABLED', 0.6, 'This setting is now ignored. See documentation.'),
+    ('POST_RENAME_CONFIG', 0.6, 'This setting is now ignored. See documentation.'),
+    ('GLOBAL_LINKS_FILE', 0.6, 'This setting is now ignored. See documentation.'),
+    ('LAZY_LINKS_PERSIST', 0.6, 'This setting is now ignored. See documentation.'),
+    ('JINJA_POSTPROCESSOR_ENABLED', 0.6, 'This setting is now ignored. See documentation.'),
 )
 
 

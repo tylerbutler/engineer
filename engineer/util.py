@@ -387,7 +387,7 @@ def update_additive(dict1, dict2):
                 dict1[key] = value
 
 
-def flatten(d, parent_key='', separator='_'):
+def flatten_dict(d, parent_key='', separator='_'):
     """
     Flattens any nested dict-like object into a non-nested form. The resulting dict will have keys of the form
     ``k1_nestedk2_nestedk3`` for nested keys. You can change the separator by passing in a value to
@@ -412,10 +412,19 @@ def flatten(d, parent_key='', separator='_'):
     for k, v in d.iteritems():
         new_key = parent_key + separator + k if parent_key else k
         if isinstance(v, collections.MutableMapping):
-            items.extend(flatten(v, new_key).items())
+            items.extend(flatten_dict(v, new_key).items())
         else:
             items.append((new_key, v))
     return dict(items)
+
+
+def flatten_list(l):
+    for el in l:
+        if isinstance(el, collections.Iterable) and not isinstance(el, basestring):
+            for sub in flatten_list(el):
+                yield sub
+        else:
+            yield el
 
 
 def has_files(the_path):

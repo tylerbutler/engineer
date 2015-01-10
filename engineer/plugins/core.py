@@ -1,10 +1,11 @@
 # coding=utf-8
 import logging
 
+from easydict import EasyDict as EasyDict
 from brownie.caching import memoize, cached_property
 from engineer.exceptions import UnsupportedPostFormat
 from engineer.log import log_object
-from engineer.util import get_class_string
+from engineer.util import get_class_string, update_additive
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -59,6 +60,19 @@ class PluginMount(type):
 
 
 class PluginMixin(object):
+    _logs = '_logs'
+    _enabled = 'enabled'
+
+    _required_settings = EasyDict({
+        _enabled: False,
+        _logs: dict()
+    })
+
+    _settings = EasyDict()
+
+    setting_name = None
+    default_settings = EasyDict()
+
     @classmethod
     def get_name(cls):
         return get_class_string(cls)
@@ -68,6 +82,18 @@ class PluginMixin(object):
         """Returns a logger for the plugin."""
         name = custom_name or cls.get_name()
         return logging.getLogger(name)
+
+    @classmethod
+    def get_setting_name(cls):
+        if cls.setting_name is None:
+            # raise NotImplementedError("A setting_name property must be set on the class.")
+            return cls.__name__ + '_SETTINGS'
+        else:
+            return cls.setting_name
+
+    @classmethod
+    def get_default_settings(cls):
+        return cls.default_settings
 
     @classmethod
     def handle_settings(cls, config_dict, settings):
@@ -89,11 +115,49 @@ class PluginMixin(object):
         :param config_dict: The dict of as-yet unhandled settings in the current settings file.
 
         :param settings: The global :class:`~engineer.conf.EngineerConfiguration` object that contains all the
+        :param settings: The global :class:`~engineer.conf.EngineerConfiguration` object that contains all the
             settings for the current Engineer process. Any custom settings should be added to this object.
 
         :returns: The modified ``config_dict`` object.
         """
+        cls.initialize_settings(config_dict, settings)
         return config_dict
+
+    @classmethod
+    def initialize_settings(cls, config_dict, engineer_settings):
+        # Combine the required, default, and user-supplied settings
+        plugin_settings = cls._required_settings.copy()
+        user_supplied_settings = config_dict.pop(cls.get_setting_name(), {})
+        update_additive(plugin_settings, cls.get_default_settings())
+        update_additive(plugin_settings, user_supplied_settings)
+
+        cls.store_settings(plugin_settings, engineer_settings)
+
+        return EasyDict(plugin_settings), EasyDict(user_supplied_settings)
+
+    @classmethod
+    def store_settings(cls, plugin_settings, engineer_settings):
+        # engineer_settings.PLUGIN_SETTINGS[cls.get_setting_name()] = plugin_settings
+        cls._settings = plugin_settings
+
+    @classmethod
+    def get_settings(cls):
+        # from engineer.conf import settings as engineer_settings
+
+        # return engineer_settings.PLUGIN_SETTINGS[cls.get_setting_name()]
+        return cls._settings
+
+    @classmethod
+    def is_enabled(cls):
+        return cls.get_settings()[cls._enabled]
+
+    @classmethod
+    def log_once(cls, msg, key, level=logging.DEBUG):
+        if cls.get_settings()[cls._logs].get(key, False):
+            return
+        else:
+            cls.get_logger().log(msg, level)
+            cls.get_settings()[cls._logs][key] = True
 
 
 class ThemeProvider(PluginMixin):

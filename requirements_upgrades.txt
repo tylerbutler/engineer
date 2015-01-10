@@ -4,6 +4,7 @@ bottle>=0.12.7
 Brownie>=0.5.1
 crayola>=0.1.1
 cssmin>=0.2.0
+easydict?=1.5
 feedgenerator>=1.7
 flufl.enum>=4.0.1
 humanize>=0.5.1

@@ -6,15 +6,13 @@ import platform
 import shelve
 
 from appdirs import user_cache_dir, user_data_dir
-from dateutil import zoneinfo
-from jinja2.loaders import ChoiceLoader
 import arrow
-import yaml
-from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
-
-# noinspection PyPackageRequirements
-from path import path
 from brownie.caching import cached_property
+from dateutil import zoneinfo
+from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
+from jinja2.loaders import ChoiceLoader
+from path import path
+import yaml
 
 from engineer.cache import SimpleFileCache
 from engineer.log import CustomLogger, log_object
@@ -304,6 +302,8 @@ class EngineerConfiguration(object):
                     logger.debug("Calling handle_settings on plugin: %s.\nconfig dict is: %s\n" % (plugin.__name__,
                                                                                                    log_object(config)))
                     config = plugin.handle_settings(config, self)
+                else:
+                    logger.error("This plugin does not have a handle_settings method defined: %s" % plugin.get_name())
 
         # Pull any remaining settings in the config and set them as attributes on the settings object
         for k, v in config.iteritems():

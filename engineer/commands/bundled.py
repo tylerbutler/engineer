@@ -137,7 +137,7 @@ class BuildCommand(ArgparseCommand):
                 # loaded after them, since the URL to the not-yet-loaded page will be missing.
                 template_pages.append(TemplatePage(template))
             for page in template_pages:
-                rendered_page = page.render_html(all_posts)
+                rendered_page = page.render_item(all_posts)
                 ensure_exists(page.output_path)
                 with open(page.output_path / page.output_file_name, mode='wb',
                           encoding='UTF-8') as the_file:
@@ -148,7 +148,7 @@ class BuildCommand(ArgparseCommand):
 
         # Generate individual post pages
         for post in all_posts:
-            rendered_post = post.render_html(all_posts)
+            rendered_post = post.render_item(all_posts)
             ensure_exists(post.output_path)
             with open(post.output_path, mode='wb',
                       encoding='UTF-8') as the_file:

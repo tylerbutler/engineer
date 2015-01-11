@@ -151,7 +151,7 @@ class PluginMixin(object):
         if cls.get_settings()[cls._logs].get(key, False):
             return
         else:
-            cls.get_logger().log(msg, level)
+            cls.get_logger().log(level, msg)
             cls.get_settings()[cls._logs][key] = True
 
 
@@ -335,8 +335,8 @@ class PostRenderer(PluginMixin):
     def render(self, content, input_format, output_format):
         raise NotImplementedError
 
-    def render_post(self, post):
-        return self.render(post.content_preprocessed, input_format=post.format, output_format='.html')
+    # def render_post(self, post):
+    #     return self.render(post.content_preprocessed, input_format=post.format, output_format='.html')
 
     def validate(self, input_format, output_format):
         if input_format not in self.supported_input_formats:

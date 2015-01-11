@@ -13,7 +13,7 @@ from engineer.enums import Status
 from engineer.filters import compress, format_datetime, img, localtime, markdown_filter, \
     naturaltime, typogrify_no_widont
 from engineer.log import log_object
-from engineer.plugins.core import PostProcessor, JinjaEnvironmentPlugin, PostRenderer
+from engineer.plugins.core import PostProcessor, JinjaEnvironmentPlugin
 from engineer.util import flatten_list
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
@@ -48,7 +48,7 @@ class PostBreaksProcessor(PostProcessor):
         # Convert the full post to HTML, then use the regex again to split the resulting HTML post. This is needed
         # since Markdown might have links in the first half of the post that are listed at the bottom. By converting
         # the whole post to HTML first then splitting we get a correctly processed HTML teaser.
-        parsed_content = re.match(cls._regex, Post.convert_post_to_html(post))
+        parsed_content = re.match(cls._regex, post.content)
         post.content_teaser = parsed_content.group('teaser_content')
         return post
 
@@ -81,8 +81,8 @@ class FinalizationPlugin(PostProcessor):
         if not cls.is_enabled and 'config' in user_supplied_settings:
             cls.log_once(cls.disabled_msg, 'disabled_msg', logging.WARNING)
         elif 'config' in user_supplied_settings:
-            for metadata_attribute, statuses in user_supplied_settings.config.iteritems():
-                plugin_settings.config[metadata_attribute] = [Status(s) for s in statuses]
+            for metadata_attribute, statuses in user_supplied_settings['config'].iteritems():
+                plugin_settings['config'][metadata_attribute] = [Status(s) for s in statuses]
 
         valid_metadata_formats = set(flatten_list((
             cls._default_metadata_format,
@@ -295,11 +295,12 @@ class PostRenamerPlugin(PostProcessor):
 class GlobalLinksPlugin(PostProcessor):
     setting_name = 'GLOBAL_LINKS'
     default_settings = {
-        'file': 'global_links.md'
+        'file': 'global_links.md',
+        'post_link_enabled': True
     }
     not_enabled_log_message = "Settings don't include a %s setting, " \
                               "so Global Links plugin will not run." % setting_name
-    file_not_found_message = "%s %s not found. Global Links plugin will not run."
+    file_not_found_message = "Global Links file %s not found. Global Links plugin will not run."
     error_displayed = False  # flag so 'file not found' error is only displayed once per build
 
     @classmethod
@@ -315,13 +316,28 @@ class GlobalLinksPlugin(PostProcessor):
             file_path = (settings.SETTINGS_DIR / file_path).abspath()
         try:
             with open(file_path, 'rb') as f:
-                abbreviations = f.read()
+                global_links = f.read()
         except IOError:
-            cls.log_once(cls.file_not_found_message % (cls.setting_name, file_path), 'fnf', logging.ERROR)
+            cls.log_once(cls.file_not_found_message % file_path, 'fnf', logging.ERROR)
             return
 
-        post.content_preprocessed += ("\n" + abbreviations)
+        post.stash_content(global_links)
         return post, metadata
+
+
+class PostLinkPlugin(PostProcessor):
+    setting_name = 'POST_LINK'
+    default_settings = {
+        'enabled': True
+    }
+
+    @classmethod
+    def preprocess(cls, post, metadata):
+        if post.is_external_link:
+            if cls.is_enabled():
+                post.stash_content('\n[post-link]: %s' % post.link)
+            else:
+                cls.log_once("PostLink plugin is disabled and will not run.", 'disabled')
 
 
 class LazyMarkdownLinksPlugin(PostProcessor):
@@ -450,3 +466,78 @@ class PythonMarkdownRenderer(PostRenderer):
 
         return markdown.markdown(content, extensions=['extra', 'codehilite'])
 
+
+# class PandocRenderer(PostRenderer):
+# supported_input_formats = ('.markdown', '.md', '.mdown')
+# supported_output_formats = ('.html',)
+#
+# format_map = {
+# '.markdown': 'markdown',
+# '.md': 'markdown',
+# '.mdown': 'markdown',
+# }
+#
+# def render(self, content, input_format, output_format='.html'):
+# import pypandoc
+#
+# logger = self.get_logger()
+#         self.validate(input_format, output_format)
+#
+#         try:
+#             f = self.format_map[input_format] + '-footnotes-pipe_tables'
+#             logger.error(f)
+#             return pypandoc.convert(content, 'html5',
+#                                     format='markdown_mmd',
+#                                     extra_args=('--highlight-style=tango',))
+#         except OSError:
+#             logger.error("Can't find Pandoc...")
+#             raise
+
+
+# class CommonMarkRenderer(PostRenderer):
+#     import CommonMark
+#
+#     supported_input_formats = ('.markdown', '.md', '.mdown')
+#     supported_output_formats = ('.html',)
+#
+#     parser = CommonMark.DocParser()
+#     renderer = CommonMark.HTMLRenderer()
+#
+#     def render(self, content, input_format, output_format='.html'):
+#
+#         logger = self.get_logger()
+#         self.validate(input_format, output_format)
+#
+#         ast = self.parser.parse(content)
+#
+#         return self.renderer.render(ast)
+
+import mistune
+from pygments import highlight
+from pygments.lexers import get_lexer_by_name
+from pygments.formatters.html import HtmlFormatter
+
+
+class MistuneSyntaxHighlightRenderer(mistune.Renderer):
+    def block_code(self, code, lang=None):
+        if not lang:
+            return '\n<pre><code>%s</code></pre>\n' % mistune.escape(code)
+        lexer = get_lexer_by_name(lang, stripall=True)
+        formatter = HtmlFormatter(linenos='table')
+        highlighted = highlight(code, lexer, formatter)
+
+        return '<div class="codehilite">%s</div>' % highlighted
+
+
+class MistuneRenderer(PostRenderer):
+    supported_input_formats = ('.markdown', '.md', '.mdown')
+    supported_output_formats = ('.html',)
+
+    def render(self, content, input_format, output_format='.html'):
+        logger = self.get_logger()
+        logger.warning("using mistune")
+
+        self.validate(input_format, output_format)
+        renderer = MistuneSyntaxHighlightRenderer()
+        md = mistune.Markdown(renderer=renderer)
+        return md.render(content)

@@ -50,11 +50,9 @@ class Post(object):
     _content_raw = setonce()
     _file_contents_raw = setonce()
 
-    @staticmethod
-    def convert_post_to_html(post):
-        return typogrify(post.content_renderer.render(post.content_preprocessed, post.format))
-
     def __init__(self, source):
+        self._content_stash = []
+
         self.source = path(source).abspath()
         """The absolute path to the source file for the post."""
 
@@ -66,9 +64,8 @@ class Post(object):
 
         metadata, self._content_raw = self._parse_source()
 
-        if not hasattr(self, 'content_preprocessed'):
-            self.content_preprocessed = self.content_raw
-
+        # if not hasattr(self, 'content_preprocessed'):
+        self._content_preprocessed = self.content_raw
         self._content_finalized = self.content_raw
 
         content_template = metadata.pop('content-template', metadata.pop('content_template',
@@ -190,7 +187,30 @@ class Post(object):
     @property
     def content(self):
         """The post's content in HTML format."""
-        return Post.convert_post_to_html(self)
+        content_list = wrap_list(self._content_preprocessed)
+        content_list.extend(self._content_stash)
+        content_to_render = '\n'.join(content_list)
+        return typogrify(self.content_renderer.render(content_to_render, self.format))
+
+    @property
+    def content_preprocessed(self):
+        return self._content_preprocessed
+
+    @content_preprocessed.setter
+    def content_preprocessed(self, value):
+        self._content_preprocessed = value
+
+    # def set_content_preprocessed(self, content, caller_class):
+    #     caller = caller_class.get_name() if hasattr(caller_class, 'get_name') else get_class_string(caller_class)
+    #     perms = settings.PLUGIN_PERMISSIONS['MODIFY_PREPROCESSED_CONTENT']
+    #     if caller not in perms and '*' not in perms:
+    #         logger.warning("A plugin is trying to modify the post's preprocessed content but does not have the "
+    #                        "MODIFY_PREPROCESSED_CONTENT permission. Plugin: %s" % caller)
+    #         return False
+    #     else:
+    #         logger.debug("%s is setting post source content." % caller)
+    #         self._content_preprocessed = content
+    #         return True
 
     @property
     def content_finalized(self):
@@ -296,7 +316,7 @@ class Post(object):
         content = parsed_content.group('content')
         return metadata, content
 
-    def render_html(self, all_posts=None):
+    def render_item(self, all_posts):
         """
         Renders the Post as HTML using the template specified in :attr:`html_template_path`.
 
@@ -347,8 +367,22 @@ class Post(object):
             return False
         else:
             logger.debug("%s is setting post source content." % caller)
-            self._content_finalized = content
+            self._content_finalized = self._remove_all_stashed_content()
             return True
+
+    def stash_content(self, stash_content):
+        self._content_stash.append(stash_content)
+#         self.content_preprocessed = '''%s
+# <!-- ||stash|| -->
+# %s
+# <!-- ||end_stash|| -->''' % (self.content_preprocessed, stash_content)
+
+    def _remove_all_stashed_content(self):
+        _regex = re.compile('<!-- \|\|stash\|\| -->.*?<!-- \|\|end_stash\|\| -->', re.DOTALL | re.MULTILINE)
+        cleaned_content, num_stashes = _regex.subn('', self.content_preprocessed)
+        if num_stashes > 0:
+            logger.debug("Removed %i stash sections from finalized content." % num_stashes)
+        return cleaned_content
 
     def __unicode__(self):
         return self.slug
@@ -441,7 +475,7 @@ class TemplatePage(object):
 
         settings.URLS[self.name] = self.absolute_url
 
-    def render_html(self, all_posts=None):
+    def render_item(self, all_posts):
         rendered = self.html_template.render(nav_context=self.name,
                                              all_posts=all_posts)
         return rendered

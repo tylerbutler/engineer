@@ -1,12 +1,12 @@
 # coding=utf-8
 import os
-from datetime import timedelta
 
 import arrow
 from path import path
 
 from engineer.exceptions import PostMetadataError
 from engineer.log import bootstrap
+
 bootstrap()
 from engineer.models import Post
 from engineer.plugins import load_plugins
@@ -33,7 +33,7 @@ class PostTestCase(CopyDataTestCase):
         settings.create_required_directories()
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 class MetadataTests(PostTestCase):
     def default_metadata_test(self):
         """Metadata defaults"""
@@ -50,7 +50,7 @@ class MetadataTests(PostTestCase):
         with self.assertRaises(PostMetadataError):
             Post(file)
 
-    #noinspection PyProtectedMember
+    # noinspection PyProtectedMember
     def fenced_metadata_test(self):
         """Fenced metadata"""
         file = self.post_dir / 'fenced_metadata.md'
@@ -107,7 +107,7 @@ class MetadataTests(PostTestCase):
         self.assertSequenceEqual(post.tags, ['2013', '2014'])
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 class StatusTests(PostTestCase):
     def draft_default_test(self):
         """Draft default status"""
@@ -136,7 +136,7 @@ class StatusTests(PostTestCase):
         self.assertFalse(post.is_draft)
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 class ContentTests(PostTestCase):
     def post_breaks_simple_test(self):
         """Post breaks of the form: -- more --"""
@@ -163,7 +163,7 @@ class ContentTests(PostTestCase):
         self.assertIn(u"also a “unicode character” in the metadata!", post.tags)
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 class PermalinkTests(PostTestCase):
     def test_fulldate(self):
         from engineer.conf import settings
@@ -259,5 +259,5 @@ class GlobalLinksTests(PostTestCase):
 <p>He does not like to be called <a href="http://tylerbutler.com">Ty</a>.</p>
         """.replace('\r\n', '\n')
 
-        actual_content = unicode(Post.convert_post_to_html(post)).replace('\r\n', '\n')
+        actual_content = unicode(post.content).replace('\r\n', '\n')
         self.assertEqual(actual_content.strip(), expected_content.strip())

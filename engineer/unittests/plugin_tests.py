@@ -1,9 +1,11 @@
 # coding=utf-8
 
 from path import path
+from engineer.models import Post
 from engineer.plugins import PostRenamerPlugin
 
 from engineer.unittests.config_tests import BaseTestCase
+from engineer.unittests.post_tests import PostTestCase
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -129,3 +131,42 @@ case][4] automatically.
         with open(post.source, mode='rb') as post_file:
             content = post_file.read()
         self.assertEqual(content.strip(), self._expected_metadata + self._expected_output.strip())
+
+
+class PostLinkHelperTestCase(PostTestCase):
+    def post_link_settings_test(self):
+        """Post link settings test."""
+        from engineer.conf import settings
+        from engineer.plugins.bundled import PostLinkPlugin
+
+        settings.reload(self.config_dir / 'post_link_default.yaml')
+        self.assertTrue(PostLinkPlugin.is_enabled())
+
+        settings.reload(self.config_dir / 'post_link_disabled_settings.yaml')
+        self.assertFalse(PostLinkPlugin.is_enabled())
+
+    def post_link_test(self):
+        """Post link test."""
+        from engineer.conf import settings
+
+        settings.reload(self.config_dir / 'post_link_settings.yaml')
+        post = Post(self.post_dir / 'post_link_post.md')
+
+        expected_content = """
+<p>Tyler Butler has a home on the web at <a href="http://tylerbutler.com">tylerbutler.com</a>.</p>
+        """.replace('\r\n', '\n')
+
+        actual_content = unicode(post.content).replace('\r\n', '\n')
+        self.assertEqual(actual_content.strip(), expected_content.strip())
+
+    def post_link_disabled_test(self):
+        """Post link disabled test."""
+        from engineer.conf import settings
+
+        settings.reload(self.config_dir / 'post_link_disabled_settings.yaml')
+        post = Post(self.post_dir / 'post_link_post.md')
+
+        expected_content = "<p>Tyler Butler has a home on the web at&nbsp;[tylerbutler.com][post-link].</p>"
+
+        actual_content = unicode(post.content).replace('\r\n', '\n')
+        self.assertEqual(actual_content.strip(), expected_content.strip())

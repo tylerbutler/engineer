@@ -47,6 +47,7 @@
 .nv { color: #000000 } /* Name.Variable */
 .ow { color: #204a87; font-weight: bold } /* Operator.Word */
 .w { color: #f8f8f8; text-decoration: underline } /* Text.Whitespace */
+.mb { color: #0000cf; font-weight: bold } /* Literal.Number.Bin */
 .mf { color: #0000cf; font-weight: bold } /* Literal.Number.Float */
 .mh { color: #0000cf; font-weight: bold } /* Literal.Number.Hex */
 .mi { color: #0000cf; font-weight: bold } /* Literal.Number.Integer */

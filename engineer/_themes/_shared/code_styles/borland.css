@@ -28,6 +28,7 @@
 .nt { color: #000080; font-weight: bold } /* Name.Tag */
 .ow { font-weight: bold } /* Operator.Word */
 .w { color: #bbbbbb } /* Text.Whitespace */
+.mb { color: #0000FF } /* Literal.Number.Bin */
 .mf { color: #0000FF } /* Literal.Number.Float */
 .mh { color: #0000FF } /* Literal.Number.Hex */
 .mi { color: #0000FF } /* Literal.Number.Integer */

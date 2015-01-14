@@ -1,33 +1,32 @@
-/* From https://github.com/gthank/solarized-dark-pygments */
-
 .hll { background-color: #ffffcc }
 .c { color: #586E75 } /* Comment */
 .err { color: #93A1A1 } /* Error */
+.esc { color: #93A1A1 } /* Escape */
 .g { color: #93A1A1 } /* Generic */
-.k { color: #859900 } /* Keyword */
+.k { color: #719e07 } /* Keyword */
 .l { color: #93A1A1 } /* Literal */
 .n { color: #93A1A1 } /* Name */
-.o { color: #859900 } /* Operator */
+.o { color: #719e07 } /* Operator */
 .x { color: #CB4B16 } /* Other */
 .p { color: #93A1A1 } /* Punctuation */
 .cm { color: #586E75 } /* Comment.Multiline */
-.cp { color: #859900 } /* Comment.Preproc */
+.cp { color: #719e07 } /* Comment.Preproc */
 .c1 { color: #586E75 } /* Comment.Single */
-.cs { color: #859900 } /* Comment.Special */
-.gd { color: #2AA198 } /* Generic.Deleted */
+.cs { color: #719e07 } /* Comment.Special */
+.gd { color: #DC322F } /* Generic.Deleted */
 .ge { color: #93A1A1; font-style: italic } /* Generic.Emph */
-.gr { color: #DC322F } /* Generic.Error */
+.gr { color: #DC322F; font-weight: bold } /* Generic.Error */
 .gh { color: #CB4B16 } /* Generic.Heading */
-.gi { color: #859900 } /* Generic.Inserted */
+.gi { color: #719e07 } /* Generic.Inserted */
 .go { color: #93A1A1 } /* Generic.Output */
 .gp { color: #93A1A1 } /* Generic.Prompt */
 .gs { color: #93A1A1; font-weight: bold } /* Generic.Strong */
-.gu { color: #CB4B16 } /* Generic.Subheading */
+.gu { color: #268BD2 } /* Generic.Subheading */
 .gt { color: #93A1A1 } /* Generic.Traceback */
 .kc { color: #CB4B16 } /* Keyword.Constant */
 .kd { color: #268BD2 } /* Keyword.Declaration */
-.kn { color: #859900 } /* Keyword.Namespace */
-.kp { color: #859900 } /* Keyword.Pseudo */
+.kn { color: #719e07 } /* Keyword.Namespace */
+.kp { color: #719e07 } /* Keyword.Pseudo */
 .kr { color: #268BD2 } /* Keyword.Reserved */
 .kt { color: #DC322F } /* Keyword.Type */
 .ld { color: #93A1A1 } /* Literal.Date */
@@ -47,8 +46,9 @@
 .py { color: #93A1A1 } /* Name.Property */
 .nt { color: #268BD2 } /* Name.Tag */
 .nv { color: #268BD2 } /* Name.Variable */
-.ow { color: #859900 } /* Operator.Word */
+.ow { color: #719e07 } /* Operator.Word */
 .w { color: #93A1A1 } /* Text.Whitespace */
+.mb { color: #2AA198 } /* Literal.Number.Bin */
 .mf { color: #2AA198 } /* Literal.Number.Float */
 .mh { color: #2AA198 } /* Literal.Number.Hex */
 .mi { color: #2AA198 } /* Literal.Number.Integer */

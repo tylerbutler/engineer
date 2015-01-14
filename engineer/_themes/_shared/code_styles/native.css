@@ -1,6 +1,7 @@
 .hll { background-color: #404040 }
 .c { color: #999999; font-style: italic } /* Comment */
 .err { color: #a61717; background-color: #e3d2d2 } /* Error */
+.esc { color: #d0d0d0 } /* Escape */
 .g { color: #d0d0d0 } /* Generic */
 .k { color: #6ab825; font-weight: bold } /* Keyword */
 .l { color: #d0d0d0 } /* Literal */
@@ -47,6 +48,7 @@
 .nv { color: #40ffff } /* Name.Variable */
 .ow { color: #6ab825; font-weight: bold } /* Operator.Word */
 .w { color: #666666 } /* Text.Whitespace */
+.mb { color: #3677a9 } /* Literal.Number.Bin */
 .mf { color: #3677a9 } /* Literal.Number.Float */
 .mh { color: #3677a9 } /* Literal.Number.Hex */
 .mi { color: #3677a9 } /* Literal.Number.Integer */

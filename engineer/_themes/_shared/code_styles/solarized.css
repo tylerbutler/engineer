@@ -1,5 +1,3 @@
-/* From https://github.com/john2x/solarized-pygment */
-
 .hll { background-color: #ffffcc }
 .c { color: #93a1a1; font-style: italic } /* Comment */
 .g { color: #d33682 } /* Generic */
@@ -45,6 +43,7 @@
 .nv { color: #268bd2 } /* Name.Variable */
 .ow { color: #859900 } /* Operator.Word */
 .w { color: #586e75 } /* Text.Whitespace */
+.mb { color: #2aa198; font-weight: bold } /* Literal.Number.Bin */
 .mf { color: #2aa198; font-weight: bold } /* Literal.Number.Float */
 .mh { color: #2aa198; font-weight: bold } /* Literal.Number.Hex */
 .mi { color: #2aa198; font-weight: bold } /* Literal.Number.Integer */

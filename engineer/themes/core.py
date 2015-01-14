@@ -93,15 +93,12 @@ class Theme(object):
 
         # register the global bundles
         assets_env.append_path(settings.ENGINEER.LIB_DIR, url=urljoin(settings.STATIC_URL, 'lib'))
-
-        for name, bundle in ThemeManager.global_bundles.iteritems():
-            assets_env.register(name, bundle)
+        self._register_bundles(assets_env, ThemeManager.global_bundles)
 
         # register code style bundles
         assets_env.append_path(settings.ENGINEER.THEMES_DIR / '_shared/code_styles',
                                url=urljoin(settings.STATIC_URL, 'code'))
-        for name, bundle in ThemeManager.code_style_bundles.iteritems():
-            assets_env.register(name, bundle)
+        self._register_bundles(assets_env, ThemeManager.code_style_bundles)
 
         # register the local bundles
         for bundle_file in self.bundle_files:
@@ -110,12 +107,16 @@ class Theme(object):
                 assets_env.append_path(bundle_yaml.dirname().abspath())
                 loader = YAMLLoader(bundle_yaml.abspath())
                 local_bundles = loader.load_bundles(assets_env)
-                for name, bundle in local_bundles.iteritems():
-                    assets_env.register(name, bundle)
+                self._register_bundles(assets_env, local_bundles)
             else:
                 self.logger.warning("Cannot find bundle file %s for theme %s." % (bundle_file, self.id))
 
         return assets_env
+
+    @staticmethod
+    def _register_bundles(assets_env, bundle_iterable):
+        for name, bundle in bundle_iterable.iteritems():
+            assets_env.register(name, bundle)
 
     def theme_path(self, template):
         if (self.template_root / template).abspath().exists():

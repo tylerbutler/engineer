@@ -5,6 +5,14 @@
 Release Notes
 =============
 
+version 0.6.0 -
+===============
+
+- Support for Facebook and Twitter 'share' buttons in the :ref:`dark rainbow` theme.
+- :ref:`dark rainbow` now uses Foundation 5 and includes a number of enhancements for smaller mobile screens.
+-
+
+
 version 0.5.1 - May 28, 2014
 ============================
 

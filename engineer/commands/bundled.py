@@ -161,9 +161,10 @@ class BuildCommand(ArgparseCommand):
 
         # Generate rollup pages
         num_posts = len(all_posts)
-        num_slices = (
-            num_posts / settings.ROLLUP_PAGE_SIZE) if num_posts % settings.ROLLUP_PAGE_SIZE == 0 \
-            else (num_posts / settings.ROLLUP_PAGE_SIZE) + 1
+        if num_posts % settings.ROLLUP_PAGE_SIZE == 0:
+            num_slices = num_posts / settings.ROLLUP_PAGE_SIZE
+        else:
+            num_slices = (num_posts / settings.ROLLUP_PAGE_SIZE) + 1
 
         slice_num = 0
         for posts in all_posts.paginate():

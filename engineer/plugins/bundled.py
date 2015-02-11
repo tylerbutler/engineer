@@ -14,7 +14,7 @@ from engineer.filters import compress, format_datetime, img, localtime, markdown
     naturaltime, typogrify_no_widont
 from engineer.log import log_object
 from engineer.plugins.core import PostProcessor, JinjaEnvironmentPlugin
-from engineer.util import flatten_list
+from engineer.util import flatten_list, update_additive
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
@@ -224,9 +224,9 @@ class FinalizationPlugin(PostProcessor):
 
 class PostRenamerPlugin(PostProcessor):
     _default_config = {
-        Status.published: u'({status_short}) {year}-{month}-{day} {slug}.md',
-        Status.draft: u'({status}) {slug}.md',
-        Status.review: u'({status}) {year}-{month}-{day} {slug}.md'
+        'published': u'({status_short}) {year}-{month}-{day} {slug}.md',
+        'draft': u'({status}) {slug}.md',
+        'review': u'({status}) {year}-{month}-{day} {slug}.md'
     }
 
     setting_name = 'POST_RENAME'
@@ -239,11 +239,8 @@ class PostRenamerPlugin(PostProcessor):
         logger = cls.get_logger()
         plugin_settings, user_supplied_settings = cls.initialize_settings(config_dict)
 
-        if 'config' in user_supplied_settings:
-            config = cls.default_settings['config'].copy()
-            custom_config = dict([(Status(k), v) for k, v in user_supplied_settings['config'].iteritems()])
-            config.update(custom_config)
-            plugin_settings['config'] = config
+        config = dict([(Status(k), v) for k, v in plugin_settings['config'].iteritems()])
+        plugin_settings['config'] = config
 
         logger.debug("Setting the %s setting to %s." % (cls.get_setting_name(), log_object(plugin_settings)))
         cls.store_settings(plugin_settings)

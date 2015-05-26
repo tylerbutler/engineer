@@ -44,23 +44,27 @@ class PandocRenderer(PostRenderer):
             raise
 
 
-class CommonMarkRenderer(PostRenderer):
+try:
     # noinspection PyPackageRequirements
     import CommonMark
+except ImportError:
+    CommonMark = None
 
-    supported_input_formats = ('.markdown', '.md', '.mdown')
-    supported_output_formats = ('.html',)
+if CommonMark:
+    class CommonMarkRenderer(PostRenderer):
+        supported_input_formats = ('.markdown', '.md', '.mdown')
+        supported_output_formats = ('.html',)
 
-    parser = CommonMark.DocParser()
-    renderer = CommonMark.HTMLRenderer()
+        parser = CommonMark.DocParser()
+        renderer = CommonMark.HTMLRenderer()
 
-    def render(self, content, input_format, output_format='.html'):
-        logger = self.get_logger()
-        self.validate(input_format, output_format)
+        def render(self, content, input_format, output_format='.html'):
+            logger = self.get_logger()
+            self.validate(input_format, output_format)
 
-        ast = self.parser.parse(content)
+            ast = self.parser.parse(content)
 
-        return self.renderer.render(ast)
+            return self.renderer.render(ast)
 
 try:
     # noinspection PyPackageRequirements

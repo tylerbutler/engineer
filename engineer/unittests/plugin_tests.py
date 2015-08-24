@@ -1,6 +1,10 @@
 # coding=utf-8
+from engineer.log import bootstrap
+
+bootstrap()
 
 from path import path
+from engineer.enums import Status
 from engineer.models import Post
 from engineer.plugins import PostRenamerPlugin
 
@@ -30,6 +34,8 @@ class PostRenamerTestCase(BaseTestCase):
         from engineer.models import Post
 
         settings.reload('config.yaml')
+        settings.create_required_directories()
+        self.assertEqual(PostRenamerPlugin.get_settings()['config'][Status.draft], '({status}) {slug}.md')
 
         post = Post('posts/draft_post.md')
         self.assertTrue(post.source.exists())
@@ -51,6 +57,7 @@ class PostRenamerTestCase(BaseTestCase):
         from engineer.models import Post
 
         settings.reload('custom_renames.yaml')
+        settings.create_required_directories()
 
         post = Post('posts/draft_post.md')
         self.assertEqual(post.source.name, 'draft_post.md')
@@ -112,6 +119,7 @@ case][4] automatically.
         from engineer.models import Post
 
         settings.reload('config.yaml')
+        settings.create_required_directories()
 
         post = Post('posts/lazy_markdown_links.md')
         self.assertEqual(post.content_preprocessed.strip(), self._expected_output.strip())
@@ -124,6 +132,7 @@ case][4] automatically.
         from engineer.models import Post
 
         settings.reload('lazy_links_persist.yaml')
+        settings.create_required_directories()
 
         post = Post('posts/lazy_markdown_links.md')
         self.assertEqual(post.content_preprocessed.strip(), self._expected_output.strip())

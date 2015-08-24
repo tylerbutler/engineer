@@ -148,7 +148,8 @@ class Post(object):
         # noinspection PyUnresolvedReferences
         # handle any postprocessor plugins
         for plugin in PostProcessor.plugins:
-            plugin.postprocess(self)
+            if plugin.is_enabled():
+                plugin.postprocess(self)
 
         # update cache
         settings.POST_CACHE[self.source] = self

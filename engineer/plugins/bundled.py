@@ -230,9 +230,12 @@ class PostRenamerPlugin(PostProcessor):
     }
 
     setting_name = 'POST_RENAME'
-    default_settings = {
-        'config': _default_config
-    }
+
+    @classmethod
+    def get_default_settings(cls):
+        return {
+            'config': cls._default_config.copy()
+        }
 
     @classmethod
     def handle_settings(cls, config_dict, settings):

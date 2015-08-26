@@ -1,5 +1,4 @@
 # coding=utf-8
-from pygments import highlight
 from pygments.formatters.html import HtmlFormatter
 from pygments.styles import get_all_styles
 

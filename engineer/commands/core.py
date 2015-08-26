@@ -1,7 +1,6 @@
 # coding=utf-8
 from __future__ import absolute_import
 import argparse
-from brownie.caching import cached_property
 
 from engineer.commands.argh_helpers import argh_installed
 from engineer.plugins import PluginMixin

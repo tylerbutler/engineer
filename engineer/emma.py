@@ -7,8 +7,8 @@ from path import path
 
 from engineer.conf import settings
 
-
 try:
+    # noinspection PyPep8Naming
     import cPickle as pickle
 except ImportError:
     import pickle
@@ -22,15 +22,7 @@ class NoSecretException(Exception):
     pass
 
 
-#def url(path_to_append, absolute=False):
-#    if path_to_append is None or path_to_append == '':
-#        return [get_secret_path(absolute), get_secret_path(absolute) + '/']
-#    else:
-#        path = '%s/%s' % (get_secret_path(absolute), path_to_append)
-#        return [path, path + '/']
-
-
-#noinspection PyUnresolvedReferences
+# noinspection PyUnresolvedReferences
 class EmmaStandalone(object):
     app = bottle.Bottle()
 
@@ -138,7 +130,7 @@ class Emma(object):
         self.secret_file.remove_p()
         exit()
 
-    #noinspection PyMethodMayBeStatic
+    # noinspection PyMethodMayBeStatic
     def _serve_static(self, filepath):
         response = bottle.static_file(filepath,
                                       root=settings.ENGINEER.STATIC_DIR)

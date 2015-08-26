@@ -303,6 +303,7 @@ def compress(item, compression_type):
 _setonce_count = itertools.count()
 
 
+# noinspection PyPep8Naming
 class setonce(object):
     """
     Allows an attribute to be set once (typically in __init__), but

@@ -14,7 +14,7 @@ from engineer.filters import compress, format_datetime, img, localtime, markdown
     naturaltime, typogrify_no_widont
 from engineer.log import log_object
 from engineer.plugins.core import PostProcessor, JinjaEnvironmentPlugin
-from engineer.util import flatten_list, update_additive
+from engineer.util import flatten_list
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 

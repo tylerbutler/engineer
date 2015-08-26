@@ -1,5 +1,4 @@
 # coding=utf-8
-from tempfile import mkdtemp
 
 # noinspection PyPackageRequirements
 from argh import named
@@ -7,7 +6,6 @@ from argh import named
 from clint.textui import colored, indent, puts
 # noinspection PyPackageRequirements
 from clint.textui import columns
-from path import path
 from engineer.log import bootstrap
 
 

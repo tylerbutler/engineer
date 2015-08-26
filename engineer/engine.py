@@ -1,7 +1,6 @@
 # coding=utf-8
 import argparse
 import logging
-import os
 import sys
 import time
 
@@ -11,9 +10,7 @@ from path import path
 from engineer.commands import all_commands, common_parser
 from engineer.log import get_console_handler, bootstrap
 from engineer.plugins import load_plugins
-from engineer.util import relpath, compress, has_files, diff_dir
 from engineer import version
-
 
 try:
     # noinspection PyPep8Naming

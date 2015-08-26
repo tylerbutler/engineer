@@ -17,9 +17,8 @@ from engineer.conf import settings
 from engineer.enums import Status
 from engineer.exceptions import PostMetadataError
 from engineer.filters import localtime
-from engineer.plugins import PostProcessor, PostRenderer, FinalizationPlugin
+from engineer.plugins import PostProcessor, FinalizationPlugin
 from engineer.util import setonce, slugify, chunk, urljoin, wrap_list
-
 
 try:
     # noinspection PyPep8Naming

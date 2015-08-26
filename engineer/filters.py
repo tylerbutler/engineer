@@ -6,6 +6,7 @@ import humanize
 from dateutil import tz
 from markdown import markdown
 from path import path
+# noinspection PyPep8Naming
 from typogrify import filters as Typogrify
 from typogrify.templatetags import jinja_filters
 
@@ -115,9 +116,9 @@ def compress(value):
                     continue
                     # TODO: Inline script minification.
                     # has_inline = True
-                    #if len(item.childNodes) > 1:
+                    # if len(item.childNodes) > 1:
                     #    raise Exception("For some reason the inline script node has more than one child node.")
-                    #else:
+                    # else:
                     #    item.childNodes[0].value = _min_js(item.childNodes[0].value)
             else:
                 raise Exception("Hmmm, wasn't expecting a '%s' here." % item.name)

@@ -129,11 +129,17 @@ class TestVariableExpansion(BaseTestCase):
     def _validate(self, settings_attr):
         from engineer.conf import settings
 
+        logger = logging.getLogger()
         if settings_attr.endswith('_FILE'):
             template_string = '~/%s.file'
         else:
             template_string = '~/%s'
         value = template_string % settings_attr.lower()
+
+        # Skip test if user's path is not defined
+        if unicode(path('~').expand()) == u'~':
+            logger.warning("Skipping variable expansion since '~' does not resolve to anything.")
+            return
 
         expected = path(value).expand()
         self.assertEqual(getattr(settings, settings_attr), expected)
@@ -141,7 +147,14 @@ class TestVariableExpansion(BaseTestCase):
     def _validate_list(self, settings_attr):
         from engineer.conf import settings
 
+        logger = logging.getLogger()
         values = ['~/foo/', '~/bar', '~/baz/']
+
+        # Skip test if user's path is not defined
+        if unicode(path('~').expand()) == u'~':
+            logger.warning("Skipping variable expansion since '~' does not resolve to anything.")
+            return
+
         expected = [path(p).expand() for p in values]
 
         self.assertEqual(getattr(settings, settings_attr), expected)

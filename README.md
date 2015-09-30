@@ -5,7 +5,7 @@ of files - articles written in Markdown, templates, and other stuff - and output
 mostly - that you can then copy wherever you want.
 
 But Engineer has some pretty nifty features that you might find enticing. You can read more about the project at
-http://engineer.readthedocs.org/ or grab the code at http://github.com/tylerbutler/engineer.
+https://engineer.readthedocs.org/ or grab the code at https://github.com/tylerbutler/engineer.
 
 Licensed under the MIT license.
 
@@ -27,8 +27,8 @@ Release:
 Development branch: 
 [![Documentation Status](https://readthedocs.org/projects/engineer/badge/?version=latest)][docs_latest]
 
-[docs_master]: http://engineer.readthedocs.org/en/master/
-[docs_latest]: http://engineer.readthedocs.org/en/latest/
+[docs_master]: https://engineer.readthedocs.org/en/master/
+[docs_latest]: https://engineer.readthedocs.org/en/latest/
 
 Installation
 ------------

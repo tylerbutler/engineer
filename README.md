@@ -1,4 +1,4 @@
-# Engineer [![Latest Version](https://pypip.in/version/engineer/badge.svg?text=version&style=flat)][release] [![Downloads](https://pypip.in/download/engineer/badge.svg?style=flat)][dl] [![License](https://pypip.in/license/engineer/badge.svg?style=flat)][license]
+# Engineer [![Latest Version](https://img.shields.io/pypi/v/engineer.svg?style=flat&label=version)][release] [![Downloads](https://img.shields.io/pypi/dm/engineer.svg?style=flat)][dl] [![Python](https://img.shields.io/pypi/pyversions/engineer.svg?style=flat)][dl] [![License](https://img.shields.io/pypi/l/engineer.svg?style=flat)][license]
 
 At its core, Engineer is a static website generator. In other words, Engineer let's you build a website from a bunch
 of files - articles written in Markdown, templates, and other stuff - and outputs *another* bunch of files - HTML,
@@ -11,11 +11,13 @@ Licensed under the MIT license.
 
 **Current build status**: 
 [![Build Status](https://api.travis-ci.org/tylerbutler/engineer.svg?branch=dev&style=flat)][build_latest]
+[![Coverage Status](https://coveralls.io/repos/tylerbutler/engineer/badge.svg?branch=dev&service=github)][coverage]
 
 [release]: https://pypi.python.org/pypi/engineer/
 [dl]: https://crate.io/packages/engineer
 [build_latest]: https://travis-ci.org/tylerbutler/engineer
 [license]: https://github.com/tylerbutler/engineer/blob/master/LICENSE.txt
+[coverage]: https://coveralls.io/github/tylerbutler/engineer?branch=dev
 
 Documentation
 -------------

@@ -128,7 +128,7 @@ class VersionClass(object):
             dev = ver['dev'] or ''
             local = ver['local'] or ''
         else:
-            raise ValueError("Couldn't parse version string.")
+            raise ValueError("Couldn't parse version string: %s" % ver_string)
 
         major = ver['major'] or '0'
         minor = ver['minor'] or '0'

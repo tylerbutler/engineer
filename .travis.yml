@@ -4,6 +4,7 @@ python:
   - "2.7"
 # command to install dependencies
 install:
+  - "git fetch --unshallow"
   - "pip install ."
   - "pip install -r requirements_tests.txt"
   - "pip install coveralls"

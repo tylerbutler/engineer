@@ -87,10 +87,11 @@ class TestConfig(BaseTestCase):
         from engineer.conf import settings
 
         self.assertFalse(settings.PUBLISH_DRAFTS)
-        override = parse_override_args("--PUBLISH_DRAFTS true --theme_dirs C:\\foo C:\\bar".split())
+        override = parse_override_args("--PUBLISH_DRAFTS true --theme_dirs foo bar".split())
         settings.reload('inheritance.yaml', override)
         self.assertTrue(settings.PUBLISH_DRAFTS)
-        self.assertEqual(settings.THEME_DIRS, ['C:\\foo', 'C:\\bar'])
+        self.assertEqual(settings.THEME_DIRS,
+                         [self.copied_data_path / 'foo', self.copied_data_path / 'bar'])
 
 
 class TestVariableExpansion(BaseTestCase):

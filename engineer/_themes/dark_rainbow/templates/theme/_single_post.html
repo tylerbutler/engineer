@@ -71,15 +71,15 @@
 
                     <div class="row">
                         <div class="small-12 columns post-links">
-                            <ul class="small-block-grid-2">
-                                <li>
+                            <ul class="row">
+                                <li class="small-12 medium-6 columns text-left">
                                     {% if older_post %}
                                         <a href="{{ older_post.url }}">← {{ older_post.title }}</a>
                                     {% else %}
                                         &nbsp;
                                     {% endif %}
                                 </li>
-                                <li>
+                                <li class="small-12 medium-6 columns text-right">
                                     {% if newer_post %}
                                         <a href="{{ newer_post.url }}">{{ newer_post.title }} →</a>
                                     {% else %}

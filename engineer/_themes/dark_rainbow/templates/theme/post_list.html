@@ -14,23 +14,23 @@
     </div>
     <div class="row archives">
         <div class="small-12 columns post-links">
-            <ul class="small-block-grid-3">
-                <li>
+            <ul class="row">
+                <li class="small-6 medium-4 columns text-left">
                     {% if has_next %}
                         <a href="{{ urlname('listpage', (slice_num + 1)) }}">← older posts</a>
                     {% else %}
                         &nbsp;
                     {% endif %}
                 </li>
-                <li style="text-align: center;">
-                    <a href="{{ urlname('archives') }}"> &ndash; archives &ndash; </a>
-                </li>
-                <li>
+                <li class="small-6 medium-4 medium-push-4 columns text-right">
                     {% if has_previous %}
                         <a href="{{ urlname('listpage', (slice_num - 1)) }}">newer posts →</a>
                     {% else %}
                         &nbsp;
                     {% endif %}
+                </li>
+                <li class="small-12 medium-4 medium-pull-4 small-centered columns text-center">
+                    <a href="{{ urlname('archives') }}"> &ndash; archives &ndash; </a>
                 </li>
             </ul>
         </div>

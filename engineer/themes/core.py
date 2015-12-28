@@ -12,7 +12,6 @@ from engineer.conf import settings
 from engineer.exceptions import ThemeNotFoundException
 from engineer.util import get_class, mirror_folder, ensure_exists, urljoin, wrap_list
 
-
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 
 
@@ -224,12 +223,12 @@ class ThemeManager(object):
         'foundation_css_ie': Bundle('foundation/stylesheets/ie.css',
                                     filters='cssmin',
                                     output='foundation_ie.%(version)s.css'),
-        'foundation5_css': Bundle('foundation5/css/foundation.css',
+        'foundation6_css': Bundle('foundation6/css/foundation.css',
                                   filters='cssmin',
-                                  output='foundation5.%(version)s.css'),
-        'foundation5_js': Bundle('foundation5/js/vendor/modernizr.js',
+                                  output='foundation6.%(version)s.css'),
+        'foundation6_js': Bundle('foundation6/js/vendor/modernizr.js',
                                  filters='jsmin',
-                                 output='foundation5.%(version)s.js'),
+                                 output='foundation6.%(version)s.js'),
         'normalize': Bundle('normalize/normalize.css',
                             filters='cssmin',
                             output='normalize.%(version)s.css'),

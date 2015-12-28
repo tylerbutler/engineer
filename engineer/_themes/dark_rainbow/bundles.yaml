@@ -1,7 +1,7 @@
 dark_rainbow_css:
   filters: less, cssmin
   contents:
-    - foundation5_css
+    - foundation6_css
     - './static/stylesheets/dark_rainbow.less'
   output: dark_rainbow.%(version)s.css
 

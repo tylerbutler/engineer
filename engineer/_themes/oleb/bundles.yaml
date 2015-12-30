@@ -1,15 +1,15 @@
 oleb_css:
-  filters: less, cssmin
   contents:
     - './static/stylesheets/oleb.less'
-    - foundation_css
+    - foundation2_css
     - codestyle_github
   output: oleb.%(version)s.css
+  filters: less, cssmin
 
 oleb_css_bigfoot:
-  filters: cssmin
   contents:
     - bigfoot_css
     - oleb_css
   output: oleb_bigfoot.%(version)s.css
+  filters: cssmin
 

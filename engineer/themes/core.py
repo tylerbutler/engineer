@@ -86,13 +86,14 @@ class Theme(object):
         # directory argument will be used as the output path
         assets_env = AssetsEnvironment(directory=(settings.OUTPUT_STATIC_DIR / 'bundled'),
                                        url=urljoin(settings.STATIC_URL, 'bundled'),
-                                       # cache=self.ENGINEER.WEBASSETS_CACHE_DIR,  # this seems broken in webassets
+                                       # cache=self.ENGINEER.WEBASSETS_CACHE_DIR, # TODO: this seems broken in webassets
                                        debug='merge' if settings.DEBUG else False)
         assets_env.config['less_bin'] = settings.LESS_PREPROCESSOR
 
         # register the global bundles
         assets_env.append_path(settings.ENGINEER.LIB_DIR, url=urljoin(settings.STATIC_URL, 'lib'))
-        self._register_bundles(assets_env, ThemeManager.global_bundles)
+        global_bundles = YAMLLoader(settings.ENGINEER.STATIC_DIR / 'engineer/lib/global_bundles.yaml').load_bundles()
+        self._register_bundles(assets_env, global_bundles)
 
         # register code style bundles
         assets_env.append_path(settings.ENGINEER.THEMES_DIR / '_shared/code_styles',
@@ -205,40 +206,6 @@ class ThemeManager(object):
             raise ThemeNotFoundException("Theme with id '%s' cannot be found." % id)
         else:
             return ThemeManager.themes()[id]
-
-    global_bundles = {
-        'jquery': Bundle('jquery-1.11.0.min.js',
-                         output='jquery.%(version)s.js'),
-        'less': Bundle('less-2.1.0.min.js',
-                       output='less.%(version)s.js'),
-        'modernizr': Bundle('modernizr-2.7.1.min.js',
-                            output='modernizr.%(version)s.js'),
-        'foundation_js': Bundle('foundation/javascripts/foundation.js',
-                                filters='jsmin',
-                                output='foundation.%(version)s.js'),
-        'foundation_css': Bundle('foundation/stylesheets/grid.css',
-                                 'foundation/stylesheets/mobile.css',
-                                 filters='cssmin',
-                                 output='foundation.%(version)s.css'),
-        'foundation_css_ie': Bundle('foundation/stylesheets/ie.css',
-                                    filters='cssmin',
-                                    output='foundation_ie.%(version)s.css'),
-        'foundation6_css': Bundle('foundation6/css/foundation.css',
-                                  filters='cssmin',
-                                  output='foundation6.%(version)s.css'),
-        'foundation6_js': Bundle('foundation6/js/vendor/modernizr.js',
-                                 filters='jsmin',
-                                 output='foundation6.%(version)s.js'),
-        'normalize': Bundle('normalize/normalize.css',
-                            filters='cssmin',
-                            output='normalize.%(version)s.css'),
-        'bigfoot_js': Bundle('bigfoot/scripts/bigfoot.js',
-                             filters='jsmin',
-                             output='bigfoot.%(version)s.js'),
-        'bigfoot_css': Bundle('bigfoot/styles/bigfoot-default.css',
-                              filters='cssmin',
-                              output='bigfoot.%(version)s.css'),
-    }
 
     _codestyle_list = (settings.ENGINEER.THEMES_DIR / '_shared/code_styles/').files('*.css')
     code_style_bundles = dict([('codestyle_%s' % name.namebase,

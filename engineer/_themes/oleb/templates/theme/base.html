@@ -17,7 +17,7 @@
     {% endif %}
 
     <!--[if lt IE 9]>
-        {% assets "foundation_css_ie" %}
+        {% assets "foundation2_css_ie" %}
             <link rel="stylesheet" href="{{ ASSET_URL }}">
         {% endassets %}
     <![endif]-->
@@ -136,7 +136,7 @@
 {% endblock body %}
 
 {%- block scripts_bottom %}
-    {% assets "foundation_js" %}
+    {% assets "foundation2_js" %}
         <script src="{{ ASSET_URL }}"></script>
     {% endassets %}
 {% endblock -%}

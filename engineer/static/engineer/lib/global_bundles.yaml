@@ -1,0 +1,62 @@
+jquery:
+  contents:
+    - './jquery-1.11.0.min.js'
+  output: 'jquery.%(version)s.js'
+
+less:
+  contents:
+    - './less-2.1.0.min.js'
+  output: 'less.%(version)s.js'
+
+modernizr:
+  contents:
+    - './modernizr-2.7.1.min.js'
+  output: 'modernizr.%(version)s.js'
+
+foundation2_css:
+  contents:
+    - './foundation/stylesheets/grid.css'
+    - './foundation/stylesheets/mobile.css'
+  output: 'foundation.%(version)s.css'
+  filters: cssmin
+
+foundation2_css_ie:
+  contents:
+    - './foundation/stylesheets/ie.css'
+  output: 'foundation_ie.%(version)s.css'
+  filters: cssmin
+
+foundation2_js:
+  contents:
+    - './foundation/javascripts/foundation.js'
+  output: 'foundation.%(version)s.js'
+  filters: jsmin
+
+foundation6_css:
+  contents:
+    - './foundation6/css/foundation.css'
+  output: 'foundation6.%(version)s.css'
+  filters: cssmin
+
+foundation6_js:
+  contents:
+    - './foundation6/js/foundation.min.js'
+  output: 'foundation6.%(version)s.js'
+
+normalize:
+  contents:
+    - './normalize/normalize.css'
+  output: 'normalize.%(version)s.css'
+  filters: cssmin
+
+bigfoot_css:
+  contents:
+    - './bigfoot/dist/bigfoot-default.css'
+  output: 'bigfoot.%(version)s.css'
+  filters: cssmin
+
+bigfoot_js:
+  contents:
+    - './bigfoot/dist/bigfoot.js'
+  output: 'bigfoot.%(version)s.js'
+  filters: jsmin

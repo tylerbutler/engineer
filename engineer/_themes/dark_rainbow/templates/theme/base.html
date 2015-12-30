@@ -6,7 +6,7 @@
 {% endblock %}
 
 {%- block stylesheets %}
-    {% if theme.enable_bigfoot %}
+    {% if theme.bigfoot.enabled %}
         {% assets "dark_rainbow_css_bigfoot" %}
             <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css"/>
         {% endassets %}
@@ -18,18 +18,6 @@
 {% endblock -%}
 
 {%- block scripts_top %}
-    {# JQUERY #}
-    <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
-    <!--suppress JSUnresolvedLibraryURL -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script>
-        if (window.jQuery == undefined) {
-            {% assets "jquery" %}
-                document.write('<script src="{{ ASSET_URL }}"><\/script>');
-            {% endassets %}
-        }
-    </script>
-
     {# TYPEKIT #}
     <!--suppress JSUnresolvedLibraryURL -->
     <script type="text/javascript"
@@ -43,7 +31,18 @@
         }
     </script>
 
-    {% if theme.enable_bigfoot %}
+    {% if theme.bigfoot.enabled %}
+        {# JQUERY #}
+        <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+        <!--suppress JSUnresolvedLibraryURL -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script>
+            if (window.jQuery == undefined) {
+                {% assets "jquery" %}
+                    document.write('<script src="{{ ASSET_URL }}"><\/script>');
+                {% endassets %}
+            }
+        </script>
         {% assets "bigfoot_js" %}
             <script src="{{ ASSET_URL }}" type="text/javascript"></script>
         {% endassets %}

@@ -1,0 +1,29 @@
+@import (reference) "_colors.less";
+
+.bigfoot-footnote,
+.bigfoot-footnote__tooltip {
+    border: 2px solid @purple;
+}
+
+.bigfoot-footnote,
+.bigfoot-footnote__content,
+.bigfoot-footnote__wrapper,
+.bigfoot-footnote__tooltip {
+    background-color: @bg;
+}
+
+.bigfoot-footnote__button {
+    background-color: @blue;
+    font-size: 1.5rem;
+
+    &:hover,
+    &:focus,
+    &.active,
+    &.is-active {
+        background-color: @purple;
+    }
+}
+
+.bigfoot-footnote__button__circle circle {
+    fill: @bg;
+}

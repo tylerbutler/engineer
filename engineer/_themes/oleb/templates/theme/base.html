@@ -6,7 +6,7 @@
 {% endblock %}
 
 {%- block stylesheets %}
-    {% if theme.enable_bigfoot %}
+    {% if theme.bigfoot.enabled %}
         {% assets "oleb_css_bigfoot" %}
             <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css"/>
         {% endassets %}
@@ -47,7 +47,7 @@
         }
     </script>
 
-    {% if theme.enable_bigfoot %}
+    {% if theme.bigfoot.enabled %}
         {% assets "bigfoot_js" %}
             <script src="{{ ASSET_URL }}" type="text/javascript"></script>
         {% endassets %}

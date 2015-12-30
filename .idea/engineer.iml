@@ -20,6 +20,9 @@
   <component name="TemplatesService">
     <option name="templateFileTypes">
       <list>
+        <option value="HTML" />
+        <option value="XHTML" />
+        <option value="XML" />
         <option value="JavaScript" />
       </list>
     </option>

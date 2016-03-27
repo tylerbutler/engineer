@@ -114,3 +114,7 @@ If you're looking for a full-blown content management system, then... keep looki
 you want. Engineer operates on the basic principle that your content is stored in text files with minimal
 metadata in the files themselves, so if you're looking for rich URL management, image/file manipulation
 capabilities, etc., Engineer will make you very sad. It's not designed to do that stuff.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/tylerbutler/engineer/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+

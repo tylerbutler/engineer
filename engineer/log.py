@@ -1,10 +1,10 @@
 # coding=utf-8
 import logging
+import pprint
 import sys
 
 from brownie.caching import memoize
-
-from engineer.lib.ansistrm import ColorizingStreamHandler
+from crayola import initialize, ColorStreamHandler
 
 
 __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
@@ -12,36 +12,13 @@ __author__ = 'Tyler Butler <tyler@tylerbutler.com>'
 CONSOLE = 1000
 
 
-class Colors(object):
-    BLACK = 'black'
-    RED = 'red'
-    GREEN = 'green'
-    YELLOW = 'yellow'
-    BLUE = 'blue'
-    MAGENTA = 'magenta'
-    CYAN = 'cyan'
-    WHITE = 'white'
-
-
 class CustomLogger(logging.getLoggerClass()):
     def console(self, msg, *args, **kwargs):
         self.log(CONSOLE, msg, *args, **kwargs)
 
 
-class ColorStreamHandler(ColorizingStreamHandler):
-    def __init__(self, stream=None):
-        super(ColorizingStreamHandler, self).__init__(stream)
-
-        #levels to (background, foreground, bold/intense)
-        self.level_map.update({
-            CONSOLE: (None, Colors.WHITE, False),
-            logging.DEBUG: (None, Colors.BLUE, True),
-            logging.INFO: (None, Colors.GREEN, True),
-            logging.WARNING: (None, Colors.YELLOW, True),
-        })
-
-
 def bootstrap():
+    initialize()
     logging.setLoggerClass(CustomLogger)
     logging.addLevelName(CONSOLE, 'CONSOLE')
 
@@ -50,11 +27,23 @@ def bootstrap():
     root_logger.addHandler(get_console_handler(logging.WARNING))
 
 
+pprinter = pprint.PrettyPrinter()
+
+
+# noinspection PyBroadException
+def log_object(obj):
+    try:
+        return pprinter.pformat(obj)
+    except Exception:
+        return str(obj)
+
+
 @memoize
 def get_console_handler(level=CONSOLE):
     console_formatter = logging.Formatter(fmt="%(message)s",
                                           datefmt='%H:%M:%S')
     console_handler = ColorStreamHandler(sys.stdout)
+    console_handler.level_map[CONSOLE] = console_handler.default_colors
     console_handler.setFormatter(console_formatter)
     console_handler.setLevel(level)
     return console_handler

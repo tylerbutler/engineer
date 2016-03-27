@@ -10,9 +10,9 @@ import re
 from itertools import chain, islice
 import urlparse
 
-#noinspection PyUnresolvedReferences
+# noinspection PyUnresolvedReferences
 import translitcodec
-#noinspection PyPackageRequirements
+# noinspection PyPackageRequirements
 from path import path
 
 
@@ -44,8 +44,17 @@ def get_class(class_string):
     return m
 
 
+def get_class_string(obj):
+    if isinstance(obj, basestring):
+        return obj
+
+    mod = obj.__module__
+    cls = getattr(obj, '__name__', obj.__class__.__name__)
+    return '.'.join((mod, cls))
+
+
 def count_iterable(i):
-    #noinspection PyUnusedLocal
+    # noinspection PyUnusedLocal
     return sum(1 for e in i)
 
 
@@ -163,7 +172,7 @@ def mirror_folder(source, target, delete_orphans=True, recurse=True, ignore_list
                 if len(fullpath.listdir()) > 0:
                     report['deleted'].update(expand_tree(fullpath))
 
-                #noinspection PyArgumentList
+                # noinspection PyArgumentList
                 fullpath.rmtree()
             elif fullpath.isfile():
                 logger.debug(
@@ -294,6 +303,7 @@ def compress(item, compression_type):
 _setonce_count = itertools.count()
 
 
+# noinspection PyPep8Naming
 class setonce(object):
     """
     Allows an attribute to be set once (typically in __init__), but
@@ -332,7 +342,7 @@ class setonce(object):
         self._name = '_setonce_attr_%s' % self._count
         self.__doc__ = doc
 
-    #noinspection PyUnusedLocal
+    # noinspection PyUnusedLocal
     def __get__(self, obj, obj_type=None):
         if obj is None:
             return self
@@ -376,6 +386,46 @@ def update_additive(dict1, dict2):
             else:  # value is not a mapping type
                 assert not isinstance(value, collections.Mapping)
                 dict1[key] = value
+
+
+def flatten_dict(d, parent_key='', separator='_'):
+    """
+    Flattens any nested dict-like object into a non-nested form. The resulting dict will have keys of the form
+    ``k1_nestedk2_nestedk3`` for nested keys. You can change the separator by passing in a value to
+    ``separator``.
+
+    Example::
+
+        >>> import collections
+        >>> d = { 'a': 1,
+        ...       'b': { 'a': 2,
+        ...              'b': 3 },
+        ...       'c': { 'a': 4,
+        ...              'b': { 'a': 5,
+        ...                     'b': 6 },
+        ...              'c': { 'a': 7 }
+        ...            }
+        ...     }
+        >>> flatten(d)
+        {'a': 1, 'b_a': 2, 'b_b': 3, 'c_a': 4, 'c_b_a': 5, 'c_b_b': 6, 'c_c_a': 7}
+    """
+    items = []
+    for k, v in d.iteritems():
+        new_key = parent_key + separator + k if parent_key else k
+        if isinstance(v, collections.MutableMapping):
+            items.extend(flatten_dict(v, new_key).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
+
+
+def flatten_list(l):
+    for el in l:
+        if isinstance(el, collections.Iterable) and not isinstance(el, basestring):
+            for sub in flatten_list(el):
+                yield sub
+        else:
+            yield el
 
 
 def has_files(the_path):

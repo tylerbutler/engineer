@@ -1,0 +1,7 @@
+{% extends 'theme/base.html' %}
+
+{% block page_title %}Template Page Base{% endblock %}
+
+{%- block header_secondary_title %}
+    {{ self.page_title() }}
+{% endblock -%}

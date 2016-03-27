@@ -1,0 +1,95 @@
+@import "../../../_shared/less/baseline.less";
+@import (reference) "_colors.less";
+@import (reference) "_typography.less";
+
+////////////////////
+// ELEMENT STYLES //
+////////////////////
+
+html {
+    font-size: 100%;
+    line-height: 1.5;
+}
+
+body {
+    line-height: 1.5rem;
+    background-color: @white;
+    color: @black;
+    font-family: @font-main;
+    font-weight: 300;
+    font-size: @font-size-default;
+    margin: 2rem auto;
+}
+
+body>div.container>.row {
+    max-width: 1000px;
+}
+
+.link-color(@blue, @white);
+a {
+    .border-radius(2px);
+    padding: 0 3px;
+    margin: 0 -3px;
+    &:hover {
+        background: @blue;
+        color: @white;
+        text-decoration: none;
+    }
+
+    &:visited {
+        color: @blue-dark;
+        &:hover {
+            color: @white;
+        }
+    }
+}
+
+header,
+h1, h2, h3, h4, h5, h6 {
+    font-family: @font-heading;
+    font-weight: bold;
+}
+
+p, p + div, blockquote {
+    margin-bottom: 1em;
+}
+
+ul + p, ol + p {
+}
+
+ul {
+    list-style: disc outside none;
+    margin: 0;
+    padding-left: 1rem;
+
+    li {
+        margin: 0.5rem 0;
+    }
+}
+
+ol {
+    padding-left: 1.5rem;
+    li {
+        margin: 0.5rem 0;
+    }
+}
+
+hr {
+    .dotted-border(bottom, @grey);
+}
+
+blockquote {
+    .dotted-border(left, @grey, 3px);
+    font-family: @font-main;
+    font-size: 1em;
+    margin: 0.75rem 0.75rem;
+    padding-left: 0.75rem;
+    quotes: none;
+}
+
+sup {
+    font-size: @font-size-microscopic;
+    vertical-align: baseline;
+    position: relative;
+    top: -.9ex;
+}

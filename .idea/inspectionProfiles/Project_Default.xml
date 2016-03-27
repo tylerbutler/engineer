@@ -24,50 +24,43 @@
       </option>
       <option name="myCustomValuesEnabled" value="true" />
     </inspection_tool>
+    <inspection_tool class="JSHint" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="JSLint" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="LossyEncoding" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PyAttributeOutsideInitInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyCompatibilityInspection" enabled="false" level="WARNING" enabled_by_default="false">
+      <option name="ourVersions">
+        <value>
+          <list size="1">
+            <item index="0" class="java.lang.String" itemvalue="2.5" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
     <inspection_tool class="PyMandatoryEncodingInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="rst Files" level="WARNING" enabled="false" />
     </inspection_tool>
     <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredPackages">
         <value>
-          <list size="5">
+          <list size="7">
             <item index="0" class="java.lang.String" itemvalue="cherrypy" />
             <item index="1" class="java.lang.String" itemvalue="path" />
             <item index="2" class="java.lang.String" itemvalue="slimit" />
             <item index="3" class="java.lang.String" itemvalue="typogrify" />
             <item index="4" class="java.lang.String" itemvalue="testfixtures" />
+            <item index="5" class="java.lang.String" itemvalue="argh" />
+            <item index="6" class="java.lang.String" itemvalue="sphinx_rtd_theme" />
           </list>
         </value>
       </option>
     </inspection_tool>
     <inspection_tool class="PyPep8Inspection" enabled="true" level="ERROR" enabled_by_default="true" />
-    <inspection_tool class="PyPep8NamingInspection" enabled="false" level="INFO" enabled_by_default="false" />
-    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="ignoredIdentifiers">
-        <value>
-          <list size="5">
-            <item index="0" class="java.lang.String" itemvalue="engineer.conf.EngineerConfiguration.*" />
-            <item index="1" class="java.lang.String" itemvalue="engineer.filters.slimit" />
-            <item index="2" class="java.lang.String" itemvalue="engineer.plugins.core.ThemeProvider.*" />
-            <item index="3" class="java.lang.String" itemvalue="engineer.plugins.core.PostProcessor.plugins" />
-            <item index="4" class="java.lang.String" itemvalue="int.name" />
-          </list>
-        </value>
-      </option>
-    </inspection_tool>
+    <inspection_tool class="PyPep8NamingInspection" enabled="true" level="INFO" enabled_by_default="true" />
     <inspection_tool class="SpellCheckingInspection" enabled="false" level="TYPO" enabled_by_default="false">
       <option name="processCode" value="true" />
       <option name="processLiterals" value="true" />
       <option name="processComments" value="true" />
-    </inspection_tool>
-    <inspection_tool class="TaskInspection" enabled="true" level="INFO" enabled_by_default="true">
-      <option name="suppressedTasks">
-        <set>
-          <option value="LESS" />
-        </set>
-      </option>
     </inspection_tool>
     <inspection_tool class="XmlUnboundNsPrefix" enabled="false" level="WARNING" enabled_by_default="false" />
   </profile>

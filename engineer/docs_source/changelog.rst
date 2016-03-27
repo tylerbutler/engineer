@@ -5,6 +5,14 @@
 Release Notes
 =============
 
+version 0.6.0 -
+===============
+
+- Support for Facebook and Twitter 'share' buttons in the :ref:`dark rainbow` theme.
+- :ref:`dark rainbow` now uses Foundation 5 and includes a number of enhancements for smaller mobile screens.
+-
+
+
 version 0.5.1 - May 28, 2014
 ============================
 
@@ -125,7 +133,7 @@ version 0.4.0 - November 28, 2012
   :ref:`copy_content<theme copy_content>` and :ref:`template dirs<theme template_dirs>` theme manifest settings.
 - The :ref:`post breaks plugin<post breaks plugin>` now outputs only the teaser content into the site RSS feed by
   default. This behavior can be changed using the ``FEED_FULL_CONTENT`` setting.
-- Added a new :class:`~engineer.plugins.CommandPlugin` class. This enables other developers to write plugins that add
+- Added a new ``CommandPlugin`` class. This enables other developers to write plugins that add
   new command line commands to Engineer.
 - Standardized a set of common classmethods that are available to all plugins - ``handle_settings`` and
   ``get_logger``.

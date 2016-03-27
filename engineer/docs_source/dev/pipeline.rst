@@ -18,7 +18,8 @@ processing. Once that's all done, then it synchronizes the actual
 :attr:`~engineer.conf.EngineerConfiguration.OUTPUT_DIR` with the cache.
 
 With that in mind, these are the basic steps that Engineer goes through. You might also find it interesting to look at
-the code for the :func:`engineer.engine.build` function - it is the primary entry point for the build process.
+the code for the :func:`engineer.commands.bundled.BuildCommand` class - it is the primary entry point for the
+build process.
 
 #. **Copy base Engineer static content**
 

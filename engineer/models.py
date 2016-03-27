@@ -3,10 +3,8 @@ import logging
 import re
 from codecs import open
 from copy import copy
-from datetime import datetime, timedelta
 
-import markdown
-import times
+import arrow
 import yaml
 from brownie.caching import cached_property
 from dateutil import parser
@@ -19,11 +17,11 @@ from engineer.conf import settings
 from engineer.enums import Status
 from engineer.exceptions import PostMetadataError
 from engineer.filters import localtime
-from engineer.plugins import PostProcessor
+from engineer.plugins import PostProcessor, FinalizationPlugin
 from engineer.util import setonce, slugify, chunk, urljoin, wrap_list
 
-
 try:
+    # noinspection PyPep8Naming
     import cPickle as pickle
 except ImportError:
     import pickle
@@ -39,6 +37,9 @@ class Post(object):
 
     :param source: path to the source file for the post.
     """
+    DEFAULT_CONTENT_TEMPLATE = 'theme/_content_default.html'
+    DEFAULT_TEMPLATE = 'theme/post_detail.html'
+
     _regex = re.compile(
         r'^[\n|\r\n]*(?P<fence>---)?[\n|\r\n]*(?P<metadata>.+?)[\n|\r\n]*---[\n|\r\n]*(?P<content>.*)[\n|\r\n]*',
         re.DOTALL)
@@ -48,16 +49,11 @@ class Post(object):
     _content_raw = setonce()
     _file_contents_raw = setonce()
 
-    @staticmethod
-    def convert_to_html(content):
-        return typogrify(markdown.markdown(content, extensions=['extra', 'codehilite']))
-
     def __init__(self, source):
+        self._content_stash = []
+
         self.source = path(source).abspath()
         """The absolute path to the source file for the post."""
-
-        self.html_template_path = 'theme/post_detail.html'
-        """The path to the template to use to transform the post into HTML."""
 
         self.markdown_template_path = 'core/post.md'
         """The path to the template to use to transform the post back into a :ref:`post source file <posts>`."""
@@ -67,14 +63,24 @@ class Post(object):
 
         metadata, self._content_raw = self._parse_source()
 
-        if not hasattr(self, 'content_preprocessed'):
-            self.content_preprocessed = self.content_raw
-
+        # if not hasattr(self, 'content_preprocessed'):
+        self._content_preprocessed = self.content_raw
         self._content_finalized = self.content_raw
 
-        # Handle any preprocessor plugins
-        for plugin in PostProcessor.plugins:
-            plugin.preprocess(self, metadata)
+        content_template = metadata.pop('content-template', metadata.pop('content_template',
+                                                                         self.DEFAULT_CONTENT_TEMPLATE))
+        if not content_template.endswith('.html'):
+            content_template += '.html'
+
+        self.content_template = content_template
+        """The path to the template to use to transform the post *content* into HTML."""
+
+        template = metadata.pop('template', self.DEFAULT_TEMPLATE)
+        if not template.endswith('.html'):
+            template += '.html'
+
+        self.template = template
+        """The path to the template to use to transform the post into HTML."""
 
         self.title = metadata.pop('title', self.source.namebase.replace('-', ' ').replace('_', ' ').title())
         """The title of the post."""
@@ -101,31 +107,13 @@ class Post(object):
             logger.warning("'%s': Invalid status value in metadata. Defaulting to 'draft'." % self.title)
             self.status = Status.draft
 
-        self.timestamp = metadata.pop('timestamp', None)
+        timestamp = metadata.pop('timestamp', None)
+        self.timestamp = self._clean_datetime(timestamp)
         """The date/time the post was published or written."""
 
-        if self.timestamp is None:
-            self.timestamp = times.now()
-            utctime = True
-            # Reduce resolution of timestamp
-            delta = timedelta(seconds=self.timestamp.second)
-            self.timestamp = self.timestamp - delta
-        else:
-            utctime = False
-
-        if not isinstance(self.timestamp, datetime):
-            # looks like the timestamp from YAML wasn't directly convertible to a datetime, so we need to parse it
-            self.timestamp = parser.parse(str(self.timestamp))
-
-        if self.timestamp.tzinfo is not None:
-            # parsed timestamp has an associated timezone, so convert it to UTC
-            self.timestamp = times.to_universal(self.timestamp)
-        elif not utctime:
-            # convert to UTC assuming input time is in the DEFAULT_TIMEZONE
-            self.timestamp = times.to_universal(self.timestamp, settings.POST_TIMEZONE)
-
-        self.content = Post.convert_to_html(self.content_preprocessed)
-        """The post's content in HTML format."""
+        updated = metadata.pop('updated', None)
+        self.updated = self._clean_datetime(updated) if updated is not None else None
+        """The date/time the post was updated."""
 
         # determine the URL based on the HOME_URL and the PERMALINK_STYLE settings
         permalink = settings.PERMALINK_STYLE.format(year=unicode(self.timestamp_local.year),
@@ -135,7 +123,7 @@ class Post(object):
                                                     i_day=self.timestamp_local.day,
                                                     title=self.slug,  # for Jekyll compatibility
                                                     slug=self.slug,
-                                                    timestamp=self.timestamp_local,
+                                                    timestamp=self.timestamp_local.datetime,
                                                     post=self)
         if permalink.endswith('index.html'):
             permalink = permalink[:-10]
@@ -145,14 +133,22 @@ class Post(object):
             permalink += '.html'
         self._permalink = permalink
 
+        # noinspection PyUnresolvedReferences
+        # Handle any preprocessor plugins
+        for plugin in PostProcessor.plugins:
+            if plugin.is_enabled():
+                plugin.preprocess(self, metadata)
+
         # keep track of any remaining properties in the post metadata
         metadata.pop('url', None)  # remove the url property from the metadata dict before copy
         self.custom_properties = copy(metadata)
         """A dict of any custom metadata properties specified in the post."""
 
+        # noinspection PyUnresolvedReferences
         # handle any postprocessor plugins
         for plugin in PostProcessor.plugins:
-            plugin.postprocess(self)
+            if plugin.is_enabled():
+                plugin.postprocess(self)
 
         # update cache
         settings.POST_CACHE[self.source] = self
@@ -189,12 +185,54 @@ class Post(object):
         return r
 
     @property
+    def content(self):
+        """The post's content in HTML format."""
+        content_list = wrap_list(self._content_preprocessed)
+        content_list.extend(self._content_stash)
+        content_to_render = '\n'.join(content_list)
+        return typogrify(self.content_renderer.render(content_to_render, self.format))
+
+    @property
+    def content_preprocessed(self):
+        return self._content_preprocessed
+
+    @content_preprocessed.setter
+    def content_preprocessed(self, value):
+        self._content_preprocessed = value
+
+    # def set_content_preprocessed(self, content, caller_class):
+    #     caller = caller_class.get_name() if hasattr(caller_class, 'get_name') else get_class_string(caller_class)
+    #     perms = settings.PLUGIN_PERMISSIONS['MODIFY_PREPROCESSED_CONTENT']
+    #     if caller not in perms and '*' not in perms:
+    #         logger.warning("A plugin is trying to modify the post's preprocessed content but does not have the "
+    #                        "MODIFY_PREPROCESSED_CONTENT permission. Plugin: %s" % caller)
+    #         return False
+    #     else:
+    #         logger.debug("%s is setting post source content." % caller)
+    #         self._content_preprocessed = content
+    #         return True
+
+    @property
     def content_finalized(self):
         return self._content_finalized
 
     @property
     def content_raw(self):
         return self._content_raw
+
+    @cached_property
+    def content_renderer(self):
+        return settings.POST_RENDERER_CONFIG[self.format]()
+
+    @property
+    def description(self):
+        regex = re.compile(r'^.*?<p>(?P<para>.*?)</p>.*?', re.DOTALL)
+        matches = re.match(regex, self.content)
+        return matches.group('para')
+
+    @property
+    def format(self):
+        return self.source.ext
 
     @property
     def is_draft(self):
@@ -204,12 +242,12 @@ class Post(object):
     @property
     def is_published(self):
         """``True`` if the post is published, ``False`` otherwise."""
-        return self.status == Status.published and self.timestamp <= times.now()
+        return self.status == Status.published and self.timestamp <= arrow.now()
 
     @property
     def is_pending(self):
         """``True`` if the post is marked as published but has a timestamp set in the future."""
-        return self.status == Status.published and self.timestamp >= times.now()
+        return self.status == Status.published and self.timestamp >= arrow.now()
 
     @property
     def is_external_link(self):
@@ -224,6 +262,25 @@ class Post(object):
         Local time is determined by the :attr:`~engineer.conf.EngineerConfiguration.POST_TIMEZONE` setting.
         """
         return localtime(self.timestamp)
+
+    @property
+    def updated_local(self):
+        return localtime(self.updated)
+
+    @staticmethod
+    def _clean_datetime(datetime):
+        if datetime is None:
+            datetime = arrow.now(settings.POST_TIMEZONE)
+            # Reduce resolution of timestamp
+            datetime = datetime.replace(second=0, microsecond=0)
+        else:
+            timestamp_dt = parser.parse(str(datetime))
+            if timestamp_dt.tzinfo is None:
+                # convert to UTC assuming input time is in the POST_TIMEZONE
+                datetime = arrow.get(timestamp_dt, settings.POST_TIMEZONE)
+            else:
+                datetime = arrow.get(timestamp_dt)
+        return datetime.to('utc')
 
     def _parse_source(self):
         try:
@@ -259,7 +316,7 @@ class Post(object):
         content = parsed_content.group('content')
         return metadata, content
 
-    def render_html(self, all_posts=None):
+    def render_item(self, all_posts):
         """
         Renders the Post as HTML using the template specified in :attr:`html_template_path`.
 
@@ -276,11 +333,13 @@ class Post(object):
             older_post = all_posts[index + 1]
         else:
             older_post = None
-        return settings.JINJA_ENV.get_template(self.html_template_path).render(post=self,
-                                                                               newer_post=newer_post,
-                                                                               older_post=older_post,
-                                                                               all_posts=all_posts,
-                                                                               nav_context='post')
+        return settings.JINJA_ENV.get_template(self.template).render(
+            post=self,
+            newer_post=newer_post,
+            older_post=older_post,
+            all_posts=all_posts,
+            nav_context='post'
+        )
 
     def set_finalized_content(self, content, caller_class):
         """
@@ -296,7 +355,7 @@ class Post(object):
         :return: ``True`` if the content was successfully modified; otherwise ``False``.
         """
         caller = caller_class.get_name() if hasattr(caller_class, 'get_name') else unicode(caller_class)
-        if not settings.FINALIZE_METADATA:
+        if not FinalizationPlugin.is_enabled():
             logger.warning("A plugin is trying to modify the post content but the FINALIZE_METADATA setting is "
                            "disabled. This setting must be enabled for plugins to modify post content. "
                            "Plugin: %s" % caller)
@@ -308,8 +367,22 @@ class Post(object):
             return False
         else:
             logger.debug("%s is setting post source content." % caller)
-            self._content_finalized = content
+            self._content_finalized = self._remove_all_stashed_content()
             return True
+
+    def stash_content(self, stash_content):
+        self._content_stash.append(stash_content)
+#         self.content_preprocessed = '''%s
+# <!-- ||stash|| -->
+# %s
+# <!-- ||end_stash|| -->''' % (self.content_preprocessed, stash_content)
+
+    def _remove_all_stashed_content(self):
+        _regex = re.compile('<!-- \|\|stash\|\| -->.*?<!-- \|\|end_stash\|\| -->', re.DOTALL | re.MULTILINE)
+        cleaned_content, num_stashes = _regex.subn('', self.content_preprocessed)
+        if num_stashes > 0:
+            logger.debug("Removed %i stash sections from finalized content." % num_stashes)
+        return cleaned_content
 
     def __unicode__(self):
         return self.slug
@@ -320,7 +393,7 @@ class Post(object):
 class PostCollection(list):
     """A collection of :class:`Posts <engineer.models.Post>`."""
 
-    #noinspection PyTypeChecker
+    # noinspection PyTypeChecker
     def __init__(self, seq=()):
         list.__init__(self, seq)
         self.listpage_template = settings.JINJA_ENV.get_template('theme/post_list.html')
@@ -402,7 +475,7 @@ class TemplatePage(object):
 
         settings.URLS[self.name] = self.absolute_url
 
-    def render_html(self, all_posts=None):
+    def render_item(self, all_posts):
         rendered = self.html_template.render(nav_context=self.name,
                                              all_posts=all_posts)
         return rendered

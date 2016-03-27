@@ -1,2 +1,4 @@
 SUPER: settings.yaml
-GLOBAL_LINKS_FILE: global_links.md
+GLOBAL_LINKS:
+  enabled: yes
+  file: global_links.md

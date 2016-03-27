@@ -9,12 +9,13 @@
       <excludeFolder url="file://$MODULE_DIR$/engineer.egg-info" />
       <excludeFolder url="file://$MODULE_DIR$/engineer/sample_site/_cache" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 2.7.5 virtualenv at C:\Users\Tyler\.virtualenvs\engineer-dev" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 2.7.10 virtualenv at C:\Users\tyler\.virtualenvs\engineer-dev" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="tylerbutler.com" />
+    <orderEntry type="library" name="sass-stdlib" level="application" />
   </component>
   <component name="PyDocumentationSettings">
-    <option name="myDocStringFormat" value="reStructuredText" />
+    <option name="analyzeDoctest" value="false" />
   </component>
   <component name="TemplatesService">
     <option name="templateFileTypes">
@@ -25,10 +26,10 @@
     <option name="TEMPLATE_CONFIGURATION" value="Jinja2" />
     <option name="TEMPLATE_FOLDERS">
       <list>
-        <option value="$MODULE_DIR$/engineer/themes" />
-        <option value="$MODULE_DIR$/engineer/themes/dark_rainbow/templates" />
-        <option value="$MODULE_DIR$/engineer/templates" />
-        <option value="$MODULE_DIR$/engineer/themes/oleb/templates" />
+        <option value="$MODULE_DIR$/engineer/_templates" />
+        <option value="$MODULE_DIR$/engineer/_themes" />
+        <option value="$MODULE_DIR$/engineer/_themes/oleb/templates" />
+        <option value="$MODULE_DIR$/engineer/_themes/dark_rainbow/templates" />
       </list>
     </option>
   </component>
@@ -37,4 +38,3 @@
     <option name="PROJECT_TEST_RUNNER" value="Nosetests" />
   </component>
 </module>
-

@@ -1,6 +1,7 @@
 SUPER: config.yaml
 
-POST_RENAME_ENABLED: yes
-POST_RENAME_CONFIG:
-  draft: ~
-  review: '{year}-{month}-{day}-{slug}.md'
+POST_RENAME:
+  enabled: yes
+  config:
+    draft: ~
+    review: '{year}-{month}-{day}-{slug}.md'

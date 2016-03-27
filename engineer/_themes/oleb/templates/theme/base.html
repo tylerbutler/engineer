@@ -1,0 +1,142 @@
+{% extends 'core/_base.html' %}
+
+{% block site_title %}
+    {% block page_title %}{% endblock %}
+    {% if self.page_title() %}: {% endif %}{{ super() }}
+{% endblock %}
+
+{%- block stylesheets %}
+    {% if theme.enable_bigfoot %}
+        {% assets "oleb_css_bigfoot" %}
+            <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css"/>
+        {% endassets %}
+    {% else %}
+        {% assets "oleb_css" %}
+            <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css"/>
+        {% endassets %}
+    {% endif %}
+
+    <!--[if lt IE 9]>
+        {% assets "foundation_css_ie" %}
+            <link rel="stylesheet" href="{{ ASSET_URL }}">
+        {% endassets %}
+    <![endif]-->
+{% endblock -%}
+
+{%- block scripts_top %}
+    {# JQUERY #}
+    <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>
+        if (window.jQuery == undefined) {
+            {% assets "jquery" %}
+                document.write('<script src="{{ ASSET_URL }}"><\/script>');
+            {% endassets %}
+        }
+    </script>
+
+    {# TYPEKIT #}
+    <script type="text/javascript"
+            src="http://use.typekit.net/{{ theme.typekit_id }}.js"></script>
+    <script type="text/javascript">
+        try {
+            // noinspection JSUnresolvedVariable
+            Typekit.load();
+        }
+        catch (e) {
+        }
+    </script>
+
+    {% if theme.enable_bigfoot %}
+        {% assets "bigfoot_js" %}
+            <script src="{{ ASSET_URL }}" type="text/javascript"></script>
+        {% endassets %}
+        <script type="text/javascript">
+            $.bigfoot({
+                          deleteOnUnhover: false,
+                          preventPageScroll: false,
+                          hoverDelay: 250,
+                          //appendPopoversTo: "body",
+                          numberResetSelector: "article.post-content"
+                      });
+            {#            {% raw %}#}
+            {#            $.bigfoot({#}
+            {#                          actionOriginalFN: "ignore",#}
+            {#                          numberResetSelector: "article.post-content",#}
+            {#                          buttonMarkup: (#}
+            {#                                  "<a href=\"#\" class=\"footnote-button\" rel=\"footnote\" " +#}
+            {#                                  "id=\"{{SUP:data-footnote-backlink-ref}}\" " +#}
+            {#                                  "data-footnote-number=\"{{FOOTNOTENUM}}\" " +#}
+            {#                                  "data-footnote-identifier=\"{{FOOTNOTEID}}\" " +#}
+            {#                                  "alt=\"See Footnote {{FOOTNOTENUM}}\" " +#}
+            {#                                  "data-footnote-content=\"{{FOOTNOTECONTENT}}\">" +#}
+            {#                                  "{{FOOTNOTENUM}}" +#}
+            {#                                  "</a>"#}
+            {#                                  )#}
+            {#                      });#}
+            {#            {% endraw %}#}
+        </script>
+    {% endif %}
+
+    {%- block additional_scripts_top %}{% endblock -%}
+{% endblock -%}
+
+{#{% block body_class %}container{% endblock %}#}
+
+{%- block body %}
+    <div class="container">
+        {%- block header_primary %}
+            <header id="primary" class="row">
+                {%- block header_primary_content %}
+                    <h1 class="{%- block header_primary_h1_class %}three columns{% endblock -%}">
+                        {%- block header_primary_title %}
+                            <a href="{{ urlname('home') }}">{{ settings.SITE_TITLE|title }}</a>
+                        {% endblock -%}
+                    </h1>
+                {% endblock -%}
+                {%- block nav_primary %}
+                    <nav class="{%- block nav_primary_class %}nine columns{% endblock -%}">
+                        {%- block nav_primary_content %}
+                            {% include '_nav_primary.html' %}
+                        {% endblock -%}
+                    </nav>
+                {% endblock -%}
+            </header>
+        {% endblock -%}
+        <div class="row">
+            {%- block section_main %}
+                <section id="main"
+                         class="{%- block section_main_class %}eight columns{% endblock -%}"
+                         role="main">
+                    {%- block section_main_content %}
+                        <div class="replace_me">
+                            Replace this content in the main section.
+                        </div>
+                    {% endblock -%}
+                </section>
+            {% endblock -%}
+            {%- block section_sidebar %}
+                <section id="sidebar" class="{%- block section_sidebar_class %}four columns{% endblock -%}">
+                    {%- block section_sidebar_content %}
+                        {% include '_sidebar.html' %}
+                    {% endblock -%}
+                </section>
+            {% endblock -%}
+        </div>
+        <div class="row">
+            {%- block footer %}
+                <footer>
+                    {%- block footer_content %}
+                        {% include '_footer.html' %}
+                    {% endblock -%}
+                </footer>
+            {% endblock -%}
+        </div>
+    </div>
+{% endblock body %}
+
+{%- block scripts_bottom %}
+    {% assets "foundation_js" %}
+        <script src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+{% endblock -%}

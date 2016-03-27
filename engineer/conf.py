@@ -1,23 +1,24 @@
 # coding=utf-8
+from datetime import datetime
 from inspect import isfunction
 import logging
 import platform
 import shelve
-from datetime import datetime
 
 from appdirs import user_cache_dir, user_data_dir
-from jinja2.loaders import ChoiceLoader
-import pytz
-import times
-import yaml
-from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
-# noinspection PyPackageRequirements
-from path import path
+import arrow
 from brownie.caching import cached_property
+from dateutil import zoneinfo
+from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache
+from jinja2.loaders import ChoiceLoader
+from path import path
+import yaml
 
 from engineer.cache import SimpleFileCache
-from engineer.plugins import get_all_plugin_types, JinjaEnvironmentPlugin
-from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive, make_precompiled_reference
+from engineer.log import CustomLogger, log_object
+from engineer.plugins import get_all_plugin_types, JinjaEnvironmentPlugin, PythonMarkdownRenderer
+from engineer.util import urljoin, slugify, ensure_exists, wrap_list, update_additive, make_precompiled_reference, \
+    get_class
 from engineer import version
 
 
@@ -35,7 +36,14 @@ deprecated_settings = (
     # ('SETTING_NAME', version_deprecated, 'Message.')
     ('NORMALIZE_INPUT_FILES', 0.4, 'This setting is now ignored.'),
     ('NORMALIZE_INPUT_FILE_MASK', 0.4, 'This setting is now ignored.'),
-    ('JINJA_CACHE_DIR', 0.5, 'This setting is now ignored.')
+    ('JINJA_CACHE_DIR', 0.5, 'This setting is now ignored.'),
+    ('FINALIZE_METADATA_CONFIG', 0.6, 'This setting is now ignored. See documentation.'),
+    ('METADATA_FORMAT', 0.6, 'This setting is now ignored. See documentation.'),
+    ('POST_RENAME_ENABLED', 0.6, 'This setting is now ignored. See documentation.'),
+    ('POST_RENAME_CONFIG', 0.6, 'This setting is now ignored. See documentation.'),
+    ('GLOBAL_LINKS_FILE', 0.6, 'This setting is now ignored. See documentation.'),
+    ('LAZY_LINKS_PERSIST', 0.6, 'This setting is now ignored. See documentation.'),
+    ('JINJA_POSTPROCESSOR_ENABLED', 0.6, 'This setting is now ignored. See documentation.'),
 )
 
 
@@ -71,36 +79,24 @@ class EngineerConfiguration(object):
         # ENGINEER 'CONSTANTS'
         ENGINEER_APP_WIDE_SETTINGS_DIR = ensure_exists(user_data_dir('Engineer', 'Engineer'))
         ROOT_DIR = path(__file__).dirname().abspath()
-        TEMPLATE_DIR = (ROOT_DIR / 'templates').abspath()
+        TEMPLATE_DIR = (ROOT_DIR / '_templates').abspath()
         STATIC_DIR = (ROOT_DIR / 'static').abspath()
-        THEMES_DIR = (ROOT_DIR / 'themes').abspath()
+        THEMES_DIR = (ROOT_DIR / '_themes').abspath()
         LIB_DIR = (STATIC_DIR / 'engineer/lib/').abspath()
         JINJA_CACHE_DIR = ensure_exists(path(user_cache_dir('Engineer', 'Engineer')) / '_jinja_cache')
 
-        FOUNDATION_CSS = 'foundation'
-        JQUERY = 'jquery-1.11.0.min.js'
-        LESS_JS = 'less-1.7.0.min.js'
-        MODERNIZR = 'modernizr-2.7.1.min.js'
-        NORMALIZE_CSS = 'normalize/normalize.css'
-
-        # URLs to included libraries - will be updated in the EngineerConfiguration.initialize() method.
-        FOUNDATION_CSS_URL = None
-        JQUERY_URL = None
-        LESS_JS_URL = None
-        MODERNIZR_URL = None
-        NORMALIZE_CSS_URL = None
-
-    def __init__(self, settings_file=None):
+    def __init__(self, settings_file=None, override=None):
         self.reload(settings_file)
         self.COMPRESS_FILE_LIST = set()
 
-    def reload(self, settings_file=None):
+    def reload(self, settings_file=None, override=None):
         if settings_file is None:
             if hasattr(self, 'SETTINGS_FILE') and self.SETTINGS_FILE is not None:
                 # First check if SETTINGS_FILE has been defined. If so, we'll reload from that file.
                 settings_file = self.SETTINGS_FILE
             else:
                 # Looks like we're just loading the 'empty' config.
+                assert isinstance(logger, CustomLogger)
                 logger.info("Initializing empty configuration.")
                 self.SETTINGS_FILE = None
                 self._initialize({})
@@ -140,12 +136,16 @@ class EngineerConfiguration(object):
             logger.debug("Finalizing configuration from %s." % path(all_configs[-1][1]).abspath())
             update_additive(config, all_configs[-1][0])
 
+            if override:
+                logger.debug("Override dict was passed into setting initializer. Applying overrides: %s" % override)
+                update_additive(config, override)
+
             for param in self._required_params:
                 if param not in config:
                     raise Exception("Required setting '%s' is missing from config file %s." % (param,
                                                                                                self.SETTINGS_FILE))
             self._initialize(config)
-            self.SETTINGS_FILE_LOAD_TIME = times.now()
+            self.SETTINGS_FILE_LOAD_TIME = arrow.now()
         else:
             raise SettingsFileNotFoundException("Settings file %s not found!" % settings_file)
 
@@ -200,18 +200,25 @@ class EngineerConfiguration(object):
         )
 
         # PLUGINS
-        self.PLUGINS = self.normalize_list(config.pop('PLUGINS', None))
+        self.PLUGINS = wrap_list(config.pop('PLUGINS', None))
         if self.PLUGINS is not None:
             for plugin in self.PLUGINS:
                 __import__(plugin)
 
+        default_renderer = PythonMarkdownRenderer()
+        final_config = default_renderer.supported_extensions_dict
+        settings_renderer_config = config.pop('POST_RENDERER_CONFIG', {})
+        settings_renderer_config = dict([(k, get_class(v)) for k, v in settings_renderer_config.iteritems()])
+        final_config.update(settings_renderer_config)
+        self.POST_RENDERER_CONFIG = final_config
+
         # THEMES
         self.THEME_DIRS = self.normalize_list(config.pop('THEME_DIRS', None))
         self.THEME_FINDERS = [
-            'engineer.finders.ThemeDirsFinder',
-            'engineer.finders.SiteFinder',
-            'engineer.finders.PluginFinder',
-            'engineer.finders.DefaultFinder'
+            'engineer.themes.finders.ThemeDirsFinder',
+            'engineer.themes.finders.SiteFinder',
+            'engineer.themes.finders.PluginFinder',
+            'engineer.themes.finders.DefaultFinder'
         ]
         self.THEME_SETTINGS = config.pop('THEME_SETTINGS', {})
         self.THEME = config.pop('THEME', 'dark_rainbow')
@@ -220,12 +227,12 @@ class EngineerConfiguration(object):
         self.COMPRESSOR_ENABLED = config.pop('COMPRESSOR_ENABLED', True)
         self.COMPRESSOR_FILE_EXTENSIONS = config.pop('COMPRESSOR_FILE_EXTENSIONS', ['js', 'css'])
         self.PREPROCESS_LESS = config.pop('PREPROCESS_LESS', True)
-        if not 'LESS_PREPROCESSOR' in config:
+        if 'LESS_PREPROCESSOR' not in config:
             if platform.system() == 'Windows':
                 self.LESS_PREPROCESSOR = str(self.ENGINEER.ROOT_DIR /
-                                             'lib/less.js-windows/lessc.cmd') + ' {infile} {outfile}'
+                                             'lib/less.js-windows/lessc.cmd')
             else:
-                self.LESS_PREPROCESSOR = 'lessc {infile} {outfile}'
+                self.LESS_PREPROCESSOR = 'lessc'
         else:
             self.LESS_PREPROCESSOR = path(config.pop('LESS_PREPROCESSOR'))
 
@@ -256,14 +263,6 @@ class EngineerConfiguration(object):
                                            'The %s most recent posts from %s.' % (self.FEED_ITEM_LIMIT, self.SITE_URL))
         self.FEED_URL = config.pop('FEED_URL', urljoin(self.HOME_URL, 'feeds/atom.xml'))
 
-        # These 'constants' are updated here so they're relative to the STATIC_URL value
-        lib_path = urljoin(self.STATIC_URL, 'engineer/lib')
-        self.ENGINEER.FOUNDATION_CSS_URL = urljoin(lib_path, 'foundation/')
-        self.ENGINEER.JQUERY_URL = urljoin(lib_path, self.ENGINEER.JQUERY)
-        self.ENGINEER.LESS_JS_URL = urljoin(lib_path, self.ENGINEER.LESS_JS)
-        self.ENGINEER.MODERNIZR_URL = urljoin(lib_path, self.ENGINEER.MODERNIZR)
-        self.ENGINEER.NORMALIZE_CSS_URL = urljoin(lib_path, self.ENGINEER.NORMALIZE_CSS)
-
         # URL helper functions
         def page(num):
             page_path = urljoin('page', str(num))
@@ -287,7 +286,7 @@ class EngineerConfiguration(object):
         # MISCELLANEOUS SETTINGS
         self.ACTIVE_NAV_CLASS = config.pop('ACTIVE_NAV_CLASS', 'current')
         self.DEBUG = config.pop('DEBUG', False)
-        #self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
+        # self.DISABLE_CACHE = config.pop('DISABLE_CACHE', False)
 
         self.PLUGIN_PERMISSIONS = {
             'MODIFY_RAW_POST': []
@@ -298,7 +297,7 @@ class EngineerConfiguration(object):
         self.PUBLISH_DRAFTS = config.pop('PUBLISH_DRAFTS', False)
         self.PUBLISH_PENDING = config.pop('PUBLISH_PENDING', False)
         self.PUBLISH_REVIEW = config.pop('PUBLISH_REVIEW', False)
-        self.POST_TIMEZONE = pytz.timezone(config.pop('POST_TIMEZONE', 'UTC'))
+        self.POST_TIMEZONE = zoneinfo.gettz(config.pop('POST_TIMEZONE', 'UTC'))
         self.SERVER_TIMEZONE = self.POST_TIMEZONE if config.get('SERVER_TIMEZONE',
                                                                 None) is None else config.pop('SERVER_TIMEZONE')
         self.TIME_FORMAT = config.pop('TIME_FORMAT', '%I:%M %p %A, %B %d, %Y %Z')  # '%Y-%m-%d %H:%M:%S %Z%z'
@@ -306,8 +305,12 @@ class EngineerConfiguration(object):
         # Let plugins deal with their settings in their own way if needed
         for plugin_type in get_all_plugin_types():
             for plugin in plugin_type.plugins:
-                logger.debug("Calling handle_settings on plugin: %s. config dict is: %s" % (plugin, config))
-                config = plugin.handle_settings(config, self)
+                if hasattr(plugin, 'handle_settings'):
+                    logger.debug("Calling handle_settings on plugin: %s.\nconfig dict is: %s\n" % (plugin.__name__,
+                                                                                                   log_object(config)))
+                    config = plugin.handle_settings(config, self)
+                else:
+                    logger.error("This plugin does not have a handle_settings method defined: %s" % plugin.get_name())
 
         # Pull any remaining settings in the config and set them as attributes on the settings object
         for k, v in config.iteritems():
@@ -325,6 +328,7 @@ class EngineerConfiguration(object):
 
     @cached_property
     def JINJA_ENV(self):
+        from webassets.ext.jinja2 import AssetsExtension
         from engineer.processors import preprocess_less
         from engineer.themes import ThemeManager
 
@@ -332,6 +336,7 @@ class EngineerConfiguration(object):
         logger.debug("Configuring the Jinja environment.")
 
         # Helper function to look up a URL by name
+        # noinspection PyShadowingNames
         def urlname(name, *args):
             url = settings.URLS.get(name, settings.HOME_URL)
             if isfunction(url):
@@ -339,27 +344,31 @@ class EngineerConfiguration(object):
             else:
                 return url
 
+        theme = ThemeManager.current_theme()
         env = Environment(
             loader=ChoiceLoader(
                 [FileSystemLoader([self.TEMPLATE_DIR]),
-                 ThemeManager.current_theme().template_loader,
-                 #self.ENGINEER.THEMES_DIR / 'base_templates',
+                 theme.template_loader,
+                 # self.ENGINEER.THEMES_DIR / 'base_templates',
                  FileSystemLoader([self.ENGINEER.TEMPLATE_DIR])]
             ),
-            extensions=['jinja2.ext.with_', ],
+            extensions=['jinja2.ext.with_', AssetsExtension],
             bytecode_cache=FileSystemBytecodeCache(directory=self.ENGINEER.JINJA_CACHE_DIR),
             trim_blocks=True)
 
+        env.assets_environment = theme.assets_environment
+
         # JinjaEnvironment plugins
+        # noinspection PyUnresolvedReferences
         for plugin in JinjaEnvironmentPlugin.plugins:
             plugin.update_environment(env)
 
         # Built-in globals
-        env.globals['theme'] = ThemeManager.current_theme()
+        env.globals['theme'] = theme
         env.globals['urlname'] = urlname
         env.globals['preprocess_less'] = preprocess_less
         env.globals['make_precompiled_reference'] = make_precompiled_reference
-        #        env.globals['url'] = url
+        # env.globals['url'] = url
         env.globals['STATIC_URL'] = self.STATIC_URL
         env.globals['DEBUG'] = self.DEBUG
         env.globals['settings'] = self

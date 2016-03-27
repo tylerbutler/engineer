@@ -128,23 +128,4 @@ my use of Python constructs that are deprecated in Python 3.
 All relevant dependencies except Python itself will be installed when you :doc:`install Engineer <installation>`. The
 complete set of packages Engineer depends on is as follows:
 
-* appdirs
-* bottle
-* brownie
-* cssmin
-* feedgenerator
-* flufl.enum
-* html5lib
-* humanize
-* jinja2
-* lpjsmin
-* markdown
-* path.py
-* propane
-* pygments
-* python-dateutil
-* pytz
-* pyYAML
-* times
-* translitcodec
-* typogrify-engineer
+.. literalinclude:: ../../requirements.txt

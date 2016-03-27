@@ -1,0 +1,15 @@
+sudo: false
+language: python
+python:
+  - "2.7"
+# command to install dependencies
+install:
+  - "git fetch --unshallow"
+  - "pip install ."
+  - "pip install -r requirements_tests.txt"
+  - "pip install coveralls"
+# command to run tests
+script:
+  nosetests --with-coverage --cover-package=engineer
+after_success:
+  coveralls

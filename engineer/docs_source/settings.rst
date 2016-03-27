@@ -376,8 +376,8 @@ Theme Settings
 
    .. attribute:: THEME_FINDERS
 
-      **Default:** ``['engineer.finders.ThemeDirsFinder', 'engineer.finders.SiteFinder',
-      'engineer.finders.DefaultFinder']``
+      **Default:** ``['engineer.themes.finders.ThemeDirsFinder', 'engineer.themes.finders.SiteFinder',
+      'engineer.themes.finders.PluginFinder', 'engineer.themes.finders.DefaultFinder']``
 
       TODO
 

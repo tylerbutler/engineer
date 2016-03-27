@@ -1,22 +1,29 @@
-appdirs==1.2.0
-bottle>=0.10.9
-brownie>=0.5
-cssmin>=0.1.4
-feedgenerator>=1.7
-flufl.enum>=3.3.1
-html5lib==0.90
-humanize>=0.2
-jinja2>=2.6
-lpjsmin>=0.4
-markdown>=2.2
-path.py>=2.2.2
-propane>=0.1.2
-pygments>=1.4
-python-dateutil>=2.1
-pytz>=2011k
-pyYAML>=3.10
-times>=0.6
-translitcodec>=0.2
+appdirs==1.4.0
+arrow==0.7.0
+bottle==0.12.9
+Brownie==0.5.1
+crayola==0.1.1
+cssmin==0.2.0
+feedgenerator==1.7
+flufl.enum==4.1
+humanize==0.5.1
+Jinja2==2.8
+jsmin==2.2.0
+Markdown==2.6.5
+path.py==8.1.2
+propane==0.1.2
+Pygments==2.0.2
+python-dateutil==2.4.2
+PyYAML==3.11
+translitcodec==0.4.0
+webassets==0.11.1
 
 # engineer-specific fork of typogrify
-typogrify-engineer>=2.0.0
+typogrify-engineer==2.0.0
+
+# these libs MUST be specific versions
+html5lib==0.90
+
+#--allow-external webassets
+#--allow-unverified webassets
+#webassets==dev

@@ -1,0 +1,28 @@
+name: 'Dark Rainbow'
+id: 'dark_rainbow'
+description: 'A dark theme with just a hint of color.'
+author: 'Tyler Butler <tyler@tylerbutler.com>'
+website: 'http://tylerbutler.com'
+license: 'Creative Commons BY-SA 3.0'
+use_precompiled_styles: no
+
+template_dirs:
+  - '../_shared/templates/'
+
+copy_content:
+  - ['../_shared/images/rss/37.png', 'images/rss.png']
+
+settings:
+  typekit_id: ~
+  comments: ~
+  comments_account: ~
+  simple_search: yes
+  enable_bigfoot: no
+  sharing:
+    enabled: no
+    facebook:
+      enabled: no
+      app_id: ~
+    twitter:
+      enabled: no
+      username: ~

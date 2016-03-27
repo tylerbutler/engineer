@@ -1,19 +1,44 @@
+# Engineer [![Latest Version](https://img.shields.io/pypi/v/engineer.svg?style=flat&label=version)][release] [![Downloads](https://img.shields.io/pypi/dm/engineer.svg?style=flat)][dl] [![Python](https://img.shields.io/pypi/pyversions/engineer.svg?style=flat)][dl] [![License](https://img.shields.io/pypi/l/engineer.svg?style=flat)][license]
+
 At its core, Engineer is a static website generator. In other words, Engineer let's you build a website from a bunch
 of files - articles written in Markdown, templates, and other stuff - and outputs *another* bunch of files - HTML,
 mostly - that you can then copy wherever you want.
 
 But Engineer has some pretty nifty features that you might find enticing. You can read more about the project at
-http://engineer.readthedocs.org/ or grab the code at http://github.com/tylerbutler/engineer.
+https://engineer.readthedocs.org/ or grab the code at https://github.com/tylerbutler/engineer.
 
 Licensed under the MIT license.
+
+**Current build status**: 
+[![Build Status](https://api.travis-ci.org/tylerbutler/engineer.svg?branch=dev&style=flat)][build_latest]
+[![Coverage Status](https://coveralls.io/repos/tylerbutler/engineer/badge.svg?branch=dev&service=github)][coverage]
+
+[release]: https://pypi.python.org/pypi/engineer/
+[dl]: https://crate.io/packages/engineer
+[build_latest]: https://travis-ci.org/tylerbutler/engineer
+[license]: https://github.com/tylerbutler/engineer/blob/master/LICENSE.txt
+[coverage]: https://coveralls.io/github/tylerbutler/engineer?branch=dev
+
+Documentation
+-------------
+
+Release: 
+[![Documentation Status](https://readthedocs.org/projects/engineer/badge/?version=master)][docs_master]
+Development branch: 
+[![Documentation Status](https://readthedocs.org/projects/engineer/badge/?version=latest)][docs_latest]
+
+[docs_master]: https://engineer.readthedocs.org/en/master/
+[docs_latest]: https://engineer.readthedocs.org/en/latest/
 
 Installation
 ------------
 
-A full installation guide is available at https://engineer.readthedocs.org/en/master/installation.html. If you're in a
-hurry, though, you can install the most recent version of Engineer using pip. Simply run the following command:
+A [full installation guide][install] is available at Read the Docs. If you're in a hurry, though, 
+you can install the most recent version of Engineer using pip. Simply run the following command:
 
     pip install engineer
+
+[install]: https://engineer.readthedocs.org/en/master/installation.html
 
 Features
 --------
@@ -89,3 +114,7 @@ If you're looking for a full-blown content management system, then... keep looki
 you want. Engineer operates on the basic principle that your content is stored in text files with minimal
 metadata in the files themselves, so if you're looking for rich URL management, image/file manipulation
 capabilities, etc., Engineer will make you very sad. It's not designed to do that stuff.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/tylerbutler/engineer/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+

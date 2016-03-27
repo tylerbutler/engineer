@@ -51,7 +51,7 @@ class CopyDataTestCase(TestCase):
         print "Marking temp folder for deletion: %s" % self.copied_data_path.dirname()
         self.tmp_dirs.append(self.copied_data_path.dirname())
 
-    #noinspection PyUnresolvedReferences,PyShadowingBuiltins
+    # noinspection PyUnresolvedReferences,PyShadowingBuiltins
     @classmethod
     def tearDownClass(cls):
         print "Teardownclass running... %s" % cls.tmp_dirs

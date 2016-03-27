@@ -1,12 +1,13 @@
 # coding=utf-8
 import os
-from datetime import timedelta
 
-import times
+import arrow
 from path import path
 
 from engineer.exceptions import PostMetadataError
 from engineer.log import bootstrap
+
+bootstrap()
 from engineer.models import Post
 from engineer.plugins import load_plugins
 from engineer.unittests import CopyDataTestCase
@@ -32,7 +33,7 @@ class PostTestCase(CopyDataTestCase):
         settings.create_required_directories()
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 class MetadataTests(PostTestCase):
     def default_metadata_test(self):
         """Metadata defaults"""
@@ -49,7 +50,7 @@ class MetadataTests(PostTestCase):
         with self.assertRaises(PostMetadataError):
             Post(file)
 
-    #noinspection PyProtectedMember
+    # noinspection PyProtectedMember
     def fenced_metadata_test(self):
         """Fenced metadata"""
         file = self.post_dir / 'fenced_metadata.md'
@@ -106,7 +107,7 @@ class MetadataTests(PostTestCase):
         self.assertSequenceEqual(post.tags, ['2013', '2014'])
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 class StatusTests(PostTestCase):
     def draft_default_test(self):
         """Draft default status"""
@@ -128,14 +129,14 @@ class StatusTests(PostTestCase):
         """Pending status"""
         file = self.post_dir / 'published.md'
         post = Post(file)
-        post.timestamp = times.now() + timedelta(days=1)
+        post.timestamp = arrow.now().replace(days=+1)
 
         self.assertTrue(post.is_pending)
         self.assertFalse(post.is_published)
         self.assertFalse(post.is_draft)
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 class ContentTests(PostTestCase):
     def post_breaks_simple_test(self):
         """Post breaks of the form: -- more --"""
@@ -162,7 +163,7 @@ class ContentTests(PostTestCase):
         self.assertIn(u"also a “unicode character” in the metadata!", post.tags)
 
 
-#noinspection PyShadowingBuiltins
+# noinspection PyShadowingBuiltins
 class PermalinkTests(PostTestCase):
     def test_fulldate(self):
         from engineer.conf import settings
@@ -256,7 +257,7 @@ class GlobalLinksTests(PostTestCase):
         expected_content = """
 <p><a href="http://tylerbutler.com">Tyler Butler</a> is the author of&nbsp;Engineer.</p>
 <p>He does not like to be called <a href="http://tylerbutler.com">Ty</a>.</p>
-        """
+        """.replace('\r\n', '\n')
 
-        actual_content = unicode(post.convert_to_html(post.content_preprocessed))
+        actual_content = unicode(post.content).replace('\r\n', '\n')
         self.assertEqual(actual_content.strip(), expected_content.strip())

@@ -1,1 +1,1 @@
-sphinx-build -b html ./engineer/docs_source ./docs
+sphinx-build -n -E -b html ./engineer/docs_source ./docs

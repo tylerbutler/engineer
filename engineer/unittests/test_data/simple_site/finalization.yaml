@@ -1,3 +1,4 @@
 SUPER: config.yaml
 
-FINALIZE_METADATA: yes
+FINALIZE_METADATA:
+  enabled: yes

@@ -1,0 +1,20 @@
+name: 'Ole Begemann'
+id: oleb
+description: "A bright design based on Ole Begemann's oleb.net. Used with permission."
+author: 'Tyler Butler <tyler@tylerbutler.com>'
+website: 'http://tylerbutler.com'
+license: 'N/A'
+use_precompiled_styles: no
+
+template_dirs:
+  - '../_shared/templates/'
+
+copy_content:
+  - ['../_shared/images/rss/04.png', 'images/rss.png']
+
+settings:
+  typekit_id: ~
+  comments: ~
+  comments_account: ~
+  simple_search: yes
+  enable_bigfoot: no

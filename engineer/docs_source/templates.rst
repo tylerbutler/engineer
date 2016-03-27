@@ -112,7 +112,7 @@ If you need more control over your navigation, you can also override the content
 providing your own. By default, :file:`_nav_primary.html` merely contains some outer scaffolding for navigation links
 (i.e. a ``<ul>`` tag):
 
-.. literalinclude:: ../templates/_nav_primary.html
+.. literalinclude:: ../_templates/_nav_primary.html
    :language: html+jinja
 
 You can of course replace this with whatever you wish, but keep in mind that some themes may expect certain CSS
@@ -130,7 +130,7 @@ programming language. The ``navigation_link`` macro, when called, outputs a list
 It's a bit easier to see it in action. Here's what the sample site :file:`_nav_primary_links.html` template fragment
 looks like:
 
-.. literalinclude:: ../templates/_nav_primary_links.html
+.. literalinclude:: ../_templates/_nav_primary_links.html
    :language: html+jinja
 
 We first import the ``navigation_link`` macro from :file:`core/_macros.html`, then subsequently call the macro to

@@ -19,3 +19,11 @@ class ThemeDirectoryNotFoundException(Exception):
 
 class PostMetadataError(Exception):
     pass
+
+
+class UnsupportedPostFormat(Exception):
+    def __init__(self, post_format, supported_formats, renderer, *args, **kwargs):
+        super(UnsupportedPostFormat, self).__init__(*args, **kwargs)
+        self.message = \
+            "%s only supports the following formats: %s. It doesn't understand '%s'. " % (renderer, supported_formats,
+                                                                                          post_format)

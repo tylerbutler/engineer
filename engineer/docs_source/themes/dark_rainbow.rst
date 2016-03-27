@@ -42,6 +42,24 @@ Dark Rainbow supports the following settings which can be configured using the
 
     .. versionadded:: 0.4.0
 
+``sharing``
+    A group of settings that control whether Facebook/Twitter share buttons are displayed on posts.
+
+    ``enabled``
+        Turns the sharing buttons on or off completely. *Defaults to false.*
+    ``facebook``
+        ``enabled``
+            Turns the Facebook sharing button on or off. *Defaults to false.*
+        ``app_id``
+            In order to share on Facebook, you must have a developer app ID specified here.
+    ``twitter``
+        ``enabled``
+            Turns the Twitter sharing button on or off. *Defaults to false.*
+        ``username``
+            If supplied, the Twitter share dialog will prepopulate your username in the tweet suggestion
+
+    .. versionadded:: 0.6.0
+
 ``typekit_id``
     The ID of the TypeKit kit that should be used. Dark Rainbow uses specific fonts that should be included in the kit.
 
@@ -138,5 +156,5 @@ The following snippets are available:
 Manifest
 ========
 
-.. literalinclude:: ../../themes/dark_rainbow/metadata.yaml
+.. literalinclude:: ../../_themes/dark_rainbow/metadata.yaml
    :language: yaml

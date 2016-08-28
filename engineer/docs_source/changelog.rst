@@ -9,8 +9,19 @@ version 0.6.0 -
 ===============
 
 - Support for Facebook and Twitter 'share' buttons in the :ref:`dark rainbow` theme.
-- :ref:`dark rainbow` now uses Foundation 5 and includes a number of enhancements for smaller mobile screens.
--
+- :ref:`dark rainbow` now uses Foundation 6 and includes a number of enhancements for smaller mobile screens.
+- Use webassets for static content management in themes.
+- Added devtools commands to pre-compile theme CSS output.
+- New command plugin model.
+- Removed dependency on the *times* module; replaced with *arrow*.
+- `Bigfoot.js <http://www.bigfootjs.com/>`_ support in Dark Rainbow and OleB.
+- Laid the groundwork for alternate post input formats, such as Textile or reStructuredText.
+- Per-post templates and content templates.
+- Plugin settings model changes; more consistency.
+- New 'stashed content' feature for PostProcessor plugins.
+- Add PostLink plugin.
+- Bundled code highlighting styles for use by themes.
+- Support for precompiled styles removed. It didn't make sense with the addition of webassets.
 
 
 version 0.5.1 - May 28, 2014

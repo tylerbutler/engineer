@@ -14,24 +14,27 @@ themes elsewhere by specifying the :attr:`~EngineerConfiguration.THEME_DIRS` set
 
 A sample theme folder might look like this::
 
-    /theme_id
-        - metadata.yaml
-        /static
-            /scripts
-                - script.js
-                - ...
-            /stylesheets
-                - theme.less
-                - reset.css
-                - ...
-        /templates
-            /theme
-               /layouts
-                    - ...
-                - _footer.html
-                - base.html
-                - post_list.html
-                - ...
+    .
+    ├── theme_id
+    |   ├── static
+    |   |   ├── scripts
+    |   |   |   ├── script.js
+    |   |   |   └── ...
+    |   |   ├── stylesheets
+    |   |   |   ├── theme.less
+    |   |   |   ├── reset.css
+    |   |   |   └── ...
+    |   |   ├── templates
+    |   |   |   ├── theme
+    |   |   |   |   ├── layouts
+    |   |   |   |   |   └── ...
+    |   |   |   |   ├── _footer.html
+    |   |   |   |   ├── base.html
+    |   |   |   |   ├── post_list.html
+    |   |   |   |   └── ...
+    |   ├── bundles.yaml
+    |   └── metadata.yaml
+
 
 .. _theme manifest:
 
@@ -107,6 +110,9 @@ Theme Manifest Parameters
 
 ``use_foundation`` *(optional)*
     Indicates whether the theme makes use of the Foundation CSS library included in Engineer. Defaults to ``False``.
+
+    .. deprecated:: 0.6.0
+       This setting is obsolete and ignored. Themes should now use
 
 
 .. _theme use_jquery:
@@ -190,6 +196,11 @@ Theme Manifest Parameters
     etc.). By specifying this parameter, content will be copied to a central location for you during the build
     process so you can include it in your theme templates, LESS files, etc.
 
+    .. tip::
+        Since Engineer uses webassets to manage static content in version 0.6.0+, the ``copy_content`` setting should
+        be used for content other than CSS and JavaScript files, such as images or web fonts. Style and script files
+        should be managed using :ref:`webassets bundles <theme bundles>`.
+
     This parameter should be a 'list of lists.' Each entry in the list is a list itself containing two items. The
     first item is the path to the file or folder that should be copied. *This path should be relative to the location
     of the theme manifest.*
@@ -214,17 +225,64 @@ Theme Manifest Parameters
 
 .. _theme styles:
 
-Theme Stylesheets
-=================
+Static Content
+==============
 
-CSS
----
+Starting with Engineer version 0.6.0, theme static content is managed using
+`webassets <http://webassets.readthedocs.org/>`_. While themes can link directly to static content in their
+templates, using webassets is preferred. Webassets handles combining and minifying static content automatically.
 
-You will likely have CSS stylesheets you wish to include in your theme. Including these is as simple as
-linking to them in your theme templates.
+.. versionadded:: 0.6.0
 
-LESS
-----
+
+.. _theme bundles:
+
+Bundles
+-------
+
+Webassets uses 'bundles' to combine and minify static files. Bundles are essentially a collection of static files, as
+well as a set of filters that define what happens to the files (compiled to CSS/JS, minified, etc.), and an output
+file location.
+
+Engineer :ref:`includes some pre-defined bundles <theme included bundles>`, which you can use in addition to defining
+your own. Bundles can include other bundles, so it's easy to include the pre-defined bundles into your own if you
+wish. This also makes it easy to share common static content across multiple themes.
+
+In order to define your own bundles for your theme, create a YAML file called ``bundles.yaml`` alongside your
+:ref:`theme manifest`. This file should contain all the bundles used in your theme. Note that while webassets itself
+supports defining bundles directly in Python code, Engineer currently only uses YAML input for custom theme bundles.
+
+The bundle format itself is straightforward. As an example, this is the ``bundles.yaml`` file for the
+:ref:`dark rainbow` theme:
+
+.. literalinclude:: ../../_themes/dark_rainbow/bundles.yaml
+   :language: yaml
+
+Note that all the paths to files, both input and output, should be relative to the ``bundles.yaml`` file itself. Make
+sure that your output file name includes the version placeholder (``%(version)s``) for cache-busting purposes. See
+:ref:`webassets:expiry` for more details.
+
+Also, keep in mind that while all of the filters supported by webassets are available for you to use in your bundles,
+many of them require external dependencies that are not included in Engineer by default. If you don't wish to require
+additional dependencies beyond what is included in Engineer, you should use only the ``cssmin``, ``jsmin``, and
+``less`` filters. You can read more about all the webassets filters
+:ref:`in the webassets documentation <webassets:builtin-filters>`.
+
+
+.. _theme included bundles:
+
+Included Bundles
+~~~~~~~~~~~~~~~~
+
+Engineer includes several CSS/JavaScript libraries that you can use in your themes. These libraries are exposed as
+bundles. Simply add the appropriate bundle's name to the ``contents`` of your own bundle.
+
+.. literalinclude:: ../../static/engineer/lib/global_bundles.yaml
+   :language: yaml
+
+
+Stylesheets
+-----------
 
 In addition to CSS, Engineer can automatically compile LESS stylesheets during a site build,
 so you are free to use LESS rather than CSS for your styles. When linking to your LESS stylesheet in your templates,
@@ -265,7 +323,7 @@ You should also ensure that your theme templates load the :ref:`built-in fragmen
 Images
 ------
 
-The built-in ``img`` tag will output content using a template fragment at :file:`templates/theme/_img.html`.
+The built-in ``img`` function will output content using a template fragment at :file:`templates/theme/_img.html`.
 Individual themes can override this output by providing their own custom template.
 
 The template is always passed the following keyword variables:

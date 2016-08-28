@@ -19,29 +19,27 @@ Settings
 Ole B supports the following settings which can be configured using the
 :attr:`~engineer.conf.EngineerConfiguration.THEME_SETTINGS` setting.
 
-``comments``
-    Set this setting to enable comments on your site. Comments are off by default. You can use either
-    `Disqus <http://www.disqus.com/>`_ or `Instense Debate <https//intensedebate.com/>`_ as your comment system. To
-    use Disqus, set the ``comments`` setting to ``disqus``. To use Intense Debate instead,
-    set the ``comments`` setting to ``intensedebate``. Be sure to also set the ``comments_account`` setting properly
-    as well.
+``comments`` *(string)*
+    Set this setting to either ``disqus`` or ``intensedebate`` to enable comments on your site. Comments are off by
+    default. `Disqus <http://www.disqus.com/>`_ or `Instense Debate <https//intensedebate.com/>`_ are supported
+    comment systems. Be sure to also set the ``comments_account`` setting properly as well.
 
-``comments_account``
+``comments_account`` *(string)*
     Both Disqus and Intense Debate require an account ID in order to associate comments properly with your site. Set
     this setting to the account ID for your respective comment account.
 
-``simple_search``
-    A boolean indicating whether simple search should be enabled for the site. *Defaults to true.*
+``simple_search`` *(bool)*
+    A boolean indicating whether simple search should be enabled for the site. *Defaults to True.*
 
     Note that if you have customized your sidebar, you must include the ``_search.html`` snippet in your sidebar file
     or the search box will not be visible. See :ref:`oleb snippets` for more information.
 
     .. versionadded:: 0.4.0
 
-``typekit_id``
+``typekit_id`` *(string)*
     The ID of the TypeKit kit that should be used. Ole B uses specific fonts that should be included in the kit.
 
-``twitter_id``
+``twitter_id`` *(string)*
     The username of the Twitter user whose feed should be shown in the sidebar. *Defaults to tylerbutler if not
     provided.*
 
@@ -49,7 +47,7 @@ Ole B supports the following settings which can be configured using the
        This setting is obsolete and ignored. The Tweet library has been removed from Engineer. See the
        :ref:`changelog` for more information.
 
-``tweet_count``
+``tweet_count`` *(int)*
     The number of tweets to include in the Twitter sidebar. *Defaults to 4 if not provided.*
 
     .. deprecated:: 0.5.0

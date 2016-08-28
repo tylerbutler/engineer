@@ -220,20 +220,20 @@ individual themes might provide their own.
 Including Images
 ----------------
 
-If you have images in your posts, you may find Engineer's built-in ``img`` tag useful. This tag allows
+If you have images in your posts, you may find Engineer's built-in ``img`` function useful. This function allows
 you to easily output consistent image markup in your posts. You must have the :ref:`jinja post processor plugin`
-enabled in order to use this tag
+enabled in order to use this function.
 
 .. admonition:: Theme Designer Note
 
-   The exact HTML content output by the ``img`` tag is customizable by a theme. See the
+   The exact HTML content output by the ``img`` function is customizable by a theme. See the
    :ref:`Theme creation documentation <image template>` for more details.
 
 
 Syntax
 ~~~~~~
 
-The typical syntax for the ``img`` tag looks like this:
+The typical syntax for the ``img`` function looks like this:
 
 .. code-block:: html+jinja
 

@@ -15,7 +15,7 @@ pygments>=1.4
 python-dateutil>=2.1
 pytz>=2011k
 pyYAML>=3.10
-times>=0.6
+times==0.6.2
 translitcodec>=0.2
 
 # engineer-specific fork of typogrify

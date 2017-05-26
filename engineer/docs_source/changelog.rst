@@ -5,6 +5,13 @@
 Release Notes
 =============
 
+version 0.5.2 - May 26, 2017
+============================
+
+- Pinned versions of dependencies to (hopefully) prevent this version series from breaking while I get v0.6.0 out the
+  door at some point.
+
+
 version 0.5.1 - May 28, 2014
 ============================
 

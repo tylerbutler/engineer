@@ -10,15 +10,10 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <module name="engineer" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-    <option name="SCRIPT_NAME" value="" />
-    <option name="CLASS_NAME" value="" />
-    <option name="METHOD_NAME" value="" />
-    <option name="FOLDER_NAME" value="$PROJECT_DIR$/engineer/unittests" />
-    <option name="TEST_TYPE" value="TEST_FOLDER" />
-    <option name="PATTERN" value="" />
-    <option name="USE_PATTERN" value="false" />
-    <option name="PARAMS" value="-v" />
-    <option name="USE_PARAM" value="true" />
+    <option name="_new_regexPattern" value="&quot;&quot;" />
+    <option name="_new_additionalArguments" value="&quot;&quot;" />
+    <option name="_new_target" value="&quot;.&quot;" />
+    <option name="_new_targetType" value="&quot;PATH&quot;" />
     <RunnerSettings RunnerId="Basic" />
     <RunnerSettings RunnerId="PyDebugRunner" />
     <RunnerSettings RunnerId="PythonCover" />

@@ -8,6 +8,9 @@
         <JSCodeStyleSettings>
           <option name="SPACE_BEFORE_FUNCTION_LEFT_PARENTH" value="false" />
         </JSCodeStyleSettings>
+        <MarkdownNavigatorCodeStyleSettings>
+          <option name="RIGHT_MARGIN" value="72" />
+        </MarkdownNavigatorCodeStyleSettings>
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>
@@ -45,4 +48,3 @@
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />
   </component>
 </project>
-

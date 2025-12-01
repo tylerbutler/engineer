@@ -1,0 +1,7 @@
+services:
+  engineer:
+    build: .
+    volumes:
+      # Mount a site directory for processing
+      - ./site:/site
+    working_dir: /site
